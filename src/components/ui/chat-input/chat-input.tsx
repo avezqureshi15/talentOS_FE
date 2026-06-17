@@ -3,35 +3,12 @@ import Input from "../input/input";
 import SendButton from "../send-button/send-button";
 
 import "./chat-input.css";
-import ModeButton from "../mode-button/mode-button";
-import type { ChatInputProps, InputActionsProps } from "./chat-input.type";
+import type { ChatInputProps } from "./chat-input.type";
 import { useMentionEngine } from "../../shared/mentions/use-mention-engine";
 import MentionPopup from "../../shared/mentions";
 
 /* ───────────────── TYPES ───────────────── */
 
-
-/* ───────────────── SUB COMPONENTS ───────────────── */
-
-const InputActions: React.FC<InputActionsProps> = ({
-  Icon,
-  Waveform,
-  onSend,
-}) => {
-  return (
-    <div className="chat-input-actions">
-      <ModeButton icon={<Icon.Chevron />} />
-
-      <button className="chat-input-mic">
-        <Icon.Mic />
-      </button>
-
-      <SendButton onClick={onSend}>
-        <Waveform />
-      </SendButton>
-    </div>
-  );
-};
 
 /* ───────────────── MAIN ───────────────── */
 
@@ -40,7 +17,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
   input,
   setInput,
   Icon,
-  Waveform,
   onSend,
 }) => {
   const {
@@ -56,13 +32,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
         <div className="chat-input-container">
 
           <div className="chat-input-wrapper">
-            {/* Left icon */}
-            {Icon && (
-              <button className="chat-input-icon-btn">
-                <Icon.Plus />
-              </button>
-            )}
-
             {/* Input */}
             <Input
               value={input}
@@ -85,13 +54,11 @@ const ChatInput: React.FC<ChatInputProps> = ({
             />
 
             {/* Right actions */}
-            {Icon && Waveform && (
-              <InputActions
-                Icon={Icon}
-                Waveform={Waveform}
-                onSend={onSend}
-              />
-            )}
+            <div className="chat-input-actions">
+              <SendButton onClick={onSend} disabled={!input.trim()}>
+                {Icon?.ArrowUp ? <Icon.ArrowUp /> : "↑"}
+              </SendButton>
+            </div>
           </div>
 
         </div>

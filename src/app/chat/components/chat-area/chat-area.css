@@ -2,21 +2,96 @@
   flex: 1;
   overflow: auto;
   padding-top: 20px;
+  background: var(--bg-primary);
 }
 
-/* centered container */
 .chat-area-container {
   max-width: 720px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
-/* optional scrollbar polish (nice UX upgrade) */
 .chat-area::-webkit-scrollbar {
   width: 6px;
 }
 
 .chat-area::-webkit-scrollbar-thumb {
-  background: var(--bg-hover);
+  background: var(--border-card);
   border-radius: 10px;
+}
+
+.chat-watermark {
+  height: calc(100vh - 220px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  user-select: none;
+  pointer-events: none;
+  font-family: var(--font-family);
+  text-align: center;
+}
+
+.chat-watermark__brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.chat-watermark__logo {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #6b5ce7 0%, #8b5cf6 100%);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-watermark__logo svg {
+  width: 28px;
+  height: 28px;
+}
+
+.chat-watermark__wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  font-size: clamp(42px, 6vw, 56px);
+}
+
+.chat-watermark__talent {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow:
+    0 0 40px rgba(107, 92, 231, 0.2),
+    0 2px 16px rgba(0, 0, 0, 0.35);
+}
+
+.chat-watermark__os {
+  margin-left: 2px;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(139, 92, 246, 0.55);
+  background: linear-gradient(
+    160deg,
+    rgba(167, 139, 250, 0.9) 0%,
+    rgba(107, 92, 231, 0.45) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.chat-watermark__tagline {
+  margin: 0;
+  font-size: var(--font-size-subtitle);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  max-width: 320px;
+  line-height: 1.5;
 }

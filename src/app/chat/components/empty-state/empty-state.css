@@ -4,6 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: 0 var(--space-4);
+  background: var(--bg-primary);
 }
 
 .empty-state-container {
@@ -17,15 +18,13 @@
   margin-top: 100px;
 }
 
-/* Heading */
 .empty-state-title {
-  font-size: 36px;
-  font-weight: 600;
+  font-size: var(--font-size-title);
+  font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 
-/* Suggestion pills container */
 .empty-state-suggestions {
   display: flex;
   flex-wrap: wrap;
@@ -35,23 +34,24 @@
   margin-top: -24px;
 }
 
-/* Suggestion button */
 .empty-state-chip {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  border-radius: var(--radius-xl);
-  border: none;
-  background: var(--chip-bg);
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-card);
+  background: var(--bg-card);
   color: var(--text-secondary);
-  font-size: 12.5px;
-  font-family: Sora, sans-serif;
-  font-weight: 500;
+  font-size: var(--font-size-subtitle);
+  font-family: var(--font-family);
+  font-weight: 400;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
 .empty-state-chip:hover {
-  background: var(--chip-hover);
+  background: var(--bg-hover);
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
 }

@@ -2,31 +2,28 @@
   margin-bottom: var(--space-6);
 }
 
-/* Thought pill */
 .ai-message-thought {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   padding: 6px 12px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--ai-thought-bg);
   border: 1px solid var(--ai-thought-border);
   margin-bottom: var(--space-4);
   color: var(--ai-thought-text);
-  font-size: 12.5px;
-  font-family: Sora, sans-serif;
+  font-size: var(--font-size-subtitle);
+  font-family: var(--font-family);
 }
 
-/* AI text */
 .ai-message-text {
-  font-size: 15px;
+  font-size: var(--font-size-card-title);
   color: var(--ai-text);
   line-height: 1.65;
   font-weight: 400;
-  font-family: Sora, sans-serif;
+  font-family: var(--font-family);
 }
 
-/* Action row */
 .ai-message-actions {
   display: flex;
   align-items: center;
@@ -34,11 +31,10 @@
   margin-top: var(--space-4);
 }
 
-/* Action button */
 .ai-message-action-btn {
   width: 30px;
   height: 30px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   border: none;
   background: transparent;
   color: var(--ai-action-icon);
@@ -46,9 +42,10 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 150ms ease, color 150ms ease;
 }
 
 .ai-message-action-btn:hover {
   background: var(--ai-action-hover);
+  color: var(--text-primary);
 }

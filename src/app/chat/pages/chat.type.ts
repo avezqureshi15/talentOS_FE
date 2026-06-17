@@ -4,6 +4,7 @@ export type ContentBlock =
   | { type: "thinking"; text: string }
   | { type: "code"; code: string }
   | { type: "image"; url: string }
+  | { type: "args"; text: string; collapsed?: boolean }
   | { type: "markdown"; content: string };
 
 

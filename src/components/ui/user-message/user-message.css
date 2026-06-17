@@ -8,20 +8,18 @@
 }
 
 .messageBubble {
-  font-size: 14.5px;
+  font-size: var(--font-size-subtitle);
   line-height: 1.5;
-  font-family: Sora, sans-serif;
+  font-family: var(--font-family);
   margin-top: 1rem;
-
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
 }
 
-/* user-specific */
 .messageUser {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
   color: var(--text-primary);
-
-  border-radius: var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm)
+    var(--radius-lg);
 }

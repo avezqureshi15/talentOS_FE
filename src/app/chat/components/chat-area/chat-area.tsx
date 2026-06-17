@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import "./chat-area.css";
 
 import UserMessage from "../../../../components/ui/user-message/user-message";
 import SuggestionChips from "./block-renderer/blocks/suggestion-chips/suggestion-chips";
@@ -7,6 +8,7 @@ import { renderBlock } from "./block-renderer/block-factory";
 import type { ContentBlock } from "./chart-area.type";
 import type { Message, AIMessage, Suggestion } from "../../pages/chat.type";
 import { useChatStore } from "../../../../store/chat.store";
+import { Icon } from "../../../../components/ui/icons";
 import TextArea from "./block-renderer/blocks/text-area/text-area";
 type ChatAreaProps = {
   onSend: (text: string, depth: number) => Promise<void>;
@@ -88,6 +90,22 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
       style={{ flex: 1, overflowY: "auto", padding: "20px 0" }}
     >
       <div style={{ maxWidth: "720px", margin: "0 auto", padding: "0 24px" }}>
+        {messages.length === 0 && (
+          <div className="chat-watermark" aria-hidden="true">
+            <div className="chat-watermark__brand">
+              <div className="chat-watermark__logo">
+                <Icon.Logo />
+              </div>
+              <h1 className="chat-watermark__wordmark">
+                <span className="chat-watermark__talent">Talent</span>
+                <span className="chat-watermark__os">OS</span>
+              </h1>
+            </div>
+            <p className="chat-watermark__tagline">
+              Intelligent hiring, powered by AI
+            </p>
+          </div>
+        )}
         {messages.map((msg) => {
           const isUI = hasUIAction(msg);
 

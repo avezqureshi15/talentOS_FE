@@ -1,6 +1,5 @@
 import React from "react";
 import IconButton from "../icon-button/icon-button";
-import ShareButton from "../share-button/share-button";
 
 import "./header.css";
 import type { HeaderLeftProps, HeaderProps } from "./header.type";
@@ -34,8 +33,6 @@ const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
       <IconButton>
         <Icon.Dots />
       </IconButton>
-
-      <ShareButton icon={<Icon.Share />} />
 
       <IconButton>
         <Icon.Edit />

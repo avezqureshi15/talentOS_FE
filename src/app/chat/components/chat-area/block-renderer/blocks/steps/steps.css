@@ -1,0 +1,31 @@
+.steps-feed {
+  display: block;
+  width: 100%;
+  margin: 10px 0 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+}
+
+.steps-feed-title {
+  font-size: var(--font-size-meta);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.steps-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.steps-feed-item {
+  font-size: var(--font-size-subtitle);
+  line-height: 1.35;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

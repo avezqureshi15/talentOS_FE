@@ -5,8 +5,10 @@ import AIMessage from "../../../../../components/ui/ai-message/ai-message";
 import ThinkingChip from "./blocks/thinking/thinking";
 import ComposeEmail from "./blocks/compose-email/compose-email";
 import TextArea from "./blocks/text-area/text-area";
-import type { CodeBlock, EmailBlock, ImageBlock, LetterBlock, MarkdownBlock, TextBlock, ThinkingBlock } from "../chart-area.type";
+import type { ArgsBlock, CodeBlock, EmailBlock, ImageBlock, LetterBlock, MarkdownBlock, StepsBlock, TextBlock, ThinkingBlock } from "../chart-area.type";
 import MarkdownRenderer from "./blocks/markdown/markdown";
+import StepsFeed from "./blocks/steps/steps";
+import ArgsStream from "./blocks/args/args";
 
 
 type RendererMap = {
@@ -16,6 +18,8 @@ type RendererMap = {
   image: (block: ImageBlock, key: number) => React.ReactNode;
   email: (block: EmailBlock, key: number) => React.ReactNode;
   letter: (block: LetterBlock, key: number) => React.ReactNode;
+  steps: (block: StepsBlock, key: number) => React.ReactNode;
+  args: (block: ArgsBlock, key: number) => React.ReactNode;
   markdown: (block: MarkdownBlock, key: number) => React.ReactNode;
 };
 
@@ -59,6 +63,14 @@ export const blockRendererMap: RendererMap = {
       name={block.name}
       meta={block.meta}
     />
+  ),
+
+  steps: (block, key) => (
+    <StepsFeed key={key} title={block.title} items={block.items} />
+  ),
+
+  args: (block, key) => (
+    <ArgsStream key={key} text={block.text} collapsed={block.collapsed} />
   ),
 
   markdown: (block: MarkdownBlock, key) => (

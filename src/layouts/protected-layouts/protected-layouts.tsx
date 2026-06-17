@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
-import { HISTORY_EARLIER, HISTORY_TODAY } from "../../constants/constants";
+import "../../app/chat/pages/chat.css";
 import { Icon } from "../../components/ui/icons";
 import Header from "../../components/ui/header/header";
 import Sidebar from "../../components/ui/sidebar/sidebar";
@@ -14,8 +14,6 @@ export default function ProtectedLayout() {
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
-        HISTORY_TODAY={HISTORY_TODAY}
-        HISTORY_EARLIER={HISTORY_EARLIER}
         Icon={Icon}
       />
 

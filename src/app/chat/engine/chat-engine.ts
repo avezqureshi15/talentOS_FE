@@ -1,76 +1,175 @@
-import { getAIResponse } from "../../../services/ai/getAIResponse";
+import type { ContentBlock } from "../pages/chat.type";
+import {
+  formatToolName,
+  streamChat,
+  streamStepToContentBlock,
+} from "../../../services/chat/chatStream";
 import { useChatStore } from "../../../store/chat.store";
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const createThreadId = () => crypto.randomUUID();
 
-export const processUserMessage = async (text: string, depth: number) => {
-  const { addMessage, updateMessage, setStarted } =
-    useChatStore.getState();
+export const processUserMessage = async (text: string, _depth: number) => {
+  const {
+    addMessage,
+    updateMessage,
+    setStarted,
+    threadId,
+    setThreadId,
+    setStreaming,
+    isStreaming,
+  } = useChatStore.getState();
+
+  if (isStreaming) return;
 
   setStarted();
+  setStreaming(true);
+
+  const currentThreadId = threadId ?? createThreadId();
+  if (!threadId) {
+    setThreadId(currentThreadId);
+  }
 
   const baseId = Date.now();
 
-  // 1. Add user message
   addMessage({
     id: baseId,
     role: "user",
     content: [{ type: "text", text }],
   });
 
-  const response = await getAIResponse(text);
-
-  await sleep(400 + text.length * 10);
-
   const id = baseId + 1;
 
-  // 2. Build initial AI message safely
   addMessage({
     id,
     role: "ai",
-
-    // PRIORITY: steps → text → final → fallback
-    content: response.steps?.length
-      ? [{ type: "thinking", text: response.steps[0] }]
-      : response.text
-      ? [{ type: "text", text: response.text }]
-      : response.final ?? [],
-
-    suggestions: response.suggestions,
-
-    ui_action: response.action
-      ? {
-          type: response.action,
-          payload: response.payload as {
-            jobId: string;
-            role: string;
-          },
-        }
-      : undefined,
+    content: [{ type: "thinking", text: "Thinking..." }],
   });
 
-  // 3. Handle streaming steps (if present)
-  if (response.steps?.length) {
-    for (let i = 1; i < response.steps.length; i++) {
-      await sleep(800);
+  let thinkingText = "Thinking...";
+  let showThinking = true;
 
-      updateMessage(id, (m) => ({
-        ...m,
-        content: [{ type: "thinking", text: response.steps![i] }],
-      }));
+  let markdownContent = "";
+  let textContent = "";
+  let hasFinalContent = false;
+
+  let pendingMarkdown = "";
+  let pendingText = "";
+  let revealTimer: number | null = null;
+  let revealDoneResolve: (() => void) | null = null;
+  const revealDone = new Promise<void>((resolve) => {
+    revealDoneResolve = resolve;
+  });
+
+  const setAiContent = (content: ContentBlock[]) => {
+    updateMessage(id, (m) => ({
+      ...m,
+      content,
+    }));
+  };
+
+  const startRevealLoop = () => {
+    if (revealTimer != null) return;
+
+    const tick = () => {
+      const hasPending = pendingMarkdown.length > 0 || pendingText.length > 0;
+      if (!hasPending) {
+        if (revealTimer != null) {
+          window.clearInterval(revealTimer);
+          revealTimer = null;
+        }
+        revealDoneResolve?.();
+        return;
+      }
+
+      if (pendingMarkdown.length > 0) {
+        const slice = pendingMarkdown.slice(0, 2);
+        pendingMarkdown = pendingMarkdown.slice(2);
+        markdownContent += slice;
+      } else if (pendingText.length > 0) {
+        const slice = pendingText.slice(0, 2);
+        pendingText = pendingText.slice(2);
+        textContent += slice;
+      }
+
+      rebuildContent();
+    };
+
+    tick();
+    revealTimer = window.setInterval(tick, 30);
+  };
+
+  const rebuildContent = () => {
+    const blocks: ContentBlock[] = [];
+
+    if (showThinking) {
+      blocks.push({ type: "thinking", text: thinkingText });
     }
 
-    await sleep(600);
-  }
+    if (markdownContent) {
+      blocks.push({ type: "markdown", content: markdownContent });
+    } else if (textContent) {
+      blocks.push({ type: "text", text: textContent });
+    }
 
-  // 4. Final render (safe fallback handling)
-  updateMessage(id, (m) => ({
-    ...m,
-    content:
-      response.final ??
-      (response.text
-        ? [{ type: "text", text: response.text }]
-        : []),
-    suggestions: response.suggestions,
-  }));
+    if (!blocks.length) {
+      blocks.push({ type: "thinking", text: "Thinking..." });
+    }
+
+    setAiContent(blocks);
+  };
+
+  try {
+    await streamChat(text, currentThreadId, {
+      onChunk: (chunk) => {
+        for (const step of chunk.steps) {
+          if (step.type === "tool_name") {
+            thinkingText = formatToolName(step.content);
+            rebuildContent();
+          }
+        }
+
+        for (const block of chunk.final) {
+          const contentBlock = streamStepToContentBlock(block);
+          if (!contentBlock) continue;
+
+          if (contentBlock.type === "markdown") {
+            hasFinalContent = true;
+            showThinking = false;
+            pendingMarkdown += contentBlock.content;
+            startRevealLoop();
+          } else if (contentBlock.type === "text") {
+            hasFinalContent = true;
+            showThinking = false;
+            pendingText += contentBlock.text;
+            startRevealLoop();
+          }
+        }
+      },
+      onError: (error) => {
+        setAiContent([{ type: "text", text: `Error: ${error.message}` }]);
+      },
+    });
+
+    if (!hasFinalContent) {
+      setAiContent([
+        { type: "text", text: "No response received from the assistant." },
+      ]);
+    }
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Something went wrong";
+    setAiContent([{ type: "text", text: `Error: ${message}` }]);
+  } finally {
+    if (revealTimer != null) {
+      await revealDone;
+    } else if (pendingMarkdown.length || pendingText.length) {
+      markdownContent += pendingMarkdown;
+      textContent += pendingText;
+      pendingMarkdown = "";
+      pendingText = "";
+      rebuildContent();
+    }
+    setStreaming(false);
+    useChatStore.getState().saveConversation();
+  }
 };

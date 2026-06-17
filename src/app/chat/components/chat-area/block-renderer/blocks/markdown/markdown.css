@@ -76,8 +76,8 @@
 
 /* code block */
 .md-root pre {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
   padding: var(--space-4);
   border-radius: var(--radius-md);
   overflow-x: auto;

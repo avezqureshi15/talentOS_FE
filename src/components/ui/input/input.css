@@ -1,22 +1,18 @@
 .input {
   flex: 1;
-
   background: transparent;
   border: none;
   outline: none;
-
   color: var(--input-text);
   caret-color: var(--input-caret);
-
-  font-size: 14px;
-  font-family: var(--font-family, Sora, sans-serif);
+  font-size: var(--font-size-subtitle);
+  font-family: var(--font-family);
 }
 
 .input::placeholder {
   color: var(--input-placeholder);
 }
 
-/* optional: better focus behavior when wrapper is focused */
 .input:focus {
   outline: none;
 }

@@ -4,44 +4,27 @@ import "./chat.css";
 import { Icon } from "../../../components/ui/icons";
 import ChatArea from "../components/chat-area/chat-area";
 import ChatInput from "../../../components/ui/chat-input/chat-input";
-import Waveform from "../../../assets/wave-form/wave-form";
 
 import { processUserMessage } from "../engine/chat-engine";
 
 import { useChatStore } from "../../../store/chat.store";
-import { useScriptStore } from "../../../store/script.store";
 
 export default function Chat() {
   const [input, setInput] = useState("");
 
-  const { messages, hasStarted, setStarted } = useChatStore();
-
-  const { start, getNext } = useScriptStore();
-
-  const handleSend = async (text: string, depth: number) => {
-    await processUserMessage(text, depth);
-
-    // AFTER AI completes → load next scripted input
-    const nextText = getNext();
-
-    if (nextText) {
-      setInput(nextText);
-    }
-  };
-
+  const { messages, hasStarted, isStreaming, setStarted } = useChatStore();
 
   useEffect(() => {
     setStarted();
+  }, [setStarted]);
 
-    start();
-
-    const first = getNext();
-    if (first) setInput(first);
-  }, []);
+  const handleSend = async (text: string, depth: number) => {
+    if (isStreaming) return;
+    await processUserMessage(text, depth);
+  };
 
   return (
     <>
-      {/* FULLY reactive from store */}
       <ChatArea onSend={handleSend} />
 
       {hasStarted && (
@@ -50,13 +33,12 @@ export default function Chat() {
           input={input}
           setInput={setInput}
           onSend={() => {
-            if (!input.trim()) return;
+            if (!input.trim() || isStreaming) return;
 
             handleSend(input, messages.length);
             setInput("");
           }}
           Icon={Icon}
-          Waveform={Waveform}
         />
       )}
     </>

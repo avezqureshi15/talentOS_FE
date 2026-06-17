@@ -1,42 +1,133 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
-  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&display=swap');
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #0a0a0a; font-family: 'Sora', sans-serif; overflow: hidden; height: 100vh; }
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+}
 
-  @keyframes fadeSlideUp   { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
-  @keyframes fadeSlideRight{ from { opacity:0; transform:translateX(16px) } to { opacity:1; transform:translateX(0) } }
-  @keyframes scaleIn       { from { opacity:0; transform:scale(0.92) }      to { opacity:1; transform:scale(1)    } }
-  @keyframes float         { 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-3px) } }
+body {
+  overflow: hidden;
+  height: 100vh;
+}
 
-  .cui-fade-up    { animation: fadeSlideUp    0.4s cubic-bezier(0.16,1,0.3,1) both; }
-  .cui-fade-right { animation: fadeSlideRight 0.4s cubic-bezier(0.16,1,0.3,1) both; }
-  .cui-scale-in   { animation: scaleIn        0.35s cubic-bezier(0.16,1,0.3,1) both; }
-  .cui-d1 { animation-delay:0.05s } .cui-d2 { animation-delay:0.1s }
-  .cui-d3 { animation-delay:0.15s } .cui-d4 { animation-delay:0.2s }
-  .cui-d5 { animation-delay:0.25s }
+::-webkit-scrollbar {
+  width: 4px;
+}
 
-  .cui-sidebar-item { transition: background 0.15s ease; cursor: pointer; }
-  .cui-sidebar-item:hover  { background: rgba(255,255,255,0.06); }
-  .cui-sidebar-item.active { background: rgba(255,255,255,0.09); }
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-  .cui-icon-btn { transition: all 0.15s ease; cursor: pointer; }
-  .cui-icon-btn:hover  { background: rgba(255,255,255,0.1) !important; transform: scale(1.08); }
-  .cui-icon-btn:active { transform: scale(0.95); }
+::-webkit-scrollbar-thumb {
+  background: var(--border-card);
+  border-radius: 2px;
+}
 
-  .cui-nav-btn { transition: all 0.15s ease; cursor: pointer; }
-  .cui-nav-btn:hover { background: rgba(255,255,255,0.08) !important; }
-
-  .cui-share-btn { transition: all 0.15s ease; cursor: pointer; }
-  .cui-share-btn:hover  { background: rgba(255,255,255,0.15) !important; }
-  .cui-share-btn:active { transform: scale(0.96); }
-
-  .cui-input-wrap:focus-within {
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 8px 32px rgba(0,0,0,0.4);
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  .cui-dot-badge { animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes fadeSlideRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
-  .cui-wave-bar { border-radius: 2px; background: #111; }
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cui-fade-up {
+  animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cui-fade-right {
+  animation: fadeSlideRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cui-scale-in {
+  animation: scaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cui-d1 {
+  animation-delay: 0.05s;
+}
+.cui-d2 {
+  animation-delay: 0.1s;
+}
+.cui-d3 {
+  animation-delay: 0.15s;
+}
+.cui-d4 {
+  animation-delay: 0.2s;
+}
+.cui-d5 {
+  animation-delay: 0.25s;
+}
+
+.cui-sidebar-item {
+  transition: background 150ms ease, border-color 150ms ease;
+  cursor: pointer;
+}
+
+.cui-sidebar-item:hover {
+  background: var(--bg-hover);
+}
+
+.cui-sidebar-item.active {
+  background: rgba(107, 92, 231, 0.15);
+  border-left: 3px solid var(--accent-primary);
+}
+
+.cui-icon-btn {
+  transition: all 150ms ease;
+  cursor: pointer;
+}
+
+.cui-icon-btn:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+.cui-icon-btn:active {
+  transform: scale(0.95);
+}
+
+.cui-nav-btn {
+  transition: all 150ms ease;
+  cursor: pointer;
+}
+
+.cui-nav-btn:hover {
+  background: var(--bg-hover) !important;
+}
+
+.cui-input-wrap:focus-within {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 1px var(--chat-input-focus-shadow);
+}
+
+.cui-dot-badge {
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}

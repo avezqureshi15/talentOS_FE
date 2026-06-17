@@ -2,11 +2,19 @@ import React from "react";
 import "./send-button.css";
 import type { SendButtonProps } from "./send-button.type";
 
-
-
-const SendButton: React.FC<SendButtonProps> = ({ children, onClick }) => {
+const SendButton: React.FC<SendButtonProps> = ({
+  children,
+  onClick,
+  disabled = false,
+}) => {
   return (
-    <button className="send-btn" onClick={onClick}>
+    <button
+      type="button"
+      className={`send-btn${disabled ? "" : " send-btn--active"}`}
+      onClick={onClick}
+      disabled={disabled}
+      aria-label="Send message"
+    >
       {children}
     </button>
   );

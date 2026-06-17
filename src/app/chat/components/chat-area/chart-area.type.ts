@@ -45,6 +45,18 @@ export type MarkdownBlock = {
   content: string;
 };
 
+export type StepsBlock = {
+  type: "steps";
+  title?: string;
+  items: string[];
+};
+
+export type ArgsBlock = {
+  type: "args";
+  text: string;
+  collapsed?: boolean;
+};
+
 export type ContentBlock =
   | TextBlock
   | ThinkingBlock
@@ -52,6 +64,8 @@ export type ContentBlock =
   | ImageBlock
   | EmailBlock
   | LetterBlock
+  | StepsBlock
+  | ArgsBlock
   | MarkdownBlock;
 
 export type Message = {

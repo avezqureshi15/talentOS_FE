@@ -4,24 +4,20 @@
   margin: 1rem 2rem;
 }
 
-/* container */
 .table {
   width: 100%;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
-  background: var(--bg-secondary);
+  background: var(--bg-card);
 }
 
-/* row */
 .table-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr;
   align-items: center;
-
   padding: 12px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-
-  transition: background 0.15s ease;
+  border-bottom: 1px solid var(--border-default);
+  transition: background 150ms ease;
 }
 
 .table-row:last-child {
@@ -32,35 +28,32 @@
   background: var(--bg-hover);
 }
 
-/* header */
 .table-header {
-  font-size: 12px;
-  color: var(--text-muted);
-  background: var(--bg-primary);
+  font-size: var(--font-size-meta);
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
 }
 
-/* role cell */
 .role-title {
-  font-size: 14px;
+  font-size: var(--font-size-subtitle);
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .role-meta {
-  font-size: 12px;
-  color: var(--text-muted);
+  font-size: var(--font-size-meta);
+  color: var(--text-secondary);
 }
 
-/* applicants */
 .applicants-cell {
   font-weight: 500;
   color: var(--text-primary);
 }
 
-/* status badge */
 .status-badge {
   padding: 4px 10px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: var(--font-size-meta);
   text-transform: capitalize;
 }
 
@@ -74,75 +67,42 @@
   color: #ef4444;
 }
 
-/* dropdown */
-.table-dropdown {
-  width: 100%;
-  padding: 6px 8px;
-
-  background: var(--input-bg);
-  color: var(--text-primary);
-
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-
-  outline: none;
-}
-
-.table-dropdown:focus {
-  border-color: var(--accent);
-}
-
-/* created */
 .created-cell {
-  font-size: 12px;
-  color: var(--text-muted);
+  font-size: var(--font-size-meta);
+  color: var(--text-secondary);
 }
 
-/* wrapper to control width */
 .dropdown-cell {
+  position: relative;
   display: flex;
   justify-content: flex-start;
 }
 
-/* dropdown */
 .table-dropdown {
-  width: auto;              /* ❌ remove full width */
-  min-width: 140px;         /* controlled width */
+  width: auto;
+  min-width: 140px;
   max-width: 160px;
-
   padding: 6px 28px 6px 10px;
-
-  font-size: 12px;          /* match table density */
+  font-size: var(--font-size-meta);
   color: var(--text-secondary);
-
-  background: var(--bg-primary); /* blend with table */
-  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-card);
   border-radius: var(--radius-sm);
-
   outline: none;
   cursor: pointer;
-
-  appearance: none;         /* remove default arrow */
+  appearance: none;
   -webkit-appearance: none;
-
-  transition: all 0.15s ease;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
-/* subtle hover */
 .table-dropdown:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
 }
 
-/* focus = accent hint (not loud) */
 .table-dropdown:focus {
-  border-color: var(--accent);
+  border-color: var(--accent-primary);
   box-shadow: 0 0 0 1px var(--accent-glow);
-}
-
-/* custom arrow */
-.dropdown-cell {
-  position: relative;
 }
 
 .dropdown-cell::after {
@@ -151,8 +111,7 @@
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-
   font-size: 10px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   pointer-events: none;
 }

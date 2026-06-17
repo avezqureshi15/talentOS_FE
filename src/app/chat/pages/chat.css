@@ -5,10 +5,9 @@
   background: var(--bg-primary);
   color: var(--text-primary);
   overflow: hidden;
-  font-family: Sora, sans-serif;
+  font-family: var(--font-family);
 }
 
-/* MAIN AREA */
 .chat-main {
   flex: 1;
   display: flex;
@@ -19,28 +18,26 @@
   background: var(--bg-primary);
 }
 
-/* ICON BUTTON SYSTEM */
 .chat-icon-btn {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
   border: none;
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: Sora, sans-serif;
+  font-family: var(--font-family);
+  transition: background 150ms ease, color 150ms ease;
 }
 
-/* OPTIONAL: hover behavior (future-proof) */
 .chat-icon-btn:hover {
   background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
-/* SIDEBAR ICON BUTTON OVERRIDE (if needed) */
 .chat-icon-btn--small {
   width: 30px;
   height: 30px;
-  border-radius: var(--radius-sm);
 }

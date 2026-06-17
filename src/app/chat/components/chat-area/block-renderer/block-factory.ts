@@ -23,6 +23,12 @@ export const renderBlock = (block: ContentBlock, key: number) => {
     case "letter":
       return blockRendererMap.letter(block, key);
 
+    case "steps":
+      return blockRendererMap.steps(block, key);
+
+    case "args":
+      return blockRendererMap.args(block, key);
+
     case "markdown":
       return blockRendererMap.markdown(block, key);
 
