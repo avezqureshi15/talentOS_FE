@@ -1,55 +1,73 @@
 import type { AIResponse } from "../../app/chat/pages/chat.type";
-
-import type { FlowState } from "./core/state-machine";
-import { runFlow } from "./flows/job-flow";
-import { finalResponse } from "./responses/final.response";
-import { formattingResponse } from "./responses/formatting.response";
+import { USER_QUERIES } from "./constants/scripts.constants";
+import { candidateStatusResponses } from "./responses/candidateStatus.response";
+import { generateJDResponses } from "./responses/generateJD.response";
+import { howCanHelpResponses } from "./responses/howcanhelp.response";
+import { humanlyResponses } from "./responses/humanly.response";
 import { initResponses } from "./responses/init.response";
-import { leaderShipResponse } from "./responses/leadership.response";
+import { jdAddExpResponses } from "./responses/jd-add-experience";
+import { jdAddBonusResponses } from "./responses/jdAddBonus.response";
 import { publisingResponses } from "./responses/publishing.response";
 import { publishTriggerResponse } from "./responses/publishTrigger.response";
-import { roleResponse } from "./responses/role.response";
-import { seniorityResponse } from "./responses/seniority.response";
 import { cleanMarkdown } from "./util";
 
 
-let state: FlowState = "INIT";
+type UserQueryKey = keyof typeof USER_QUERIES;
 
-let context = {
-  role: "",
-  jobId: "job_" + Date.now(),
+
+export const resolveUserQuery = (
+  input: string
+): UserQueryKey | null => {
+  const normalized = input.trim().toLowerCase();
+
+  for (const key in USER_QUERIES) {
+    const value = USER_QUERIES[key as UserQueryKey];
+
+    if (value.toLowerCase() === normalized) {
+      return key as UserQueryKey;
+    }
+  }
+
+  return null;
 };
 
-const getResponseByState = (state: FlowState): AIResponse => {
+
+const getResponseByState = (
+  state: UserQueryKey
+): AIResponse => {
   switch (state) {
-    case "INIT":
+    case "INITIATE_HIRING":
       return initResponses.default();
 
-    case "ROLE_INTRO":
-      return initResponses.askRole();
+    case "ROLE_SELECTION":
+      return howCanHelpResponses.default();
 
-    case "ROLE_DEFINED":
-      return roleResponse.default();
+    case "CREATE_JD":
+      return generateJDResponses.default();
 
-    case "SENIORITY_ADDED":
-      return seniorityResponse.default();
+    case "JD_ADD_EXPERIENCE":
+      return jdAddExpResponses.default();
 
-    case "LEADERSHIP_ADDED":
-      return leaderShipResponse.default();
-
-    case "FORMATTED":
-      return formattingResponse.default();
-
-    case "READY_TO_PUBLISH":
+    case "JD_ADD_REACT_NATIVE":
+      return jdAddBonusResponses.default();
+      
+    case "JD_MAKE_MORE_HUMAN":
+      return humanlyResponses.default();
+    
+    case "JD_APPROVED":
+      return publishTriggerResponse.default();
+      
+    case "PUBLISH_JD":
       return publishTriggerResponse.default();
 
     case "PUBLISHING":
       return publisingResponses.default();
-      
-    case "FINALIZED":
-      return finalResponse.default();
-    
 
+    case "CHECK_CANDIDATE_STATUS":
+      return candidateStatusResponses.default();
+
+    default:
+      return initResponses.default();
   }
 };
 
@@ -58,12 +76,10 @@ export const getAIResponse = async (
 ): Promise<AIResponse> => {
   const text = cleanMarkdown(input.toLowerCase());
 
-  const nextState = runFlow(state, text);
-  state = nextState;
-
-  // update context safely
-  if (state === "ROLE_DEFINED") {
-    context.role = input;
+  const state = resolveUserQuery(text);
+  console.log(state)
+  if (!state) {
+    return initResponses.default();
   }
 
   return getResponseByState(state);

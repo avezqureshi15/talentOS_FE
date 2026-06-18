@@ -1,13 +1,17 @@
 import { create } from "zustand";
+import { USER_QUERIES } from "../services/ai/constants/scripts.constants";
 
-const SCRIPT = [
-  "We need to hire someone",
-  "Senior React Developer for product based company",
-  "Add system design responsibility and make it more senior",
-  "Also include mentoring juniors and microfrontend experience",
-  "Make it little bit lengthy and quite formatted",
-  "This looks good, finalize it and lets post it",
+const SCRIPT_ORDER: (keyof typeof USER_QUERIES)[] = [
+  "INITIATE_HIRING",
+  "ROLE_SELECTION",
+  "CREATE_JD",
+  "JD_ADD_EXPERIENCE",
+  "JD_ADD_REACT_NATIVE",
+  "JD_MAKE_MORE_HUMAN",
+  "JD_APPROVED",
 ];
+
+const SCRIPT = SCRIPT_ORDER.map((key) => USER_QUERIES[key]);
 
 type ScriptState = {
   script: string[];

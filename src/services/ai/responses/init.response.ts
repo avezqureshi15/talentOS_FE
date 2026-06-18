@@ -4,7 +4,7 @@ export const initResponses = {
   askRole: () =>
     ({
       type: "text",
-      text: "Got it. What role are we hiring for?",
+      text: "Sure, For which position or role are we hiring?",
       suggestions: [
         { label: "Frontend Engineer", action: "role:frontend" },
         { label: "Backend Engineer", action: "role:backend" },

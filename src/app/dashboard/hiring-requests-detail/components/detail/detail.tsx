@@ -33,21 +33,22 @@ export default function JobDetail() {
     <div className="job-page">
 
       {/* HEADER */}
-     <div className="job-header ">
+  <div className="job-header">
+  {/* LEFT: BACK BUTTON */}
+  <button className="back-btn" onClick={() => window.history.back()}>
+    <i className="bx bx-arrow-left-stroke"></i>
+  </button>
 
-        {/* LEFT: BACK BUTTON */}
-        <button
-          className="back-btn"
-          onClick={() => window.history.back()}
-        >
-          <i className="bx bx-arrow-left-stroke"></i>
-        </button>
+  {/* TITLE */}
+  <div className="header-text">Frontend Engineer Hiring</div>
 
-        {/* TITLE */}
-        <div className="header-text">
-          Frontend Engineer Hiring
-        </div>
-      </div>
+  {/* RIGHT: ACTIONS */}
+  <div className="header-actions">
+    <button className="export-btn" onClick={()=>{}}>
+      Export as Excel
+    </button>
+  </div>
+</div>
 
       {/* SUBTITLE */}
       <div className="job-subtitle ">
@@ -67,7 +68,7 @@ export default function JobDetail() {
           className={`segment-item ${segment === "applicants" ? "active" : ""}`}
           onClick={() => setSegment("applicants")}
         >
-          Applicants
+          Applicants (24)
         </button>
       </div>
 
