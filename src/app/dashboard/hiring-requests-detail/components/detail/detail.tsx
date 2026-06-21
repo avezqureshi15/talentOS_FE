@@ -1,8 +1,10 @@
 import { useState } from "react";
 import "./detail.css";
 
-import JobDescription from "../job-desc/job-desc";
-import Applicants, { type Applicant } from "../applicants/applicants";
+import JobDescription from "@/app/dashboard/hiring-requests-detail/components/job-desc/job-desc";
+import Applicants, { type Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
+import { JOB_DETAIL } from "@/constants/constants";
+import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 
 type Segment = "jd" | "applicants";
 
@@ -40,19 +42,19 @@ export default function JobDetail() {
   </button>
 
   {/* TITLE */}
-  <div className="header-text">Frontend Engineer Hiring</div>
+  <div className="header-text">{JOB_DETAIL.TITLE}</div>
 
   {/* RIGHT: ACTIONS */}
   <div className="header-actions">
     <button className="export-btn" onClick={()=>{}}>
-      Export as Excel
+      {JOB_DETAIL.EXPORT_AS_EXCEL}
     </button>
   </div>
 </div>
 
       {/* SUBTITLE */}
       <div className="job-subtitle ">
-        Manage job posting, review applicants, and track hiring pipeline.
+        {JOB_DETAIL.SUBTITLE}
       </div>
 
       {/* SEGMENT NAV (Flowbite-inspired, but dark SaaS tuned) */}
@@ -61,27 +63,29 @@ export default function JobDetail() {
           className={`segment-item ${segment === "jd" ? "active" : ""}`}
           onClick={() => setSegment("jd")}
         >
-          Job Description
+          {JOB_DETAIL.JOB_DESCRIPTION}
         </button>
 
         <button
           className={`segment-item ${segment === "applicants" ? "active" : ""}`}
           onClick={() => setSegment("applicants")}
         >
-          Applicants (24)
+          {JOB_DETAIL.APPLICANTS}
         </button>
       </div>
 
       {/* CONTENT */}
       <div className="tab-content">
-        {segment === "jd" && <JobDescription />}
-        {segment === "applicants" && (
-          <Applicants
-            data={applicants}
-            openId={openId}
-            setOpenId={setOpenId}
-          />
-        )}
+        <ErrorBoundary>
+          {segment === "jd" && <JobDescription />}
+          {segment === "applicants" && (
+            <Applicants
+              data={applicants}
+              openId={openId}
+              setOpenId={setOpenId}
+            />
+          )}
+        </ErrorBoundary>
       </div>
     </div>
   );

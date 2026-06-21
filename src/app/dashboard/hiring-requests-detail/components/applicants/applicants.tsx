@@ -1,5 +1,6 @@
 import { useState } from "react";
-import ApplicantTimelineSheet from "../timeline/timeline";
+import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
+import { APPLICANT_LABELS } from "@/constants/constants";
 
 export type ApplicantStatus =
   | "new"
@@ -66,7 +67,7 @@ function Applicants({
               <div className="header-right">
                 {a.status === "reviewing" && (
                   <div className="queue-text mb-30">
-                    Queuing candidate for first round...
+                    {APPLICANT_LABELS.QUEUING}
                   </div>
                 )}
                 <div className={`status-dot ${a.status}`} />
@@ -80,7 +81,7 @@ function Applicants({
                       setOpenId(a.id); // optional UX improvement
                     }}
                   >
-                    Start Screening Round
+                    {APPLICANT_LABELS.START_SCREENING}
                   </button>
                 )}
 
@@ -94,7 +95,7 @@ function Applicants({
                         setScreeningId(null);
                       }}
                     >
-                      Reject
+                      {APPLICANT_LABELS.REJECT}
                     </button>
 
                     <button
@@ -105,7 +106,7 @@ function Applicants({
                         setScreeningId(null);
                       }}
                     >
-                      Accept
+                      {APPLICANT_LABELS.ACCEPT}
                     </button>
 
 
@@ -121,11 +122,11 @@ function Applicants({
               <div className="accordion-body ">
                 <div className="action-links">
                   <a href={a.linkedinUrl} target="_blank" rel="noreferrer">
-                    🔗 LinkedIn
+                    {APPLICANT_LABELS.LINKEDIN}
                   </a>
 
                   <a href={a.cvUrl} download>
-                    📄 CV
+                    {APPLICANT_LABELS.CV}
                   </a>
 
                   <button
@@ -135,7 +136,7 @@ function Applicants({
                       setTimelineId(a.id);
                     }}
                   >
-                    <span className="bx bx-clock" ></span> Timeline
+                    <span className="bx bx-clock" ></span> {APPLICANT_LABELS.TIMELINE}
                   </button>
 
                 </div>
@@ -144,13 +145,13 @@ function Applicants({
 
                 {a.status === "rejected" && (
                   <div className="rejected-text">
-                    Candidate rejected
+                    {APPLICANT_LABELS.CANDIDATE_REJECTED}
                   </div>
                 )}
 
                 {a.status === "hired" && (
                   <div className="hired-text">
-                    Candidate hired 🎉
+                    {APPLICANT_LABELS.CANDIDATE_HIRED}
                   </div>
                 )}
               </div>

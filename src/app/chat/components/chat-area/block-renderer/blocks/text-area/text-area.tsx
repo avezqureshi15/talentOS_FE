@@ -1,6 +1,6 @@
 import React from "react";
 import "./text-area.css";
-import MarkdownRenderer from "../markdown/markdown";
+import MarkdownRenderer from "@/app/chat/components/chat-area/block-renderer/blocks/markdown/markdown";
 
 type Props = {
   subject?: string;
@@ -11,19 +11,8 @@ type Props = {
 
 const Divider = () => <div className="rl-divider" />;
 
-const Highlight: React.FC<{ children: React.ReactNode; block?: boolean }> = ({
-  children,
-  block,
-}) => (
-  <span className={`rl-highlight ${block ? "block" : ""}`}>
-    {children}
-  </span>
-);
-
 const TextArea: React.FC<Props> = ({
   subject = "",
-  name = "",
-  meta = "",
   content,
 }) => {
   return (

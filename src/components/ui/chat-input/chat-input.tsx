@@ -1,12 +1,12 @@
 import React from "react";
-import Input from "../input/input";
-import SendButton from "../send-button/send-button";
+import Input from "@/components/ui/input/input";
+import SendButton from "@/components/ui/send-button/send-button";
 
 import "./chat-input.css";
-import ModeButton from "../mode-button/mode-button";
-import type { ChatInputProps, InputActionsProps } from "./chat-input.type";
-import { useMentionEngine } from "../../shared/mentions/use-mention-engine";
-import MentionPopup from "../../shared/mentions";
+import ModeButton from "@/components/ui/mode-button/mode-button";
+import type { ChatInputProps, InputActionsProps } from "./chat-input.types";
+import { useMentionEngine } from "@/components/shared/mentions/use-mention-engine";
+import MentionPopup from "@/components/shared/mentions";
 
 /* ───────────────── TYPES ───────────────── */
 

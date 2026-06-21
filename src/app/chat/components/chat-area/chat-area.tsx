@@ -1,18 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import UserMessage from "../../../../components/ui/user-message/user-message";
+import UserMessage from "@/components/ui/user-message/user-message";
+import "./chat-area.css";
 import SuggestionChips from "./block-renderer/blocks/suggestion-chips/suggestion-chips";
 
 import { renderBlock } from "./block-renderer/block-factory";
-import type { ContentBlock } from "./chart-area.type";
-import type { Message, AIMessage, Suggestion } from "../../pages/chat.type";
-import { useChatStore } from "../../../../store/chat.store";
+import type { ContentBlock, Message, AIMessage, Suggestion } from "@/app/chat/pages/chat.types";
+import { useChatStore } from "@/store/chat.store";
 import TextArea from "./block-renderer/blocks/text-area/text-area";
+import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+
 type ChatAreaProps = {
-  onSend: (text: string, depth: number) => Promise<void>;
+  onSend: (text: string) => void;
 };
 const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
-  const { messages, hasStarted } = useChatStore();
+  const { messages, hasStarted, isProcessing, error } = useChatStore();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -85,9 +88,9 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      style={{ flex: 1, overflowY: "auto", padding: "20px 0" }}
+      className="chat-area"
     >
-      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "0 24px" }}>
+      <div className="chat-area-container">
         {messages.map((msg) => {
           const isUI = hasUIAction(msg);
 
@@ -98,7 +101,8 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
               : msg.content;
 
           return (
-            <div key={msg.id}>
+            <ErrorBoundary key={msg.id}>
+            <div>
               {msg.role === "user" ? (
                 <UserMessage text={extractText(msg.content)} />
               ) : (
@@ -114,7 +118,7 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
                       UI ACTION (PURE SIDE EFFECT)
                   ----------------------------- */}
                   {isUI && (
-                    <div style={{ marginTop: 16 }}>
+                    <div className="chat-area__action">
                       <TextArea
                         subject={`Job Posting: ${msg.ui_action.payload.role}`}
                         name="HR System"
@@ -138,8 +142,23 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
                 </div>
               )}
             </div>
+            </ErrorBoundary>
           );
         })}
+
+        {/* Error banner */}
+        {error && (
+          <div className="chat-area__error">
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Typing indicator */}
+        {isProcessing && (
+          <div className="chat-area__typing">
+            <LoadingSpinner size="sm" label="AI is thinking..." />
+          </div>
+        )}
 
         <div ref={bottomRef} />
       </div>

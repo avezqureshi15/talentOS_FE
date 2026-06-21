@@ -1,7 +1,11 @@
 .chat-area {
   flex: 1;
-  overflow: auto;
-  padding-top: 20px;
+  overflow-y: auto;
+  padding: 20px 0;
+}
+
+.chat-area__action {
+  margin-top: 16px;
 }
 
 /* centered container */
@@ -19,4 +23,21 @@
 .chat-area::-webkit-scrollbar-thumb {
   background: var(--bg-hover);
   border-radius: 10px;
+}
+
+/* Error banner */
+.chat-area__error {
+  background: #7f1d1d;
+  color: #fca5a5;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 8px 0;
+}
+
+/* Typing indicator */
+.chat-area__typing {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
 }

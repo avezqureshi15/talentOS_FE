@@ -1,8 +1,7 @@
 import React from "react";
 import "./input.css";
-import type { InputProps } from "./input.type";
-
-
+import type { InputProps } from "./input.types";
+import { UI_LABELS } from "@/constants/constants";
 
 const Input: React.FC<InputProps> = ({ value, onChange, onKeyDown }) => {
   return (
@@ -11,7 +10,7 @@ const Input: React.FC<InputProps> = ({ value, onChange, onKeyDown }) => {
       value={value}
       onChange={(e) => onChange(e.target.value)}
       onKeyDown={onKeyDown}
-      placeholder="Ask anything"
+      placeholder={UI_LABELS.ASK_ANYTHING}
     />
   );
 };

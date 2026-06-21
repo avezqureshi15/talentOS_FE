@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import Dropdown from "../../../../../components/ui/dropdown/dropdown";
+import Dropdown from "@/components/ui/dropdown/dropdown";
 import "./table.css";
+import { TABLE_HEADERS, DROPDOWN_OPTIONS } from "@/constants/constants";
 
 type HiringItem = {
   id: string;
@@ -37,11 +38,11 @@ const Table = () => {
 
         {/* header */}
         <div className="table-row table-header">
-          <div>Role</div>
-          <div>Applicants</div>
-          <div>Status</div>
-          <div>Close Application</div>
-          <div>Created</div>
+          <div>{TABLE_HEADERS[0]}</div>
+          <div>{TABLE_HEADERS[1]}</div>
+          <div>{TABLE_HEADERS[2]}</div>
+          <div>{TABLE_HEADERS[3]}</div>
+          <div>{TABLE_HEADERS[4]}</div>
         </div>
 
         {/* rows */}
@@ -77,9 +78,9 @@ const Table = () => {
             {/* dropdown */}
             <div className="dropdown-cell">
               <Dropdown
-                options={["Close Now", "Close in 24h", "Close in 3 days"]}
-                defaultValue="Close in 3 days"
-                onChange={(val) => console.log(val)}
+                options={[...DROPDOWN_OPTIONS]}
+                defaultValue={DROPDOWN_OPTIONS[2]}
+                onChange={() => {}}
               />
             </div>
 

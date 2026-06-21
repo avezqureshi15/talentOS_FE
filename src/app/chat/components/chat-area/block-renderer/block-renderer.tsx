@@ -1,12 +1,13 @@
 // block-renderer.tsx
 
 import React from "react";
-import AIMessage from "../../../../../components/ui/ai-message/ai-message";
+import AIMessage from "@/components/ui/ai-message/ai-message";
 import ThinkingChip from "./blocks/thinking/thinking";
 import ComposeEmail from "./blocks/compose-email/compose-email";
 import TextArea from "./blocks/text-area/text-area";
-import type { CodeBlock, EmailBlock, ImageBlock, LetterBlock, MarkdownBlock, TextBlock, ThinkingBlock } from "../chart-area.type";
+import type { CodeBlock, EmailBlock, ImageBlock, LetterBlock, MarkdownBlock, TextBlock, ThinkingBlock } from "@/app/chat/pages/chat.types";
 import MarkdownRenderer from "./blocks/markdown/markdown";
+import "./block-renderer.css";
 
 
 type RendererMap = {
@@ -29,7 +30,7 @@ export const blockRendererMap: RendererMap = {
   ),
 
   code: (block, key) => (
-    <pre key={key} style={{ background: "#111", padding: 12 }}>
+    <pre key={key} className="block-renderer__code">
       {block.code}
     </pre>
   ),
@@ -39,11 +40,11 @@ export const blockRendererMap: RendererMap = {
       key={key}
       src={block.url}
       alt=""
-      style={{ maxWidth: "100%", borderRadius: 8 }}
+      className="block-renderer__image"
     />
   ),
 
-  email: (block, key) => (
+  email: (_block, key) => (
     <ComposeEmail
       key={key}
       // future ready

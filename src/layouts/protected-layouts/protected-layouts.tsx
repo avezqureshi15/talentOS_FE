@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
-import { HISTORY_EARLIER, HISTORY_TODAY } from "../../constants/constants";
-import { Icon } from "../../components/ui/icons";
-import Header from "../../components/ui/header/header";
-import Sidebar from "../../components/ui/sidebar/sidebar";
+import { HISTORY_EARLIER, HISTORY_TODAY } from "@/constants/constants";
+import { Icon } from "@/components/ui/icons";
+import Header from "@/components/ui/header/header";
+import Sidebar from "@/components/ui/sidebar/sidebar";
+import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 
 export default function ProtectedLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -26,7 +27,9 @@ export default function ProtectedLayout() {
           setSidebarOpen={setSidebarOpen}
           Icon={Icon}
         />
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
     </div>
   );

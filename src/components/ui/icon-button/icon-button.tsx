@@ -1,6 +1,6 @@
 import React from "react";
 import "./icon-button.css";
-import type { IconButtonProps } from "./icon-button.type";
+import type { IconButtonProps } from "./icon-button.types";
 
 const IconButton: React.FC<IconButtonProps> = ({
   children,

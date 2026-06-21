@@ -1,5 +1,5 @@
 import "./user-message.css";
-import type { UserMessageProps } from "./user-message.type";
+import type { UserMessageProps } from "./user-message.types";
 
 
 

@@ -1,0 +1,61 @@
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.spinner--full-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.spinner__dot {
+  border-radius: 50%;
+  background: #7c3aed;
+  animation: spinner-bounce 1.4s infinite ease-in-out both;
+}
+
+.spinner--sm .spinner__dot {
+  width: 6px;
+  height: 6px;
+}
+
+.spinner--md .spinner__dot {
+  width: 10px;
+  height: 10px;
+}
+
+.spinner--lg .spinner__dot {
+  width: 14px;
+  height: 14px;
+}
+
+.spinner__dot--1 {
+  animation-delay: -0.32s;
+}
+
+.spinner__dot--2 {
+  animation-delay: -0.16s;
+}
+
+.spinner__dot--3 {
+  animation-delay: 0s;
+}
+
+@keyframes spinner-bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+.spinner__label {
+  margin: 0 0 0 8px;
+  font-size: 13px;
+  color: #888;
+}

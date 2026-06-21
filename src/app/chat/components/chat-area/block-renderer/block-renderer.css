@@ -1,0 +1,9 @@
+.block-renderer__code {
+  background: #111;
+  padding: 12px;
+}
+
+.block-renderer__image {
+  max-width: 100%;
+  border-radius: 8px;
+}

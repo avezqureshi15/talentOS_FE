@@ -55,3 +55,8 @@
 .empty-state-chip:hover {
   background: var(--chip-hover);
 }
+
+.empty-state-wave {
+  animation: pulse 1.5s infinite;
+  display: inline-block;
+}

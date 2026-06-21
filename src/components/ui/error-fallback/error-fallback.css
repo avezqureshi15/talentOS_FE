@@ -1,0 +1,70 @@
+.error-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  min-height: 200px;
+}
+
+.error-fallback__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #7f1d1d;
+  color: #fca5a5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.error-fallback__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e8e8ea;
+  margin: 0 0 8px;
+}
+
+.error-fallback__message {
+  font-size: 14px;
+  color: #888;
+  margin: 0 0 16px;
+  max-width: 400px;
+}
+
+.error-fallback__details {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 16px;
+  max-width: 400px;
+  text-align: left;
+}
+
+.error-fallback__details pre {
+  background: #1a1a1f;
+  padding: 8px 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+}
+
+.error-fallback__retry {
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.error-fallback__retry:hover {
+  background: #6d28d9;
+}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./compose-email.css";
+import { UI_LABELS } from "@/constants/constants";
 
 const ComposeEmail: React.FC = () => {
   const [subject, setSubject] = useState("Connecting regarding [Topic]");
@@ -54,7 +55,7 @@ I am writing to connect with you regarding [insert topic/purpose of your email h
         
         {/* Header */}
         <div className="ce-header">
-          <span className="ce-title">Compose</span>
+          <span className="ce-title">{UI_LABELS.COMPOSE}</span>
         </div>
 
         {/* To */}
@@ -93,11 +94,11 @@ I am writing to connect with you regarding [insert topic/purpose of your email h
 
         {/* Footer */}
         <div className="ce-footer">
-          <button className="ce-link-btn">Edit in Gmail ↗</button>
+          <button className="ce-link-btn">{UI_LABELS.EDIT_IN_GMAIL}</button>
 
           <div className="ce-actions">
             <button className="ce-cancel" onClick={handleCancel}>
-              Cancel
+              {UI_LABELS.CANCEL}
             </button>
 
             <button
@@ -107,13 +108,13 @@ I am writing to connect with you regarding [insert topic/purpose of your email h
               onClick={handleSend}
               disabled={isSending}
             >
-              {sent ? "Sent" : "Send"}
+              {sent ? UI_LABELS.SENT : UI_LABELS.SEND}
             </button>
           </div>
         </div>
       </div>
 
-      {showToast && <div className="ce-toast">Message sent</div>}
+      {showToast && <div className="ce-toast">{UI_LABELS.MESSAGE_SENT}</div>}
     </div>
   );
 };

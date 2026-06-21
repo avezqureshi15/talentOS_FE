@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import "./timeline.css";
-import AddRemarkModal from "../modal/add-remark-modal";
-import { mockSteps } from "../../mock";
+import AddRemarkModal from "@/app/dashboard/hiring-requests-detail/components/modal/add-remark-modal";
+import { mockSteps } from "@/app/dashboard/hiring-requests-detail/mock";
+import { TIMELINE_LABELS } from "@/constants/constants";
 
 type TimelineStatus = "waiting" | "queued" | "success";
 
@@ -70,7 +71,7 @@ export default function ApplicantTimelineSheet({
           {/* HEADER */}
           <div className="timeline-header">
             <div className="title">
-              <i className="bx bx-time-five"></i> Candidate Journey
+              <i className="bx bx-time-five"></i> {TIMELINE_LABELS.CANDIDATE_JOURNEY}
             </div>
 
             <button className="close-btn" onClick={onClose}>
@@ -142,7 +143,7 @@ export default function ApplicantTimelineSheet({
 
                         <button className="ghost-btn">
                           <i className="bx bx-download"></i>
-                          Download Resume
+                          {TIMELINE_LABELS.DOWNLOAD_RESUME}
                         </button>
 
                         <button
@@ -153,7 +154,7 @@ export default function ApplicantTimelineSheet({
                           }}
                         >
                           <i className="bx bx-note"></i>
-                          Add Remark
+                          {TIMELINE_LABELS.ADD_REMARK}
                         </button>
                       </div>
                     )}

@@ -1,5 +1,5 @@
 import React from "react";
-import type { MentionPopupProps } from "./mentions.type";
+import type { MentionPopupProps } from "@/components/shared/mentions/mentions.types";
 import "./mentions.css";
 
 const MentionPopup: React.FC<MentionPopupProps> = ({

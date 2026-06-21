@@ -1,20 +1,17 @@
-// useMentionEngine.ts
 import { useState } from "react";
-import { fetchMockRecruitments, fetchMockUsers } from "./mock-api";
+import type { MentionItem, TriggerType } from "@/components/shared/mentions/mentions.types";
+import { fetchMockRecruitments, fetchMockUsers } from "@/components/shared/mentions/mock-api";
 
 const TRIGGERS = {
   "@": fetchMockUsers,
   "#": fetchMockRecruitments,
 };
 
-type TriggerType = "@" | "#";
-
 
 export const useMentionEngine = () => {
  const [activeTrigger, setActiveTrigger] = useState<TriggerType | null>(null);
 
-  const [query, setQuery] = useState("");
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<MentionItem[]>([]);
   const [show, setShow] = useState(false);
 
   const handleChange = async (value: string, cursorPos: number) => {
@@ -26,12 +23,11 @@ export const useMentionEngine = () => {
       const q = match[2];
 
       setActiveTrigger(trigger);
-      setQuery(q);
       setShow(true);
 
       const fetcher = TRIGGERS[trigger as "@" | "#"];
       const result = await fetcher(q);
-      setData(result);
+      setData(result as MentionItem[]);
     } else {
       setShow(false);
       setActiveTrigger(null);
@@ -39,13 +35,13 @@ export const useMentionEngine = () => {
   };
 
   const handleSelect = (
-    item: any,
+    item: MentionItem,
     value: string,
     setValue: (v: string) => void
   ) => {
     const newText = value.replace(/([@#])(\w*)$/, () => {
-      if (activeTrigger === "@") return `@${item.name} `;
-      if (activeTrigger === "#") return `#${item.title} `;
+      if (activeTrigger === "@" && "name" in item) return `@${item.name} `;
+      if (activeTrigger === "#" && "title" in item) return `#${item.title} `;
       return "";
     });
 

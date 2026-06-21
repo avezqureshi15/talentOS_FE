@@ -1,10 +1,20 @@
 
+export type TextBlock = { type: "text"; text: string };
+export type ThinkingBlock = { type: "thinking"; text: string };
+export type CodeBlock = { type: "code"; code: string };
+export type ImageBlock = { type: "image"; url: string };
+export type EmailBlock = { type: "email"; subject?: string; body?: string };
+export type LetterBlock = { type: "letter"; subject?: string; name?: string; meta?: string };
+export type MarkdownBlock = { type: "markdown"; content: string };
+
 export type ContentBlock =
-  | { type: "text"; text: string }
-  | { type: "thinking"; text: string }
-  | { type: "code"; code: string }
-  | { type: "image"; url: string }
-  | { type: "markdown"; content: string };
+  | TextBlock
+  | ThinkingBlock
+  | CodeBlock
+  | ImageBlock
+  | EmailBlock
+  | LetterBlock
+  | MarkdownBlock;
 
 
 export type UserMessage = {

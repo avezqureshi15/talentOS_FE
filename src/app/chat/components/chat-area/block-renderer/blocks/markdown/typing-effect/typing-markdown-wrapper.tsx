@@ -1,6 +1,6 @@
 import React from "react";
-import { useTypingMarkdown } from "../use-typing-markdown";
-import MarkdownRenderer from "../markdown";
+import { useTypingMarkdown } from "@/app/chat/components/chat-area/block-renderer/blocks/markdown/use-typing-markdown";
+import MarkdownRenderer from "@/app/chat/components/chat-area/block-renderer/blocks/markdown/markdown";
 
 type Props = {
   content: string;

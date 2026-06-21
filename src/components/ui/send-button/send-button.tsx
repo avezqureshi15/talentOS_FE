@@ -1,6 +1,6 @@
 import React from "react";
 import "./send-button.css";
-import type { SendButtonProps } from "./send-button.type";
+import type { SendButtonProps } from "./send-button.types";
 
 
 

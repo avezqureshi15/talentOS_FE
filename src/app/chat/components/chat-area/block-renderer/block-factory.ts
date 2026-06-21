@@ -1,6 +1,6 @@
 // render-block.ts
 
-import type { ContentBlock } from "../chart-area.type";
+import type { ContentBlock } from "@/app/chat/pages/chat.types";
 import { blockRendererMap } from "./block-renderer";
 
 export const renderBlock = (block: ContentBlock, key: number) => {

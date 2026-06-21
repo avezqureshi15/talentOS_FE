@@ -1,9 +1,9 @@
 import React from "react";
-import IconButton from "../icon-button/icon-button";
-import ShareButton from "../share-button/share-button";
+import IconButton from "@/components/ui/icon-button/icon-button";
+import ShareButton from "@/components/ui/share-button/share-button";
 
 import "./header.css";
-import type { HeaderLeftProps, HeaderProps } from "./header.type";
+import type { HeaderLeftProps, HeaderProps } from "./header.types";
 
 /* ───────── LEFT ───────── */
 
@@ -24,8 +24,12 @@ const HeaderLeft: React.FC<HeaderLeftProps> = ({
 
 /* ───────── RIGHT ───────── */
 
+import type { ComponentType } from "react";
+
+type IconComponent = ComponentType<{ className?: string }>;
+
 type HeaderRightProps = {
-  Icon: any;
+  Icon: Record<string, IconComponent>;
 };
 
 const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {

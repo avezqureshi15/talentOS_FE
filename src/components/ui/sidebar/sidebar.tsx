@@ -1,7 +1,8 @@
 import React from "react";
 import "./sidebar.css";
-import type { SidebarProps } from "./sidebar.type";
+import type { SidebarProps } from "@/components/ui/sidebar/sidebar.types";
 import { Link } from "react-router-dom";
+import { SIDEBAR_LABELS, SIDEBAR_USER } from "@/constants/constants";
 
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -33,15 +34,15 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="sidebar__nav">
           <Link to="/hiring-requests">
           <button className="sidebar-item">
-             <span className="bx bx-home text-lg" ></span> Hiring Requests
+             <span className="bx bx-home text-lg" ></span> {SIDEBAR_LABELS.HIRING_REQUESTS}
           </button>
           </Link>
           <button className="sidebar-item">
-            <Icon.Search /> Search
+            <Icon.Search /> {SIDEBAR_LABELS.SEARCH}
           </button>
               <Link to="/chat">
           <button className="sidebar-item">
-            <Icon.Edit /> New Chat
+            <Icon.Edit /> {SIDEBAR_LABELS.NEW_CHAT}
             <span className="sidebar-badge" />
           </button>
               </Link>
@@ -50,12 +51,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* HISTORY */}
         <div className="sidebar__history">
           <div className="sidebar-section-header">
-            History <Icon.Chevron />
+            {SIDEBAR_LABELS.HISTORY} <Icon.Chevron />
           </div>
 
           <div className="sidebar__scroll">
 
-            <Group title="Today">
+            <Group title={SIDEBAR_LABELS.TODAY}>
               {HISTORY_TODAY.map(({ label, active }) => (
                 <button
                   key={label}
@@ -68,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               ))}
             </Group>
 
-            <Group title="Earlier">
+            <Group title={SIDEBAR_LABELS.EARLIER}>
               {HISTORY_EARLIER.map(({ label }) => (
                 <button className="sidebar-subitem" key={label}>
                   {label}
@@ -82,12 +83,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* USER */}
         <div className="sidebar-user">
           <div className="sidebar-user__row">
-            <div className="sidebar-avatar">AQ</div>
+            <div className="sidebar-avatar">{SIDEBAR_USER.INITIALS}</div>
 
             <div>
-              <div className="sidebar-user__name">Avez Qureshi</div>
+              <div className="sidebar-user__name">{SIDEBAR_USER.NAME}</div>
               <div className="sidebar-user__email">
-                avezqureshi4785@gmail.com
+                {SIDEBAR_USER.EMAIL}
               </div>
             </div>
           </div>
@@ -101,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 export default Sidebar;
 
 /* helpers */
-const Group = ({ title, children }: any) => (
+const Group = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <>
     <p className="sidebar-group-title">{title}</p>
     {children}
