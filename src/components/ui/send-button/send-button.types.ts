@@ -1,4 +1,4 @@
 export type SendButtonProps = {
-  children: React.ReactNode;
+  disabled?: boolean;
   onClick?: () => void;
 };

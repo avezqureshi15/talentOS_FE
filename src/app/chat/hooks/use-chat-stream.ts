@@ -2,13 +2,10 @@ import { useMutation } from "@tanstack/react-query";
 import { streamChat } from "@/services/ai/chat-stream";
 import { useChatStore } from "@/store/chat.store";
 import { QUERY_KEYS } from "@/constants/constants";
+import { getVisitorId } from "@/utils/visitor";
 import type { ContentBlock } from "@/app/chat/pages/chat.types";
 
-let threadId = `thread_${Date.now()}`;
-
-export const resetThread = () => {
-  threadId = `thread_${Date.now()}`;
-};
+const visitorId = getVisitorId();
 
 const PHRASE_INTERVAL_MS = 600;
 
@@ -18,8 +15,15 @@ const splitPhrases = (text: string): string[] => {
 };
 
 export const useChatStream = () => {
-  const { addMessage, updateMessage, setStarted, setProcessing, setError } =
-    useChatStore();
+  const {
+    addMessage,
+    updateMessage,
+    setStarted,
+    setProcessing,
+    setError,
+    setChatId,
+    chatId,
+  } = useChatStore();
 
   return useMutation({
     mutationKey: [QUERY_KEYS.CHAT_STREAM],
@@ -90,7 +94,14 @@ export const useChatStream = () => {
       };
 
       try {
-        await streamChat(text, threadId, {
+        await streamChat(text, chatId, visitorId, {
+          onChatId: (id) => {
+            setChatId(id);
+            if (!chatId) {
+              window.history.replaceState(null, "", `/chat/${id}`);
+            }
+          },
+
           onStep: (step) => {
             updateMessage(aiMessageId, (m) => ({
               ...m,

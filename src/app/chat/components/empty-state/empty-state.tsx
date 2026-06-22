@@ -1,9 +1,7 @@
 import React from "react";
 import ChatInput from "@/components/ui/chat-input/chat-input";
-import { Icon } from "@/components/ui/icons";
 
 import "./empty-state.css";
-import Waveform from "@/assets/wave-form/wave-form";
 import type { EmptyStateProps } from "./empty-state.types";
 import { CHAT_SUGGESTIONS, EMPTY_STATE } from "@/constants/constants";
 
@@ -31,8 +29,6 @@ const EmptyState: React.FC<EmptyStateProps> = ({
             input={input}
             setInput={setInput}
             onSend={onSend}
-            Icon={Icon}
-            Waveform={Waveform}
           />
         </div>
 

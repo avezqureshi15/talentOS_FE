@@ -3,9 +3,10 @@ import type { ChatStreamCallbacks, StreamChunk } from "./chat-stream.types";
 
 export const streamChat = async (
   message: string,
-  threadId: string,
+  chatId: string | null,
+  visitorId: string,
   callbacks: ChatStreamCallbacks,
-): Promise<void> => {
+): Promise<string | null> => {
   const url = `${API_BASE_URL}${CHAT_STREAM_ENDPOINT}`;
 
   const response = await fetch(url, {
@@ -15,12 +16,18 @@ export const streamChat = async (
     },
     body: JSON.stringify({
       message,
-      thread_id: threadId,
+      chat_id: chatId,
+      visitor_id: visitorId,
     }),
   });
 
   if (!response.ok) {
     throw new Error(`Chat stream failed: ${response.status} ${response.statusText}`);
+  }
+
+  const resolvedChatId = response.headers.get("X-Chat-Id");
+  if (resolvedChatId) {
+    callbacks.onChatId?.(resolvedChatId);
   }
 
   const reader = response.body?.getReader();
@@ -120,6 +127,8 @@ export const streamChat = async (
     callbacks.onError?.(error);
     throw error;
   }
+
+  return resolvedChatId;
 };
 
 const processChunk = (chunk: StreamChunk, callbacks: ChatStreamCallbacks) => {

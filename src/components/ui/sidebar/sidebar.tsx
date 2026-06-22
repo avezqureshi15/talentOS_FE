@@ -4,12 +4,12 @@ import type { SidebarProps } from "@/components/ui/sidebar/sidebar.types";
 import { Link } from "react-router-dom";
 import { SIDEBAR_LABELS, SIDEBAR_USER } from "@/constants/constants";
 
-
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
   setSidebarOpen,
-  HISTORY_TODAY,
-  HISTORY_EARLIER,
+  chats,
+  activeChatId,
+  onSelectChat,
   Icon,
 }) => {
   return (
@@ -56,26 +56,35 @@ const Sidebar: React.FC<SidebarProps> = ({
 
           <div className="sidebar__scroll">
 
-            <Group title={SIDEBAR_LABELS.TODAY}>
-              {HISTORY_TODAY.map(({ label, active }) => (
-                <button
-                  key={label}
-                  className={`sidebar-subitem ${
-                    active ? "sidebar-subitem--active" : ""
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </Group>
+            {chats.today.length > 0 && (
+              <Group title={SIDEBAR_LABELS.TODAY}>
+                {chats.today.map((chat) => (
+                  <button
+                    key={chat.id}
+                    onClick={() => onSelectChat?.(chat.id)}
+                    className={`sidebar-subitem ${
+                      activeChatId === chat.id ? "sidebar-subitem--active" : ""
+                    }`}
+                  >
+                    {chat.title}
+                  </button>
+                ))}
+              </Group>
+            )}
 
-            <Group title={SIDEBAR_LABELS.EARLIER}>
-              {HISTORY_EARLIER.map(({ label }) => (
-                <button className="sidebar-subitem" key={label}>
-                  {label}
-                </button>
-              ))}
-            </Group>
+            {chats.earlier.length > 0 && (
+              <Group title={SIDEBAR_LABELS.EARLIER}>
+                {chats.earlier.map((chat) => (
+                  <button
+                    key={chat.id}
+                    onClick={() => onSelectChat?.(chat.id)}
+                    className="sidebar-subitem"
+                  >
+                    {chat.title}
+                  </button>
+                ))}
+              </Group>
+            )}
 
           </div>
         </div>

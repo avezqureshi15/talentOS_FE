@@ -17,4 +17,5 @@ export type ChatStreamCallbacks = {
   onFinal?: (block: { type: string; content: string }) => void;
   onError?: (error: Error) => void;
   onComplete?: () => void;
+  onChatId?: (chatId: string) => void;
 };

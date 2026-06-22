@@ -1,16 +1,6 @@
 import { Icon } from "@/components/ui/icons";
 
 /* ── Data ── */
-export const HISTORY_TODAY = [
-  { label: "Hey dude what's good", active: true },
-  { label: "Backtracking Permutations in …" },
-  { label: "Friendly greeting" },
-];
-export const HISTORY_EARLIER = [
-  { label: "Human Relationships Are Tra…" },
-  { label: "Be Wild Unleashed Chaos" },
-  { label: "System Bottleneck Resolution" },
-];
 export const ACTION_BTNS = [
   { Icon: Icon.Copy, label: "Copy" },
   { Icon: Icon.Link, label: "Link" },
@@ -105,12 +95,14 @@ export const TIMELINE_LABELS = {
 } as const;
 
 /* ── API ── */
-export const API_BASE_URL = "http://localhost:8003";
 export const CHAT_STREAM_ENDPOINT = "/api/v1/chat/stream";
 export const BE_API_BASE_URL = "http://localhost:8001/api/v1";
+export const API_BASE_URL = "http://localhost:8001";
 
 export const QUERY_KEYS = {
   CHAT_STREAM: "chat-stream",
+  CHAT_HISTORY: "chat-history",
+  CHAT_MESSAGES: "chat-messages",
   HIRING_REQUESTS: "hiring-requests",
   HIRING_REQUEST: "hiring-request",
   APPLICATIONS: "applications",

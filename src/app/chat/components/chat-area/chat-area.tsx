@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import UserMessage from "@/components/ui/user-message/user-message";
 import "./chat-area.css";
@@ -10,30 +10,51 @@ import { useChatStore } from "@/store/chat.store";
 import TextArea from "./block-renderer/blocks/text-area/text-area";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import { useChatMessages } from "@/app/chat/hooks/use-chat-messages";
 
 type ChatAreaProps = {
   onSend: (text: string) => void;
 };
 const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
-  const { messages, hasStarted, isProcessing, error } = useChatStore();
+  const { messages, hasStarted, isProcessing, error, hasMore } = useChatStore();
+  const { loadMore, isLoadingMore } = useChatMessages();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const [autoScroll, setAutoScroll] = useState(true);
+  const prevScrollHeightRef = useRef(0);
 
   // -----------------------------
   // Scroll Handling
   // -----------------------------
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
+
+    // Infinite scroll upward: detect scroll near top
+    if (el.scrollTop < 100 && hasMore && !isLoadingMore) {
+      prevScrollHeightRef.current = el.scrollHeight;
+      loadMore();
+    }
 
     const threshold = 120;
     const isNearBottom =
       el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
 
     setAutoScroll(isNearBottom);
-  };
+  }, [hasMore, loadMore, isLoadingMore]);
+
+  // Preserve scroll position when older messages are prepended
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !prevScrollHeightRef.current) return;
+    const newHeight = el.scrollHeight;
+    const delta = newHeight - prevScrollHeightRef.current;
+    if (delta > 0) {
+      el.scrollTop += delta;
+    }
+    prevScrollHeightRef.current = 0;
+  }, [messages]);
 
   useEffect(() => {
     if (autoScroll) {
@@ -91,6 +112,12 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
       className="chat-area"
     >
       <div className="chat-area-container">
+        {isLoadingMore && (
+          <div className="chat-area__loading-more">
+            <LoadingSpinner size="sm" label="Loading older messages..." />
+          </div>
+        )}
+
         {messages.map((msg) => {
           const isUI = hasUIAction(msg);
 
