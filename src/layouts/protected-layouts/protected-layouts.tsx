@@ -5,11 +5,14 @@ import { Icon } from "@/components/ui/icons";
 import Header from "@/components/ui/header/header";
 import Sidebar from "@/components/ui/sidebar/sidebar";
 import { useChatHistory } from "@/components/ui/sidebar/hooks/use-chat-history";
+import { useChatStore } from "@/store/chat.store";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 
 export default function ProtectedLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { chatId } = useParams();
+  const { chatId: paramsChatId } = useParams();
+  const storeChatId = useChatStore((s) => s.chatId);
+  const activeChatId = paramsChatId ?? storeChatId;
   const { data: chats } = useChatHistory();
 
   const handleSelectChat = (id: string) => {
@@ -22,7 +25,7 @@ export default function ProtectedLayout() {
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         chats={chats ?? { today: [], earlier: [] }}
-        activeChatId={chatId}
+        activeChatId={activeChatId}
         onSelectChat={handleSelectChat}
         Icon={Icon}
       />

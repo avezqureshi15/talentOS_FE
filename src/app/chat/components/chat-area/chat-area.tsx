@@ -16,8 +16,8 @@ type ChatAreaProps = {
   onSend: (text: string) => void;
 };
 const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
-  const { messages, hasStarted, isProcessing, error, hasMore } = useChatStore();
-  const { loadMore, isLoadingMore } = useChatMessages();
+  const { messages, hasStarted, isProcessing, error, hasMore, chatId } = useChatStore();
+  const { loadMore, isLoadingMore } = useChatMessages(chatId);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);

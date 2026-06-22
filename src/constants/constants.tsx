@@ -28,9 +28,9 @@ export const SIDEBAR_USER = {
 
 /* ── Chat ── */
 export const CHAT_SUGGESTIONS = [
-  "Explain React hooks simply",
-  "Give me LeetCode plan",
-  "Optimize my resume",
+  "Draft a Job Posting",
+  "Get Benched Candidates",
+  "Post JD",
 ];
 
 export const EMPTY_STATE = {

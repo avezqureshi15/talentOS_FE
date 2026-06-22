@@ -1,15 +1,10 @@
 import React from "react";
-import ChatInput from "@/components/ui/chat-input/chat-input";
 
 import "./empty-state.css";
 import type { EmptyStateProps } from "./empty-state.types";
 import { CHAT_SUGGESTIONS, EMPTY_STATE } from "@/constants/constants";
 
-const EmptyState: React.FC<EmptyStateProps> = ({
-  input,
-  setInput,
-  onSend,
-}) => {
+const EmptyState: React.FC<EmptyStateProps> = ({ onSuggestionClick }) => {
   return (
     <div className="empty-state">
       <div className="empty-state-container">
@@ -22,22 +17,12 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           </h1>
         </div>
 
-        {/* Input */}
-        <div className="w-full">
-          <ChatInput
-            mounted={false}
-            input={input}
-            setInput={setInput}
-            onSend={onSend}
-          />
-        </div>
-
         {/* Suggestions */}
         <div className="empty-state-suggestions">
           {CHAT_SUGGESTIONS.map((s, i) => (
             <button
               key={i}
-              onClick={() => setInput(s)}
+              onClick={() => onSuggestionClick(s)}
               className="empty-state-chip"
             >
               {s}

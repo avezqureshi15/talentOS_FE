@@ -28,7 +28,7 @@ export const useChatStream = () => {
   return useMutation({
     mutationKey: [QUERY_KEYS.CHAT_STREAM],
 
-    mutationFn: async ({ text }: { text: string }) => {
+    mutationFn: async ({ text, chatId: overrideId }: { text: string; chatId?: string | null }) => {
       const baseId = Date.now();
       const aiMessageId = baseId + 1;
       let accumulatedContent = "";
@@ -94,12 +94,10 @@ export const useChatStream = () => {
       };
 
       try {
-        await streamChat(text, chatId, visitorId, {
+        const effectiveChatId = overrideId ?? chatId;
+        await streamChat(text, effectiveChatId, visitorId, {
           onChatId: (id) => {
             setChatId(id);
-            if (!chatId) {
-              window.history.replaceState(null, "", `/chat/${id}`);
-            }
           },
 
           onStep: (step) => {

@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
 import { QUERY_KEYS } from "@/constants/constants";
 import { fetchMessages } from "@/services/chat/chat-history";
 import { useChatStore } from "@/store/chat.store";
@@ -20,9 +19,7 @@ const toFrontendMessage = (m: {
   return { id: m.id, role, content: [{ type: "markdown", content: m.content }] };
 };
 
-export const useChatMessages = () => {
-  const { chatId } = useParams();
-
+export const useChatMessages = (chatId: string | null) => {
   const {
     setMessages,
     prependMessages,
@@ -39,6 +36,11 @@ export const useChatMessages = () => {
     queryFn: async () => {
       if (!chatId) return;
       setChatId(chatId);
+
+      if (useChatStore.getState().messages.length > 0) {
+        return;
+      }
+
       setStarted();
 
       const res = await fetchMessages(chatId, 20);
@@ -71,5 +73,5 @@ export const useChatMessages = () => {
     }
   }, [chatId, hasMore, isLoadingMore, prependMessages, setHasMore]);
 
-  return { chatId, isLoading: query.isLoading, isLoadingMore, loadMore, hasMore };
+  return { isLoading: query.isLoading, isLoadingMore, loadMore, hasMore };
 };

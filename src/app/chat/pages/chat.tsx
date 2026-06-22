@@ -15,27 +15,51 @@ import { useChatStore } from "@/store/chat.store";
 
 export default function Chat() {
   const [input, setInput] = useState("");
-  const { chatId } = useParams();
+  const { chatId: paramsChatId } = useParams();
 
-  const { hasStarted, isProcessing, setChatId, setMessages, reset } = useChatStore();
-  const { isLoading } = useChatMessages();
+  const {
+    hasStarted,
+    isProcessing,
+    chatId: storeChatId,
+    setChatId,
+    messages,
+    reset,
+  } = useChatStore();
+
+  // Prefer URL param, fall back to store
+  const chatId = paramsChatId ?? storeChatId;
+
+  const { isLoading } = useChatMessages(chatId);
   const chatStream = useChatStream();
 
-  // Reset store when navigating to a new chat or between different chats
+  // Reset store when landing on /chat (new chat, no ID in URL)
   useEffect(() => {
-    if (!chatId) {
+    if (!paramsChatId) {
       reset();
-    } else {
-      setChatId(chatId);
-      setMessages([]);
     }
-  }, [chatId]);
+  }, [paramsChatId]);
+
+  // Sync URL param into store when navigating directly to /chat/:id
+  useEffect(() => {
+    if (paramsChatId && storeChatId !== paramsChatId) {
+      setChatId(paramsChatId);
+    }
+  }, [paramsChatId]);
 
   const handleSend = (text: string) => {
-    chatStream.mutate({ text });
+    if (!chatId) {
+      const newId = crypto.randomUUID();
+      setChatId(newId);
+      window.history.replaceState(null, "", `/chat/${newId}`);
+      chatStream.mutate({ text, chatId: newId });
+    } else {
+      chatStream.mutate({ text });
+    }
   };
 
-  if (chatId && isLoading) {
+  const showLoading = chatId && isLoading && messages.length === 0;
+
+  if (showLoading) {
     return (
       <div className="chat-loading">
         <LoadingSpinner size="lg" label="Loading messages..." />
@@ -43,12 +67,16 @@ export default function Chat() {
     );
   }
 
-  if (chatId) {
-    return (
-      <ErrorBoundary>
-        <ChatArea onSend={handleSend} />
+  return (
+    <ErrorBoundary>
+      <div className="chat-flex">
+        {chatId ? (
+          <ChatArea onSend={handleSend} />
+        ) : (
+          <EmptyState onSuggestionClick={(text) => setInput(text)} />
+        )}
 
-        {hasStarted && (
+        {(hasStarted || !chatId) && (
           <ChatInput
             mounted={false}
             input={input}
@@ -60,21 +88,7 @@ export default function Chat() {
             }}
           />
         )}
-      </ErrorBoundary>
-    );
-  }
-
-  return (
-    <ErrorBoundary>
-      <EmptyState
-        input={input}
-        setInput={setInput}
-        onSend={() => {
-          if (!input.trim() || isProcessing) return;
-          handleSend(input);
-          setInput("");
-        }}
-      />
+      </div>
     </ErrorBoundary>
   );
 }
