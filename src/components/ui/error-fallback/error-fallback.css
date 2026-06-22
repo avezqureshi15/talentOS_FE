@@ -54,17 +54,17 @@
 }
 
 .error-fallback__retry {
-  background: #7c3aed;
-  color: #fff;
+  background: var(--send-btn-bg, #ffffff);
+  color: #000;
   border: none;
   border-radius: 8px;
   padding: 10px 24px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: opacity 0.2s;
 }
 
 .error-fallback__retry:hover {
-  background: #6d28d9;
+  opacity: 0.8;
 }

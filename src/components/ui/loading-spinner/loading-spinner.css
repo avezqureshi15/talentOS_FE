@@ -14,7 +14,7 @@
 
 .spinner__dot {
   border-radius: 50%;
-  background: #7c3aed;
+  background: var(--send-btn-bg, #ffffff);
   animation: spinner-bounce 1.4s infinite ease-in-out both;
 }
 

@@ -39,13 +39,24 @@ export default function ApplicantTimelineSheet({
   useEffect(() => {
     if (openId) {
       setRender(true);
+      document.body.style.overflow = "hidden";
       requestAnimationFrame(() => setAnim("open"));
     } else {
       setAnim("close");
+      document.body.style.overflow = "";
       const t = setTimeout(() => setRender(false), 220);
       return () => clearTimeout(t);
     }
   }, [openId]);
+
+  useEffect(() => {
+    if (!openId) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [openId, onClose]);
 
   const addRemark = (text: string) => {
     if (!activeStep) return;

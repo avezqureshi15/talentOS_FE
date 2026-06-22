@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import IconButton from "@/components/ui/icon-button/icon-button";
 import ShareButton from "@/components/ui/share-button/share-button";
 
@@ -33,17 +34,43 @@ type HeaderRightProps = {
 };
 
 const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
+  const location = useLocation();
+  const [copied, setCopied] = useState(false);
+
+  const isChat = location.pathname === "/chat";
+  const isHiringDetail = location.pathname.startsWith("/hiring-requests/");
+
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // clipboard not available
+    }
+  };
+
   return (
     <div className="header-right">
-      <IconButton>
-        <Icon.Dots />
-      </IconButton>
+      {isChat && (
+        <IconButton>
+          <Icon.Dots />
+        </IconButton>
+      )}
 
-      <ShareButton icon={<Icon.Share />} />
+      {isHiringDetail && (
+        <ShareButton
+          icon={<Icon.Share />}
+          onClick={handleShare}
+          label={copied ? "Copied!" : undefined}
+        />
+      )}
 
-      <IconButton>
-        <Icon.Edit />
-      </IconButton>
+      {isChat && (
+        <IconButton>
+          <Icon.Edit />
+        </IconButton>
+      )}
     </div>
   );
 };

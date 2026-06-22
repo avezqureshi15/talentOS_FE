@@ -1,0 +1,11 @@
+.hiring-requests-page {
+  padding: 22px 26px;
+}
+
+.page-heading {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}

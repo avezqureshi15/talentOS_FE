@@ -1,42 +1,31 @@
 import { Link } from "react-router-dom";
 import Dropdown from "@/components/ui/dropdown/dropdown";
-import "./table.css";
+import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import { TABLE_HEADERS, DROPDOWN_OPTIONS } from "@/constants/constants";
+import type { HiringRequestsTableProps } from "./table.types";
+import "./table.css";
 
-type HiringItem = {
-  id: string;
-  title: string;
-  team?: string;
-  applicants: number;
-  status: "active" | "closed";
-  createdAt: string;
-};
+const SkeletonRow = () => (
+  <div className="table-row">
+    <div className="role-cell">
+      <div className="skeleton skeleton-title" />
+      <div className="skeleton skeleton-meta" />
+    </div>
+    <div className="skeleton skeleton-badge" />
+    <div className="skeleton skeleton-badge" />
+    <div className="skeleton skeleton-dropdown" />
+    <div className="skeleton skeleton-date" />
+  </div>
+);
 
-const data: HiringItem[] = [
-  {
-    id: "1",
-    title: "Frontend Engineer",
-    team: "Web Team",
-    applicants: 24,
-    status: "active",
-    createdAt: "2 days ago",
-  },
-  {
-    id: "2",
-    title: "Backend Engineer",
-    team: "Platform",
-    applicants: 12,
-    status: "closed",
-    createdAt: "5 days ago",
-  },
-];
+const HiringRequestsTable = ({ data, isLoading, error, onRetry }: HiringRequestsTableProps) => {
+  if (error) {
+    return <ErrorFallback message={error} onRetry={onRetry} />;
+  }
 
-const Table = () => {
   return (
     <div className="table-wrapper">
       <div className="table">
-
-        {/* header */}
         <div className="table-row table-header">
           <div>{TABLE_HEADERS[0]}</div>
           <div>{TABLE_HEADERS[1]}</div>
@@ -45,55 +34,52 @@ const Table = () => {
           <div>{TABLE_HEADERS[4]}</div>
         </div>
 
-        {/* rows */}
-        {data.map((item) => (
-          <Link to="/hiring-requests/1">
-          <div key={item.id} className="table-row">
+        {isLoading ? (
+          <>
+            <SkeletonRow />
+            <SkeletonRow />
+            <SkeletonRow />
+          </>
+        ) : (
+          data.map((item, idx) => (
+            <Link
+              key={item.id}
+              to={`/hiring-requests/${item.id}`}
+              className="table-row table-row-link"
+              style={{ animationDelay: `${idx * 50}ms` }}
+            >
+              <div className="role-cell">
+                <div className="role-title">{item.title}</div>
+                <div className="role-meta">{item.department}</div>
+              </div>
 
-            {/* role */}
-            <div className="role-cell">
-              <div className="role-title">{item.title}</div>
-              {item.team && (
-                <div className="role-meta">{item.team}</div>
-              )}
-            </div>
+              <div className="applicants-cell">—</div>
 
-            {/* applicants */}
-            <div className="applicants-cell">
-              {item.applicants}
-            </div>
+              <div>
+                <span
+                  className={`status-badge ${item.is_active ? "status-active" : "status-closed"}`}
+                >
+                  {item.is_active ? "active" : "closed"}
+                </span>
+              </div>
 
-            {/* status */}
-            <div>
-              <span
-                className={`status-badge ${item.status === "active"
-                  ? "status-active"
-                  : "status-closed"
-                  }`}
-              >
-                {item.status}
-              </span>
-            </div>
+              <div className="dropdown-cell">
+                <Dropdown
+                  options={[...DROPDOWN_OPTIONS]}
+                  defaultValue={DROPDOWN_OPTIONS[2]}
+                  onChange={() => {}}
+                />
+              </div>
 
-            {/* dropdown */}
-            <div className="dropdown-cell">
-              <Dropdown
-                options={[...DROPDOWN_OPTIONS]}
-                defaultValue={DROPDOWN_OPTIONS[2]}
-                onChange={() => {}}
-              />
-            </div>
-
-            {/* created */}
-            <div className="created-cell">
-              {item.createdAt}
-            </div>
-          </div>
-          </Link>
-        ))}
+              <div className="created-cell">
+                {new Date(item.created_at).toLocaleDateString()}
+              </div>
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );
 };
 
-export default Table;
+export default HiringRequestsTable;

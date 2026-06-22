@@ -1,36 +1,51 @@
-function JobDescription() {
+import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
+
+const JobDescription = ({ hiringRequest }: { hiringRequest: HiringRequest }) => {
   return (
     <div className="bento-grid">
       <div className="bento-card large">
         <h3>Role Overview</h3>
-        <p>
-          We are looking for a strong Frontend Engineer who can build
-          scalable UI systems using React, TypeScript, and modern CSS
-          architecture.
-        </p>
+        <p>{hiringRequest.description}</p>
       </div>
 
       <div className="bento-card">
-        <h3>Tech Stack</h3>
-        <p>React, TS, Node, GraphQL</p>
-      </div>
-
-      <div className="bento-card">
-        <h3>Experience</h3>
-        <p>2 - 5 Years</p>
+        <h3>Department</h3>
+        <p>{hiringRequest.department}</p>
       </div>
 
       <div className="bento-card">
         <h3>Location</h3>
-        <p>Remote / Bangalore</p>
+        <p>{hiringRequest.location}</p>
       </div>
+
+      {hiringRequest.benefits.length > 0 && (
+        <div className="bento-card">
+          <h3>Benefits</h3>
+          <div className="chip-list">
+            {hiringRequest.benefits.map((ben, i) => (
+              <span key={i} className="chip">{ben}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {hiringRequest.requirements.length > 0 && (
+        <div className="bento-card">
+          <h3>Requirements</h3>
+          <div className="chip-list">
+            {hiringRequest.requirements.map((req, i) => (
+              <span key={i} className="chip">{req}</span>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="bento-card">
         <h3>Employment</h3>
-        <p>Full Time</p>
+        <p>{hiringRequest.type}</p>
       </div>
     </div>
   );
-}
+};
 
-export default JobDescription
+export default JobDescription;

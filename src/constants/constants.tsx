@@ -86,11 +86,16 @@ export const APPLICANT_LABELS = {
   START_SCREENING: "Start Screening Round",
   REJECT: "Reject",
   ACCEPT: "Accept",
-  LINKEDIN: "🔗 LinkedIn",
-  CV: "📄 CV",
+  EMAIL: "Email",
+  PHONE: "Phone",
+  APPLIED: "Applied",
+  COVER_LETTER: "Cover Letter",
+  LINKEDIN: "LinkedIn",
+  CV: "CV",
   TIMELINE: "Timeline",
   CANDIDATE_REJECTED: "Candidate rejected",
-  CANDIDATE_HIRED: "Candidate hired 🎉",
+  CANDIDATE_HIRED: "Candidate hired",
+  READ_MORE: "Read more",
 } as const;
 
 export const TIMELINE_LABELS = {
@@ -100,9 +105,23 @@ export const TIMELINE_LABELS = {
 } as const;
 
 /* ── API ── */
-export const API_BASE_URL = "http://localhost:8080";
+export const API_BASE_URL = "http://localhost:8003";
 export const CHAT_STREAM_ENDPOINT = "/api/v1/chat/stream";
+export const BE_API_BASE_URL = "http://localhost:8001/api/v1";
 
 export const QUERY_KEYS = {
   CHAT_STREAM: "chat-stream",
+  HIRING_REQUESTS: "hiring-requests",
+  HIRING_REQUEST: "hiring-request",
+  APPLICATIONS: "applications",
+} as const;
+
+export const QUERY_CONFIG = {
+  DEFAULT_STALE_TIME: 30_000,
+  DEFAULT_RETRY_COUNT: 3,
+} as const;
+
+export const EXPORT_LABELS = {
+  EXPORT_AS_EXCEL: "Export as Excel",
+  DOWNLOADING: "Downloading...",
 } as const;

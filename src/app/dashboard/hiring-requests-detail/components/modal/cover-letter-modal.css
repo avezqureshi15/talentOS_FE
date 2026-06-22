@@ -1,0 +1,30 @@
+.base-modal.cl-modal {
+  width: 680px;
+  max-height: 90vh;  
+  display: flex;
+  flex-direction: column;
+}
+
+
+.cl-body {
+  padding: 14px;
+  flex: 1;              /* take remaining height */
+  overflow: hidden;     /* prevent double scroll */
+  display: flex;
+}
+
+.cl-text {
+  flex: 1;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  overflow-y: auto;     /* ONLY scroll here */
+  
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}

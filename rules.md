@@ -115,6 +115,7 @@ src/
 - data transformation
 - streaming logic
 - Zustand usage directly (unless UI state)
+- No inline javascript inside jsx , if needed create utility or function then use 
 
 #### ✅ Allowed:
 - rendering UI
@@ -293,6 +294,21 @@ Content-Type: application/x-ndjson
 - ❌ Never let an async error go unhandled (unhandled promise rejection)
 - ❌ Never show raw error messages to users — use friendly fallbacks
 
+## 16. Modal Reusability & Keyboard Accessibility
+
+### MUST use BaseModal for all modals
+
+- ❌ Never hand-roll overlay/backdrop/close button for a modal
+- ❌ Never omit keyboard escape support
+
+- ✅ All modals MUST use `<BaseModal>` from `@/components/ui/modal/base-modal`
+- ✅ BaseModal provides: Escape key close, overlay click close, body scroll lock, consistent glassmorphism styling, header with close button
+- ✅ Use `variant="centered"` (default) for center-positioned modals
+- ✅ Use `variant="slide-right"` for side-sheet panels
+- ✅ Slide-in sheets that cannot use BaseModal MUST still implement Escape key close and body scroll lock manually
+
+---
+
 ### Components Provided
 
 | Component | Location | Purpose |
@@ -300,10 +316,11 @@ Content-Type: application/x-ndjson
 | `<ErrorBoundary>` | `@/components/ui/error-boundary/error-boundary` | Catches render errors, shows fallback |
 | `<ErrorFallback>` | `@/components/ui/error-fallback/error-fallback` | "Something went wrong" UI with retry |
 | `<LoadingSpinner>` | `@/components/ui/loading-spinner/loading-spinner` | Bouncing dots spinner (sm/md/lg, fullPage) |
+| `<BaseModal>` | `@/components/ui/modal/base-modal` | Reusable modal with Escape close, overlay close, scroll lock |
 
 ---
 
-## 16. Anti-Patterns (STRICTLY FORBIDDEN)
+## 17. Anti-Patterns (STRICTLY FORBIDDEN)
 
 - ❌ API calls inside components
 - ❌ Business logic in JSX
@@ -319,7 +336,7 @@ Content-Type: application/x-ndjson
 
 ---
 
-## 17. Enforcement Rule
+## 18. Enforcement Rule
 
 If ANY rule is violated:
 → REGENERATE the solution

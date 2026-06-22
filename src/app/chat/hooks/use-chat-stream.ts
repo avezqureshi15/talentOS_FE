@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { streamChat } from "@/services/ai/chat-stream";
 import { useChatStore } from "@/store/chat.store";
 import { QUERY_KEYS } from "@/constants/constants";
+import type { ContentBlock } from "@/app/chat/pages/chat.types";
 
 let threadId = `thread_${Date.now()}`;
 
@@ -9,47 +10,71 @@ export const resetThread = () => {
   threadId = `thread_${Date.now()}`;
 };
 
+const PHRASE_INTERVAL_MS = 600;
+
+const splitPhrases = (text: string): string[] => {
+  const parts = text.split(/(?<=[.,!?;:])\s*/);
+  return parts.filter((p) => p.trim().length > 0);
+};
+
 export const useChatStream = () => {
-  const {
-    addMessage,
-    updateMessage,
-    setStarted,
-    setProcessing,
-    setError,
-  } = useChatStore();
+  const { addMessage, updateMessage, setStarted, setProcessing, setError } =
+    useChatStore();
 
   return useMutation({
     mutationKey: [QUERY_KEYS.CHAT_STREAM],
 
-    mutationFn: async ({
-      text,
-    }: {
-      text: string;
-    }) => {
+    mutationFn: async ({ text }: { text: string }) => {
       const baseId = Date.now();
       const aiMessageId = baseId + 1;
+      let accumulatedContent = "";
+      let thinkingBuffer = "";
+      let emittedPhrases = 0;
 
       setProcessing(true);
       setError(null);
       setStarted();
 
-      // 1. Add user message
       addMessage({
         id: baseId,
         role: "user",
         content: [{ type: "text", text }],
       });
 
-      // 2. Add placeholder AI message
       addMessage({
         id: aiMessageId,
         role: "ai",
         content: [{ type: "thinking", text: "Analyzing your request..." }],
       });
 
-      let accumulatedContent = "";
+      const buildContent = (thinking: string): ContentBlock[] => {
+        const blocks: ContentBlock[] = [{ type: "thinking", text: thinking }];
+        if (accumulatedContent) {
+          blocks.push({ type: "markdown", content: accumulatedContent });
+        }
+        return blocks;
+      };
 
-      const formatStepText = (step: { type: string; content: string }): string => {
+      const flushThinking = () => {
+        const phrases = splitPhrases(thinkingBuffer);
+        if (phrases.length > emittedPhrases) {
+          const latest = phrases[phrases.length - 1].trim();
+          if (latest.length > 0) {
+            emittedPhrases = phrases.length;
+            updateMessage(aiMessageId, (m) => ({
+              ...m,
+              content: buildContent(latest),
+            }));
+          }
+        }
+      };
+
+      const thinkingTimer = setInterval(flushThinking, PHRASE_INTERVAL_MS);
+
+      const formatStepText = (step: {
+        type: string;
+        content: string;
+      }): string => {
         if (step.type === "tool_name") {
           return "Processing your request...";
         }
@@ -64,41 +89,32 @@ export const useChatStream = () => {
         return step.content;
       };
 
-      await streamChat(text, threadId, {
-        onStep: (step) => {
-          updateMessage(aiMessageId, (m) => ({
-            ...m,
-            content: [
-              { type: "thinking" as const, text: formatStepText(step) },
-            ],
-          }));
-        },
+      try {
+        await streamChat(text, threadId, {
+          onStep: (step) => {
+            updateMessage(aiMessageId, (m) => ({
+              ...m,
+              content: buildContent(formatStepText(step)),
+            }));
+          },
 
-        onFinal: (block) => {
-          accumulatedContent += block.content;
+          onFinal: (block) => {
+            accumulatedContent += block.content;
+            thinkingBuffer += block.content;
+          },
 
-          updateMessage(aiMessageId, (m) => ({
-            ...m,
-            content: [{
-              type: "markdown" as const,
-              content: accumulatedContent,
-            }],
-          }));
-        },
+          onError: (err) => {
+            setError(err.message);
+          },
+        });
+      } finally {
+        clearInterval(thinkingTimer);
+      }
 
-        onError: (err) => {
-          setError(err.message);
-        },
-      });
-
-      // 3. Final update with all accumulated content
       if (accumulatedContent) {
         updateMessage(aiMessageId, (m) => ({
           ...m,
-          content: [{
-            type: "markdown" as const,
-            content: accumulatedContent,
-          }],
+          content: [{ type: "markdown" as const, content: accumulatedContent }],
         }));
       }
     },
@@ -111,10 +127,8 @@ export const useChatStream = () => {
 
       setError(errorMessage);
 
-      const baseId = Date.now();
-
       addMessage({
-        id: baseId,
+        id: Date.now(),
         role: "ai",
         content: [{ type: "text", text: errorMessage }],
       });
