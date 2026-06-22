@@ -6,6 +6,8 @@ import JobDescription from "@/app/dashboard/hiring-requests-detail/components/jo
 import Applicants, { type Applicant, type ApplicantStatus } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import BaseModal from "@/components/ui/modal/base-modal";
+import { useToggleStatus } from "@/app/dashboard/hiring-requests/hooks/use-toggle-status";
 import { JOB_DETAIL, BE_API_BASE_URL } from "@/constants/constants";
 import { useApplications } from "@/app/dashboard/hiring-requests/hooks/use-applications";
 import type { JobDetailProps } from "./detail.types";
@@ -24,6 +26,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [segment, setSegment] = useState<Segment>("jd");
   const [openId, setOpenId] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const { mutate: toggleStatus, isPending: isToggling } = useToggleStatus();
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -78,13 +82,35 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           <i className="bx bx-arrow-left-stroke"></i>
         </Link>
 
-        <div className="header-text">{hiringRequest.title}</div>
+        <div className="header-text">
+          {hiringRequest.title}
+          {!hiringRequest.is_active && <span className="closed-chip">Application Closed</span>}
+        </div>
 
         <div className="header-actions">
           <button className="export-btn" onClick={handleExport} disabled={isExporting}>
             {isExporting ? "Downloading..." : JOB_DETAIL.EXPORT_AS_EXCEL}
           </button>
+          <button
+            className={`status-btn ${hiringRequest.is_active ? "status-btn-close" : "status-btn-open"}`}
+            onClick={() => setShowConfirm(true)}
+            title={hiringRequest.is_active ? "Close Application" : "Reopen Application"}
+          >
+            <i className={`bx ${hiringRequest.is_active ? "bx-x-circle" : "bx-check-circle"}`} />
+          </button>
         </div>
+
+        <BaseModal open={showConfirm} onClose={() => setShowConfirm(false)} title={hiringRequest.is_active ? "Close Application" : "Reopen Application"}>
+          <div className="confirm-body">
+            <p>Are you sure you want to {hiringRequest.is_active ? "close" : "reopen"} this application?</p>
+            <div className="confirm-actions">
+              <button className="confirm-btn confirm-cancel" onClick={() => setShowConfirm(false)}>Cancel</button>
+              <button className="confirm-btn confirm-proceed" onClick={() => { toggleStatus(hiringRequest.id); setShowConfirm(false); }} disabled={isToggling}>
+                {isToggling ? "..." : hiringRequest.is_active ? "Close" : "Reopen"}
+              </button>
+            </div>
+          </div>
+        </BaseModal>
       </div>
 
       <div className="job-subtitle">

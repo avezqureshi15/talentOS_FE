@@ -10,6 +10,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   chats,
   activeChatId,
   onSelectChat,
+  onSearch,
   Icon,
 }) => {
   return (
@@ -37,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({
              <span className="bx bx-home text-lg" ></span> {SIDEBAR_LABELS.HIRING_REQUESTS}
           </button>
           </Link>
-          <button className="sidebar-item">
+          <button className="sidebar-item" onClick={onSearch}>
             <Icon.Search /> {SIDEBAR_LABELS.SEARCH}
           </button>
               <Link to="/chat">

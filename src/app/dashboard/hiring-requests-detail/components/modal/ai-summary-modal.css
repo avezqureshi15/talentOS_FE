@@ -1,18 +1,18 @@
-.base-modal.cl-modal {
+.base-modal.ai-modal {
   width: 680px;
-  max-height: 90vh;  
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
 }
 
-.cl-body {
+.ai-body {
   padding: 14px;
   flex: 1;
   overflow: hidden;
   display: flex;
 }
 
-.cl-text {
+.ai-text {
   flex: 1;
   padding: 16px;
   border-radius: 10px;

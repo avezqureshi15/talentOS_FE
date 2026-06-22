@@ -18,8 +18,28 @@ export type HiringRequest = {
 export type HiringRequestsListResponse = {
   data: HiringRequest[];
   count: number;
+  page: number;
+  per_page: number;
+  total_pages: number;
+  total: number;
+};
+
+export type HiringRequestsFilters = {
+  q?: string;
+  department?: string;
+  location?: string;
+  type?: string;
+  is_active?: boolean;
+  created_from?: string;
+  created_to?: string;
+  page?: number;
+  per_page?: number;
 };
 
 export type HiringRequestDetailResponse = {
   data: HiringRequest;
+};
+
+export type DepartmentsResponse = {
+  data: string[];
 };

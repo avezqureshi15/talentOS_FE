@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
+import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
 import { APPLICANT_LABELS } from "@/constants/constants";
 
 export type ApplicantStatus =
@@ -12,6 +13,7 @@ export type Applicant = {
   email?: string;
   phone?: string;
   coverLetter?: string;
+  aiSummary?: string;
   experienceYears: number;
   currentRole?: string;
   currentCompany?: string;
@@ -28,11 +30,15 @@ type Props = {
   setOpenId: (id: string | null) => void;
 };
 
+type AccordionTab = "cover-letter" | "ai-summary";
+
 function Applicants({ data, openId, setOpenId }: Props) {
   const [localData, setLocalData] = useState(data);
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<string | null>(null);
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
+  const [aiSummaryId, setAiSummaryId] = useState<string | null>(null);
+  const [accordionTab, setAccordionTab] = useState<AccordionTab>("cover-letter");
 
   const updateStatus = (id: string, status: ApplicantStatus) => {
     setLocalData((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
@@ -49,12 +55,17 @@ function Applicants({ data, openId, setOpenId }: Props) {
     return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   };
 
+  const handleTabChange = (tab: AccordionTab) => {
+    setAccordionTab(tab);
+  };
+
   return (
     <div className="accordion-list">
       {localData.map((a) => {
         const isOpen = openId === a.id;
         const isScreening = screeningId === a.id;
         const cl = a.coverLetter ? truncateText(a.coverLetter, 50) : null;
+        const aiSum = a.aiSummary ? truncateText(a.aiSummary, 50) : null;
 
         return (
           <div key={a.id} className="accordion-card">
@@ -105,17 +116,64 @@ function Applicants({ data, openId, setOpenId }: Props) {
                   </button>
                 </div>
 
-                {cl && (
+                <div className="accordion-tabs block">
+                  <button
+                    className={`accordion-tab ${accordionTab === "cover-letter" ? "accordion-tab--active" : ""}`}
+                    onClick={() => handleTabChange("cover-letter")}
+                    type="button"
+                  >
+                    <i className="bx bx-notepad" />
+                    {APPLICANT_LABELS.COVER_LETTER}
+                  </button>
+                  <button
+                    className={`accordion-tab ${accordionTab === "ai-summary" ? "accordion-tab--active" : ""}`}
+                    onClick={() => handleTabChange("ai-summary")}
+                    type="button"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5Z" /></svg>
+                    {APPLICANT_LABELS.AI_SUMMARY}
+                  </button>
+                </div>
+
+                {accordionTab === "cover-letter" && (
                   <div className="cover-letter">
-                    <div className="cover-letter-label"><i className="bx bx-notepad"></i> {APPLICANT_LABELS.COVER_LETTER}</div>
-                    <p className="cover-letter-text">
-                      {cl.text}
-                      {cl.truncated && (
-                        <button className="read-more" onClick={(e) => { e.stopPropagation(); setCoverLetterId(a.id); }}>
-                          {APPLICANT_LABELS.READ_MORE}
-                        </button>
-                      )}
-                    </p>
+                    <div className="cover-letter-label">
+                      <i className="bx bx-notepad"></i>
+                      {APPLICANT_LABELS.COVER_LETTER}
+                    </div>
+                    {cl ? (
+                      <p className="cover-letter-text">
+                        {cl.text}
+                        {cl.truncated && (
+                          <button className="read-more" onClick={(e) => { e.stopPropagation(); setCoverLetterId(a.id); }}>
+                            {APPLICANT_LABELS.READ_MORE}
+                          </button>
+                        )}
+                      </p>
+                    ) : (
+                      <p className="cover-letter-text">{APPLICANT_LABELS.NO_AI_SUMMARY}</p>
+                    )}
+                  </div>
+                )}
+
+                {accordionTab === "ai-summary" && (
+                  <div className="cover-letter">
+                    <div className="cover-letter-label">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5Z" /></svg>
+                      {APPLICANT_LABELS.AI_SUMMARY}
+                    </div>
+                    {aiSum ? (
+                      <p className="cover-letter-text">
+                        {aiSum.text}
+                        {aiSum.truncated && (
+                          <button className="read-more" onClick={(e) => { e.stopPropagation(); setAiSummaryId(a.id); }}>
+                            {APPLICANT_LABELS.READ_MORE}
+                          </button>
+                        )}
+                      </p>
+                    ) : (
+                      <p className="cover-letter-text">{APPLICANT_LABELS.NO_AI_SUMMARY}</p>
+                    )}
                   </div>
                 )}
 
@@ -131,11 +189,21 @@ function Applicants({ data, openId, setOpenId }: Props) {
 
       {localData.map((a) => (
         <CoverLetterModal
-          key={a.id}
+          key={`cl-${a.id}`}
           open={coverLetterId === a.id}
           applicantName={a.name}
           coverLetter={a.coverLetter ?? ""}
           onClose={() => setCoverLetterId(null)}
+        />
+      ))}
+
+      {localData.map((a) => (
+        <AiSummaryModal
+          key={`ai-${a.id}`}
+          open={aiSummaryId === a.id}
+          applicantName={a.name}
+          aiSummary={a.aiSummary ?? ""}
+          onClose={() => setAiSummaryId(null)}
         />
       ))}
     </div>

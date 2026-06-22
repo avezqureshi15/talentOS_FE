@@ -51,9 +51,9 @@ export const UI_LABELS = {
 /* ── Dashboard ── */
 export const TABLE_HEADERS = [
   "Role",
-  "Applicants",
+  "Location",
   "Status",
-  "Close Application",
+  "Type",
   "Created",
 ] as const;
 
@@ -80,12 +80,14 @@ export const APPLICANT_LABELS = {
   PHONE: "Phone",
   APPLIED: "Applied",
   COVER_LETTER: "Cover Letter",
+  AI_SUMMARY: "AI Summary",
   LINKEDIN: "LinkedIn",
   CV: "CV",
   TIMELINE: "Timeline",
   CANDIDATE_REJECTED: "Candidate rejected",
   CANDIDATE_HIRED: "Candidate hired",
   READ_MORE: "Read more",
+  NO_AI_SUMMARY: "No AI summary available for this applicant yet.",
 } as const;
 
 export const TIMELINE_LABELS = {
@@ -105,6 +107,9 @@ export const QUERY_KEYS = {
   CHAT_MESSAGES: "chat-messages",
   HIRING_REQUESTS: "hiring-requests",
   HIRING_REQUEST: "hiring-request",
+  DEPARTMENTS: "departments",
+  LOCATIONS: "locations",
+  TYPES: "types",
   APPLICATIONS: "applications",
 } as const;
 
@@ -117,3 +122,11 @@ export const EXPORT_LABELS = {
   EXPORT_AS_EXCEL: "Export as Excel",
   DOWNLOADING: "Downloading...",
 } as const;
+
+export const FILTER_OPTIONS = {
+  DEPARTMENTS: ["Engineering", "Design", "Marketing", "Sales", "HR", "Finance", "Operations"],
+  LOCATIONS: ["Remote", "New York", "San Francisco", "London", "Berlin", "Singapore", "Tokyo"],
+  TYPES: ["Full-time", "Part-time", "Contract", "Internship", "Freelance"],
+} as const;
+
+export const PER_PAGE_OPTIONS = [5, 10, 50] as const;

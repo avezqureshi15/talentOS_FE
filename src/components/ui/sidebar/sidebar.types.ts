@@ -10,6 +10,7 @@ export type SidebarProps = {
   chats: GroupedChats;
   activeChatId?: string | null;
   onSelectChat?: (chatId: string) => void;
+  onSearch?: () => void;
   Icon: Record<string, IconComponent>;
 };
 
