@@ -7,7 +7,6 @@ import ComposeEmail from "./blocks/compose-email/compose-email";
 import TextArea from "./blocks/text-area/text-area";
 import type { CodeBlock, EmailBlock, ImageBlock, LetterBlock, MarkdownBlock, TextBlock, ThinkingBlock } from "@/app/chat/pages/chat.types";
 import MarkdownRenderer from "./blocks/markdown/markdown";
-import TypingMarkdownRenderer from "./blocks/markdown/typing-effect/typing-markdown-wrapper";
 import "./block-renderer.css";
 
 
@@ -18,7 +17,7 @@ type RendererMap = {
   image: (block: ImageBlock, key: number) => React.ReactNode;
   email: (block: EmailBlock, key: number) => React.ReactNode;
   letter: (block: LetterBlock, key: number) => React.ReactNode;
-  markdown: (block: MarkdownBlock, key: number, isStreaming?: boolean) => React.ReactNode;
+  markdown: (block: MarkdownBlock, key: number) => React.ReactNode;
 };
 
 export const blockRendererMap: RendererMap = {
@@ -60,8 +59,6 @@ export const blockRendererMap: RendererMap = {
     />
   ),
 
-  markdown: (block: MarkdownBlock, key, isStreaming) =>
-    isStreaming
-      ? <TypingMarkdownRenderer key={key} content={block.content} />
-      : <MarkdownRenderer key={key} content={block.content} />,
+  markdown: (block: MarkdownBlock, key) =>
+    <MarkdownRenderer key={key} content={block.content} />,
 };

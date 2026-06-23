@@ -121,10 +121,6 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
         {messages.map((msg) => {
           const isUI = hasUIAction(msg);
 
-          // Only apply typing effect to the last AI message while streaming
-          const lastMsgId = messages.length > 0 ? messages[messages.length - 1].id : null;
-          const isStreamingMsg = isProcessing && msg.role === "ai" && msg.id === lastMsgId;
-
           // filter markdown if UI action exists
           const visibleBlocks =
             msg.role === "ai" && isUI
@@ -139,7 +135,7 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
               ) : (
                 <div className="mb-10">
                   {visibleBlocks.map((block, i) =>
-                    renderBlock(block, i, isStreamingMsg)
+                    renderBlock(block, i)
                   )}
 
                   {/* -----------------------------
