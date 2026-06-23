@@ -88,6 +88,7 @@ export const APPLICANT_LABELS = {
   CANDIDATE_HIRED: "Candidate hired",
   READ_MORE: "Read more",
   NO_AI_SUMMARY: "No AI summary available for this applicant yet.",
+  NO_COVER_LETTER: "No Cover letter provided",
 } as const;
 
 export const TIMELINE_LABELS = {

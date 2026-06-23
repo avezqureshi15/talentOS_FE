@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Select from "@/components/ui/select/select";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
@@ -28,12 +29,15 @@ type Props = {
   data: Applicant[];
   openId: string | null;
   setOpenId: (id: string | null) => void;
+  filter: string;
+  onFilterChange: (value: string) => void;
 };
 
 type AccordionTab = "cover-letter" | "ai-summary";
 
-function Applicants({ data, openId, setOpenId }: Props) {
-  const [localData, setLocalData] = useState(data);
+function Applicants({ data, openId, setOpenId, filter, onFilterChange }: Props) {
+  const [localData, setLocalData] = useState<Applicant[]>([]);
+  useEffect(() => { setLocalData(data); }, [data]);
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<string | null>(null);
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
@@ -60,7 +64,20 @@ function Applicants({ data, openId, setOpenId }: Props) {
   };
 
   return (
-    <div className="accordion-list">
+    <>
+      <div className="filter-bar">
+        <Select
+          placeholder="Filter"
+          value={filter}
+          onChange={(e) => onFilterChange(e.target.value)}
+          options={[
+            { value: "shortlisted", label: "Shortlisted" },
+            { value: "non-shortlisted", label: "Non-shortlisted" },
+            { value: "all", label: "All Candidates" },
+          ]}
+        />
+      </div>
+      <div className="accordion-list">
       {localData.map((a) => {
         const isOpen = openId === a.id;
         const isScreening = screeningId === a.id;
@@ -151,7 +168,7 @@ function Applicants({ data, openId, setOpenId }: Props) {
                         )}
                       </p>
                     ) : (
-                      <p className="cover-letter-text">{APPLICANT_LABELS.NO_AI_SUMMARY}</p>
+                      <p className="cover-letter-text">{APPLICANT_LABELS.NO_COVER_LETTER}</p>
                     )}
                   </div>
                 )}
@@ -207,6 +224,7 @@ function Applicants({ data, openId, setOpenId }: Props) {
         />
       ))}
     </div>
+    </>
   );
 }
 

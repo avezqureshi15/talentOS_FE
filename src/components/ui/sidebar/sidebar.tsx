@@ -35,16 +35,20 @@ const Sidebar: React.FC<SidebarProps> = ({
         <div className="sidebar__nav">
           <Link to="/hiring-requests">
           <button className="sidebar-item">
-             <span className="bx bx-home text-lg" ></span> {SIDEBAR_LABELS.HIRING_REQUESTS}
+             <span className="bx bx-home text-lg" ></span>
+             <span className="sidebar-item-label">{SIDEBAR_LABELS.HIRING_REQUESTS}</span>
+             <span className="sidebar-shortcut">Ctrl+Shift+H</span>
           </button>
           </Link>
           <button className="sidebar-item" onClick={onSearch}>
-            <Icon.Search /> {SIDEBAR_LABELS.SEARCH}
+            <Icon.Search />
+            <span className="sidebar-item-label">{SIDEBAR_LABELS.SEARCH}</span>
+            <span className="sidebar-shortcut">Ctrl+K</span>
           </button>
               <Link to="/chat">
           <button className="sidebar-item">
-            <Icon.Edit /> {SIDEBAR_LABELS.NEW_CHAT}
-            <span className="sidebar-badge" />
+            <Icon.Edit />
+            <span className="sidebar-item-label">{SIDEBAR_LABELS.NEW_CHAT}</span>
           </button>
               </Link>
         </div>
@@ -67,7 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       activeChatId === chat.id ? "sidebar-subitem--active" : ""
                     }`}
                   >
-                    {chat.title}
+                    <span className="sidebar-subitem-title">{chat.title}</span>
                   </button>
                 ))}
               </Group>
@@ -81,7 +85,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     onClick={() => onSelectChat?.(chat.id)}
                     className="sidebar-subitem"
                   >
-                    {chat.title}
+                    <span className="sidebar-subitem-title">{chat.title}</span>
                   </button>
                 ))}
               </Group>

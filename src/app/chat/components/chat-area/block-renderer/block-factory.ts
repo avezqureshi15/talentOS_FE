@@ -3,7 +3,7 @@
 import type { ContentBlock } from "@/app/chat/pages/chat.types";
 import { blockRendererMap } from "./block-renderer";
 
-export const renderBlock = (block: ContentBlock, key: number) => {
+export const renderBlock = (block: ContentBlock, key: number, isStreaming = false) => {
   switch (block.type) {
     case "text":
       return blockRendererMap.text(block, key);
@@ -24,7 +24,7 @@ export const renderBlock = (block: ContentBlock, key: number) => {
       return blockRendererMap.letter(block, key);
 
     case "markdown":
-      return blockRendererMap.markdown(block, key);
+      return blockRendererMap.markdown(block, key, isStreaming);
 
     default:
       return null;

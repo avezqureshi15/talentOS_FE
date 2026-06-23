@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { streamChat } from "@/services/ai/chat-stream";
 import { useChatStore } from "@/store/chat.store";
 import { QUERY_KEYS } from "@/constants/constants";
@@ -7,14 +7,8 @@ import type { ContentBlock } from "@/app/chat/pages/chat.types";
 
 const visitorId = getVisitorId();
 
-const PHRASE_INTERVAL_MS = 600;
-
-const splitPhrases = (text: string): string[] => {
-  const parts = text.split(/(?<=[.,!?;:])\s*/);
-  return parts.filter((p) => p.trim().length > 0);
-};
-
 export const useChatStream = () => {
+  const queryClient = useQueryClient();
   const {
     addMessage,
     updateMessage,
@@ -32,8 +26,8 @@ export const useChatStream = () => {
       const baseId = Date.now();
       const aiMessageId = baseId + 1;
       let accumulatedContent = "";
-      let thinkingBuffer = "";
-      let emittedPhrases = 0;
+      let currentThinking = "Analyzing your request...";
+      let hasFinalContent = false;
 
       setProcessing(true);
       setError(null);
@@ -48,32 +42,16 @@ export const useChatStream = () => {
       addMessage({
         id: aiMessageId,
         role: "ai",
-        content: [{ type: "thinking", text: "Analyzing your request..." }],
+        content: [{ type: "thinking", text: currentThinking }],
       });
 
-      const buildContent = (thinking: string): ContentBlock[] => {
-        const blocks: ContentBlock[] = [{ type: "thinking", text: thinking }];
+      const buildContent = (): ContentBlock[] => {
+        const blocks: ContentBlock[] = [{ type: "thinking", text: currentThinking }];
         if (accumulatedContent) {
           blocks.push({ type: "markdown", content: accumulatedContent });
         }
         return blocks;
       };
-
-      const flushThinking = () => {
-        const phrases = splitPhrases(thinkingBuffer);
-        if (phrases.length > emittedPhrases) {
-          const latest = phrases[phrases.length - 1].trim();
-          if (latest.length > 0) {
-            emittedPhrases = phrases.length;
-            updateMessage(aiMessageId, (m) => ({
-              ...m,
-              content: buildContent(latest),
-            }));
-          }
-        }
-      };
-
-      const thinkingTimer = setInterval(flushThinking, PHRASE_INTERVAL_MS);
 
       const formatStepText = (step: {
         type: string;
@@ -101,15 +79,20 @@ export const useChatStream = () => {
           },
 
           onStep: (step) => {
+            currentThinking = formatStepText(step);
             updateMessage(aiMessageId, (m) => ({
               ...m,
-              content: buildContent(formatStepText(step)),
+              content: buildContent(),
             }));
           },
 
           onFinal: (block) => {
             accumulatedContent += block.content;
-            thinkingBuffer += block.content;
+            hasFinalContent = true;
+            updateMessage(aiMessageId, (m) => ({
+              ...m,
+              content: buildContent(),
+            }));
           },
 
           onError: (err) => {
@@ -117,15 +100,19 @@ export const useChatStream = () => {
           },
         });
       } finally {
-        clearInterval(thinkingTimer);
+        // no-op
       }
 
-      if (accumulatedContent) {
+      if (hasFinalContent) {
         updateMessage(aiMessageId, (m) => ({
           ...m,
           content: [{ type: "markdown" as const, content: accumulatedContent }],
         }));
       }
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CHAT_HISTORY] });
     },
 
     onError: (err) => {

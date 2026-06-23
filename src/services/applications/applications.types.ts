@@ -1,22 +1,17 @@
-export type ApplicationJobListing = {
-  title: string;
-  department: string;
-  location: string;
-};
-
-export type Application = {
+export type EvaluatedCandidate = {
   id: string;
   job_id: string;
-  name: string;
-  email: string;
-  phone: string;
-  cover_letter: string;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  cover_letter: string | null;
   resume_url: string | null;
-  status: string;
-  created_at: string;
-  job_listings: ApplicationJobListing | null;
+  status: string | null;
+  fit_score: number | null;
+  summary_md: string | null;
+  evaluated_at: string | null;
 };
 
-export type ApplicationsResponse = {
-  data: Application[];
+export type EvaluatedCandidatesResponse = {
+  data: EvaluatedCandidate[];
 };

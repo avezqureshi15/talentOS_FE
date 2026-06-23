@@ -1,17 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function useTypingMarkdown(text: string, speed = 10) {
   const [output, setOutput] = useState("");
+  const indexRef = useRef(0);
+  const textRef = useRef(text);
 
   useEffect(() => {
-    let i = 0;
-    setOutput("");
+    textRef.current = text;
+
+    if (text.length < indexRef.current) {
+      indexRef.current = 0;
+    }
+
+    if (indexRef.current >= text.length) {
+      setOutput(text);
+      return;
+    }
 
     const interval = setInterval(() => {
-      i++;
-      setOutput(text.slice(0, i));
+      indexRef.current += 1;
+      const next = textRef.current.slice(0, indexRef.current);
+      setOutput(next);
 
-      if (i >= text.length) {
+      if (indexRef.current >= textRef.current.length) {
         clearInterval(interval);
       }
     }, speed);

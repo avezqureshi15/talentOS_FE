@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "./detail.css";
 
 import JobDescription from "@/app/dashboard/hiring-requests-detail/components/job-desc/job-desc";
-import Applicants, { type Applicant, type ApplicantStatus } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
+import Applicants, { type Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import BaseModal from "@/components/ui/modal/base-modal";
@@ -14,19 +14,12 @@ import type { JobDetailProps } from "./detail.types";
 
 type Segment = "jd" | "applicants";
 
-const STATUS_MAP: Record<string, ApplicantStatus> = {
-  pending: "new",
-  reviewing: "reviewing",
-  shortlisted: "shortlisted",
-  rejected: "rejected",
-  hired: "hired",
-};
-
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [segment, setSegment] = useState<Segment>("jd");
   const [openId, setOpenId] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [filter, setFilter] = useState("shortlisted");
   const { mutate: toggleStatus, isPending: isToggling } = useToggleStatus();
 
   const handleExport = async () => {
@@ -53,6 +46,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const jobId = hiringRequest.supabase_job_id;
   const { data: apiApplications, isLoading: appsLoading } = useApplications(
     jobId,
+    filter,
     segment === "applicants",
   );
 
@@ -61,17 +55,18 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
 
     return apiApplications.map((app) => ({
       id: app.id,
-      name: app.name,
-      email: app.email,
-      phone: app.phone,
-      coverLetter: app.cover_letter,
+      name: app.name ?? "",
+      email: app.email ?? "",
+      phone: app.phone ?? "",
+      coverLetter: app.cover_letter ?? "",
+      aiSummary: app.summary_md ?? undefined,
       experienceYears: 0,
       currentRole: "",
       currentCompany: "",
       linkedinUrl: "",
       cvUrl: app.resume_url ?? "",
-      status: STATUS_MAP[app.status] ?? "new",
-      appliedAt: app.created_at,
+      status: "new",
+      score: app.fit_score ?? undefined,
     }));
   }, [apiApplications]);
 
@@ -146,6 +141,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 data={applicants}
                 openId={openId}
                 setOpenId={setOpenId}
+                filter={filter}
+                onFilterChange={setFilter}
               />
             )
           )}

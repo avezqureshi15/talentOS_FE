@@ -121,7 +121,11 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
         {messages.map((msg) => {
           const isUI = hasUIAction(msg);
 
-          // ✅ KEY FIX: filter markdown if UI action exists
+          // Only apply typing effect to the last AI message while streaming
+          const lastMsgId = messages.length > 0 ? messages[messages.length - 1].id : null;
+          const isStreamingMsg = isProcessing && msg.role === "ai" && msg.id === lastMsgId;
+
+          // filter markdown if UI action exists
           const visibleBlocks =
             msg.role === "ai" && isUI
               ? msg.content.filter((b) => b.type !== "markdown")
@@ -134,11 +138,8 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
                 <UserMessage text={extractText(msg.content)} />
               ) : (
                 <div className="mb-10">
-                  {/* -----------------------------
-                      NORMAL CONTENT RENDER
-                  ----------------------------- */}
                   {visibleBlocks.map((block, i) =>
-                    renderBlock(block, i)
+                    renderBlock(block, i, isStreamingMsg)
                   )}
 
                   {/* -----------------------------

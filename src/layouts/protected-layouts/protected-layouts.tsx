@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 
 import { Icon } from "@/components/ui/icons";
@@ -34,6 +34,21 @@ export default function ProtectedLayout() {
     resetChat();
     navigate("/chat");
   }, [navigate, resetChat]);
+
+  const handleHome = useCallback(() => {
+    navigate("/hiring-requests");
+  }, [navigate]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyH") {
+        e.preventDefault();
+        handleHome();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [handleNewChat, handleHome]);
 
   const {
     isOpen: cmdOpen,
