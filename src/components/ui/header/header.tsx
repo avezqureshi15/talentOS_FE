@@ -53,11 +53,11 @@ const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
 
   return (
     <div className="header-right">
-      {isChat && (
+      {/* {isChat && (
         <IconButton>
           <Icon.Dots />
         </IconButton>
-      )}
+      )} */}
 
       {isHiringDetail && (
         <ShareButton
