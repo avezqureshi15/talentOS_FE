@@ -49,6 +49,10 @@ export default function ProtectedLayout() {
         e.preventDefault();
         handleHome();
       }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyC") {
+        e.preventDefault();
+        handleNewChat();
+      }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyS") {
         e.preventDefault();
         handleToggleSidebar();

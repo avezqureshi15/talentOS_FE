@@ -145,6 +145,16 @@
   color: var(--text-muted);
 
   cursor: pointer;
+  user-select: none;
+}
+
+.sidebar-chevron {
+  display: inline-flex;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-chevron--collapsed {
+  transform: rotate(-90deg);
 }
 
 /* group title */
@@ -159,19 +169,26 @@
   text-transform: uppercase;
 }
 
-/* logo */
-.sidebar-logo {
-  width: 28px;
-  height: 28px;
-
-  background: var(--logo-gradient);
-  border-radius: 50%;
-
+/* brand */
+.sidebar-brand {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  line-height: 1.2;
+}
 
-  opacity: 0.9;
+.sidebar-brand-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.sidebar-brand-os {
+  background: linear-gradient(135deg, #a0a0a0, #555);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* badge */

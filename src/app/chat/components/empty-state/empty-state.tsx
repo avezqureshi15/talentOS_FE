@@ -11,7 +11,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onSuggestionClick }) => {
 
         {/* Greeting */}
         <div>
-          <h1 className="empty-state-title">
+          <h1 className="empty-state-title !mb-3">
             {EMPTY_STATE.GREETING}{" "}
             <span className="empty-state-wave">👋</span>
           </h1>

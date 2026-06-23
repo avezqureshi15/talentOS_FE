@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./sidebar.css";
 import type { SidebarProps } from "@/components/ui/sidebar/sidebar.types";
 import { Link } from "react-router-dom";
@@ -13,15 +13,15 @@ const Sidebar: React.FC<SidebarProps> = ({
   onSearch,
   Icon,
 }) => {
+  const [historyOpen, setHistoryOpen] = useState(true);
+
   return (
     <aside className={`sidebar ${!sidebarOpen ? "sidebar--collapsed" : ""}`}>
       <div className="sidebar__inner">
 
         {/* TOP */}
         <div className="sidebar__top">
-          <div className="sidebar-logo">
-            <Icon.Logo />
-          </div>
+          <Icon.Logo />
 
           <button
             className="sidebar-item flex justify-end"
@@ -49,16 +49,18 @@ const Sidebar: React.FC<SidebarProps> = ({
           <button className="sidebar-item">
             <Icon.Edit />
             <span className="sidebar-item-label">{SIDEBAR_LABELS.NEW_CHAT}</span>
+            <span className="sidebar-shortcut">Ctrl+Shift+C</span>
           </button>
               </Link>
         </div>
 
         {/* HISTORY */}
         <div className="sidebar__history">
-          <div className="sidebar-section-header">
-            {SIDEBAR_LABELS.HISTORY} <Icon.Chevron />
+          <div className="sidebar-section-header" onClick={() => setHistoryOpen(!historyOpen)}>
+            {SIDEBAR_LABELS.HISTORY} <span className={`sidebar-chevron ${historyOpen ? "" : "sidebar-chevron--collapsed"}`}><Icon.Chevron /></span>
           </div>
 
+          {historyOpen && (
           <div className="sidebar__scroll">
 
             {chats.today.length > 0 && (
@@ -92,6 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             )}
 
           </div>
+          )}
         </div>
 
         {/* USER */}
