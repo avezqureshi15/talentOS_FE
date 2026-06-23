@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import IconButton from "@/components/ui/icon-button/icon-button";
 import ShareButton from "@/components/ui/share-button/share-button";
 
@@ -17,7 +17,7 @@ const HeaderLeft: React.FC<HeaderLeftProps> = ({
   if (sidebarOpen) return <div className="header-left-empty" />;
 
   return (
-    <IconButton onClick={() => setSidebarOpen(true)}>
+    <IconButton onClick={() => setSidebarOpen(true)} title="Ctrl+Shift+S">
       <Icon.Hamburger />
     </IconButton>
   );
@@ -35,9 +35,10 @@ type HeaderRightProps = {
 
 const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
-  const isChat = location.pathname === "/chat";
+  const isChat = location.pathname === "/chat" || location.pathname.startsWith("/chat/");
   const isHiringDetail = location.pathname.startsWith("/hiring-requests/");
 
   const handleShare = async () => {
@@ -67,7 +68,7 @@ const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
       )}
 
       {isChat && (
-        <IconButton>
+        <IconButton onClick={() => navigate("/chat")}>
           <Icon.Edit />
         </IconButton>
       )}

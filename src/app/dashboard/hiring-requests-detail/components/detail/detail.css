@@ -686,6 +686,12 @@
   background: rgba(34, 197, 94, 0.25);
 }
 
+.status-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
 .read-more {
   display: inline;
   background: none;

@@ -39,16 +39,24 @@ export default function ProtectedLayout() {
     navigate("/hiring-requests");
   }, [navigate]);
 
+  const handleToggleSidebar = useCallback(() => {
+    setSidebarOpen((prev) => !prev);
+  }, []);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyH") {
         e.preventDefault();
         handleHome();
       }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyS") {
+        e.preventDefault();
+        handleToggleSidebar();
+      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [handleNewChat, handleHome]);
+  }, [handleNewChat, handleHome, handleToggleSidebar]);
 
   const {
     isOpen: cmdOpen,

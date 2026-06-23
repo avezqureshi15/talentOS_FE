@@ -7,11 +7,13 @@ const IconButton: React.FC<IconButtonProps> = ({
   onClick,
   className = "",
   size = "md",
+  title,
 }) => {
   return (
     <button
       onClick={onClick}
       className={`icon-btn icon-btn--${size} ${className}`}
+      title={title}
     >
       {children}
     </button>

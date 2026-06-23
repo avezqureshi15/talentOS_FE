@@ -89,9 +89,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           <button
             className={`status-btn ${hiringRequest.is_active ? "status-btn-close" : "status-btn-open"}`}
             onClick={() => setShowConfirm(true)}
+            disabled={isToggling}
             title={hiringRequest.is_active ? "Close Application" : "Reopen Application"}
           >
-            <i className={`bx ${hiringRequest.is_active ? "bx-x-circle" : "bx-check-circle"}`} />
+            {isToggling ? <LoadingSpinner size="sm" /> : <i className={`bx ${hiringRequest.is_active ? "bx-x-circle" : "bx-check-circle"}`} />}
           </button>
         </div>
 
