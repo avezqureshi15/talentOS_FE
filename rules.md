@@ -2,6 +2,8 @@
 
 ---
 
+***Strictly follow if a component is handling many things or doing too many things divide that components into multiple small components and if possible encapsulated logic into reusable components or Hooks following best React Coding Practices , this rule is must ***
+
 ## 1. Project Architecture
 
 ### MUST follow existing folder structure EXACTLY
@@ -244,6 +246,7 @@ Content-Type: application/x-ndjson
   - Factory (if required)
   - Composition over inheritance
 
+
 ---
 
 ## 12. Clean Code Rules
@@ -337,6 +340,18 @@ Content-Type: application/x-ndjson
 ---
 
 ## 18. Enforcement Rule
+
+If ANY rule is violated:
+→ REGENERATE the solution
+
+
+## 19. Avoid using chains of if else conditions , if it is becoming too much than move to using switch case or map depending on Scenario
+
+## 20. If doing any kinf of heavy computation make sure u try to reduce the complexity as much as possible and also mention afterwards on which tasks u worked and reduced time complexity
+
+## 21. Always during optimization or fixing strictly make sure the existing motive of the feature must not break
+
+## 22. Do as much as minimal use of useffect see if alternative are available if not then go ahead  
 
 If ANY rule is violated:
 → REGENERATE the solution
