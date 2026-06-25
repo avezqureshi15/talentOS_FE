@@ -228,6 +228,11 @@
   outline: none;
 }
 
+.sidebar-rename-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 /* delete confirmation modal */
 .sidebar-delete-body {
   padding: 1rem;

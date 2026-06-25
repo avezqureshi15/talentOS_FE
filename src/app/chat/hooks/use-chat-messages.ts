@@ -36,11 +36,6 @@ export const useChatMessages = (chatId: string | null) => {
     queryFn: async () => {
       if (!chatId) return;
       setChatId(chatId);
-
-      if (useChatStore.getState().messages.length > 0) {
-        return;
-      }
-
       setStarted();
 
       const res = await fetchMessages(chatId, 20);

@@ -23,6 +23,7 @@ export default function Chat() {
     isProcessing,
     chatId: storeChatId,
     setChatId,
+    setMessages,
     messages,
     reset,
   } = useChatStore();
@@ -41,10 +42,11 @@ export default function Chat() {
     }
   }, [paramsChatId]);
 
-  // Sync URL param into store when navigating directly to a specific chat URL
-  // (e.g. /chat/abc-123) so the store matches the route
+  // Sync URL param into store when navigating to a different chat
+  // Clear old messages so loading state shows while new ones fetch
   useEffect(() => {
     if (paramsChatId && storeChatId !== paramsChatId) {
+      setMessages([]);
       setChatId(paramsChatId);
     }
   }, [paramsChatId]);
