@@ -3,13 +3,12 @@
   flex-shrink: 0;
 }
 
-/* center container */
 .chat-input-container {
   max-width: 720px;
   margin: 0 auto;
+  position: relative;
 }
 
-/* wrapper */
 .chat-input-wrapper {
   display: flex;
   align-items: center;
@@ -23,43 +22,30 @@
   transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* focus state (replaces JS onFocusCapture/onBlurCapture) */
 .chat-input-wrapper:focus-within {
   border: 1px solid var(--chat-input-border-focus);
 }
 
-/* left icon button */
-.chat-input-icon-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: none;
-  background: var(--input-icon-bg);
-  color: var(--input-icon-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  cursor: pointer;
-}
+.chat-input-textarea {
+  flex: 1;
 
-/* right action group */
-.chat-input-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* mic button */
-.chat-input-mic {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: none;
   background: transparent;
-  color: var(--input-icon-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  border: none;
+  outline: none;
+  resize: none;
+
+  color: var(--input-text);
+  caret-color: var(--input-caret);
+
+  font-size: 14px;
+  font-family: var(--font-family, Sora, sans-serif);
+  line-height: 1.5;
+
+  max-height: 150px;
+
+  scrollbar-width: thin;
+}
+
+.chat-input-textarea::placeholder {
+  color: var(--input-placeholder);
 }

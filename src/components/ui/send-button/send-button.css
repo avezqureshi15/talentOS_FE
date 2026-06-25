@@ -6,6 +6,7 @@
   border: none;
 
   background: var(--send-btn-bg, #ffffff);
+  color: var(--send-btn-color, #fff);
 
   display: flex;
   align-items: center;
@@ -15,17 +16,23 @@
 
   cursor: pointer;
 
-  transition: transform 0.15s ease, background 0.2s ease;
+  transition: transform 0.15s ease, background 0.2s ease, opacity 0.2s ease;
 }
 
 /* hover */
-.send-btn:hover {
+.send-btn:hover:not(:disabled) {
   transform: scale(1.08);
 }
 
 /* active press */
-.send-btn:active {
+.send-btn:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+/* disabled */
+.send-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 /* focus accessibility */

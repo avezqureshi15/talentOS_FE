@@ -1,4 +1,4 @@
-import type { TimelineStep } from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
+import type { TimelineStep } from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline.types";
 
 export const mockSteps: TimelineStep[] = [
   {

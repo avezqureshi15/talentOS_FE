@@ -1,9 +1,6 @@
 import { Icon } from "@/components/ui/icons";
 import "./thinking.css";
-
-type Props = {
-    text: string;
-};
+import type { Props } from "./thinking.types";
 
 const ThinkingChip: React.FC<Props> = ({ text }) => {
     return (

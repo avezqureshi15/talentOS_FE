@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import UserMessage from "@/components/ui/user-message/user-message";
 import "./chat-area.css";
@@ -10,31 +10,55 @@ import { useChatStore } from "@/store/chat.store";
 import TextArea from "./block-renderer/blocks/text-area/text-area";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import { useChatMessages } from "@/app/chat/hooks/use-chat-messages";
+import { SCROLL_THRESHOLD, LOADING_MORE_LABEL, PROCESSING_LABEL } from "./chat-area.constants";
 
 type ChatAreaProps = {
   onSend: (text: string) => void;
 };
 const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
-  const { messages, hasStarted, isProcessing, error } = useChatStore();
+  const { messages, hasStarted, isProcessing, error, hasMore, chatId } = useChatStore();
+  const { loadMore, isLoadingMore } = useChatMessages(chatId);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const [autoScroll, setAutoScroll] = useState(true);
+  const [autoScroll, setAutoScroll] = useState(true); // Tracks whether user has scrolled near the bottom
+  const prevScrollHeightRef = useRef(0);
 
   // -----------------------------
   // Scroll Handling
   // -----------------------------
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
 
-    const threshold = 120;
+    // Infinite scroll upward: detect scroll near top
+    if (el.scrollTop < 100 && hasMore && !isLoadingMore) {
+      prevScrollHeightRef.current = el.scrollHeight;
+      loadMore();
+    }
+
     const isNearBottom =
-      el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+      el.scrollHeight - el.scrollTop - el.clientHeight < SCROLL_THRESHOLD;
 
     setAutoScroll(isNearBottom);
-  };
+  }, [hasMore, loadMore, isLoadingMore]);
 
+  // Preserve scroll position when older messages are prepended during infinite scroll
+  // Without this, loading more history would snap the viewport to the top
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !prevScrollHeightRef.current) return;
+    const newHeight = el.scrollHeight;
+    const delta = newHeight - prevScrollHeightRef.current;
+    if (delta > 0) {
+      el.scrollTop += delta;
+    }
+    prevScrollHeightRef.current = 0;
+  }, [messages]);
+
+  // Auto-scroll to the bottom when new messages arrive, but only if the user
+  // hasn't scrolled up to read history
   useEffect(() => {
     if (autoScroll) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -91,10 +115,16 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
       className="chat-area"
     >
       <div className="chat-area-container">
+        {isLoadingMore && (
+          <div className="chat-area__loading-more">
+            <LoadingSpinner size="sm" label={LOADING_MORE_LABEL} />
+          </div>
+        )}
+
         {messages.map((msg) => {
           const isUI = hasUIAction(msg);
 
-          // ✅ KEY FIX: filter markdown if UI action exists
+          // filter markdown if UI action exists
           const visibleBlocks =
             msg.role === "ai" && isUI
               ? msg.content.filter((b) => b.type !== "markdown")
@@ -107,9 +137,6 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
                 <UserMessage text={extractText(msg.content)} />
               ) : (
                 <div className="mb-10">
-                  {/* -----------------------------
-                      NORMAL CONTENT RENDER
-                  ----------------------------- */}
                   {visibleBlocks.map((block, i) =>
                     renderBlock(block, i)
                   )}
@@ -156,7 +183,7 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
         {/* Typing indicator */}
         {isProcessing && (
           <div className="chat-area__typing">
-            <LoadingSpinner size="sm" label="AI is thinking..." />
+            <LoadingSpinner size="sm" label={PROCESSING_LABEL} />
           </div>
         )}
 

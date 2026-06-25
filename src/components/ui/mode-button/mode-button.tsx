@@ -1,11 +1,11 @@
 import React from "react";
 import "./mode-button.css";
-import { UI_LABELS } from "@/constants/constants";
+import type { ModeButtonProps } from "./mode-button.types";
 
-const ModeButton = ({ icon }: { icon: React.ReactNode }) => {
+const ModeButton = ({ icon }: ModeButtonProps) => {
   return (
     <button className="mode-btn">
-      {UI_LABELS.FAST_MODE} {icon}
+      Fast Mode {icon}
     </button>
   );
 };

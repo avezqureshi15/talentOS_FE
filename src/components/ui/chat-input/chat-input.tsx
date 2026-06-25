@@ -1,48 +1,21 @@
 import React from "react";
-import Input from "@/components/ui/input/input";
 import SendButton from "@/components/ui/send-button/send-button";
 
 import "./chat-input.css";
-import ModeButton from "@/components/ui/mode-button/mode-button";
-import type { ChatInputProps, InputActionsProps } from "./chat-input.types";
+import type { ChatInputProps } from "./chat-input.types";
 import { useMentionEngine } from "@/components/shared/mentions/use-mention-engine";
-import MentionPopup from "@/components/shared/mentions";
-
-/* ───────────────── TYPES ───────────────── */
-
-
-/* ───────────────── SUB COMPONENTS ───────────────── */
-
-const InputActions: React.FC<InputActionsProps> = ({
-  Icon,
-  Waveform,
-  onSend,
-}) => {
-  return (
-    <div className="chat-input-actions">
-      <ModeButton icon={<Icon.Chevron />} />
-
-      <button className="chat-input-mic">
-        <Icon.Mic />
-      </button>
-
-      <SendButton onClick={onSend}>
-        <Waveform />
-      </SendButton>
-    </div>
-  );
-};
-
-/* ───────────────── MAIN ───────────────── */
+import MentionPopup from "@/components/shared/mentions/mentions";
+import { useAutoResize } from "./hooks/useAutoResize";
+import { CHAT_INPUT_LABELS } from "./chat-input.constants";
 
 const ChatInput: React.FC<ChatInputProps> = ({
   mounted = true,
   input,
   setInput,
-  Icon,
-  Waveform,
   onSend,
 }) => {
+  const { textareaRef } = useAutoResize(input);
+
   const {
     show,
     data,
@@ -50,50 +23,49 @@ const ChatInput: React.FC<ChatInputProps> = ({
     handleChange,
     handleSelect,
   } = useMentionEngine();
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (input.trim()) onSend();
+    }
+    handleChange(input, input.length);
+  };
+
   return (
     <div className={`cui-fade-up cui-d3${mounted ? "" : " opacity-0"}`}>
       <div className="chat-input-root">
         <div className="chat-input-container">
-
           <div className="chat-input-wrapper">
-            {/* Left icon */}
-            {Icon && (
-              <button className="chat-input-icon-btn">
-                <Icon.Plus />
-              </button>
-            )}
-
-            {/* Input */}
-            <Input
+            <textarea
+              ref={textareaRef}
+              className="chat-input-textarea"
               value={input}
-              onChange={(val: string) => {
-                setInput(val);
-                handleChange(val, val.length); // 👈 inject here
+              onChange={(e) => {
+                setInput(e.target.value);
+                handleChange(e.target.value, e.target.value.length);
               }}
-              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                if (e.key === "Enter") onSend();
-              }}
+              onKeyDown={handleKeyDown}
+              placeholder={CHAT_INPUT_LABELS.PLACEHOLDER}
+              rows={1}
             />
 
-            <MentionPopup
-              show={show}
-              data={data}
-              activeTrigger={activeTrigger}
-              onSelect={(item) =>
-                handleSelect(item, input, setInput)
-              }
+            <SendButton
+              disabled={!input.trim()}
+              onClick={() => {
+                if (input.trim()) onSend();
+              }}
             />
-
-            {/* Right actions */}
-            {Icon && Waveform && (
-              <InputActions
-                Icon={Icon}
-                Waveform={Waveform}
-                onSend={onSend}
-              />
-            )}
           </div>
 
+          <MentionPopup
+            show={show}
+            data={data}
+            activeTrigger={activeTrigger}
+            onSelect={(item) =>
+              handleSelect(item, input, setInput)
+            }
+          />
         </div>
       </div>
     </div>

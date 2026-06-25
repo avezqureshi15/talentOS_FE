@@ -2,17 +2,7 @@ import React from "react";
 import type { ReactNode } from "react";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import "./error-boundary.css";
-
-type ErrorBoundaryProps = {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
-};
-
-type ErrorBoundaryState = {
-  hasError: boolean;
-  error: Error | null;
-};
+import type { ErrorBoundaryProps, ErrorBoundaryState } from "./error-boundary.types";
 
 export default class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,

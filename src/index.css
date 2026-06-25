@@ -81,6 +81,9 @@
   --cta-border: rgba(255, 255, 255, 0.15);
   --cta-text: var(--text-primary);
   --cta-hover: rgba(255, 255, 255, 0.09);
+
+  /* send button */
+  --send-btn-color: #000;
 }
 
 /* LIGHT MODE (optional future-ready) */

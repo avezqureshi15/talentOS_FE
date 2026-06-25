@@ -2,6 +2,8 @@
 
 ---
 
+***Strictly follow if a component is handling many things or doing too many things divide that components into multiple small components and if possible encapsulated logic into reusable components or Hooks following best React Coding Practices , this rule is must ***
+
 ## 1. Project Architecture
 
 ### MUST follow existing folder structure EXACTLY
@@ -115,6 +117,7 @@ src/
 - data transformation
 - streaming logic
 - Zustand usage directly (unless UI state)
+- No inline javascript inside jsx , if needed create utility or function then use 
 
 #### ✅ Allowed:
 - rendering UI
@@ -243,6 +246,7 @@ Content-Type: application/x-ndjson
   - Factory (if required)
   - Composition over inheritance
 
+
 ---
 
 ## 12. Clean Code Rules
@@ -293,6 +297,21 @@ Content-Type: application/x-ndjson
 - ❌ Never let an async error go unhandled (unhandled promise rejection)
 - ❌ Never show raw error messages to users — use friendly fallbacks
 
+## 16. Modal Reusability & Keyboard Accessibility
+
+### MUST use BaseModal for all modals
+
+- ❌ Never hand-roll overlay/backdrop/close button for a modal
+- ❌ Never omit keyboard escape support
+
+- ✅ All modals MUST use `<BaseModal>` from `@/components/ui/modal/base-modal`
+- ✅ BaseModal provides: Escape key close, overlay click close, body scroll lock, consistent glassmorphism styling, header with close button
+- ✅ Use `variant="centered"` (default) for center-positioned modals
+- ✅ Use `variant="slide-right"` for side-sheet panels
+- ✅ Slide-in sheets that cannot use BaseModal MUST still implement Escape key close and body scroll lock manually
+
+---
+
 ### Components Provided
 
 | Component | Location | Purpose |
@@ -300,10 +319,11 @@ Content-Type: application/x-ndjson
 | `<ErrorBoundary>` | `@/components/ui/error-boundary/error-boundary` | Catches render errors, shows fallback |
 | `<ErrorFallback>` | `@/components/ui/error-fallback/error-fallback` | "Something went wrong" UI with retry |
 | `<LoadingSpinner>` | `@/components/ui/loading-spinner/loading-spinner` | Bouncing dots spinner (sm/md/lg, fullPage) |
+| `<BaseModal>` | `@/components/ui/modal/base-modal` | Reusable modal with Escape close, overlay close, scroll lock |
 
 ---
 
-## 16. Anti-Patterns (STRICTLY FORBIDDEN)
+## 17. Anti-Patterns (STRICTLY FORBIDDEN)
 
 - ❌ API calls inside components
 - ❌ Business logic in JSX
@@ -319,7 +339,19 @@ Content-Type: application/x-ndjson
 
 ---
 
-## 17. Enforcement Rule
+## 18. Enforcement Rule
+
+If ANY rule is violated:
+→ REGENERATE the solution
+
+
+## 19. Avoid using chains of if else conditions , if it is becoming too much than move to using switch case or map depending on Scenario
+
+## 20. If doing any kinf of heavy computation make sure u try to reduce the complexity as much as possible and also mention afterwards on which tasks u worked and reduced time complexity
+
+## 21. Always during optimization or fixing strictly make sure the existing motive of the feature must not break
+
+## 22. Do as much as minimal use of useffect see if alternative are available if not then go ahead  
 
 If ANY rule is violated:
 → REGENERATE the solution

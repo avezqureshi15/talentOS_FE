@@ -4,4 +4,5 @@ export type IconButtonProps = {
   onClick?: () => void;
   className?: string;
   size?: "sm" | "md" | "lg";
+  title?: string;
 };

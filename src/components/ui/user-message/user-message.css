@@ -15,6 +15,9 @@
 
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-xl);
+
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* user-specific */

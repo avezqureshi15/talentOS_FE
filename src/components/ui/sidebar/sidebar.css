@@ -86,15 +86,43 @@
   cursor: pointer;
 }
 
+.sidebar-item-label {
+  flex: 1;
+  text-align: left;
+}
+
+.sidebar-shortcut {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-family: inherit;
+  letter-spacing: 0.02em;
+}
+
+/* sub item wrapper */
+.sidebar-subitem-wrapper {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.sidebar-subitem-wrapper:hover {
+  background: var(--bg-hover);
+}
+
+.sidebar-subitem-wrapper--active {
+  background: var(--bg-active);
+}
+
 /* sub item */
 .sidebar-subitem {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
 
   display: flex;
   align-items: center;
 
   padding: 8px 10px;
-  border-radius: 8px;
 
   border: none;
   background: transparent;
@@ -105,16 +133,141 @@
   font-family: var(--font-family);
 
   cursor: pointer;
+}
 
+.sidebar-subitem-title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* active state */
-.sidebar-subitem--active {
-  background: var(--bg-active);
+/* 3-dots menu */
+.sidebar-subitem-menu {
+  position: relative;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.sidebar-subitem-wrapper:hover .sidebar-subitem-menu {
+  opacity: 1;
+}
+
+.sidebar-menu-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sidebar-menu-trigger:hover {
+  background: var(--bg-secondary);
   color: var(--text-primary);
+}
+
+.sidebar-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 50;
+  min-width: 120px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-menu-item {
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: var(--font-family);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sidebar-menu-item:hover {
+  background: var(--bg-hover);
+}
+
+.sidebar-menu-item--danger {
+  color: #ef4444;
+}
+
+.sidebar-menu-item--danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* rename input */
+.sidebar-subitem--renaming {
+  flex: 1;
+  padding: 6px 10px;
+}
+
+.sidebar-rename-input {
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 4px 8px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: var(--font-family);
+  outline: none;
+}
+
+/* delete confirmation modal */
+.sidebar-delete-body {
+  padding: 1rem;
+}
+
+.sidebar-delete-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.sidebar-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.sidebar-delete-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-family: var(--font-family);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.sidebar-delete-btn--cancel {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.sidebar-delete-btn--confirm {
+  background: #ef4444;
+  color: #fff;
+}
+
+.sidebar-delete-btn--confirm:hover {
+  background: #dc2626;
 }
 
 /* section header */
@@ -130,6 +283,16 @@
   color: var(--text-muted);
 
   cursor: pointer;
+  user-select: none;
+}
+
+.sidebar-chevron {
+  display: inline-flex;
+  transition: transform 0.25s ease;
+}
+
+.sidebar-chevron--collapsed {
+  transform: rotate(-90deg);
 }
 
 /* group title */
@@ -144,19 +307,26 @@
   text-transform: uppercase;
 }
 
-/* logo */
-.sidebar-logo {
-  width: 28px;
-  height: 28px;
-
-  background: var(--logo-gradient);
-  border-radius: 50%;
-
+/* brand */
+.sidebar-brand {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  line-height: 1.2;
+}
 
-  opacity: 0.9;
+.sidebar-brand-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.sidebar-brand-os {
+  background: linear-gradient(135deg, #a0a0a0, #555);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* badge */
@@ -210,4 +380,14 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.sidebar-scroll-sentinel {
+  height: 1px;
+}
+
+.sidebar-loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
 }

@@ -1,14 +1,5 @@
 import "./suggestion-chips.css";
-
-type Suggestion = {
-  label: string;
-  action: string;
-};
-
-type SuggestionChipsProps = {
-  suggestions: Suggestion[];
-  onSend: (text: string) => void;
-};
+import type { SuggestionChipsProps } from "./suggestion-chips.types";
 
 const SuggestionChips = ({
   suggestions,

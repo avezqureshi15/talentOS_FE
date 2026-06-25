@@ -44,3 +44,16 @@
   height: 30px;
   border-radius: var(--radius-sm);
 }
+
+.chat-flex {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}

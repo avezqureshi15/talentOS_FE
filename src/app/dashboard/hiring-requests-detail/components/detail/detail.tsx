@@ -1,63 +1,88 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import "./detail.css";
 
 import JobDescription from "@/app/dashboard/hiring-requests-detail/components/job-desc/job-desc";
-import Applicants, { type Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
-import { JOB_DETAIL } from "@/constants/constants";
+import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
+import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import BaseModal from "@/components/ui/modal/base-modal";
+import { useToggleStatus } from "@/app/dashboard/hiring-requests/hooks/use-toggle-status";
+import { JOB_DETAIL } from "@/constants/constants";
+import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/useApplicationsData";
+import { useExportCsv } from "@/app/dashboard/hiring-requests-detail/components/detail/useExportCsv";
+import { DEFAULT_FILTER } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import type { JobDetailProps } from "./detail.types";
 
 type Segment = "jd" | "applicants";
 
-const applicants: Applicant[] = [
-  {
-    id: "1",
-    name: "Aman Verma",
-    experienceYears: 3,
-    linkedinUrl: "https://linkedin.com",
-    cvUrl: "/cv.pdf",
-    status: "new",
-  },
-  {
-    id: "2",
-    name: "Rohit Singh",
-    experienceYears: 5,
-    linkedinUrl: "https://linkedin.com",
-    cvUrl: "/cv.pdf",
-    status: "shortlisted",
-  },
-];
-
-export default function JobDetail() {
+const JobDetail = ({ hiringRequest }: JobDetailProps) => {
+  // justification: tracks active tab segment (job description vs applicants)
   const [segment, setSegment] = useState<Segment>("jd");
+  // justification: tracks which applicant accordion is expanded
   const [openId, setOpenId] = useState<string | null>(null);
+  // justification: tracks confirm modal visibility for close/reopen
+  const [showConfirm, setShowConfirm] = useState(false);
+  // justification: controls applicant filter value (shortlisted, all, etc.)
+  const [filter, setFilter] = useState(DEFAULT_FILTER);
+  const { mutate: toggleStatus, isPending: isToggling } = useToggleStatus();
+
+  const { handleExport, isExporting, exportError } = useExportCsv(
+    hiringRequest.id,
+    hiringRequest.title,
+  );
+
+  const jobId = hiringRequest.supabase_job_id;
+  const { applicants, isLoading: appsLoading } = useApplicationsData(
+    jobId,
+    filter,
+    segment === "applicants",
+  );
 
   return (
     <div className="job-page">
+      <div className="job-header">
+        <Link to="/hiring-requests" className="back-btn">
+          <i className="bx bx-arrow-left-stroke"></i>
+        </Link>
 
-      {/* HEADER */}
-  <div className="job-header">
-  {/* LEFT: BACK BUTTON */}
-  <button className="back-btn" onClick={() => window.history.back()}>
-    <i className="bx bx-arrow-left-stroke"></i>
-  </button>
+        <div className="header-text">
+          {hiringRequest.title}
+          {!hiringRequest.is_active && <span className="closed-chip">Application Closed</span>}
+        </div>
 
-  {/* TITLE */}
-  <div className="header-text">{JOB_DETAIL.TITLE}</div>
+        <div className="header-actions">
+          <button className="export-btn" onClick={handleExport} disabled={isExporting}>
+            {isExporting ? "Downloading..." : JOB_DETAIL.EXPORT_AS_EXCEL}
+          </button>
+          {exportError && <span className="export-error">{exportError}</span>}
+          <button
+            className={`status-btn ${hiringRequest.is_active ? "status-btn-close" : "status-btn-open"}`}
+            onClick={() => setShowConfirm(true)}
+            disabled={isToggling}
+            title={hiringRequest.is_active ? "Close Application" : "Reopen Application"}
+          >
+            {isToggling ? <LoadingSpinner size="sm" /> : <i className={`bx ${hiringRequest.is_active ? "bx-x-circle" : "bx-check-circle"}`} />}
+          </button>
+        </div>
 
-  {/* RIGHT: ACTIONS */}
-  <div className="header-actions">
-    <button className="export-btn" onClick={()=>{}}>
-      {JOB_DETAIL.EXPORT_AS_EXCEL}
-    </button>
-  </div>
-</div>
-
-      {/* SUBTITLE */}
-      <div className="job-subtitle ">
-        {JOB_DETAIL.SUBTITLE}
+        <BaseModal open={showConfirm} onClose={() => setShowConfirm(false)} title={hiringRequest.is_active ? "Close Application" : "Reopen Application"}>
+          <div className="confirm-body">
+            <p>Are you sure you want to {hiringRequest.is_active ? "close" : "reopen"} this application?</p>
+            <div className="confirm-actions">
+              <button className="confirm-btn confirm-cancel" onClick={() => setShowConfirm(false)}>Cancel</button>
+              <button className="confirm-btn confirm-proceed" onClick={() => { toggleStatus(hiringRequest.id); setShowConfirm(false); }} disabled={isToggling}>
+                {isToggling ? "..." : hiringRequest.is_active ? "Close" : "Reopen"}
+              </button>
+            </div>
+          </div>
+        </BaseModal>
       </div>
 
-      {/* SEGMENT NAV (Flowbite-inspired, but dark SaaS tuned) */}
+      <div className="job-subtitle">
+        {hiringRequest.department} &middot; {hiringRequest.location} &middot; {hiringRequest.type}
+      </div>
+
       <div className="segment-nav">
         <button
           className={`segment-item ${segment === "jd" ? "active" : ""}`}
@@ -70,23 +95,32 @@ export default function JobDetail() {
           className={`segment-item ${segment === "applicants" ? "active" : ""}`}
           onClick={() => setSegment("applicants")}
         >
-          {JOB_DETAIL.APPLICANTS}
+          {segment === "applicants"
+            ? `Applicants (${applicants.length})`
+            : "Applicants"}
         </button>
       </div>
 
-      {/* CONTENT */}
       <div className="tab-content">
         <ErrorBoundary>
-          {segment === "jd" && <JobDescription />}
+          {segment === "jd" && <JobDescription hiringRequest={hiringRequest} />}
           {segment === "applicants" && (
-            <Applicants
-              data={applicants}
-              openId={openId}
-              setOpenId={setOpenId}
-            />
+            appsLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <Applicants
+                data={applicants}
+                openId={openId}
+                setOpenId={setOpenId}
+                filter={filter}
+                onFilterChange={setFilter}
+              />
+            )
           )}
         </ErrorBoundary>
       </div>
     </div>
   );
-}
+};
+
+export default JobDetail;

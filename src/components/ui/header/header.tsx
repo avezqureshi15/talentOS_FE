@@ -1,9 +1,11 @@
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import IconButton from "@/components/ui/icon-button/icon-button";
 import ShareButton from "@/components/ui/share-button/share-button";
 
 import "./header.css";
 import type { HeaderLeftProps, HeaderProps } from "./header.types";
+import { useHeaderShare } from "./hooks/useHeaderShare";
 
 /* ───────── LEFT ───────── */
 
@@ -16,7 +18,7 @@ const HeaderLeft: React.FC<HeaderLeftProps> = ({
   if (sidebarOpen) return <div className="header-left-empty" />;
 
   return (
-    <IconButton onClick={() => setSidebarOpen(true)}>
+    <IconButton onClick={() => setSidebarOpen(true)} title="Ctrl+Shift+S">
       <Icon.Hamburger />
     </IconButton>
   );
@@ -33,17 +35,34 @@ type HeaderRightProps = {
 };
 
 const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { copied, handleShare } = useHeaderShare();
+
+  const isChat = location.pathname === "/chat" || location.pathname.startsWith("/chat/");
+  const isHiringDetail = location.pathname.startsWith("/hiring-requests/");
+
   return (
     <div className="header-right">
-      <IconButton>
-        <Icon.Dots />
-      </IconButton>
+      {/* {isChat && (
+        <IconButton>
+          <Icon.Dots />
+        </IconButton>
+      )} */}
 
-      <ShareButton icon={<Icon.Share />} />
+      {isHiringDetail && (
+        <ShareButton
+          icon={<Icon.Share />}
+          onClick={handleShare}
+          label={copied ? "Copied!" : undefined}
+        />
+      )}
 
-      <IconButton>
-        <Icon.Edit />
-      </IconButton>
+      {isChat && (
+        <IconButton onClick={() => navigate("/chat")}>
+          <Icon.Edit />
+        </IconButton>
+      )}
     </div>
   );
 };
