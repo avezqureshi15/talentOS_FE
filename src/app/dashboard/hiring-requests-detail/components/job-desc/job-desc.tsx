@@ -1,6 +1,7 @@
-import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
+import type { JobDescriptionProps } from "./job-desc.types";
+import "./job-desc.css";
 
-const JobDescription = ({ hiringRequest }: { hiringRequest: HiringRequest }) => {
+const JobDescription = ({ hiringRequest }: JobDescriptionProps) => {
   return (
     <div className="bento-grid">
       <div className="bento-card large">

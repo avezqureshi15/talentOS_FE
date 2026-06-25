@@ -1,15 +1,21 @@
-import type { PredictionRow } from "./Home.types";
-import "./Home.css";
+import type { PredictionMarketsProps } from "./prediction-markets.types";
+import {
+  PREDICTION_TITLE,
+  PREDICTION_QUESTION,
+  PREDICTION_VOLUME,
+  PREDICTION_POLYMARKET,
+  PREDICTION_BOTTOM_TEXT,
+} from "../home.constants";
 
-export default function PredictionMarkets({ rows }: { rows: PredictionRow[] }) {
+export default function PredictionMarkets({ rows }: PredictionMarketsProps) {
   return (
     <div className="prediction-card">
       <div className="prediction-header">
-        <span className="prediction-header-title">Prediction Markets</span>
+        <span className="prediction-header-title">{PREDICTION_TITLE}</span>
       </div>
       <div className="prediction-body">
         <div className="prediction-question">
-          Bitcoin above ___ on June 4?
+          {PREDICTION_QUESTION}
         </div>
         {rows.map((r) => (
           <div key={r.price} className="prediction-row">
@@ -17,7 +23,7 @@ export default function PredictionMarkets({ rows }: { rows: PredictionRow[] }) {
             <div className="prediction-bar-track">
               <div
                 className={`prediction-bar-fill prediction-bar-fill--${r.up ? "up" : "other"}`}
-                style={{ '--bar-width': r.prob } as React.CSSProperties}
+                style={{ '--bar-width': r.prob }}
               />
             </div>
             <span className="prediction-prob">{r.prob}</span>
@@ -29,13 +35,13 @@ export default function PredictionMarkets({ rows }: { rows: PredictionRow[] }) {
           </div>
         ))}
         <div className="prediction-footer">
-          <span>$5.6M vol.</span>
-          <span>+11 on Polymarket</span>
+          <span>{PREDICTION_VOLUME}</span>
+          <span>{PREDICTION_POLYMARKET}</span>
         </div>
       </div>
       <div className="prediction-bottom">
         <div className="prediction-bottom-text">
-          What price will Bitcoin hit in June?
+          {PREDICTION_BOTTOM_TEXT}
         </div>
       </div>
     </div>

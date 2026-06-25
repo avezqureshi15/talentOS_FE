@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import "./sidebar.css";
-import type { SidebarProps } from "@/components/ui/sidebar/sidebar.types";
+import type { SidebarProps, ChatHistoryItem } from "@/components/ui/sidebar/sidebar.types";
 import { Link } from "react-router-dom";
 import { SIDEBAR_LABELS, SIDEBAR_USER } from "@/constants/constants";
+import BaseModal from "@/components/ui/modal/base-modal";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -11,9 +14,147 @@ const Sidebar: React.FC<SidebarProps> = ({
   activeChatId,
   onSelectChat,
   onSearch,
+  onDeleteChat,
+  onRenameChat,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
   Icon,
 }) => {
+  // justification: historyOpen controls the collapse/expand state of the chat history section
   const [historyOpen, setHistoryOpen] = useState(true);
+  // justification: menuOpen tracks which chat's 3-dots menu is currently open
+  const [menuOpen, setMenuOpen] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // justification: renamingChatId tracks which chat title is being edited inline
+  const [renamingChatId, setRenamingChatId] = useState<string | null>(null);
+  // justification: renameValue holds the current input value during rename
+  const [renameValue, setRenameValue] = useState("");
+  const renameInputRef = useRef<HTMLInputElement | null>(null);
+
+  // justification: deleteTargetId is the chat waiting for delete confirmation via modal
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
+  const sentinelRef = useIntersectionObserver(
+    useCallback(() => {
+      if (hasMore && !isLoadingMore) {
+        onLoadMore?.();
+      }
+    }, [hasMore, isLoadingMore, onLoadMore]),
+    !!hasMore && !isLoadingMore,
+  );
+
+  // Explanation: close the context menu when clicking outside
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [menuOpen]);
+
+  // Explanation: auto-focus the rename input when it appears
+  useEffect(() => {
+    if (renamingChatId) {
+      renameInputRef.current?.focus();
+      renameInputRef.current?.select();
+    }
+  }, [renamingChatId]);
+
+  const commitRename = useCallback(
+    (chatId: string) => {
+      const trimmed = renameValue.trim();
+      if (trimmed && trimmed !== chats.today.find((c) => c.id === chatId)?.title &&
+          trimmed !== chats.earlier.find((c) => c.id === chatId)?.title) {
+        onRenameChat?.(chatId, trimmed);
+      }
+      setRenamingChatId(null);
+      setMenuOpen(null);
+    },
+    [renameValue, chats, onRenameChat],
+  );
+
+  const renderChatItem = (chat: ChatHistoryItem) => {
+    const isRenaming = renamingChatId === chat.id;
+    return (
+      <div
+        key={chat.id}
+        className={`sidebar-subitem-wrapper ${activeChatId === chat.id ? "sidebar-subitem-wrapper--active" : ""}`}
+      >
+        {isRenaming ? (
+          <div className="sidebar-subitem sidebar-subitem--renaming">
+            <input
+              ref={renameInputRef}
+              className="sidebar-rename-input"
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commitRename(chat.id);
+                }
+                if (e.key === "Escape") {
+                  setRenamingChatId(null);
+                }
+              }}
+              onBlur={() => commitRename(chat.id)}
+            />
+          </div>
+        ) : (
+          <>
+            <button
+              onClick={() => onSelectChat?.(chat.id)}
+              className="sidebar-subitem"
+            >
+              <span className="sidebar-subitem-title">{chat.title}</span>
+            </button>
+            <div className="sidebar-subitem-menu" onClick={(e) => e.stopPropagation()}>
+              <button
+                className="sidebar-menu-trigger"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuOpen(menuOpen === chat.id ? null : chat.id);
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <circle cx="8" cy="3" r="1.5" />
+                  <circle cx="8" cy="8" r="1.5" />
+                  <circle cx="8" cy="13" r="1.5" />
+                </svg>
+              </button>
+              {menuOpen === chat.id && (
+                <div className="sidebar-menu-dropdown" ref={menuRef}>
+                  <button
+                    className="sidebar-menu-item"
+                    onClick={() => {
+                      setRenamingChatId(chat.id);
+                      setRenameValue(chat.title);
+                      setMenuOpen(null);
+                    }}
+                  >
+                    {SIDEBAR_LABELS.RENAME}
+                  </button>
+                  <button
+                    className="sidebar-menu-item sidebar-menu-item--danger"
+                    onClick={() => {
+                      setMenuOpen(null);
+                      setDeleteTargetId(chat.id);
+                    }}
+                  >
+                    {SIDEBAR_LABELS.DELETE}
+                  </button>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
 
   return (
     <aside className={`sidebar ${!sidebarOpen ? "sidebar--collapsed" : ""}`}>
@@ -65,33 +206,23 @@ const Sidebar: React.FC<SidebarProps> = ({
 
             {chats.today.length > 0 && (
               <Group title={SIDEBAR_LABELS.TODAY}>
-                {chats.today.map((chat) => (
-                  <button
-                    key={chat.id}
-                    onClick={() => onSelectChat?.(chat.id)}
-                    className={`sidebar-subitem ${
-                      activeChatId === chat.id ? "sidebar-subitem--active" : ""
-                    }`}
-                  >
-                    <span className="sidebar-subitem-title">{chat.title}</span>
-                  </button>
-                ))}
+                {chats.today.map((chat) => renderChatItem(chat))}
               </Group>
             )}
 
             {chats.earlier.length > 0 && (
               <Group title={SIDEBAR_LABELS.EARLIER}>
-                {chats.earlier.map((chat) => (
-                  <button
-                    key={chat.id}
-                    onClick={() => onSelectChat?.(chat.id)}
-                    className="sidebar-subitem"
-                  >
-                    <span className="sidebar-subitem-title">{chat.title}</span>
-                  </button>
-                ))}
+                {chats.earlier.map((chat) => renderChatItem(chat))}
               </Group>
             )}
+
+            {isLoadingMore && (
+              <div className="sidebar-loading-more">
+                <LoadingSpinner size="sm" />
+              </div>
+            )}
+
+            <div ref={sentinelRef} className="sidebar-scroll-sentinel" />
 
           </div>
           )}
@@ -112,6 +243,38 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
       </div>
+
+      {/* Delete confirmation modal */}
+      <BaseModal
+        open={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        title="Delete chat?"
+      >
+        <div className="sidebar-delete-body">
+          <p className="sidebar-delete-text">
+            This will permanently delete this chat and its messages.
+          </p>
+          <div className="sidebar-delete-actions">
+            <button
+              className="sidebar-delete-btn sidebar-delete-btn--cancel"
+              onClick={() => setDeleteTargetId(null)}
+            >
+              Cancel
+            </button>
+            <button
+              className="sidebar-delete-btn sidebar-delete-btn--confirm"
+              onClick={() => {
+                if (deleteTargetId) {
+                  onDeleteChat?.(deleteTargetId);
+                }
+                setDeleteTargetId(null);
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </BaseModal>
     </aside>
   );
 };

@@ -11,6 +11,7 @@ import TextArea from "./block-renderer/blocks/text-area/text-area";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import { useChatMessages } from "@/app/chat/hooks/use-chat-messages";
+import { SCROLL_THRESHOLD, LOADING_MORE_LABEL, PROCESSING_LABEL } from "./chat-area.constants";
 
 type ChatAreaProps = {
   onSend: (text: string) => void;
@@ -21,7 +22,7 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const [autoScroll, setAutoScroll] = useState(true);
+  const [autoScroll, setAutoScroll] = useState(true); // Tracks whether user has scrolled near the bottom
   const prevScrollHeightRef = useRef(0);
 
   // -----------------------------
@@ -37,14 +38,14 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
       loadMore();
     }
 
-    const threshold = 120;
     const isNearBottom =
-      el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+      el.scrollHeight - el.scrollTop - el.clientHeight < SCROLL_THRESHOLD;
 
     setAutoScroll(isNearBottom);
   }, [hasMore, loadMore, isLoadingMore]);
 
-  // Preserve scroll position when older messages are prepended
+  // Preserve scroll position when older messages are prepended during infinite scroll
+  // Without this, loading more history would snap the viewport to the top
   useEffect(() => {
     const el = containerRef.current;
     if (!el || !prevScrollHeightRef.current) return;
@@ -56,6 +57,8 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
     prevScrollHeightRef.current = 0;
   }, [messages]);
 
+  // Auto-scroll to the bottom when new messages arrive, but only if the user
+  // hasn't scrolled up to read history
   useEffect(() => {
     if (autoScroll) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -114,7 +117,7 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
       <div className="chat-area-container">
         {isLoadingMore && (
           <div className="chat-area__loading-more">
-            <LoadingSpinner size="sm" label="Loading older messages..." />
+            <LoadingSpinner size="sm" label={LOADING_MORE_LABEL} />
           </div>
         )}
 
@@ -180,7 +183,7 @@ const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
         {/* Typing indicator */}
         {isProcessing && (
           <div className="chat-area__typing">
-            <LoadingSpinner size="sm" label="AI is thinking..." />
+            <LoadingSpinner size="sm" label={PROCESSING_LABEL} />
           </div>
         )}
 

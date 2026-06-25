@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import type { SearchResultItem, CommandPaletteSection } from "../command-palette.types";
 import { COMMAND_PALETTE_LABELS, SEARCH_DEBOUNCE_MS } from "../command-palette.constants";
-import { searchHiringRequests } from "../services/command-palette.service";
-import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
+import { useHiringSearch } from "./use-hiring-search";
 
 type UseCommandPaletteReturn = {
   isOpen: boolean;
@@ -14,6 +13,9 @@ type UseCommandPaletteReturn = {
   close: () => void;
   handleKeyDown: (e: React.KeyboardEvent) => void;
   totalItems: number;
+  loadMore: () => void;
+  hasMore: boolean;
+  isLoadingMore: boolean;
 };
 
 export const useCommandPalette = (
@@ -23,22 +25,24 @@ export const useCommandPalette = (
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [results, setResults] = useState<HiringRequest[]>([]);
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const {
+    data: results,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useHiringSearch(debouncedQuery);
 
   useEffect(() => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
 
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const data = await searchHiringRequests(query);
-        setResults(data);
-      } catch {
-        setResults([]);
-      }
+    debounceRef.current = setTimeout(() => {
+      setDebouncedQuery(query);
     }, SEARCH_DEBOUNCE_MS);
 
     return () => {
@@ -52,14 +56,14 @@ export const useCommandPalette = (
     setIsOpen(true);
     setQuery("");
     setSelectedIndex(0);
-    setResults([]);
+    setDebouncedQuery("");
   }, []);
 
   const close = useCallback(() => {
     setIsOpen(false);
     setQuery("");
     setSelectedIndex(0);
-    setResults([]);
+    setDebouncedQuery("");
   }, []);
 
   useEffect(() => {
@@ -96,10 +100,10 @@ export const useCommandPalette = (
       ],
     });
 
-    if (results.length > 0) {
+    if (results && results.length > 0) {
       result.push({
         title: COMMAND_PALETTE_LABELS.HIRING_REQUESTS_SECTION,
-        items: results.map((r: HiringRequest) => ({
+        items: results.map((r) => ({
           id: r.id,
           label: r.title,
           sublabel: `${r.department} - ${r.location}`,
@@ -163,5 +167,8 @@ export const useCommandPalette = (
     close,
     handleKeyDown,
     totalItems,
+    loadMore: fetchNextPage,
+    hasMore: !!hasNextPage,
+    isLoadingMore: isFetchingNextPage,
   };
 };

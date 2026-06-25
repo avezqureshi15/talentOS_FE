@@ -12,6 +12,7 @@ export default function BaseModal({
   className = "",
 }: BaseModalProps) {
 
+  // Explanation: closes the modal when the Escape key is pressed
   useEffect(() => {
     if (!open) return;
     const handleKey = (e: KeyboardEvent) => {
@@ -21,6 +22,7 @@ export default function BaseModal({
     return () => document.removeEventListener("keydown", handleKey);
   }, [open, onClose]);
 
+  // Explanation: prevents background scrolling while the modal is open
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;

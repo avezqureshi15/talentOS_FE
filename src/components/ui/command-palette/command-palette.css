@@ -10,7 +10,7 @@
   z-index: 200;
 }
 
-.cp-modal {
+.command-palette-modal {
   width: 560px;
   max-height: 480px;
   background: var(--bg-primary, #18181b);
@@ -19,6 +19,14 @@
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.cp-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
   overflow: hidden;
 }
 
@@ -138,4 +146,14 @@
   text-align: center;
   color: rgba(255, 255, 255, 0.3);
   font-size: 13px;
+}
+
+.cp-scroll-sentinel {
+  height: 1px;
+}
+
+.cp-loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
 }

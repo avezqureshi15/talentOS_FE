@@ -1,17 +1,12 @@
 import "./error-fallback.css";
-
-type ErrorFallbackProps = {
-  error?: Error | null;
-  onRetry?: () => void;
-  title?: string;
-  message?: string;
-};
+import type { ErrorFallbackProps } from "./error-fallback.types";
+import { ERROR_FALLBACK_DEFAULTS } from "./error-fallback.constants";
 
 export default function ErrorFallback({
   error,
   onRetry,
-  title = "Something went wrong",
-  message = "An unexpected error occurred. Please try again.",
+  title = ERROR_FALLBACK_DEFAULTS.title,
+  message = ERROR_FALLBACK_DEFAULTS.message,
 }: ErrorFallbackProps) {
   return (
     <div className="error-fallback" role="alert">

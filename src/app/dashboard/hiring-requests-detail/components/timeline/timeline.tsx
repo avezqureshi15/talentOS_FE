@@ -3,41 +3,32 @@ import "./timeline.css";
 import AddRemarkModal from "@/app/dashboard/hiring-requests-detail/components/modal/add-remark-modal";
 import { mockSteps } from "@/app/dashboard/hiring-requests-detail/mock";
 import { TIMELINE_LABELS } from "@/constants/constants";
-
-type TimelineStatus = "waiting" | "queued" | "success";
-
-export type TimelineStep = {
-  id: string;
-  title: string;
-  description: string;
-  status: TimelineStatus;
-
-  date?: string;
-  actor?: string;
-  remarks?: string[];
-};
+import type { TimelineStep, TimelineSheetProps } from "./timeline.types";
+import { useEscapeKey } from "./useEscapeKey";
 
 export default function ApplicantTimelineSheet({
   openId,
   onClose,
-}: {
-  openId: string | null;
-  onClose: () => void;
-}) {
+}: TimelineSheetProps) {
+  // justification: controls whether the sheet DOM is mounted (deferred unmount for exit animation)
   const [render, setRender] = useState(!!openId);
+  // justification: drives open/close CSS animation state
   const [anim, setAnim] = useState<"open" | "close">(
     openId ? "open" : "close"
   );
-
+  // justification: tracks which timeline step node is expanded
   const [expanded, setExpanded] = useState<string | null>(null);
-
+  // justification: controls the add-remark modal visibility
   const [remarkOpen, setRemarkOpen] = useState(false);
+  // justification: tracks which step is receiving a new remark
   const [activeStep, setActiveStep] = useState<string | null>(null);
-
+  // justification: holds the timeline steps data (currently from mock)
   const [steps, setSteps] = useState<TimelineStep[]>(mockSteps);
 
+  // Sync sheet open/close with render and animation state; lock body scroll when open
   useEffect(() => {
     if (openId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRender(true);
       document.body.style.overflow = "hidden";
       requestAnimationFrame(() => setAnim("open"));
@@ -49,14 +40,8 @@ export default function ApplicantTimelineSheet({
     }
   }, [openId]);
 
-  useEffect(() => {
-    if (!openId) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [openId, onClose]);
+  // Close sheet on Escape key press
+  useEscapeKey(onClose);
 
   const addRemark = (text: string) => {
     if (!activeStep) return;

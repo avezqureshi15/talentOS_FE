@@ -18,6 +18,9 @@ export type CommandPaletteProps = {
   onKeyDown: (e: React.KeyboardEvent) => void;
   onSelectHiringRequest: (id: string) => void;
   onNewChat: () => void;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 };
 
 export type CommandPaletteSection = {

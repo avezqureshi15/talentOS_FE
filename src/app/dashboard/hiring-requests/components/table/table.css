@@ -129,6 +129,7 @@
 /* row fade-in */
 .table-row-link {
   animation: rowFadeIn 0.3s ease both;
+  animation-delay: var(--anim-delay, 0ms);
 }
 
 @keyframes rowFadeIn {

@@ -1,18 +1,10 @@
-import type { NewsItem } from "./Home.types";
-import "./Home.css";
+import type { NewsItem } from "../home.types";
+import type { NewsSectionProps } from "./news-section.types";
 
-export default function NewsSection({
-  items,
-  openIndex,
-  onToggle,
-}: {
-  items: NewsItem[];
-  openIndex: number;
-  onToggle: (index: number) => void;
-}) {
+export default function NewsSection({ items, openIndex, onToggle }: NewsSectionProps) {
   return (
     <div className="news-card">
-      {items.map((item, i) => (
+      {items.map((item: NewsItem, i: number) => (
         <div key={i} className="news-item">
           <button
             className="news-item-btn"

@@ -6,32 +6,32 @@ import Chat from "@/app/chat/pages/chat";
 import HiringRequests from "@/app/dashboard/hiring-requests/pages/hiring-requests";
 import HiringRequestDetails from "@/app/dashboard/hiring-requests-detail/pages/hiring-requests-detail";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
-
+import { ROUTES } from "@/constants/routes";
+import { ERROR_FALLBACK_LABELS } from "@/constants/error-labels";
 
 export const router = createBrowserRouter([
   {
-    path: "/login",
+    path: ROUTES.LOGIN,
     element: <Login />,
-    errorElement: <ErrorFallback title="Page Error" message="Failed to load login page." />,
+    errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} />,
   },
 
   {
-    errorElement: <ErrorFallback title="Application Error" message="Something went wrong. Please sign in again." />,
+    errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
     element: <ProtectedRoute />,
     children: [
       {
         element: <ProtectedLayout />,
         children: [
-          // root redirect INSIDE protected flow
           {
             path: "/",
-            element: <Navigate to="/chat" replace />,
+            element: <Navigate to={ROUTES.CHAT} replace />,
           },
 
-          { path: "/chat", element: <Chat /> },
-          { path: "/chat/:chatId", element: <Chat /> },
-          { path: "/hiring-requests", element: <HiringRequests /> },
-          { path: "/hiring-requests/:id", element: <HiringRequestDetails /> },
+          { path: ROUTES.CHAT, element: <Chat />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+          { path: ROUTES.CHAT_ID, element: <Chat />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+          { path: ROUTES.HIRING_REQUESTS, element: <HiringRequests />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+          { path: ROUTES.HIRING_REQUESTS_ID, element: <HiringRequestDetails />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
         ],
       },
     ],

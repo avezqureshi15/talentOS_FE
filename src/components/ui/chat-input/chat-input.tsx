@@ -1,10 +1,12 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import SendButton from "@/components/ui/send-button/send-button";
 
 import "./chat-input.css";
 import type { ChatInputProps } from "./chat-input.types";
 import { useMentionEngine } from "@/components/shared/mentions/use-mention-engine";
-import MentionPopup from "@/components/shared/mentions";
+import MentionPopup from "@/components/shared/mentions/mentions";
+import { useAutoResize } from "./hooks/useAutoResize";
+import { CHAT_INPUT_LABELS } from "./chat-input.constants";
 
 const ChatInput: React.FC<ChatInputProps> = ({
   mounted = true,
@@ -12,7 +14,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   setInput,
   onSend,
 }) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { textareaRef } = useAutoResize(input);
 
   const {
     show,
@@ -21,17 +23,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
     handleChange,
     handleSelect,
   } = useMentionEngine();
-
-  const adjustHeight = () => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 150)}px`;
-  };
-
-  useEffect(() => {
-    adjustHeight();
-  }, [input]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -55,7 +46,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
                 handleChange(e.target.value, e.target.value.length);
               }}
               onKeyDown={handleKeyDown}
-              placeholder="Ask anything..."
+              placeholder={CHAT_INPUT_LABELS.PLACEHOLDER}
               rows={1}
             />
 

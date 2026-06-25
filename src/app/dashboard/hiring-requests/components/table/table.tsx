@@ -5,6 +5,7 @@ import { useDepartments } from "@/app/dashboard/hiring-requests/hooks/use-depart
 import { useLocations } from "@/app/dashboard/hiring-requests/hooks/use-locations";
 import { useTypes } from "@/app/dashboard/hiring-requests/hooks/use-types";
 import { TABLE_HEADERS, PER_PAGE_OPTIONS } from "@/constants/constants";
+import { TABLE_EMPTY_STATE, PAGINATION_PREVIOUS, PAGINATION_NEXT } from "./table.constants";
 import type { HiringRequestsTableProps } from "./table.types";
 import "./table.css";
 
@@ -123,14 +124,14 @@ const HiringRequestsTable = ({
             <SkeletonRow />
           </>
         ) : data.length === 0 ? (
-          <div className="table-empty">No hiring requests found</div>
+          <div className="table-empty">{TABLE_EMPTY_STATE}</div>
         ) : (
           data.map((item, idx) => (
             <Link
               key={item.id}
               to={`/hiring-requests/${item.id}`}
               className="table-row table-row-link"
-              style={{ animationDelay: `${idx * 50}ms` }}
+              style={{ '--anim-delay': `${idx * 50}ms` }}
             >
               <div className="role-cell">
                 <div className="role-title">{item.title}</div>
@@ -168,7 +169,7 @@ const HiringRequestsTable = ({
             disabled={page <= 1}
             onClick={() => onPageChange(page - 1)}
           >
-            Previous
+            {PAGINATION_PREVIOUS}
           </button>
 
           {pages.map((p) => (
@@ -186,7 +187,7 @@ const HiringRequestsTable = ({
             disabled={page >= totalPages}
             onClick={() => onPageChange(page + 1)}
           >
-            Next
+            {PAGINATION_NEXT}
           </button>
         </div>
 

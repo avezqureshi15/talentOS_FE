@@ -100,8 +100,9 @@ export const streamChat = async (
     try {
       const chunk = JSON.parse(trimmed) as StreamChunk;
       processChunk(chunk, callbacks);
-    } catch {
-      // skip malformed / incomplete JSON fragments
+    } catch (parseError) {
+      console.warn("[chat-stream] Failed to parse JSON chunk:", parseError, "text:", trimmed);
+      callbacks.onError?.(new Error("Failed to parse stream chunk"));
     }
   };
 

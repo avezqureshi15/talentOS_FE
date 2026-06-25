@@ -12,9 +12,10 @@ import { useChatStream } from "@/app/chat/hooks/use-chat-stream";
 import { useChatMessages } from "@/app/chat/hooks/use-chat-messages";
 
 import { useChatStore } from "@/store/chat.store";
+import { CHAT_BASE_PATH } from "./chat.constants";
 
 export default function Chat() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(""); // Controlled input value for the chat message field
   const { chatId: paramsChatId } = useParams();
 
   const {
@@ -32,14 +33,16 @@ export default function Chat() {
   const { isLoading } = useChatMessages(chatId);
   const chatStream = useChatStream();
 
-  // Reset store when landing on /chat (new chat, no ID in URL)
+  // Reset store when landing on the base chat page (no chat ID in URL) to
+  // ensure a clean state for starting a new conversation
   useEffect(() => {
     if (!paramsChatId) {
       reset();
     }
   }, [paramsChatId]);
 
-  // Sync URL param into store when navigating directly to /chat/:id
+  // Sync URL param into store when navigating directly to a specific chat URL
+  // (e.g. /chat/abc-123) so the store matches the route
   useEffect(() => {
     if (paramsChatId && storeChatId !== paramsChatId) {
       setChatId(paramsChatId);
@@ -50,7 +53,7 @@ export default function Chat() {
     if (!chatId) {
       const newId = crypto.randomUUID();
       setChatId(newId);
-      window.history.replaceState(null, "", `/chat/${newId}`);
+      window.history.replaceState(null, "", `${CHAT_BASE_PATH}${newId}`);
       chatStream.mutate({ text, chatId: newId });
     } else {
       chatStream.mutate({ text });

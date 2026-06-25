@@ -29,7 +29,7 @@ export const useChatMessages = (chatId: string | null) => {
     setStarted,
   } = useChatStore();
 
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false); // Tracks whether older messages are being fetched
 
   const query = useQuery({
     queryKey: [QUERY_KEYS.CHAT_MESSAGES, chatId],

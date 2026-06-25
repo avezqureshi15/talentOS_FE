@@ -1,6 +1,7 @@
 import React from "react";
 import type { MentionPopupProps } from "@/components/shared/mentions/mentions.types";
 import "./mentions.css";
+import { MENTIONS_LABELS } from "./mentions.constants";
 
 const MentionPopup: React.FC<MentionPopupProps> = ({
   show,
@@ -10,7 +11,6 @@ const MentionPopup: React.FC<MentionPopupProps> = ({
 }) => {
   if (!show || !activeTrigger) return null;
 
-  // 🔹 group data
   const groupedData = {
     applicants: data.filter((item) => item.type === "user"),
     requests: data.filter((item) => item.type !== "user"),
@@ -62,11 +62,11 @@ const MentionPopup: React.FC<MentionPopupProps> = ({
   return (
     <div className="mention-popup">
       {isEmpty ? (
-        <div className="mention-empty">No results found</div>
+        <div className="mention-empty">{MENTIONS_LABELS.NO_RESULTS}</div>
       ) : (
         <>
-          {renderSection("Applicants", groupedData.applicants)}
-          {renderSection("Hiring Requests", groupedData.requests)}
+          {renderSection(MENTIONS_LABELS.APPLICANTS, groupedData.applicants)}
+          {renderSection(MENTIONS_LABELS.HIRING_REQUESTS, groupedData.requests)}
         </>
       )}
     </div>

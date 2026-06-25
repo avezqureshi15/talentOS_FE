@@ -1,18 +1,18 @@
-import type { WatchlistItem } from "./Home.types";
-import "./Home.css";
+import type { WatchlistSectionProps } from "./watchlist-section.types";
+import { WATCHLIST_TITLE } from "../home.constants";
 
-export default function WatchlistSection({ items }: { items: WatchlistItem[] }) {
+export default function WatchlistSection({ items }: WatchlistSectionProps) {
   return (
     <div className="watchlist-card">
       <div className="watchlist-header">
-        <span className="watchlist-header-title">Create Watchlist</span>
+        <span className="watchlist-header-title">{WATCHLIST_TITLE}</span>
         <span className="watchlist-header-add">⊞</span>
       </div>
       {items.map((s) => (
         <div key={s.ticker} className="watchlist-item">
           <div
             className="watchlist-color-box"
-            style={{ '--box-color': s.color } as React.CSSProperties}
+            style={{ '--box-color': s.color }}
           >
             {s.name.slice(0, 2).toUpperCase()}
           </div>

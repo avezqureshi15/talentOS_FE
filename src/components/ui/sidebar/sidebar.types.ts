@@ -11,6 +11,11 @@ export type SidebarProps = {
   activeChatId?: string | null;
   onSelectChat?: (chatId: string) => void;
   onSearch?: () => void;
+  onDeleteChat?: (chatId: string) => void;
+  onRenameChat?: (chatId: string, title: string) => void;
+  onLoadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
   Icon: Record<string, IconComponent>;
 };
 

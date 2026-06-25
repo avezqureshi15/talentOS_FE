@@ -1,14 +1,7 @@
-import { Icon } from "@/components/ui/icons";
-
-/* ── Data ── */
-export const ACTION_BTNS = [
-  { Icon: Icon.Copy, label: "Copy" },
-  { Icon: Icon.Link, label: "Link" },
-  { Icon: Icon.ThumbUp, label: "Good" },
-  { Icon: Icon.ThumbDown, label: "Bad" },
-  { Icon: Icon.Refresh, label: "Retry" },
-  { Icon: Icon.Dots, label: "More" },
-];
+/* ── Storage Keys ── */
+export const STORAGE_KEYS = {
+  VISITOR_ID: "talentos_visitor_id",
+} as const;
 
 /* ── Sidebar ── */
 export const SIDEBAR_LABELS = {
@@ -18,6 +11,8 @@ export const SIDEBAR_LABELS = {
   HISTORY: "History",
   TODAY: "Today",
   EARLIER: "Earlier",
+  RENAME: "Rename",
+  DELETE: "Delete",
 } as const;
 
 export const SIDEBAR_USER = {
@@ -98,6 +93,7 @@ export const TIMELINE_LABELS = {
 } as const;
 
 /* ── API ── */
+// TODO: Move these base URLs to environment variables (e.g. VITE_API_BASE_URL)
 export const CHAT_STREAM_ENDPOINT = "/api/v1/chat/stream";
 export const BE_API_BASE_URL = "http://localhost:8001/api/v1";
 export const API_BASE_URL = "http://localhost:8001";

@@ -1,4 +1,4 @@
-import type { CryptoData, NewsItem, WatchlistItem, PredictionRow, NavTab } from "./Home.types";
+import type { CryptoData, NewsItem, WatchlistItem, PredictionRow, NavTab } from "./home.types";
 
 export const CRYPTOS: CryptoData[] = [
   { name: "Bitcoin", sym: "BTC", price: "$63,424.29", change: "-3.40%", delta: "-$2,233.60", down: true },
@@ -62,3 +62,8 @@ export const SENTIMENT_SUBTITLE = "Crypto · 4 Jun 2026, IST";
 export const CHAT_PLACEHOLDER = "Ask anything about crypto";
 export const SEARCH_BTN_LABEL = "🔍 Search ▾";
 export const COMPUTER_BTN_LABEL = "🖥 Computer";
+
+export const PREDICTION_QUESTION = "Bitcoin above ___ on June 4?";
+export const PREDICTION_VOLUME = "$5.6M vol.";
+export const PREDICTION_POLYMARKET = "+11 on Polymarket";
+export const PREDICTION_BOTTOM_TEXT = "What price will Bitcoin hit in June?";

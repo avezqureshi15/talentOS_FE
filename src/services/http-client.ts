@@ -1,10 +1,12 @@
 import axios from "axios";
 import { BE_API_BASE_URL } from "@/constants/constants";
 
+const DEFAULT_TIMEOUT = 15_000;
+
 const httpClient = axios.create({
   baseURL: BE_API_BASE_URL,
   headers: { "Content-Type": "application/json" },
-  timeout: 15_000,
+  timeout: DEFAULT_TIMEOUT,
 });
 
 httpClient.interceptors.response.use(

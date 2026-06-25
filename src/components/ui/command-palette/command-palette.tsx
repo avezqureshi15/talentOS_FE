@@ -2,6 +2,10 @@ import { useEffect, useRef, useCallback } from "react";
 import "./command-palette.css";
 import type { CommandPaletteProps, SearchResultItem } from "./command-palette.types";
 import type { CommandPaletteSection } from "./command-palette.types";
+import { COMMAND_PALETTE_LABELS } from "./command-palette.constants";
+import BaseModal from "@/components/ui/modal/base-modal";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 
 const getSelectedSectionItem = (
   sections: CommandPaletteSection[],
@@ -33,8 +37,20 @@ export default function CommandPalette({
   onKeyDown,
   onSelectHiringRequest,
   onNewChat,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
 }: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const sentinelRef = useIntersectionObserver(
+    useCallback(() => {
+      if (hasMore && !isLoadingMore) {
+        onLoadMore?.();
+      }
+    }, [hasMore, isLoadingMore, onLoadMore]),
+    !!hasMore && !isLoadingMore,
+  );
 
   useEffect(() => {
     if (open) {
@@ -54,22 +70,16 @@ export default function CommandPalette({
     [onNewChat, onSelectHiringRequest, onClose],
   );
 
-  if (!open) return null;
-
   return (
-    <div className="cp-overlay" onClick={onClose}>
-      <div
-        className="cp-modal"
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={onKeyDown}
-      >
+    <BaseModal open={open} onClose={onClose} className="command-palette-modal">
+      <div className="cp-inner" onKeyDown={onKeyDown}>
         <div className="cp-input-wrapper">
           <i className="bx bx-search cp-input-icon" />
           <input
             ref={inputRef}
             className="cp-input"
             type="text"
-            placeholder="Search hiring requests or type a command..."
+            placeholder={COMMAND_PALETTE_LABELS.PLACEHOLDER}
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
           />
@@ -78,7 +88,7 @@ export default function CommandPalette({
 
         <div className="cp-body">
           {sections.length === 0 || sections.every((s) => s.items.length === 0) ? (
-            <div className="cp-empty">No results found</div>
+            <div className="cp-empty">{COMMAND_PALETTE_LABELS.NO_RESULTS}</div>
           ) : (
             sections.map((section) =>
               section.items.length > 0 ? (
@@ -112,8 +122,16 @@ export default function CommandPalette({
               ) : null,
             )
           )}
+
+          {isLoadingMore && (
+            <div className="cp-loading-more">
+              <LoadingSpinner size="sm" />
+            </div>
+          )}
+
+          <div ref={sentinelRef} className="cp-scroll-sentinel" />
         </div>
       </div>
-    </div>
+    </BaseModal>
   );
 }

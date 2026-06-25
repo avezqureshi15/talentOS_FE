@@ -3,7 +3,13 @@ import { streamChat } from "@/services/ai/chat-stream";
 import { useChatStore } from "@/store/chat.store";
 import { QUERY_KEYS } from "@/constants/constants";
 import { getVisitorId } from "@/utils/visitor";
-import type { ContentBlock } from "@/app/chat/pages/chat.types";
+import type { ContentBlock, StreamInput } from "@/app/chat/pages/chat.types";
+import {
+  INITIAL_THINKING,
+  STEP_TOOL_NAME_LABEL,
+  STEP_FALLBACK_LABEL,
+  GENERIC_ERROR_MESSAGE,
+} from "./use-chat-stream.constants";
 
 const visitorId = getVisitorId();
 
@@ -22,11 +28,11 @@ export const useChatStream = () => {
   return useMutation({
     mutationKey: [QUERY_KEYS.CHAT_STREAM],
 
-    mutationFn: async ({ text, chatId: overrideId }: { text: string; chatId?: string | null }) => {
+    mutationFn: async ({ text, chatId: overrideId }: StreamInput) => {
       const baseId = Date.now();
       const aiMessageId = baseId + 1;
       let accumulatedContent = "";
-      let currentThinking = "Analyzing your request...";
+      let currentThinking = INITIAL_THINKING;
       let hasFinalContent = false;
 
       setProcessing(true);
@@ -57,18 +63,19 @@ export const useChatStream = () => {
         type: string;
         content: string;
       }): string => {
-        if (step.type === "tool_name") {
-          return "Processing your request...";
+        switch (step.type) {
+          case "tool_name":
+            return STEP_TOOL_NAME_LABEL;
+          case "tool_args":
+            try {
+              const parsed = JSON.parse(step.content);
+              return parsed.request ?? STEP_FALLBACK_LABEL;
+            } catch {
+              return STEP_FALLBACK_LABEL;
+            }
+          default:
+            return step.content;
         }
-        if (step.type === "tool_args") {
-          try {
-            const parsed = JSON.parse(step.content);
-            return parsed.request ?? "Analyzing...";
-          } catch {
-            return "Analyzing...";
-          }
-        }
-        return step.content;
       };
 
       try {
@@ -119,7 +126,7 @@ export const useChatStream = () => {
       const errorMessage =
         err instanceof Error
           ? err.message
-          : "Something went wrong. Please try again.";
+          : GENERIC_ERROR_MESSAGE;
 
       setError(errorMessage);
 

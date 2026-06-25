@@ -1,42 +1,68 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, Suspense } from "react";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 
 import { Icon } from "@/components/ui/icons";
 import Header from "@/components/ui/header/header";
 import Sidebar from "@/components/ui/sidebar/sidebar";
 import { useChatHistory } from "@/components/ui/sidebar/hooks/use-chat-history";
+import { useDeleteChat } from "@/components/ui/sidebar/hooks/use-delete-chat";
+import { useRenameChat } from "@/components/ui/sidebar/hooks/use-rename-chat";
 import { useChatStore } from "@/store/chat.store";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import CommandPalette from "@/components/ui/command-palette/command-palette";
 import { useCommandPalette } from "@/components/ui/command-palette/hooks/use-command-palette";
+import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import { ROUTES } from "@/constants/routes";
+import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
 
 export default function ProtectedLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { chatId: paramsChatId } = useParams();
   const storeChatId = useChatStore((s) => s.chatId);
   const activeChatId = paramsChatId ?? storeChatId;
-  const { data: chats } = useChatHistory();
+  const { data: chats, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatHistory();
   const navigate = useNavigate();
   const resetChat = useChatStore((s) => s.reset);
 
   const handleSelectChat = (id: string) => {
-    window.location.href = `/chat/${id}`;
+    navigate(`${ROUTES.CHAT}/${id}`);
   };
 
   const handleSelectHiringRequest = useCallback(
     (id: string) => {
-      navigate(`/hiring-requests/${id}`);
+      navigate(`${ROUTES.HIRING_REQUESTS}/${id}`);
     },
     [navigate],
   );
 
+  const deleteChatMutation = useDeleteChat();
+  const renameChatMutation = useRenameChat();
+
+  const handleRenameChat = useCallback(
+    (chatId: string, title: string) => {
+      renameChatMutation.mutate({ chatId, title });
+    },
+    [renameChatMutation],
+  );
+
+  const handleDeleteChat = useCallback(
+    (chatId: string) => {
+      deleteChatMutation.mutate(chatId);
+      if (activeChatId === chatId) {
+        resetChat();
+        navigate(ROUTES.CHAT);
+      }
+    },
+    [activeChatId, deleteChatMutation, resetChat, navigate],
+  );
+
   const handleNewChat = useCallback(() => {
     resetChat();
-    navigate("/chat");
+    navigate(ROUTES.CHAT);
   }, [navigate, resetChat]);
 
   const handleHome = useCallback(() => {
-    navigate("/hiring-requests");
+    navigate(ROUTES.HIRING_REQUESTS);
   }, [navigate]);
 
   const handleToggleSidebar = useCallback(() => {
@@ -45,15 +71,16 @@ export default function ProtectedLayout() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyH") {
+      const k = KEYBOARD_SHORTCUTS;
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.HOME.code) {
         e.preventDefault();
         handleHome();
       }
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyC") {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.NEW_CHAT.code) {
         e.preventDefault();
         handleNewChat();
       }
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === "KeyS") {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.TOGGLE_SIDEBAR.code) {
         e.preventDefault();
         handleToggleSidebar();
       }
@@ -71,6 +98,9 @@ export default function ProtectedLayout() {
     open: cmdOpenPalette,
     close: cmdClose,
     handleKeyDown: cmdHandleKeyDown,
+    loadMore: cmdLoadMore,
+    hasMore: cmdHasMore,
+    isLoadingMore: cmdIsLoadingMore,
   } = useCommandPalette(handleSelectHiringRequest, handleNewChat);
 
   return (
@@ -82,6 +112,11 @@ export default function ProtectedLayout() {
         activeChatId={activeChatId}
         onSelectChat={handleSelectChat}
         onSearch={cmdOpenPalette}
+        onDeleteChat={handleDeleteChat}
+        onRenameChat={handleRenameChat}
+        onLoadMore={fetchNextPage}
+        hasMore={hasNextPage}
+        isLoadingMore={isFetchingNextPage}
         Icon={Icon}
       />
 
@@ -93,7 +128,9 @@ export default function ProtectedLayout() {
           Icon={Icon}
         />
         <ErrorBoundary>
-          <Outlet />
+          <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
+            <Outlet />
+          </Suspense>
         </ErrorBoundary>
       </main>
 
@@ -107,6 +144,9 @@ export default function ProtectedLayout() {
         onKeyDown={cmdHandleKeyDown}
         onSelectHiringRequest={handleSelectHiringRequest}
         onNewChat={handleNewChat}
+        onLoadMore={cmdLoadMore}
+        hasMore={cmdHasMore}
+        isLoadingMore={cmdIsLoadingMore}
       />
     </div>
   );

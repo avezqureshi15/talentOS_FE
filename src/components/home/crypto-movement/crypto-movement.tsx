@@ -1,5 +1,5 @@
-import type { CryptoData } from "./Home.types";
-import "./Home.css";
+import type { CryptoData } from "../home.types";
+import { CRYPTO_TITLE } from "../home.constants";
 
 function SparkLine({
   color = "#ef4444",
@@ -56,7 +56,7 @@ export default function CryptoMovement({ cryptos }: { cryptos: CryptoData[] }) {
 
   return (
     <section>
-      <h2 className="home-section-title">Crypto Movement</h2>
+      <h2 className="home-section-title">{CRYPTO_TITLE}</h2>
       <div className="crypto-grid">
         {cryptos.map((c, i) => (
           <div key={c.sym} className="crypto-card">

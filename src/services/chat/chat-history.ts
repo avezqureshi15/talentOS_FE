@@ -1,5 +1,6 @@
-import { BE_API_BASE_URL } from "@/constants/constants";
+import httpClient from "@/services/http-client";
 import { getVisitorId } from "@/utils/visitor";
+import { API_ENDPOINTS, PAGINATION } from "@/constants/api-endpoints";
 
 export type ChatHistoryItem = {
   id: string;
@@ -20,6 +21,7 @@ export type ChatMessageItem = {
 type ChatsResponse = {
   data: ChatHistoryItem[];
   count: number;
+  has_more: boolean;
 };
 
 type MessagesResponse = {
@@ -27,33 +29,37 @@ type MessagesResponse = {
   has_more: boolean;
 };
 
-export const fetchChats = async (): Promise<ChatHistoryItem[]> => {
+export const updateChatTitle = async (chatId: string, title: string): Promise<void> => {
+  await httpClient.patch(`${API_ENDPOINTS.CHAT_CHAT_DELETE}/${chatId}`, { title });
+};
+
+export const deleteChat = async (chatId: string): Promise<void> => {
+  await httpClient.delete(`${API_ENDPOINTS.CHAT_CHAT_DELETE}/${chatId}`);
+};
+
+export const fetchChats = async (
+  offset = 0,
+  limit = PAGINATION.DEFAULT_CHATS_PAGE_SIZE,
+): Promise<ChatsResponse> => {
   const visitorId = getVisitorId();
-  const res = await fetch(`${BE_API_BASE_URL}/chat/chats?visitor_id=${encodeURIComponent(visitorId)}`);
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch chats: ${res.status}`);
-  }
-
-  const body: ChatsResponse = await res.json();
-  return body.data;
+  const { data } = await httpClient.get<ChatsResponse>(API_ENDPOINTS.CHAT_CHATS, {
+    params: { visitor_id: visitorId, limit, offset },
+  });
+  return data;
 };
 
 export const fetchMessages = async (
   chatId: string,
-  limit = 20,
+  limit = PAGINATION.DEFAULT_CHAT_MESSAGES_LIMIT,
   before?: number,
 ): Promise<MessagesResponse> => {
-  let url = `${BE_API_BASE_URL}/chat/messages?chat_id=${encodeURIComponent(chatId)}&limit=${limit}`;
+  const params: Record<string, string | number> = {
+    chat_id: chatId,
+    limit,
+  };
   if (before !== undefined) {
-    url += `&before=${before}`;
+    params.before = before;
   }
-
-  const res = await fetch(url);
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch messages: ${res.status}`);
-  }
-
-  return res.json() as Promise<MessagesResponse>;
+  const { data } = await httpClient.get<MessagesResponse>(API_ENDPOINTS.CHAT_MESSAGES, { params });
+  return data;
 };

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import IconButton from "@/components/ui/icon-button/icon-button";
 import ShareButton from "@/components/ui/share-button/share-button";
 
 import "./header.css";
 import type { HeaderLeftProps, HeaderProps } from "./header.types";
+import { useHeaderShare } from "./hooks/useHeaderShare";
 
 /* ───────── LEFT ───────── */
 
@@ -36,20 +37,10 @@ type HeaderRightProps = {
 const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [copied, setCopied] = useState(false);
+  const { copied, handleShare } = useHeaderShare();
 
   const isChat = location.pathname === "/chat" || location.pathname.startsWith("/chat/");
   const isHiringDetail = location.pathname.startsWith("/hiring-requests/");
-
-  const handleShare = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // clipboard not available
-    }
-  };
 
   return (
     <div className="header-right">

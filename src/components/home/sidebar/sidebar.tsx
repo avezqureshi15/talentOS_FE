@@ -1,5 +1,4 @@
-import { SIDEBAR_NAV_ITEMS, SIDEBAR_NEW_LABEL, SIDEBAR_SIGN_IN } from "./Home.data";
-import "./Home.css";
+import { SIDEBAR_NAV_ITEMS, SIDEBAR_NEW_LABEL, SIDEBAR_SIGN_IN } from "../home.constants";
 
 export default function Sidebar() {
   return (

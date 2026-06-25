@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import "./compose-email.css";
 import { UI_LABELS } from "@/constants/constants";
+import { DEFAULT_SUBJECT, DEFAULT_BODY, HR_EMAIL } from "./compose-email.constants";
 
 const ComposeEmail: React.FC = () => {
-  const [subject, setSubject] = useState("Connecting regarding [Topic]");
-  const [body, setBody] = useState(`Hi Avez,
+  const [subject, setSubject] = useState(DEFAULT_SUBJECT); // UI state for email subject field
+  const [body, setBody] = useState(DEFAULT_BODY); // UI state for email body textarea
 
-I hope you are doing well.
-
-I am writing to connect with you regarding [insert topic/purpose of your email here].`);
-
-  const [isSending, setIsSending] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [hideCard, setHideCard] = useState(false);
+  const [isSending, setIsSending] = useState(false); // UI state for send-in-progress flag
+  const [sent, setSent] = useState(false); // UI state for sent confirmation flag
+  const [showToast, setShowToast] = useState(false); // UI state for toast notification visibility
+  const [hideCard, setHideCard] = useState(false); // UI state for card fade-out animation
 
   const handleSend = () => {
     if (isSending) return;
@@ -39,12 +36,8 @@ I am writing to connect with you regarding [insert topic/purpose of your email h
     setHideCard(true);
 
     setTimeout(() => {
-      setSubject("Connecting regarding [Topic]");
-      setBody(`Hi Avez,
-
-I hope you are doing well.
-
-I am writing to connect with you regarding [insert topic/purpose of your email here].`);
+      setSubject(DEFAULT_SUBJECT);
+      setBody(DEFAULT_BODY);
       setHideCard(false);
     }, 300);
   };
@@ -64,7 +57,7 @@ I am writing to connect with you regarding [insert topic/purpose of your email h
 
           <div className="ce-chip">
             <div className="ce-avatar">A</div>
-            avez@webknot.in
+            {HR_EMAIL}
             <span className="ce-chip-close">×</span>
           </div>
 

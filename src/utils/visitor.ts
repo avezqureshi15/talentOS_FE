@@ -1,10 +1,10 @@
-const VISITOR_KEY = "talentos_visitor_id";
+import { STORAGE_KEYS } from "@/constants/constants";
 
 export const getVisitorId = (): string => {
-  let id = localStorage.getItem(VISITOR_KEY);
+  let id = localStorage.getItem(STORAGE_KEYS.VISITOR_ID);
   if (!id) {
     id = crypto.randomUUID();
-    localStorage.setItem(VISITOR_KEY, id);
+    localStorage.setItem(STORAGE_KEYS.VISITOR_ID, id);
   }
   return id;
 };

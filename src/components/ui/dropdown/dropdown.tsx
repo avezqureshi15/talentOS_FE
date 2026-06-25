@@ -1,25 +1,22 @@
 import { useState, useRef, useEffect } from "react";
 import "./dropdown.css";
-
-type DropdownProps = {
-  options: string[];
-  defaultValue?: string;
-  onChange?: (value: string) => void;
-};
+import type { DropdownProps } from "./dropdown.types";
 
 const Dropdown = ({
   options,
   defaultValue,
   onChange,
 }: DropdownProps) => {
+  // justification: open state controls dropdown visibility
   const [open, setOpen] = useState(false);
+  // justification: value tracks the currently selected option
   const [value, setValue] = useState(
     defaultValue || options[0]
   );
 
   const ref = useRef<HTMLDivElement>(null);
 
-  // close on outside click
+  // Explanation: closes the dropdown when a click occurs outside the component
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {

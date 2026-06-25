@@ -22,6 +22,7 @@ export type HiringRequestsListResponse = {
   per_page: number;
   total_pages: number;
   total: number;
+  has_more: boolean;
 };
 
 export type HiringRequestsFilters = {

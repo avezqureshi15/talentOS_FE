@@ -1,74 +1,43 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./detail.css";
 
 import JobDescription from "@/app/dashboard/hiring-requests-detail/components/job-desc/job-desc";
-import Applicants, { type Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
+import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import BaseModal from "@/components/ui/modal/base-modal";
 import { useToggleStatus } from "@/app/dashboard/hiring-requests/hooks/use-toggle-status";
-import { JOB_DETAIL, BE_API_BASE_URL } from "@/constants/constants";
-import { useApplications } from "@/app/dashboard/hiring-requests/hooks/use-applications";
+import { JOB_DETAIL } from "@/constants/constants";
+import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/useApplicationsData";
+import { useExportCsv } from "@/app/dashboard/hiring-requests-detail/components/detail/useExportCsv";
+import { DEFAULT_FILTER } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import type { JobDetailProps } from "./detail.types";
 
 type Segment = "jd" | "applicants";
 
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
+  // justification: tracks active tab segment (job description vs applicants)
   const [segment, setSegment] = useState<Segment>("jd");
+  // justification: tracks which applicant accordion is expanded
   const [openId, setOpenId] = useState<string | null>(null);
-  const [isExporting, setIsExporting] = useState(false);
+  // justification: tracks confirm modal visibility for close/reopen
   const [showConfirm, setShowConfirm] = useState(false);
-  const [filter, setFilter] = useState("shortlisted");
+  // justification: controls applicant filter value (shortlisted, all, etc.)
+  const [filter, setFilter] = useState(DEFAULT_FILTER);
   const { mutate: toggleStatus, isPending: isToggling } = useToggleStatus();
 
-  const handleExport = async () => {
-    setIsExporting(true);
-    try {
-      const res = await fetch(`${BE_API_BASE_URL}/hiring-requests/${hiringRequest.id}/export`);
-      if (!res.ok) throw new Error("Export failed");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${hiringRequest.title}_applicants.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    } catch {
-      // silently fail
-    } finally {
-      setIsExporting(false);
-    }
-  };
+  const { handleExport, isExporting, exportError } = useExportCsv(
+    hiringRequest.id,
+    hiringRequest.title,
+  );
 
   const jobId = hiringRequest.supabase_job_id;
-  const { data: apiApplications, isLoading: appsLoading } = useApplications(
+  const { applicants, isLoading: appsLoading } = useApplicationsData(
     jobId,
     filter,
     segment === "applicants",
   );
-
-  const applicants: Applicant[] = useMemo(() => {
-    if (!apiApplications) return [];
-
-    return apiApplications.map((app) => ({
-      id: app.id,
-      name: app.name ?? "",
-      email: app.email ?? "",
-      phone: app.phone ?? "",
-      coverLetter: app.cover_letter ?? "",
-      aiSummary: app.summary_md ?? undefined,
-      experienceYears: 0,
-      currentRole: "",
-      currentCompany: "",
-      linkedinUrl: "",
-      cvUrl: app.resume_url ?? "",
-      status: "new",
-      score: app.fit_score ?? undefined,
-    }));
-  }, [apiApplications]);
 
   return (
     <div className="job-page">
@@ -86,6 +55,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           <button className="export-btn" onClick={handleExport} disabled={isExporting}>
             {isExporting ? "Downloading..." : JOB_DETAIL.EXPORT_AS_EXCEL}
           </button>
+          {exportError && <span className="export-error">{exportError}</span>}
           <button
             className={`status-btn ${hiringRequest.is_active ? "status-btn-close" : "status-btn-open"}`}
             onClick={() => setShowConfirm(true)}

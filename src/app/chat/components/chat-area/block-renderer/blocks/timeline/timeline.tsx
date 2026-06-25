@@ -31,7 +31,7 @@ const Timeline: React.FC<Props> = ({ steps, currentStep }) => {
           const connState = i < currentStep - 1 ? "filled" : i === currentStep - 1 ? "partial" : "empty";
 
           return (
-            <div key={i} className="tl-step" data-state={state} style={{ '--tl-delay': `${i * 60}ms` } as React.CSSProperties}>
+            <div key={i} className="tl-step" data-state={state} style={{ '--tl-delay': `${i * 60}ms` }}>
               <div className="tl-left">
                 <div className={`tl-node ${state}`}>
                   {state === "done"
