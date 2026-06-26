@@ -1,5 +1,5 @@
 import type { WatchlistSectionProps } from "./watchlist-section.types";
-import { WATCHLIST_TITLE } from "../home.constants";
+import { WATCHLIST_TITLE } from "@/components/home/home.constants";
 
 export default function WatchlistSection({ items }: WatchlistSectionProps) {
   return (

@@ -5,22 +5,11 @@ import { useDepartments } from "@/app/dashboard/hiring-requests/hooks/use-depart
 import { useLocations } from "@/app/dashboard/hiring-requests/hooks/use-locations";
 import { useTypes } from "@/app/dashboard/hiring-requests/hooks/use-types";
 import { TABLE_HEADERS, PER_PAGE_OPTIONS } from "@/constants/constants";
-import { TABLE_EMPTY_STATE, PAGINATION_PREVIOUS, PAGINATION_NEXT } from "./table.constants";
+import { TABLE_EMPTY_STATE, PAGINATION_PREVIOUS, PAGINATION_NEXT, DATE_FROM_LABEL, DATE_TO_LABEL, ALL_DEPARTMENTS, ALL_LOCATIONS, ALL_TYPES, ALL_STATUS, STATUS_ACTIVE, STATUS_CLOSED } from "./table.constants";
 import type { HiringRequestsTableProps } from "./table.types";
+import DatePickerInput from "./date-picker-input";
+import SkeletonRow from "./skeleton-row";
 import "./table.css";
-
-const SkeletonRow = () => (
-  <div className="table-row">
-    <div className="role-cell">
-      <div className="skeleton skeleton-title" />
-      <div className="skeleton skeleton-meta" />
-    </div>
-    <div className="skeleton skeleton-badge" />
-    <div className="skeleton skeleton-badge" />
-    <div className="skeleton skeleton-badge" />
-    <div className="skeleton skeleton-date" />
-  </div>
-);
 
 const HiringRequestsTable = ({
   filters,
@@ -57,6 +46,8 @@ const HiringRequestsTable = ({
   if (filters.location) chipConfig.push({ key: "location", label: `Location: ${filters.location}` });
   if (filters.type) chipConfig.push({ key: "type", label: `Type: ${filters.type}` });
   if (filters.is_active !== undefined) chipConfig.push({ key: "is_active", label: `Status: ${filters.is_active ? "Active" : "Closed"}` });
+  if (filters.created_from) chipConfig.push({ key: "created_from", label: `From: ${filters.created_from}` });
+  if (filters.created_to) chipConfig.push({ key: "created_to", label: `To: ${filters.created_to}` });
 
   const startItem = (page - 1) * perPage + 1;
   const endItem = Math.min(page * perPage, total);
@@ -66,34 +57,46 @@ const HiringRequestsTable = ({
     <div className="table-wrapper">
       <div className="filter-bar">
         <Select
-          placeholder="All Departments"
+          placeholder={ALL_DEPARTMENTS}
           value={filters.department ?? ""}
           onChange={(e) => handleFilterSelect("department", e.target.value)}
           options={departments.map((d) => ({ value: d, label: d }))}
         />
 
         <Select
-          placeholder="All Locations"
+          placeholder={ALL_LOCATIONS}
           value={filters.location ?? ""}
           onChange={(e) => handleFilterSelect("location", e.target.value)}
           options={locations.map((l) => ({ value: l, label: l }))}
         />
 
         <Select
-          placeholder="All Types"
+          placeholder={ALL_TYPES}
           value={filters.type ?? ""}
           onChange={(e) => handleFilterSelect("type", e.target.value)}
           options={types.map((t) => ({ value: t, label: t }))}
         />
 
         <Select
-          placeholder="All Status"
+          placeholder={ALL_STATUS}
           value={filters.is_active === undefined ? "" : String(filters.is_active)}
           onChange={(e) => handleFilterSelect("is_active", e.target.value)}
           options={[
-            { value: "true", label: "Active" },
-            { value: "false", label: "Closed" },
+            { value: "true", label: STATUS_ACTIVE },
+            { value: "false", label: STATUS_CLOSED },
           ]}
+        />
+
+        <DatePickerInput
+          label={DATE_FROM_LABEL}
+          value={filters.created_from ?? ""}
+          onChange={(v) => onFilterChange({ created_from: v || undefined, page: 1 })}
+        />
+
+        <DatePickerInput
+          label={DATE_TO_LABEL}
+          value={filters.created_to ?? ""}
+          onChange={(v) => onFilterChange({ created_to: v || undefined, page: 1 })}
         />
       </div>
 
@@ -131,7 +134,6 @@ const HiringRequestsTable = ({
               key={item.id}
               to={`/hiring-requests/${item.id}`}
               className="table-row table-row-link"
-              style={{ '--anim-delay': `${idx * 50}ms` }}
             >
               <div className="role-cell">
                 <div className="role-title">{item.title}</div>
@@ -144,7 +146,7 @@ const HiringRequestsTable = ({
                 <span
                   className={`status-badge ${item.is_active ? "status-active" : "status-closed"}`}
                 >
-                  {item.is_active ? "Active" : "Closed"}
+                  {item.is_active ? STATUS_ACTIVE : STATUS_CLOSED}
                 </span>
               </div>
 

@@ -14,3 +14,7 @@ export type HeaderLeftProps = {
   setSidebarOpen: (v: boolean) => void;
   Icon: Record<string, IconComponent>;
 };
+
+export type HeaderRightProps = {
+  Icon: Record<string, IconComponent>;
+};

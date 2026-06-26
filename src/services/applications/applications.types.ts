@@ -10,8 +10,22 @@ export type EvaluatedCandidate = {
   fit_score: number | null;
   summary_md: string | null;
   evaluated_at: string | null;
+  current_ctc: string | null;
+  expected_ctc: string | null;
+  location: string | null;
+  years_of_experience: string | null;
+  notice_period: string | null;
+  how_did_you_hear: string | null;
+  linkedin_url: string | null;
 };
 
 export type EvaluatedCandidatesResponse = {
   data: EvaluatedCandidate[];
+};
+
+export type PaginatedEvaluatedCandidatesResponse = {
+  data: EvaluatedCandidate[];
+  total: number;
+  limit: number;
+  offset: number;
 };

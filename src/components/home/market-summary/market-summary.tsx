@@ -1,6 +1,6 @@
 import type { MarketSummaryProps } from "./market-summary.types";
 import NewsSection from "../news-section/news-section";
-import { MARKET_SUMMARY_TITLE, TIMESTAMP_TEXT } from "../home.constants";
+import { MARKET_SUMMARY_TITLE, TIMESTAMP_TEXT } from "@/components/home/home.constants";
 
 export default function MarketSummary({ items, openIndex, onToggle }: MarketSummaryProps) {
   return (

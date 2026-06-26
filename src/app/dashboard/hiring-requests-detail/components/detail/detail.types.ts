@@ -3,3 +3,5 @@ import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.t
 export type JobDetailProps = {
   hiringRequest: HiringRequest;
 };
+
+export type Segment = "jd" | "applicants";

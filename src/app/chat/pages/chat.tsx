@@ -34,18 +34,12 @@ export default function Chat() {
   const { isLoading } = useChatMessages(chatId);
   const chatStream = useChatStream();
 
-  // Reset store when landing on the base chat page (no chat ID in URL) to
-  // ensure a clean state for starting a new conversation
+  // Syncing URL param changes to the store — landing on base page resets to new conversation,
+  // navigating to a different chat clears stale messages before new ones load
   useEffect(() => {
     if (!paramsChatId) {
       reset();
-    }
-  }, [paramsChatId]);
-
-  // Sync URL param into store when navigating to a different chat
-  // Clear old messages so loading state shows while new ones fetch
-  useEffect(() => {
-    if (paramsChatId && storeChatId !== paramsChatId) {
+    } else if (storeChatId !== paramsChatId) {
       setMessages([]);
       setChatId(paramsChatId);
     }

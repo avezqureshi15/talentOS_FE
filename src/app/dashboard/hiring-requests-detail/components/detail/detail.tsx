@@ -9,12 +9,19 @@ import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import BaseModal from "@/components/ui/modal/base-modal";
 import { useToggleStatus } from "@/app/dashboard/hiring-requests/hooks/use-toggle-status";
 import { JOB_DETAIL } from "@/constants/constants";
-import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/useApplicationsData";
-import { useExportCsv } from "@/app/dashboard/hiring-requests-detail/components/detail/useExportCsv";
+import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
+import { useExportCsv } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-csv";
 import { DEFAULT_FILTER } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
-import type { JobDetailProps } from "./detail.types";
+import type { JobDetailProps, Segment } from "./detail.types";
 
-type Segment = "jd" | "applicants";
+const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = {
+  all: {},
+  gte80: { min: 80 },
+  gte70: { min: 70 },
+  gte50: { min: 50 },
+  lt50: { max: 49 },
+  lt30: { max: 29 },
+};
 
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   // justification: tracks active tab segment (job description vs applicants)
@@ -25,6 +32,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [showConfirm, setShowConfirm] = useState(false);
   // justification: controls applicant filter value (shortlisted, all, etc.)
   const [filter, setFilter] = useState(DEFAULT_FILTER);
+  // justification: score range filter preset
+  const [scoreFilter, setScoreFilter] = useState<string>("all");
   const { mutate: toggleStatus, isPending: isToggling } = useToggleStatus();
 
   const { handleExport, isExporting, exportError } = useExportCsv(
@@ -32,11 +41,14 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     hiringRequest.title,
   );
 
+  const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
   const jobId = hiringRequest.supabase_job_id;
-  const { applicants, isLoading: appsLoading } = useApplicationsData(
+  const { applicants, isLoading: appsLoading, hasMore, fetchNext } = useApplicationsData(
     jobId,
     filter,
     segment === "applicants",
+    scoreRange.min,
+    scoreRange.max,
   );
 
   return (
@@ -114,6 +126,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 setOpenId={setOpenId}
                 filter={filter}
                 onFilterChange={setFilter}
+                hasMore={hasMore}
+                onLoadMore={fetchNext}
+                scoreFilter={scoreFilter}
+                onScoreFilterChange={setScoreFilter}
               />
             )
           )}

@@ -1,0 +1,8 @@
+﻿export const CRYPTO_DEFAULTS = {
+  SPARK_LINE_WIDTH: 120,
+  SPARK_LINE_HEIGHT: 40,
+  SPARK_DATA_LENGTH: 40,
+  DEFAULT_TREND: "down",
+  COLOR_DOWN: "#f87171",
+  COLOR_UP: "#4ade80",
+} as const;

@@ -4,8 +4,9 @@ import SendButton from "@/components/ui/send-button/send-button";
 import "./chat-input.css";
 import type { ChatInputProps } from "./chat-input.types";
 import { useMentionEngine } from "@/components/shared/mentions/use-mention-engine";
-import MentionPopup from "@/components/shared/mentions/mentions";
-import { useAutoResize } from "./hooks/useAutoResize";
+import { useCommandMenu } from "@/components/shared/mentions/use-command-menu";
+import MentionPopup, { resolveMenuSelection } from "@/components/shared/mentions/mentions";
+import { useAutoResize } from "./hooks/use-auto-resize";
 import { CHAT_INPUT_LABELS } from "./chat-input.constants";
 
 const ChatInput: React.FC<ChatInputProps> = ({
@@ -15,16 +16,40 @@ const ChatInput: React.FC<ChatInputProps> = ({
   onSend,
 }) => {
   const { textareaRef } = useAutoResize(input);
-
-  const {
-    show,
-    data,
-    activeTrigger,
-    handleChange,
-    handleSelect,
-  } = useMentionEngine();
+  const { show, handleChange, insert } = useMentionEngine();
+  const menu = useCommandMenu();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (show) {
+      const items = menu.isListView ? menu.listItems : menu.filteredEntries;
+      if (items.length > 0) {
+        switch (e.key) {
+          case "ArrowDown":
+            e.preventDefault();
+            menu.moveDown();
+            return;
+          case "ArrowUp":
+            e.preventDefault();
+            menu.moveUp();
+            return;
+          case "Enter":
+            if (!e.shiftKey) {
+              e.preventDefault();
+              const current = menu.selectCurrentItem();
+              if (current) {
+                const result = resolveMenuSelection(current, menu.isListView, menu.activeEntry);
+                if (result.action === "navigate") {
+                  menu.navigateTo(result.entry);
+                } else {
+                  insert(result.text, input, setInput);
+                }
+              }
+            }
+            return;
+        }
+      }
+    }
+
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (input.trim()) onSend();
@@ -60,11 +85,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
           <MentionPopup
             show={show}
-            data={data}
-            activeTrigger={activeTrigger}
-            onSelect={(item) =>
-              handleSelect(item, input, setInput)
-            }
+            menu={menu}
+            onInsert={(text) => insert(text, input, setInput)}
           />
         </div>
       </div>

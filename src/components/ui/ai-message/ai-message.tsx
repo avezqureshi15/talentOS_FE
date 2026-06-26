@@ -2,8 +2,6 @@ import { Icon } from "@/components/ui/icons";
 import "./ai-message.css";
 import type { AIResponseBlockProps } from "./ai-message.types";
 
-
-
 const AIMessage = ({
   message,
   thought,

@@ -1,4 +1,4 @@
-import { SIDEBAR_NAV_ITEMS, SIDEBAR_NEW_LABEL, SIDEBAR_SIGN_IN } from "../home.constants";
+import { SIDEBAR_NAV_ITEMS, SIDEBAR_NEW_LABEL, SIDEBAR_SIGN_IN } from "@/components/home/home.constants";
 
 export default function Sidebar() {
   return (

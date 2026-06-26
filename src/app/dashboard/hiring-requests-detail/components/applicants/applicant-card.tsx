@@ -1,21 +1,11 @@
-import { truncateText, formatDate } from "./applicants.utils";
+import { useState, useRef, useEffect } from "react";
+import { formatDate } from "./applicants.utils";
 import { APPLICANT_LABELS } from "@/constants/constants";
-import type { Applicant, AccordionTab } from "./applicants.types";
-
-type ApplicantCardProps = {
-  applicant: Applicant;
-  isOpen: boolean;
-  isScreening: boolean;
-  accordionTab: AccordionTab;
-  onToggleOpen: (id: string) => void;
-  onStartScreening: (id: string) => void;
-  onReject: (id: string) => void;
-  onAccept: (id: string) => void;
-  onTabChange: (tab: AccordionTab) => void;
-  onCoverLetterReadMore: (id: string) => void;
-  onAiSummaryReadMore: (id: string) => void;
-  onTimeline: (id: string) => void;
-};
+import type { ApplicantCardProps } from "./applicants.types";
+import CardDetailsTab from "./card-details-tab";
+import CardCoverLetterTab from "./card-cover-letter-tab";
+import CardAiSummaryTab from "./card-ai-summary-tab";
+import CardRoundsTab from "./card-rounds-tab";
 
 const ApplicantCard = ({
   applicant: a,
@@ -29,10 +19,24 @@ const ApplicantCard = ({
   onTabChange,
   onCoverLetterReadMore,
   onAiSummaryReadMore,
+  onDetailsReadMore,
   onTimeline,
+  onFinalDecision,
+  onViewRound,
 }: ApplicantCardProps) => {
-  const cl = a.coverLetter ? truncateText(a.coverLetter, 50) : null;
-  const aiSum = a.aiSummary ? truncateText(a.aiSummary, 50) : null;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [menuOpen]);
 
   return (
     <div className="accordion-card">
@@ -50,8 +54,12 @@ const ApplicantCard = ({
         </div>
 
         <div className="header-right">
+          {a.score != null && (
+            <div className={`ats-score ${a.score >= 70 ? "score-high" : a.score >= 40 ? "score-mid" : "score-low"}`}>
+              {a.score}
+            </div>
+          )}
           {a.status === "reviewing" && <div className="queue-text mb-30">{APPLICANT_LABELS.QUEUING}</div>}
-          <div className={`status-dot ${a.status}`} />
 
           {a.status === "new" && !isScreening && (
             <button className="screen-btn compact" onClick={(e) => { e.stopPropagation(); onStartScreening(a.id); }}>
@@ -69,6 +77,26 @@ const ApplicantCard = ({
               </button>
             </>
           )}
+
+          <div className="three-dots-wrapper" ref={menuRef}>
+            <button
+              className="three-dots-btn"
+              onClick={(e) => { e.stopPropagation(); if (!isOpen) onToggleOpen(a.id); setMenuOpen((v) => !v); }}
+              type="button"
+            >
+              <i className="bx bx-dots-vertical-rounded"></i>
+            </button>
+            {menuOpen && (
+              <div className="three-dots-menu">
+                <button className="menu-item menu-item-select" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onFinalDecision(a.id, "selected"); }} type="button">
+                  {APPLICANT_LABELS.SELECT_CANDIDATE}
+                </button>
+                <button className="menu-item menu-item-reject" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onFinalDecision(a.id, "rejected"); }} type="button">
+                  {APPLICANT_LABELS.REJECT_CANDIDATE}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -84,65 +112,25 @@ const ApplicantCard = ({
           </div>
 
           <div className="accordion-tabs block">
-            <button
-              className={`accordion-tab ${accordionTab === "cover-letter" ? "accordion-tab--active" : ""}`}
-              onClick={() => onTabChange("cover-letter")}
-              type="button"
-            >
-              <i className="bx bx-notepad" />
-              {APPLICANT_LABELS.COVER_LETTER}
+            <button className={`accordion-tab ${accordionTab === "details" ? "accordion-tab--active" : ""}`} onClick={() => onTabChange("details")} type="button">
+              <i className="bx bx-detail" /> {APPLICANT_LABELS.DETAILS}
             </button>
-            <button
-              className={`accordion-tab ${accordionTab === "ai-summary" ? "accordion-tab--active" : ""}`}
-              onClick={() => onTabChange("ai-summary")}
-              type="button"
-            >
+            <button className={`accordion-tab ${accordionTab === "cover-letter" ? "accordion-tab--active" : ""}`} onClick={() => onTabChange("cover-letter")} type="button">
+              <i className="bx bx-notepad" /> {APPLICANT_LABELS.COVER_LETTER}
+            </button>
+            <button className={`accordion-tab ${accordionTab === "ai-summary" ? "accordion-tab--active" : ""}`} onClick={() => onTabChange("ai-summary")} type="button">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5Z" /></svg>
               {APPLICANT_LABELS.AI_SUMMARY}
             </button>
+            <button className={`accordion-tab ${accordionTab === "rounds" ? "accordion-tab--active" : ""}`} onClick={() => onTabChange("rounds")} type="button">
+              <i className="bx bx-repeat" /> {APPLICANT_LABELS.ROUNDS}
+            </button>
           </div>
 
-          {accordionTab === "cover-letter" && (
-            <div className="cover-letter">
-              <div className="cover-letter-label">
-                <i className="bx bx-notepad"></i>
-                {APPLICANT_LABELS.COVER_LETTER}
-              </div>
-              {cl ? (
-                <p className="cover-letter-text">
-                  {cl.text}
-                  {cl.truncated && (
-                    <button className="read-more" onClick={(e) => { e.stopPropagation(); onCoverLetterReadMore(a.id); }}>
-                      {APPLICANT_LABELS.READ_MORE}
-                    </button>
-                  )}
-                </p>
-              ) : (
-                <p className="cover-letter-text">{APPLICANT_LABELS.NO_COVER_LETTER}</p>
-              )}
-            </div>
-          )}
-
-          {accordionTab === "ai-summary" && (
-            <div className="cover-letter">
-              <div className="cover-letter-label">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5Z" /></svg>
-                {APPLICANT_LABELS.AI_SUMMARY}
-              </div>
-              {aiSum ? (
-                <p className="cover-letter-text">
-                  {aiSum.text}
-                  {aiSum.truncated && (
-                    <button className="read-more" onClick={(e) => { e.stopPropagation(); onAiSummaryReadMore(a.id); }}>
-                      {APPLICANT_LABELS.READ_MORE}
-                    </button>
-                  )}
-                </p>
-              ) : (
-                <p className="cover-letter-text">{APPLICANT_LABELS.NO_AI_SUMMARY}</p>
-              )}
-            </div>
-          )}
+          {accordionTab === "details" && <CardDetailsTab applicant={a} onDetailsReadMore={onDetailsReadMore} />}
+          {accordionTab === "cover-letter" && <CardCoverLetterTab coverLetter={a.coverLetter ?? ""} applicantId={a.id} onReadMore={onCoverLetterReadMore} />}
+          {accordionTab === "rounds" && <CardRoundsTab rounds={a.rounds} onViewRound={onViewRound} />}
+          {accordionTab === "ai-summary" && <CardAiSummaryTab aiSummary={a.aiSummary ?? ""} applicantId={a.id} onReadMore={onAiSummaryReadMore} />}
 
           {a.status === "rejected" && <div className="rejected-text">{APPLICANT_LABELS.CANDIDATE_REJECTED}</div>}
           {a.status === "hired" && <div className="hired-text">{APPLICANT_LABELS.CANDIDATE_HIRED}</div>}

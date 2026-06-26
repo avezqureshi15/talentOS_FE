@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import "./timeline.css";
 import AddRemarkModal from "@/app/dashboard/hiring-requests-detail/components/modal/add-remark-modal";
-import { mockSteps } from "@/app/dashboard/hiring-requests-detail/mock";
+import { mockSteps as INITIAL_STEPS } from "@/app/dashboard/hiring-requests-detail/mock";
 import { TIMELINE_LABELS } from "@/constants/constants";
 import type { TimelineStep, TimelineSheetProps } from "./timeline.types";
-import { useEscapeKey } from "./useEscapeKey";
+import { useEscapeKey } from "./use-escape-key";
 
 export default function ApplicantTimelineSheet({
   openId,
@@ -22,8 +22,13 @@ export default function ApplicantTimelineSheet({
   const [remarkOpen, setRemarkOpen] = useState(false);
   // justification: tracks which step is receiving a new remark
   const [activeStep, setActiveStep] = useState<string | null>(null);
-  // justification: holds the timeline steps data (currently from mock)
-  const [steps, setSteps] = useState<TimelineStep[]>(mockSteps);
+  // justification: stores remarks appended locally (mock steps are static)
+  const [remarks, setRemarks] = useState<Record<string, string[]>>({});
+
+  const steps: TimelineStep[] = INITIAL_STEPS.map((s) => ({
+    ...s,
+    remarks: s.remarks ? [...s.remarks, ...(remarks[s.id] ?? [])] : (remarks[s.id] ?? []),
+  }));
 
   // Sync sheet open/close with render and animation state; lock body scroll when open
   useEffect(() => {
@@ -43,17 +48,13 @@ export default function ApplicantTimelineSheet({
   // Close sheet on Escape key press
   useEscapeKey(onClose);
 
-  const addRemark = (text: string) => {
+  const addRemark = useCallback((text: string) => {
     if (!activeStep) return;
-
-    setSteps((prev) =>
-      prev.map((s) =>
-        s.id === activeStep
-          ? { ...s, remarks: [...(s.remarks || []), text] }
-          : s
-      )
-    );
-  };
+    setRemarks((prev) => ({
+      ...prev,
+      [activeStep]: [...(prev[activeStep] ?? []), text],
+    }));
+  }, [activeStep]);
 
   if (!render) return null;
 

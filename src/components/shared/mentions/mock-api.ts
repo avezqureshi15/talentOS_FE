@@ -1,21 +1,37 @@
-export const fetchMockUsers = async (query: string) => {
-  return [
-    { id: 1, name: "Avez", type: "user" , email:"avez@webknot.in" },
-    { id: 2, name: "Avinash", type: "user" , email:"avinash@webknot.in"},
-    { id: 3, name: "Rahul", type: "user", email:"rahul@webknot.in" },
-  ].filter((u) =>
-    u.name.toLowerCase().includes(query.toLowerCase())
+import type { CommandItem } from "./mentions.types";
+
+const MOCK_USERS: CommandItem[] = [
+  { id: "1", label: "Avez", description: "avez@webknot.in" },
+  { id: "2", label: "Avinash", description: "avinash@webknot.in" },
+  { id: "3", label: "Rahul", description: "rahul@webknot.in" },
+];
+
+const MOCK_RECRUITMENTS: CommandItem[] = [
+  { id: "1", label: "Frontend Engineer", description: "Frontend Engineer Recruitment being performed" },
+  { id: "2", label: "Backend Engineer", description: "Backend Engineer Recruitment being performed" },
+  { id: "3", label: "Fullstack Developer", description: "Fullstack Engineer Recruitment being performed" },
+];
+
+const MOCK_SLOTS: CommandItem[] = [
+  { id: "1", label: "Monday 10:00 AM - 11:00 AM", description: "Available" },
+  { id: "2", label: "Monday 2:00 PM - 3:00 PM", description: "Available" },
+  { id: "3", label: "Tuesday 10:00 AM - 11:00 AM", description: "Available" },
+];
+
+export const fetchMockUsers = async (query: string): Promise<CommandItem[]> => {
+  return MOCK_USERS.filter((u) =>
+    u.label.toLowerCase().includes(query.toLowerCase()),
   );
 };
 
-export const fetchMockRecruitments = async (query: string) => {
-  const jobs = [
-    { id: 1, title: "Frontend Engineer", description:"Frontend Engineer Recuritment being peformed" },
-    { id: 2, title: "Backend Engineer", description:"Backend Engineer Recuritment being peformed" },
-    { id: 3, title: "Fullstack Developer", description:"Fullstack Engineer Recuritment being peformed" },
-  ];
+export const fetchMockRecruitments = async (query: string): Promise<CommandItem[]> => {
+  return MOCK_RECRUITMENTS.filter((j) =>
+    j.label.toLowerCase().includes(query.toLowerCase()),
+  );
+};
 
-  return jobs.filter((j) =>
-    j.title.toLowerCase().includes(query.toLowerCase())
+export const fetchMockSlots = async (query: string): Promise<CommandItem[]> => {
+  return MOCK_SLOTS.filter((s) =>
+    s.label.toLowerCase().includes(query.toLowerCase()),
   );
 };

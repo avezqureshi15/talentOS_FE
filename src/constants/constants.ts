@@ -13,6 +13,10 @@ export const SIDEBAR_LABELS = {
   EARLIER: "Earlier",
   RENAME: "Rename",
   DELETE: "Delete",
+  DELETE_CHAT_TITLE: "Delete chat?",
+  DELETE_CHAT_CONFIRM: "This will permanently delete this chat and its messages.",
+  CANCEL: "Cancel",
+  DELETE_CONFIRM: "Delete",
 } as const;
 
 export const SIDEBAR_USER = {
@@ -66,6 +70,131 @@ export const JOB_DETAIL = {
   EXPORT_AS_EXCEL: "Export as Excel",
 } as const;
 
+import type { InterviewRound } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+
+export const MOCK_ROUNDS: InterviewRound[] = [
+  {
+    id: "r1",
+    round: "Technical Round 1",
+    interviewer: "Avez Qureshi",
+    role: "Senior Frontend Engineer",
+    jdHref: "/hiring-requests/hr-001",
+    jdLabel: "React, TypeScript, Next.js, and Tailwind CSS. 4+ years experience required.",
+    candidate: "Engineering Team / Frontend Lead",
+    occurredOn: "June 27, 2026 • 10:30 AM",
+    slot: "10:30 AM – 11:15 AM",
+    duration: "45 min",
+    interviewType: "Technical Round 1 (Google Meet)",
+    status: "Completed",
+    ratings: [
+      { label: "Communication", score: 3, maxScore: 4 },
+      { label: "Technical Skills", score: 4, maxScore: 4 },
+      { label: "Problem Solving", score: 2, maxScore: 4 },
+      { label: "Cultural Fit", score: 3, maxScore: 4 },
+    ],
+    skills: ["React", "TypeScript", "State Management"],
+    notes: "Strong React and TypeScript fundamentals. Needs improvement in system design and architectural thinking.",
+    aiSummary: "Overall Assessment:\nStrong technical candidate with solid frontend fundamentals.\n• Strengths: Deep React and TypeScript knowledge, good component architecture\n• Areas to Improve: System design and large-scale state management patterns\n• Communication: Clear and articulate when discussing technical concepts\n• Verdict: Recommended to advance to next round",
+    verdict: "advance",
+    aiDecision: "selected",
+    hrDecision: "pending",
+  },
+  {
+    id: "r2",
+    round: "Technical Round 2",
+    interviewer: "Pranav Kumar",
+    role: "Senior Frontend Engineer",
+    jdHref: "/hiring-requests/hr-001",
+    jdLabel: "React, TypeScript, Next.js, and Tailwind CSS. 4+ years experience required.",
+    candidate: "Engineering Team / Frontend Lead",
+    occurredOn: "July 2, 2026 • 2:00 PM",
+    slot: "2:00 PM – 2:45 PM",
+    duration: "45 min",
+    interviewType: "Technical Round 2 (Google Meet)",
+    status: "Scheduled",
+    ratings: [],
+    skills: [],
+    notes: "",
+    aiSummary: "Overall Assessment:\nInterview yet to be conducted. No AI analysis available.\n• Status: Scheduled\n• No data to evaluate at this stage",
+    verdict: "hold",
+    aiDecision: "pending",
+    hrDecision: "pending",
+  },
+  {
+    id: "r3",
+    round: "HR Round",
+    interviewer: "HR Team",
+    role: "Senior Frontend Engineer",
+    jdHref: "/hiring-requests/hr-001",
+    jdLabel: "React, TypeScript, Next.js, and Tailwind CSS. 4+ years experience required.",
+    candidate: "Engineering Team / Frontend Lead",
+    occurredOn: "July 5, 2026 • 11:00 AM",
+    slot: "11:00 AM – 11:30 AM",
+    duration: "30 min",
+    interviewType: "HR Round (Google Meet)",
+    status: "Pending",
+    ratings: [],
+    skills: [],
+    notes: "",
+    aiSummary: "Overall Assessment:\nPending HR evaluation. No technical concerns flagged.\n• Status: Pending scheduling confirmation",
+    verdict: "hold",
+    aiDecision: "pending",
+    hrDecision: "pending",
+  },
+  {
+    id: "r4",
+    round: "Screening Round",
+    interviewer: "HR Team",
+    role: "Senior Frontend Engineer",
+    jdHref: "/hiring-requests/hr-001",
+    jdLabel: "React, TypeScript, Next.js, and Tailwind CSS. 4+ years experience required.",
+    candidate: "Engineering Team / Frontend Lead",
+    occurredOn: "June 20, 2026 • 9:00 AM",
+    slot: "9:00 AM – 9:30 AM",
+    duration: "30 min",
+    interviewType: "Screening (Phone)",
+    status: "Completed",
+    ratings: [
+      { label: "Communication", score: 4, maxScore: 4 },
+      { label: "Technical Skills", score: 3, maxScore: 4 },
+      { label: "Problem Solving", score: 3, maxScore: 4 },
+      { label: "Cultural Fit", score: 4, maxScore: 4 },
+    ],
+    skills: ["React", "TypeScript"],
+    notes: "Good communication skills. Has relevant experience. Proceed to technical round.",
+    aiSummary: "Overall Assessment:\nCandidate meets minimum qualifications for the role.\n• Strengths: Excellent communication, relevant domain experience, strong cultural alignment\n• Areas to Improve: Deep technical breadth yet to be assessed\n• Communication: Very responsive and well-prepared\n• Verdict: Clear pass — proceed to technical round",
+    verdict: "advance",
+    aiDecision: "selected",
+    hrDecision: "approved",
+  },
+  {
+    id: "r5",
+    round: "Take-Home Assignment",
+    interviewer: "Tech Team",
+    role: "Senior Frontend Engineer",
+    jdHref: "/hiring-requests/hr-001",
+    jdLabel: "React, TypeScript, Next.js, and Tailwind CSS. 4+ years experience required.",
+    candidate: "Engineering Team / Frontend Lead",
+    occurredOn: "June 22, 2026 • 6:00 PM",
+    slot: "Submitted: June 25, 2026",
+    duration: "3 days",
+    interviewType: "Take-Home (Async)",
+    status: "Completed",
+    ratings: [
+      { label: "Code Quality", score: 4, maxScore: 4 },
+      { label: "Architecture", score: 3, maxScore: 4 },
+      { label: "UI/UX Sense", score: 3, maxScore: 4 },
+      { label: "Documentation", score: 2, maxScore: 4 },
+    ],
+    skills: ["React", "TypeScript", "Next.js", "Tailwind"],
+    notes: "Clean code with good component structure. Could improve test coverage and documentation.",
+    aiSummary: "Overall Assessment:\nSolid take-home submission demonstrating strong engineering practices.\n• Strengths: Clean component architecture, good use of Next.js patterns, well-organized codebase\n• Areas to Improve: Test coverage below threshold, sparse documentation\n• Code Quality: 4/4 — production-ready code\n• Verdict: Pass — proceed to final round",
+    verdict: "advance",
+    aiDecision: "selected",
+    hrDecision: "pending",
+  },
+];
+
 export const APPLICANT_LABELS = {
   QUEUING: "Queuing candidate for first round...",
   START_SCREENING: "Start Screening Round",
@@ -74,16 +203,30 @@ export const APPLICANT_LABELS = {
   EMAIL: "Email",
   PHONE: "Phone",
   APPLIED: "Applied",
+  DETAILS: "Details",
   COVER_LETTER: "Cover Letter",
   AI_SUMMARY: "AI Summary",
+  ROUNDS: "Rounds",
   LINKEDIN: "LinkedIn",
   CV: "CV",
   TIMELINE: "Timeline",
   CANDIDATE_REJECTED: "Candidate rejected",
   CANDIDATE_HIRED: "Candidate hired",
   READ_MORE: "Read more",
+  VIEW_ALL_DETAILS: "View all details",
+  NO_DETAILS: "No additional details available.",
   NO_AI_SUMMARY: "No AI summary available for this applicant yet.",
   NO_COVER_LETTER: "No Cover letter provided",
+  CURRENT_CTC: "Current CTC",
+  EXPECTED_CTC: "Expected CTC",
+  YEARS_OF_EXPERIENCE: "Years of Experience",
+  LOCATION: "Location",
+  NOTICE_PERIOD: "Notice Period",
+  HOW_DID_YOU_HEAR: "How did you hear",
+  SELECT_CANDIDATE: "Select Candidate",
+  REJECT_CANDIDATE: "Reject Candidate",
+  NO_ROUNDS: "No interview rounds recorded yet.",
+  FINAL_DECISION_CONFIRM: "Are you sure you want to {action} this candidate? After this the candidate will move out of the hiring pipeline.",
 } as const;
 
 export const TIMELINE_LABELS = {
@@ -127,3 +270,19 @@ export const FILTER_OPTIONS = {
 } as const;
 
 export const PER_PAGE_OPTIONS = [5, 10, 50] as const;
+
+export const HR_TABS = [
+  { key: "hiring-requests", label: "All Hiring Requests", icon: "bx bx-briefcase" },
+  { key: "action-center", label: "Action Center", icon: "bx bx-bell" },
+  { key: "pipeline-outflow", label: "Pipeline Outflow", icon: "bx bx-trending-up" },
+] as const;
+
+export const ACTION_CENTER_TABS = [
+  { key: "slots", label: "Slots", icon: "bx bx-stopwatch" },
+  { key: "reviews", label: "Reviews", icon: "bx bx-check-shield" },
+] as const;
+
+export const PIPELINE_OUTFLOW_TABS = [
+  { key: "selected", label: "Selected", icon: "bx bx-check-circle" },
+  { key: "rejected", label: "Rejected", icon: "bx bx-x-circle" },
+] as const;

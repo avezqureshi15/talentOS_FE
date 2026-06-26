@@ -5,7 +5,7 @@ import {
   PREDICTION_VOLUME,
   PREDICTION_POLYMARKET,
   PREDICTION_BOTTOM_TEXT,
-} from "../home.constants";
+} from "@/components/home/home.constants";
 
 export default function PredictionMarkets({ rows }: PredictionMarketsProps) {
   return (

@@ -4,8 +4,8 @@ import IconButton from "@/components/ui/icon-button/icon-button";
 import ShareButton from "@/components/ui/share-button/share-button";
 
 import "./header.css";
-import type { HeaderLeftProps, HeaderProps } from "./header.types";
-import { useHeaderShare } from "./hooks/useHeaderShare";
+import type { HeaderLeftProps, HeaderRightProps, HeaderProps } from "./header.types";
+import { useHeaderShare } from "./hooks/use-header-share";
 
 /* ───────── LEFT ───────── */
 
@@ -25,14 +25,6 @@ const HeaderLeft: React.FC<HeaderLeftProps> = ({
 };
 
 /* ───────── RIGHT ───────── */
-
-import type { ComponentType } from "react";
-
-type IconComponent = ComponentType<{ className?: string }>;
-
-type HeaderRightProps = {
-  Icon: Record<string, IconComponent>;
-};
 
 const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
   const location = useLocation();

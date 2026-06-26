@@ -8,7 +8,7 @@ import ErrorFallback from '@/components/ui/error-fallback/error-fallback'
 import LoadingSpinner from '@/components/ui/loading-spinner/loading-spinner'
 import { ERROR_FALLBACK_LABELS } from '@/constants/error-labels'
 import '@/index.css'
-import '@/App.css'
+import '@/app.css'
 
 const queryClient = new QueryClient()
 

@@ -1,26 +1,20 @@
-// mention.types.ts
-
-export type TriggerType = "@" | "#";
-
-export type User = {
-  id: number;
-  name: string;
-  type: "user";
-  email:string;
+export type CommandItem = {
+  id: string;
+  label: string;
+  description?: string;
 };
 
-export type Recruitment = {
-  id: number;
+export type CommandEntry = {
+  id: string;
+  label: string;
+  icon?: string;
+  children?: CommandEntry[];
+  searchPlaceholder?: string;
+  fetcher?: (query: string) => Promise<CommandItem[]>;
+  getInsertText?: (item?: CommandItem) => string;
+};
+
+export type MenuLevel = {
   title: string;
-  type: "recruitment";
-  description:string
-};
-
-export type MentionItem = User | Recruitment;
-
-export type MentionPopupProps = {
-  show: boolean;
-  data: MentionItem[];
-  activeTrigger: TriggerType | null;
-  onSelect: (item: MentionItem) => void;
+  entries: CommandEntry[];
 };

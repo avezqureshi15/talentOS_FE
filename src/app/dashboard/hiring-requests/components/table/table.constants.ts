@@ -1,3 +1,13 @@
 export const TABLE_EMPTY_STATE = "No hiring requests found";
 export const PAGINATION_PREVIOUS = "Previous";
 export const PAGINATION_NEXT = "Next";
+export const DATE_FROM_LABEL = "From";
+export const DATE_TO_LABEL = "To";
+export const SELECT_DATE = "Select date";
+export const ALL_DEPARTMENTS = "All Departments";
+export const ALL_LOCATIONS = "All Locations";
+export const ALL_TYPES = "All Types";
+export const ALL_STATUS = "All Status";
+export const STATUS_ACTIVE = "Active";
+export const STATUS_CLOSED = "Closed";
+export const PER_PAGE_TEMPLATE = "{n} / page";

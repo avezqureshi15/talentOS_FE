@@ -1,4 +1,4 @@
-import type { NewsItem } from "../home.types";
+import type { NewsItem } from "@/components/home/home.types";
 
 export type NewsSectionProps = {
   items: NewsItem[];

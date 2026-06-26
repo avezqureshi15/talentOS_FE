@@ -1,0 +1,53 @@
+.skill-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skill-chips-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.skill-chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-secondary);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.skill-chip:hover {
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+
+.skill-chip--active {
+  color: #0a0a0a;
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.skill-chip--active:hover {
+  color: #0a0a0a;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.skill-chip-check {
+  font-size: 14px;
+}

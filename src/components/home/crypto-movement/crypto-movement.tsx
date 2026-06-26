@@ -1,5 +1,5 @@
-import type { CryptoData } from "../home.types";
-import { CRYPTO_TITLE } from "../home.constants";
+import type { CryptoData } from "@/components/home/home.types";
+import { CRYPTO_TITLE } from "@/components/home/home.constants";
 
 function SparkLine({
   color = "#ef4444",

@@ -1,0 +1,65 @@
+.slot-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.slot-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.slot-picker-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.slot-picker-badge {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--surface-glass);
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.slot-chip {
+  padding: 11px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  font-family: inherit;
+  text-align: center;
+}
+
+.slot-chip:hover {
+  background: var(--surface-glass-hover);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.slot-chip--selected {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(255, 255, 255, 0.85) !important;
+  color: #0a0a0a;
+}
+
+.slot-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 28px 0;
+}

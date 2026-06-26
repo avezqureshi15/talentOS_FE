@@ -1,0 +1,312 @@
+.booking-page {
+  height: 100vh;
+  display: flex;
+  background: var(--bg-primary);
+  animation: fadeSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Two-column layout ── */
+.booking-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Left context panel (35%) ── */
+.booking-context {
+  flex: 0 0 35%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 36px 32px;
+  border-right: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.context-brand {
+  margin-bottom: 4px;
+}
+
+.context-brand .sidebar-brand-name {
+  font-size: 20px;
+}
+
+.context-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 18px 0;
+}
+
+.context-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.context-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 3px 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  background: var(--surface-glass);
+  border-radius: 20px;
+}
+
+.context-role {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.context-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.context-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.context-meta-item i {
+  font-size: 15px;
+  color: var(--text-muted);
+  width: 18px;
+  text-align: center;
+}
+
+.context-note {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.context-note-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.context-note-heading i {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.context-note p {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── Right action panel (65%) ── */
+.booking-action {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 40px 32px 36px;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.action-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.action-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.action-main {
+  display: flex;
+  gap: 32px;
+  flex: 1;
+  min-height: 0;
+}
+
+.action-calendar-wrap {
+  flex: 0 0 auto;
+  max-width: 340px;
+}
+
+.action-slots-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.action-slots-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ── Bottom bar (tz + confirm) ── */
+.action-bottom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+/* ── Timezone picker ── */
+.action-tz-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.action-tz-picker:focus-within {
+  border-color: var(--text-muted);
+}
+
+.action-tz-picker i:first-child {
+  font-size: 15px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.tz-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  padding-right: 4px;
+  min-width: 180px;
+}
+
+.tz-select option {
+  background: #1a1a1a;
+  color: var(--text-primary);
+}
+
+.tz-arrow {
+  font-size: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* ── Confirm button ── */
+.booking-confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0a0a0a;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.booking-confirm-btn i {
+  font-size: 16px;
+}
+
+.booking-confirm-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.booking-confirm-btn:active {
+  transform: scale(0.98);
+}
+
+.booking-hint {
+  font-size: 12px;
+  color: var(--text-faint);
+  text-align: center;
+  padding: 10px 0;
+  flex: 1;
+}
+
+/* ── Confirmed state ── */
+.booking-confirmed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 48px 28px;
+  gap: 10px;
+  text-align: center;
+}
+
+.confirmed-icon {
+  font-size: 48px;
+  color: #22c55e;
+}
+
+.confirmed-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.confirmed-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .booking-layout {
+    flex-direction: column;
+  }
+
+  .booking-context {
+    flex: none;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 24px 20px;
+  }
+
+  .booking-action {
+    padding: 24px 20px;
+  }
+
+  .action-calendar {
+    max-width: 100%;
+  }
+}

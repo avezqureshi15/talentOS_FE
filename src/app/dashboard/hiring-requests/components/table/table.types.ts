@@ -1,5 +1,11 @@
 import type { HiringRequest, HiringRequestsFilters } from "@/services/hiring-requests/hiring-requests.types";
 
+export type DatePickerInputProps = {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+};
+
 export type HiringRequestsTableProps = {
   filters: HiringRequestsFilters;
   data: HiringRequest[];

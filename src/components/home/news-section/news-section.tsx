@@ -1,4 +1,4 @@
-import type { NewsItem } from "../home.types";
+import type { NewsItem } from "@/components/home/home.types";
 import type { NewsSectionProps } from "./news-section.types";
 
 export default function NewsSection({ items, openIndex, onToggle }: NewsSectionProps) {

@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { PAGINATION } from "@/constants/api-endpoints";
-import { searchHiringRequests } from "../services/command-palette.service";
+import { searchHiringRequests } from "@/components/ui/command-palette/services/command-palette.service";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
 
 export const useHiringSearch = (q: string) => {

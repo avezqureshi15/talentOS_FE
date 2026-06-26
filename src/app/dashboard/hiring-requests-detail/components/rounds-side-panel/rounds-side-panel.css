@@ -1,0 +1,274 @@
+.rp-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Badge ── */
+.rp-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 3px 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  background: var(--surface-glass);
+  border-radius: 20px;
+}
+
+/* ── Divider ── */
+.rp-divider {
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+/* ── Group ── */
+.rp-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rp-group-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Details rows ── */
+.rp-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.rp-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.rp-row:last-child {
+  border-bottom: none;
+}
+
+.rp-row-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+}
+
+.rp-row-label i {
+  font-size: 12px;
+  width: 14px;
+  text-align: center;
+}
+
+.rp-row-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* ── Decision cards ── */
+.rp-decision-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rp-decision-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.rp-decision-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.rp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 20px;
+}
+
+.rp-pill i {
+  font-size: 13px;
+}
+
+/* Interviewer verdicts */
+.rp-pill--reject {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.rp-pill--hold {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.rp-pill--advance {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+/* AI decisions */
+.rp-pill--ai-pending {
+  color: var(--text-muted);
+  background: var(--surface-glass);
+}
+
+.rp-pill--ai-selected {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.rp-pill--ai-rejected {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.rp-pill--ai-conflict {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+
+/* HR decisions */
+.rp-pill--hr-pending {
+  color: var(--text-muted);
+  background: var(--surface-glass);
+}
+
+.rp-pill--hr-approved {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.rp-pill--hr-rejected {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ── Ratings ── */
+.rp-ratings {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rp-rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.rp-rating-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.rp-rating-score {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.rp-avg {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ── Skills ── */
+.rp-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rp-skill-chip {
+  display: inline-flex;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+}
+
+/* ── AI Summary ── */
+.rp-ai-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.rp-ai-heading {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.rp-ai-heading:first-child {
+  margin-top: 0;
+}
+
+.rp-ai-bullet {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding-left: 12px;
+}
+
+.rp-ai-text {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ── Notes ── */
+.rp-notes {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin: 0;
+}
