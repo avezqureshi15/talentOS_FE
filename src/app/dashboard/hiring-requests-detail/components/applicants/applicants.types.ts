@@ -30,16 +30,19 @@ export type ApplicantCardProps = {
   accordionTab: AccordionTab;
   onToggleOpen: (id: string) => void;
   onStartScreening: (id: string) => void;
-  onReject: (id: string) => void;
-  onAccept: (id: string) => void;
+  onHrShortlist: (id: string) => void;
+  onHrReject: (id: string) => void;
   onTabChange: (tab: AccordionTab) => void;
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
   onDetailsReadMore: (id: string) => void;
   onTimeline: (id: string) => void;
+  onScheduleRound1: (id: string) => void;
   onFinalDecision: (id: string, decision: "selected" | "rejected") => void;
   onViewRound?: (roundId: string) => void;
 };
+
+export type AiDecision = "shortlisted" | "rejected" | "pending";
 
 export type Applicant = {
   id: string;
@@ -55,6 +58,7 @@ export type Applicant = {
   cvUrl: string;
   status: ApplicantStatus;
   score?: number;
+  aiDecision?: AiDecision;
   appliedAt?: string;
   currentCtc?: string;
   expectedCtc?: string;

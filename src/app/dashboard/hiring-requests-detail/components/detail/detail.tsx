@@ -4,6 +4,7 @@ import "./detail.css";
 
 import JobDescription from "@/app/dashboard/hiring-requests-detail/components/job-desc/job-desc";
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
+import FinalVerdict from "@/app/dashboard/hiring-requests-detail/components/final-verdict/final-verdict";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import BaseModal from "@/components/ui/modal/base-modal";
@@ -111,6 +112,13 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
             ? `Applicants (${applicants.length})`
             : "Applicants"}
         </button>
+
+        <button
+          className={`segment-item ${segment === "final-verdict" ? "active" : ""}`}
+          onClick={() => setSegment("final-verdict")}
+        >
+          Final Verdict
+        </button>
       </div>
 
       <div className="tab-content">
@@ -132,6 +140,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 onScoreFilterChange={setScoreFilter}
               />
             )
+          )}
+
+          {segment === "final-verdict" && (
+            <FinalVerdict jobId={hiringRequest.supabase_job_id ?? ""} />
           )}
         </ErrorBoundary>
       </div>

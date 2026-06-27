@@ -13,6 +13,7 @@ import { useChatMessages } from "@/app/chat/hooks/use-chat-messages";
 
 import { useChatStore } from "@/store/chat.store";
 import { CHAT_BASE_PATH } from "./chat.constants";
+import type { WizardExecutionPayload, HybridQuestionPayload } from "@/components/shared/mentions/mentions.types";
 
 export default function Chat() {
   const [input, setInput] = useState(""); // Controlled input value for the chat message field
@@ -56,6 +57,10 @@ export default function Chat() {
     }
   };
 
+  const handleWizardComplete = (payload: WizardExecutionPayload | HybridQuestionPayload) => {
+    handleSend(JSON.stringify(payload));
+  };
+
   const showLoading = chatId && isLoading && messages.length === 0;
 
   if (showLoading) {
@@ -85,6 +90,7 @@ export default function Chat() {
               handleSend(input);
               setInput("");
             }}
+            onWizardComplete={handleWizardComplete}
           />
         )}
       </div>

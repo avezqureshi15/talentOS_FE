@@ -226,6 +226,13 @@ export const APPLICANT_LABELS = {
   SELECT_CANDIDATE: "Select Candidate",
   REJECT_CANDIDATE: "Reject Candidate",
   NO_ROUNDS: "No interview rounds recorded yet.",
+  HR_SHORTLIST: "Shortlist",
+  HR_REJECT: "Reject",
+  SCHEDULE_ROUND_1: "Schedule Round 1",
+  AI_SHORTLISTED: "AI Shortlisted",
+  AI_REJECTED: "AI Rejected",
+  AI_PENDING: "AI Pending",
+  REJECT_WARNING: "Rejecting this candidate may move them outside the hiring pipeline. Are you sure?",
   FINAL_DECISION_CONFIRM: "Are you sure you want to {action} this candidate? After this the candidate will move out of the hiring pipeline.",
 } as const;
 
@@ -274,7 +281,6 @@ export const PER_PAGE_OPTIONS = [5, 10, 50] as const;
 export const HR_TABS = [
   { key: "hiring-requests", label: "All Hiring Requests", icon: "bx bx-briefcase" },
   { key: "action-center", label: "Action Center", icon: "bx bx-bell" },
-  { key: "pipeline-outflow", label: "Pipeline Outflow", icon: "bx bx-trending-up" },
 ] as const;
 
 export const ACTION_CENTER_TABS = [
@@ -282,7 +288,3 @@ export const ACTION_CENTER_TABS = [
   { key: "reviews", label: "Reviews", icon: "bx bx-check-shield" },
 ] as const;
 
-export const PIPELINE_OUTFLOW_TABS = [
-  { key: "selected", label: "Selected", icon: "bx bx-check-circle" },
-  { key: "rejected", label: "Rejected", icon: "bx bx-x-circle" },
-] as const;

@@ -3,13 +3,9 @@ import type { CommandEntry, CommandItem, MenuLevel } from "./mentions.types";
 import { ROOT_MENU } from "./command-menu.config";
 
 export const useCommandMenu = () => {
-  // Stack of menu levels for breadcrumb-style navigation
   const [stack, setStack] = useState<MenuLevel[]>([{ title: "", entries: ROOT_MENU }]);
-  // Current search query within the active level
   const [search, setSearch] = useState("");
-  // Fetched items when viewing a list (HR requests, applicants, employees, slots)
   const [listItems, setListItems] = useState<CommandItem[]>([]);
-  // Index of the currently highlighted item for keyboard navigation
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const currentLevel = stack[stack.length - 1];
@@ -25,12 +21,10 @@ export const useCommandMenu = () => {
 
   const activeItems: (CommandEntry | CommandItem)[] = isListView ? listItems : filteredEntries;
 
-  // Reset selection highlight when the item list changes (search, navigation, data load)
   useEffect(() => {
     setSelectedIndex(0);
   }, [filteredEntries.length, listItems.length, stack.length]);
 
-  // Fetch list items from the active entry's fetcher whenever search or active entry changes
   useEffect(() => {
     if (!isListView || !activeEntry?.fetcher) {
       setListItems([]);
@@ -39,10 +33,20 @@ export const useCommandMenu = () => {
     activeEntry.fetcher(search).then(setListItems);
   }, [search, isListView, activeEntry]);
 
+  const loadWizardItems = useCallback((items: CommandItem[]) => {
+    setStack([{ title: "", entries: [{ id: "wizard", label: "", fetcher: async () => items }] }]);
+    setSearch("");
+  }, []);
+
+  const resetToRoot = useCallback(() => {
+    setStack([{ title: "", entries: ROOT_MENU }]);
+    setSearch("");
+    setListItems([]);
+  }, []);
+
   const navigateTo = useCallback((entry: CommandEntry) => {
     if (entry.children) {
-      const children = entry.children;
-      setStack((prev) => [...prev, { title: entry.label, entries: children }]);
+      setStack((prev) => [...prev, { title: entry.label, entries: entry.children }]);
       setSearch("");
     } else if (entry.fetcher) {
       setStack((prev) => [...prev, { title: entry.label, entries: [entry] }]);
@@ -89,6 +93,8 @@ export const useCommandMenu = () => {
     navigateTo,
     goBack,
     reset,
+    resetToRoot,
+    loadWizardItems,
     canGoBack,
     selectedIndex,
     setSelectedIndex,

@@ -68,7 +68,7 @@ export default function ApplicantTimelineSheet({
           {/* HEADER */}
           <div className="timeline-header">
             <div className="title">
-              <i className="bx bx-time-five"></i> {TIMELINE_LABELS.CANDIDATE_JOURNEY}
+              <i className="bx bx-clock"></i> {TIMELINE_LABELS.CANDIDATE_JOURNEY}
             </div>
 
             <button className="close-btn" onClick={onClose}>

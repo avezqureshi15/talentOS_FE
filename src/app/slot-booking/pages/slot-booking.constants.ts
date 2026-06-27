@@ -20,7 +20,7 @@ export const CONTEXT_SECTIONS: ContextSection[] = [
   {
     type: "meta",
     items: [
-      { icon: "bx bx-time", text: "30 Minutes" },
+      { icon: "bx bx-clock", text: "30 Minutes" },
       { icon: "bx bx-video", text: "Google Meet / Zoom" },
     ],
   },

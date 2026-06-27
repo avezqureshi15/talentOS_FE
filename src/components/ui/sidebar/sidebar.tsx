@@ -130,6 +130,13 @@ const Sidebar: React.FC<SidebarProps> = ({
              <span className="sidebar-shortcut">Ctrl+Shift+H</span>
           </button>
           </Link>
+          <Link to="/hiring-requests?tab=action-center">
+          <button className="sidebar-item">
+            <span className="bx bx-bell text-lg" ></span>
+            <span className="sidebar-item-label">Action Center</span>
+            <span className="sidebar-shortcut">Ctrl+Shift+A</span>
+          </button>
+          </Link>
           <button className="sidebar-item" onClick={onSearch}>
             <Icon.Search />
             <span className="sidebar-item-label">{SIDEBAR_LABELS.SEARCH}</span>

@@ -12,7 +12,7 @@ const ChatArea: React.FC<ChatAreaProps> = (props: ChatAreaProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const prevScrollHeightRef = useRef(0);
-  const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
+  const [copiedMsgId, setCopiedMsgId] = useState<number | null>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
   const { messages, hasStarted, isProcessing } = useChatStore();
@@ -42,7 +42,7 @@ const ChatArea: React.FC<ChatAreaProps> = (props: ChatAreaProps) => {
     if (autoScroll) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, autoScroll]);
 
-  const handleCopy = useCallback(async (id: string) => {
+  const handleCopy = useCallback(async (id: number) => {
     const msg = messages.find((m) => m.id === id);
     if (!msg || msg.role !== "ai") return;
     const text = extractAllText(msg.content);

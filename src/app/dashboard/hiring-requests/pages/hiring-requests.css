@@ -97,3 +97,13 @@
   color: var(--text-primary);
   border-bottom-color: var(--accent, #818cf8);
 }
+
+.hr-tab--highlight,
+.ac-tab--highlight {
+  animation: tab-pulse 2s ease-out;
+}
+
+@keyframes tab-pulse {
+  0% { background: rgba(79, 142, 247, 0.15); }
+  100% { background: transparent; }
+}

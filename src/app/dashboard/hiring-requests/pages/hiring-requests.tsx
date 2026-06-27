@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import HiringRequestsTable from "@/app/dashboard/hiring-requests/components/table/table";
@@ -8,15 +8,27 @@ import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useHiringRequests } from "@/app/dashboard/hiring-requests/hooks/use-hiring-requests";
 import type { HiringRequestsFilters } from "@/services/hiring-requests/hiring-requests.types";
-import { QUERY_KEYS, HR_TABS, ACTION_CENTER_TABS, PIPELINE_OUTFLOW_TABS } from "@/constants/constants";
+import { QUERY_KEYS, HR_TABS, ACTION_CENTER_TABS } from "@/constants/constants";
 import "./hiring-requests.css";
 
 const HiringRequests = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = searchParams.get("tab") || "hiring-requests";
   const sub = searchParams.get("sub") || "slots";
-  const outflowSub = searchParams.get("outflow_sub") || "selected";
+  const highlight = searchParams.get("highlight") === "true";
   const setTab = (key: string) => setSearchParams({ tab: key });
+
+  useEffect(() => {
+    if (!highlight) return;
+    const t = setTimeout(() => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("highlight");
+        return next;
+      }, { replace: true });
+    }, 2000);
+    return () => clearTimeout(t);
+  }, [highlight, setSearchParams]);
 
   const [filters, setFilters] = useState<HiringRequestsFilters>({
     page: 1,
@@ -48,7 +60,7 @@ const HiringRequests = () => {
           {HR_TABS.map((t) => (
             <button
               key={t.key}
-              className={`hr-tab${tab === t.key ? " hr-tab--active" : ""}`}
+              className={`hr-tab${tab === t.key ? " hr-tab--active" : ""}${highlight && t.key === "action-center" ? " hr-tab--highlight" : ""}`}
               onClick={() => setTab(t.key)}
               type="button"
             >
@@ -85,7 +97,7 @@ const HiringRequests = () => {
               {ACTION_CENTER_TABS.map((st) => (
                 <button
                   key={st.key}
-                  className={`ac-tab${sub === st.key ? " ac-tab--active" : ""}`}
+                  className={`ac-tab${sub === st.key ? " ac-tab--active" : ""}${highlight ? " ac-tab--highlight" : ""}`}
                   onClick={() => setSearchParams({ tab: "action-center", sub: st.key })}
                   type="button"
                 >
@@ -98,24 +110,7 @@ const HiringRequests = () => {
           </div>
         )}
 
-        {tab === "pipeline-outflow" && (
-          <div className="ac-content">
-            <div className="ac-tabs">
-              {PIPELINE_OUTFLOW_TABS.map((st) => (
-                <button
-                  key={st.key}
-                  className={`ac-tab${outflowSub === st.key ? " ac-tab--active" : ""}`}
-                  onClick={() => setSearchParams({ tab: "pipeline-outflow", outflow_sub: st.key })}
-                  type="button"
-                >
-                  <i className={st.icon} />
-                  {st.label}
-                </button>
-              ))}
-            </div>
-            <div className="hr-tab-placeholder">Coming soon</div>
-          </div>
-        )}
+        
       </div>
     </ErrorBoundary>
   );

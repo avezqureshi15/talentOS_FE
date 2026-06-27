@@ -69,6 +69,10 @@ export default function ProtectedLayout() {
     setSidebarOpen((prev) => !prev);
   }, []);
 
+  const handleActionCenter = useCallback(() => {
+    navigate("/hiring-requests?tab=action-center&highlight=true");
+  }, [navigate]);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const k = KEYBOARD_SHORTCUTS;
@@ -84,10 +88,14 @@ export default function ProtectedLayout() {
         e.preventDefault();
         handleToggleSidebar();
       }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.ACTION_CENTER.code) {
+        e.preventDefault();
+        handleActionCenter();
+      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [handleNewChat, handleHome, handleToggleSidebar]);
+  }, [handleNewChat, handleHome, handleToggleSidebar, handleActionCenter]);
 
   const {
     isOpen: cmdOpen,

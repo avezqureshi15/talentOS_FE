@@ -4,4 +4,4 @@ export type JobDetailProps = {
   hiringRequest: HiringRequest;
 };
 
-export type Segment = "jd" | "applicants";
+export type Segment = "jd" | "applicants" | "final-verdict";

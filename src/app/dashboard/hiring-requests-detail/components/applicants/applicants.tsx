@@ -7,8 +7,9 @@ import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
+import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import { APPLICANT_LABELS, MOCK_ROUNDS } from "@/constants/constants";
-import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps, InterviewRound } from "./applicants.types";
+import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps } from "./applicants.types";
 
 const SCORE_FILTERS = [
   { value: "all", label: "All Scores" },
@@ -31,6 +32,8 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
   const [finalCandidateId, setFinalCandidateId] = useState<string | null>(null);
   const [finalDecision, setFinalDecision] = useState<"selected" | "rejected" | null>(null);
   const [roundId, setRoundId] = useState<string | null>(null);
+  const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
+  const [scheduleCandidateId, setScheduleCandidateId] = useState<string | null>(null);
   const selectedRound = roundId ? MOCK_ROUNDS.find((r) => r.id === roundId) ?? null : null;
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -115,8 +118,9 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
             accordionTab={accordionTab}
             onToggleOpen={(id) => setOpenId(isOpen ? null : id)}
             onStartScreening={(id) => { setScreeningId(id); setOpenId(id); }}
-            onReject={(id) => { overrideStatus(id, "rejected"); setScreeningId(null); }}
-            onAccept={(id) => { overrideStatus(id, "reviewing"); setScreeningId(null); }}
+            onHrShortlist={(id) => { overrideStatus(id, "reviewing"); }}
+            onHrReject={setRejectConfirmId}
+            onScheduleRound1={setScheduleCandidateId}
             onTabChange={setAccordionTab}
             onCoverLetterReadMore={setCoverLetterId}
             onAiSummaryReadMore={setAiSummaryId}
@@ -157,6 +161,40 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
           </div>
         </div>
       </BaseModal>
+
+      <BaseModal
+        open={!!rejectConfirmId}
+        onClose={() => setRejectConfirmId(null)}
+        title={APPLICANT_LABELS.HR_REJECT}
+      >
+        <div className="confirm-body">
+          <p>{APPLICANT_LABELS.REJECT_WARNING}</p>
+          <div className="confirm-actions">
+            <button className="confirm-btn confirm-cancel" onClick={() => setRejectConfirmId(null)} type="button">Cancel</button>
+            <button
+              className="confirm-btn confirm-danger"
+              onClick={() => {
+                if (rejectConfirmId) {
+                  overrideStatus(rejectConfirmId, "rejected");
+                  setScreeningId(null);
+                }
+                setRejectConfirmId(null);
+              }}
+              type="button"
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+      </BaseModal>
+
+      <ScheduleRoundModal
+        open={!!scheduleCandidateId}
+        candidateName={data.find((a) => a.id === scheduleCandidateId)?.name ?? ""}
+        candidateId={scheduleCandidateId ?? ""}
+        onClose={() => setScheduleCandidateId(null)}
+        onScheduled={(id) => { overrideStatus(id, "shortlisted"); setScreeningId(null); }}
+      />
 
       <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 

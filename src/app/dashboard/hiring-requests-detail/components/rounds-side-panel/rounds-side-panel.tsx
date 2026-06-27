@@ -5,7 +5,7 @@ import "./rounds-side-panel.css";
 
 const verdictIcon: Record<string, string> = {
   reject: "bx bx-x-circle",
-  hold: "bx bx-timer",
+  hold: "bx bx-clockr",
   advance: "bx bx-check-double",
 };
 
@@ -70,7 +70,7 @@ const PanelContent = ({ round }: PanelContentProps) => {
         <span className="rp-group-title">Schedule Details</span>
         <div className="rp-details">
           <Row label="Occurred On" icon="bx bx-calendar" value={round.occurredOn} />
-          <Row label="Slot" icon="bx bx-time" value={round.slot} />
+          <Row label="Slot" icon="bx bx-clock" value={round.slot} />
           <Row label="Duration" icon="bx bx-stopwatch" value={round.duration} />
           <Row label="Interview Type" icon="bx bx-video" value={round.interviewType} />
           <Row label="Status" icon="bx bx-check-circle" value={round.status} />

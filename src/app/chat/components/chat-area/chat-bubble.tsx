@@ -1,16 +1,17 @@
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import UserMessage from "@/components/ui/user-message/user-message";
+import CommandCard from "@/components/ui/command-card/command-card";
 import SuggestionChips from "./block-renderer/blocks/suggestion-chips/suggestion-chips";
 import TextArea from "./block-renderer/blocks/text-area/text-area";
 import { renderBlock } from "./block-renderer/block-factory";
-import { hasSuggestions, hasUIAction, extractFirstText, extractMarkdown } from "./chat-area.utils";
+import { hasSuggestions, hasUIAction, extractFirstText, extractMarkdown, isCommandExecution, parseCommandExecution, isHybridQuestion, parseHybridQuestion } from "./chat-area.utils";
 import { COPY_LABEL } from "./chat-area.constants";
 import type { Message, ContentBlock } from "@/app/chat/pages/chat.types";
 
 type ChatBubbleProps = {
   msg: Message;
-  copiedMsgId: string | null;
-  onCopy: (id: string, blocks: ContentBlock[]) => void;
+  copiedMsgId: number | null;
+  onCopy: (id: number, blocks: ContentBlock[]) => void;
   onSend: (text: string) => void;
 };
 
@@ -38,7 +39,12 @@ const ChatBubble = ({ msg, copiedMsgId, onCopy, onSend }: ChatBubbleProps) => {
     <ErrorBoundary>
       <div>
         {msg.role === "user" ? (
-          <UserMessage text={extractFirstText(msg.content)} />
+          (() => {
+            const text = extractFirstText(msg.content);
+            const cmdData = isCommandExecution(text) ? parseCommandExecution(text) : null;
+            const hybridData = !cmdData && isHybridQuestion(text) ? parseHybridQuestion(text) : null;
+            return cmdData ? <CommandCard data={cmdData} /> : hybridData ? <CommandCard hybrid={hybridData} /> : <UserMessage text={text} />;
+          })()
         ) : (
           <div className="mb-10">
             {visibleBlocks.map((block, i) => renderBlock(block, i))}

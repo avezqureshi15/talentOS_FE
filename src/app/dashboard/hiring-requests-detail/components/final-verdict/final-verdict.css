@@ -1,0 +1,46 @@
+.final-verdict {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fv-sub-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.fv-sub-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.fv-sub-tab i {
+  font-size: 14px;
+}
+
+.fv-sub-tab:hover {
+  color: var(--text-primary);
+}
+
+.fv-sub-tab--active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent, #818cf8);
+}
+
+.fv-card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

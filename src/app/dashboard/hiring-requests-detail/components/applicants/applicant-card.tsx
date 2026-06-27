@@ -7,6 +7,12 @@ import CardCoverLetterTab from "./card-cover-letter-tab";
 import CardAiSummaryTab from "./card-ai-summary-tab";
 import CardRoundsTab from "./card-rounds-tab";
 
+const AI_LABEL: Record<string, string> = {
+  shortlisted: APPLICANT_LABELS.AI_SHORTLISTED,
+  rejected: APPLICANT_LABELS.AI_REJECTED,
+  pending: APPLICANT_LABELS.AI_PENDING,
+};
+
 const ApplicantCard = ({
   applicant: a,
   isOpen,
@@ -14,13 +20,14 @@ const ApplicantCard = ({
   accordionTab,
   onToggleOpen,
   onStartScreening,
-  onReject,
-  onAccept,
+  onHrShortlist,
+  onHrReject,
   onTabChange,
   onCoverLetterReadMore,
   onAiSummaryReadMore,
   onDetailsReadMore,
   onTimeline,
+  onScheduleRound1,
   onFinalDecision,
   onViewRound,
 }: ApplicantCardProps) => {
@@ -54,26 +61,45 @@ const ApplicantCard = ({
         </div>
 
         <div className="header-right">
+          {a.aiDecision && a.aiDecision !== "pending" && (
+            <span className={`ai-chip ai-chip--${a.aiDecision}`}>
+              <i className={`bx ${a.aiDecision === "shortlisted" ? "bx-check-circle" : "bx-x-circle"}`} />
+              {AI_LABEL[a.aiDecision]}
+            </span>
+          )}
+
           {a.score != null && (
             <div className={`ats-score ${a.score >= 70 ? "score-high" : a.score >= 40 ? "score-mid" : "score-low"}`}>
               {a.score}
             </div>
           )}
-          {a.status === "reviewing" && <div className="queue-text mb-30">{APPLICANT_LABELS.QUEUING}</div>}
+
+          <span className="header-action-divider" />
 
           {a.status === "new" && !isScreening && (
+            <>
+              <button className="btn shortlist compact" onClick={(e) => { e.stopPropagation(); onHrShortlist(a.id); }}>
+                <i className="bx bx-check" /> {APPLICANT_LABELS.HR_SHORTLIST}
+              </button>
+              <button className="btn reject compact" onClick={(e) => { e.stopPropagation(); onHrReject(a.id); }}>
+                <i className="bx bx-x" /> {APPLICANT_LABELS.HR_REJECT}
+              </button>
+            </>
+          )}
+
+          {a.status === "reviewing" && !isScreening && (
             <button className="screen-btn compact" onClick={(e) => { e.stopPropagation(); onStartScreening(a.id); }}>
               {APPLICANT_LABELS.START_SCREENING}
             </button>
           )}
 
-          {a.status === "new" && isScreening && (
+          {a.status === "reviewing" && isScreening && (
             <>
-              <button className="btn reject compact" onClick={(e) => { e.stopPropagation(); onReject(a.id); }}>
-                {APPLICANT_LABELS.REJECT}
+              <button className="btn shortlist compact" onClick={(e) => { e.stopPropagation(); onScheduleRound1(a.id); }}>
+                <i className="bx bx-check" /> {APPLICANT_LABELS.SCHEDULE_ROUND_1}
               </button>
-              <button className="btn accept compact" onClick={(e) => { e.stopPropagation(); onAccept(a.id); }}>
-                {APPLICANT_LABELS.ACCEPT}
+              <button className="btn reject compact" onClick={(e) => { e.stopPropagation(); onHrReject(a.id); }}>
+                <i className="bx bx-x" /> {APPLICANT_LABELS.HR_REJECT}
               </button>
             </>
           )}
