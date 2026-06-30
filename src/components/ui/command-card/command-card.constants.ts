@@ -2,6 +2,37 @@ export const HYBRID_INTENT_ICONS: Record<string, string> = {
   INQUIRE_HR_REQUEST: "bx bx-briefcase",
   INQUIRE_APPLICANT: "bx bx-user",
   INQUIRE_EMPLOYEE: "bx bx-user",
+  INQUIRE_INTERVIEW: "bx bx-calendar-check",
 };
 
 export const HYBRID_INTENT_FALLBACK_ICON = "bx bx-id-card";
+
+export const COMMAND_CARD_LABELS = {
+  SLOT_BOOKING: "Slot Booking Request",
+  PING: "Ping",
+  INTERVIEW_BOOKING: "Interview Booking Request",
+  HIRING_REQUEST: "Hiring Request",
+  CANDIDATE: "Candidate",
+  INTERVIEWER: "Interviewer",
+  TIME_SLOT: "Time Slot",
+  EMPLOYEES: "Employees",
+  EMPLOYEE: "Employee",
+  NO_QUESTION: "No question provided",
+  UNKNOWN: "Unknown",
+} as const;
+
+export const INTENT_LABELS: Record<string, string> = {
+  "book-interview": "Book Interview",
+  "ASK_SLOTS": "Slot Booking Request",
+  "interviews": "Interviews",
+  "employees-ping": "Ping",
+  "hr-request": "HR Request",
+  "applicants": "Applicants",
+  "employees-view": "View Employees",
+  "employees-ask-slots": "Ask Slots",
+  "INQUIRE_HR_REQUEST": "HR Request",
+  "INQUIRE_APPLICANT": "Applicant Inquiry",
+  "INQUIRE_EMPLOYEE": "Employee Inquiry",
+  "INQUIRE_INTERVIEW": "Interview Inquiry",
+  "UNKNOWN": "Unknown Command",
+};

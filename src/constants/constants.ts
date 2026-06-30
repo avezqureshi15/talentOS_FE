@@ -280,11 +280,57 @@ export const PER_PAGE_OPTIONS = [5, 10, 50] as const;
 
 export const HR_TABS = [
   { key: "hiring-requests", label: "All Hiring Requests", icon: "bx bx-briefcase" },
+  { key: "interviews", label: "Interviews", icon: "bx bx-calendar-check" },
   { key: "action-center", label: "Action Center", icon: "bx bx-bell" },
 ] as const;
 
 export const ACTION_CENTER_TABS = [
   { key: "slots", label: "Slots", icon: "bx bx-stopwatch" },
   { key: "reviews", label: "Reviews", icon: "bx bx-check-shield" },
+] as const;
+
+export const PROFILE_MENU_ITEMS = [
+  { id: "profile", label: "Profile", icon: "bx bx-user" },
+  { id: "settings", label: "Settings", icon: "bx bx-cog" },
+  { id: "keyboard-shortcuts", label: "Keyboard shortcuts", icon: "bx bx-keyboard" },
+] as const;
+
+export const PROFILE_DANGER_ITEM = { id: "logout", label: "Log out", icon: "bx bx-arrow-out-right-square-half" } as const;
+
+export const LOGOUT_MODAL = {
+  TITLE: "Log out",
+  BODY: "Are you sure you want to log out? You'll need to sign in again to access your account.",
+  CANCEL: "Cancel",
+  CONFIRM: "Log out",
+} as const;
+
+export const PROFILE_MODAL = {
+  TITLE: "Profile",
+  ICON: "bx bx-user",
+  DELETE_CHATS: "Delete all chats",
+  DELETE_CHATS_CONFIRM: "Are you sure you want to delete all chats? This action cannot be undone.",
+  DELETE_CHATS_CANCEL: "Cancel",
+  DELETE_CHATS_CONFIRM_BTN: "Delete all",
+} as const;
+
+export const SETTINGS_MODAL = {
+  TITLE: "Settings",
+  ICON: "bx bx-cog",
+  EMPTY: "Settings panel coming soon.",
+} as const;
+
+export const KEYBOARD_SHORTCUTS_MODAL = {
+  TITLE: "Keyboard shortcuts",
+  ICON: "bx bx-keyboard",
+} as const;
+
+export const KEYBOARD_SHORTCUTS_LIST = [
+  { label: "New Chat", keys: "Ctrl+Shift+C" },
+  { label: "Hiring Requests", keys: "Ctrl+Shift+H" },
+  { label: "Interviews", keys: "Ctrl+Shift+I" },
+  { label: "Action Center", keys: "Ctrl+Shift+A" },
+  { label: "Search", keys: "Ctrl+K" },
+  { label: "Toggle Sidebar", keys: "Ctrl+Shift+S" },
+  { label: "Shortcuts Menu", keys: "Alt+K" },
 ] as const;
 

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import "./detail.css";
 
 import JobDescription from "@/app/dashboard/hiring-requests-detail/components/job-desc/job-desc";
@@ -13,6 +13,7 @@ import { JOB_DETAIL } from "@/constants/constants";
 import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
 import { useExportCsv } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-csv";
 import { DEFAULT_FILTER } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { PAGINATION } from "@/constants/api-endpoints";
 import type { JobDetailProps, Segment } from "./detail.types";
 
 const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = {
@@ -25,16 +26,19 @@ const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = {
 };
 
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const applicantParam = searchParams.get("applicant");
   // justification: tracks active tab segment (job description vs applicants)
-  const [segment, setSegment] = useState<Segment>("jd");
+  const [segment, setSegment] = useState<Segment>(applicantParam ? "applicants" : "jd");
   // justification: tracks which applicant accordion is expanded
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(applicantParam ?? null);
   // justification: tracks confirm modal visibility for close/reopen
   const [showConfirm, setShowConfirm] = useState(false);
   // justification: controls applicant filter value (shortlisted, all, etc.)
   const [filter, setFilter] = useState(DEFAULT_FILTER);
   // justification: score range filter preset
   const [scoreFilter, setScoreFilter] = useState<string>("all");
+
   const { mutate: toggleStatus, isPending: isToggling } = useToggleStatus();
 
   const { handleExport, isExporting, exportError } = useExportCsv(
@@ -43,14 +47,48 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   );
 
   const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
-  const jobId = hiringRequest.supabase_job_id;
+  const jobId = hiringRequest.supabase_job_id ?? undefined;
   const { applicants, isLoading: appsLoading, hasMore, fetchNext } = useApplicationsData(
     jobId,
     filter,
     segment === "applicants",
+    applicantParam ? PAGINATION.APPLICATIONS_SEARCH_SIZE : undefined,
     scoreRange.min,
     scoreRange.max,
   );
+
+  const scrolledRef = useRef(false);
+
+  // justification: scroll + highlight after applicant appears, or clear param if not found
+  useEffect(() => {
+    if (!applicantParam || appsLoading || scrolledRef.current) return;
+    const found = applicants.some((a) => a.id === applicantParam);
+    if (!found) {
+      if (!hasMore) {
+        setSearchParams((prev) => {
+          prev.delete("applicant");
+          return prev;
+        });
+      }
+      return;
+    }
+    scrolledRef.current = true;
+    const scrollTimer = setTimeout(() => {
+      const el = document.querySelector(`[data-applicant-id="${applicantParam}"]`);
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 150);
+    // justification: clear ?applicant= param after highlight animation completes
+    const clearTimer = setTimeout(() => {
+      setSearchParams((prev) => {
+        prev.delete("applicant");
+        return prev;
+      });
+    }, 3000);
+    return () => {
+      clearTimeout(scrollTimer);
+      clearTimeout(clearTimer);
+    };
+  }, [applicantParam, appsLoading, applicants, hasMore, setSearchParams]);
 
   return (
     <div className="job-page">
@@ -138,6 +176,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 onLoadMore={fetchNext}
                 scoreFilter={scoreFilter}
                 onScoreFilterChange={setScoreFilter}
+                applicantParam={applicantParam}
               />
             )
           )}

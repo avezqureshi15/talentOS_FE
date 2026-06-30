@@ -4,10 +4,11 @@ import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import "./sidebar.css";
 import type { SidebarProps, ChatHistoryItem } from "@/components/ui/sidebar/sidebar.types";
 import { Link } from "react-router-dom";
-import { SIDEBAR_LABELS, SIDEBAR_USER } from "@/constants/constants";
+import { SIDEBAR_LABELS } from "@/constants/constants";
 import SidebarGroup from "./sidebar-group";
 import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
+import SidebarUserPopover from "@/components/ui/sidebar/sidebar-user-popover/sidebar-user-popover";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -84,7 +85,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     <ChatItem
       key={chat.id}
       chat={chat}
-      activeChatId={activeChatId}
+      activeChatId={activeChatId ?? null}
       menuOpen={menuOpen}
       renamingChatId={renamingChatId}
       renameValue={renameValue}
@@ -92,8 +93,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       onToggleMenu={setMenuOpen}
       onStartRename={(id, title) => { setRenamingChatId(id); setRenameValue(title); }}
       onDeleteTarget={(id) => setDeleteTargetId(id)}
-      onCommitRename={commitRename}
-      onCancelRename={() => setRenamingChatId(null)}
       onRenameInput={setRenameValue}
       onKeyDownRename={(e, chatId) => {
         if (e.key === "Enter") { e.preventDefault(); commitRename(chatId); }
@@ -128,6 +127,13 @@ const Sidebar: React.FC<SidebarProps> = ({
              <span className="bx bx-home text-lg" ></span>
              <span className="sidebar-item-label">{SIDEBAR_LABELS.HIRING_REQUESTS}</span>
              <span className="sidebar-shortcut">Ctrl+Shift+H</span>
+          </button>
+          </Link>
+          <Link to="/hiring-requests?tab=interviews">
+          <button className="sidebar-item">
+            <span className="bx bx-calendar-check text-lg" ></span>
+            <span className="sidebar-item-label">Interviews</span>
+            <span className="sidebar-shortcut">Ctrl+Shift+I</span>
           </button>
           </Link>
           <Link to="/hiring-requests?tab=action-center">
@@ -185,18 +191,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* USER */}
-        <div className="sidebar-user">
-          <div className="sidebar-user__row">
-            <div className="sidebar-avatar">{SIDEBAR_USER.INITIALS}</div>
-
-            <div>
-              <div className="sidebar-user__name">{SIDEBAR_USER.NAME}</div>
-              <div className="sidebar-user__email">
-                {SIDEBAR_USER.EMAIL}
-              </div>
-            </div>
-          </div>
-        </div>
+        <SidebarUserPopover />
 
       </div>
 

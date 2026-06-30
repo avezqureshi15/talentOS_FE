@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
-import BaseModal from "@/components/ui/modal/base-modal";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";

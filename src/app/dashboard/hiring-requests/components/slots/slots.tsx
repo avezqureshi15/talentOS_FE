@@ -22,8 +22,6 @@ const Slots = () => {
           linkLabel={SLOTS_LABELS.SLOT_LINK}
           isOpen={openId === i.id}
           onToggleOpen={(id) => setOpenId(openId === id ? null : id)}
-          jdHref={i.jdHref}
-          jdLabel={SLOTS_LABELS.JD}
         />
       ))}
     </div>

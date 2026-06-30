@@ -4,4 +4,6 @@ export const ACCORDION_LABELS = {
   CONTACT: "Contact",
   JD: "JD",
   VIEW_INTERVIEW: "View Details",
+  RESOLVE: "Resolve",
+  RESOLVED: "Resolved",
 } as const;

@@ -18,28 +18,35 @@ type UseApplicationsDataResult = {
 const LIMIT = PAGINATION.APPLICATIONS_PER_PAGE;
 
 export const useApplicationsData = (
-  jobId: string,
-  filter: string,
-  enabled: boolean,
+  jobId?: string,
+  filter: string = "ALL",
+  enabled: boolean = true,
+  pageSize?: number,
   minScore?: number,
   maxScore?: number,
 ): UseApplicationsDataResult => {
-  const status = filter.toUpperCase().replace("-", "_");
+  const limit = pageSize ?? LIMIT;
+  const isScheduleFilter = filter === "scheduled" || filter === "unscheduled";
+  const status = isScheduleFilter ? "ALL" : filter.toUpperCase().replace("-", "_");
+  const schedule = isScheduleFilter ? filter : undefined;
 
   const query = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, status, minScore, maxScore],
+    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, status, minScore, maxScore, pageSize, schedule],
     queryFn: ({ pageParam }) =>
       fetchApplicationsPaginated(
         jobId,
         status === "ALL" ? undefined : status,
         minScore,
         maxScore,
-        LIMIT,
+        undefined,
+        undefined,
+        limit,
         pageParam as number,
+        schedule,
       ),
     initialPageParam: 0,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {
-      const nextOffset = (lastPageParam as number) + LIMIT;
+      const nextOffset = (lastPageParam as number) + limit;
       return nextOffset < lastPage.total ? nextOffset : undefined;
     },
     enabled,
@@ -83,6 +90,7 @@ function mapCandidate(app: {
   notice_period: string | null;
   how_did_you_hear: string | null;
   linkedin_url: string | null;
+  scheduled?: boolean;
 }): Applicant {
   return {
     id: app.id,
@@ -95,6 +103,7 @@ function mapCandidate(app: {
     currentRole: "",
     currentCompany: "",
     linkedinUrl: app.linkedin_url ?? "",
+    scheduled: app.scheduled ?? false,
     cvUrl: app.resume_url ?? "",
     status: "new",
     score: app.fit_score ?? undefined,

@@ -44,7 +44,7 @@ src/
 │   ├── protected-route.tsx
 │   ├── routes.tsx
 │
-├── services/
+├── services/ 
 ├── store/
 │   ├── chat.store.ts
 │   ├── script.store.ts
@@ -61,7 +61,7 @@ src/
 ## 2. Tech Stack Rules
 
 - React (Vite + TypeScript)
-- TanStack Query → server state ONLY
+- TanStack Query → server state ONLY (make sure to implement caching , retry mechanism and optimistic updates this are really very much important for necessary api integration)
 - Zustand → global/client state ONLY
 - Axios → normal API calls
 - Fetch → ONLY for streaming APIs (NDJSON)
@@ -283,9 +283,12 @@ Content-Type: application/x-ndjson
 
 - ✅ Any async operation MUST set an `isProcessing` / `isLoading` flag in the store
 - ✅ UI components MUST consume loading flags to show visual feedback:
-  - `<LoadingSpinner>` for indeterminate waits
+  - `<Skeleton>` shimmer lines/boxes for content that is loading (preferred over spinner for known-content areas)
+  - `<LoadingSpinner>` for indeterminate waits (page loads, full-screen operations)
   - Typing indicator for AI/chat responses
   - Disabled inputs/buttons during processing
+- ✅ Never show a raw ID or unloaded placeholder — always use `<Skeleton>` while entity data is being fetched
+- ✅ `/components/ui/skeleton` — reusable `<Skeleton>` with variants: `text` (default), `circle`, `rect`
 - ✅ `/components/ui/loading-spinner` — reusable `<LoadingSpinner>`
 
 ### Error States
@@ -319,6 +322,7 @@ Content-Type: application/x-ndjson
 | `<ErrorBoundary>` | `@/components/ui/error-boundary/error-boundary` | Catches render errors, shows fallback |
 | `<ErrorFallback>` | `@/components/ui/error-fallback/error-fallback` | "Something went wrong" UI with retry |
 | `<LoadingSpinner>` | `@/components/ui/loading-spinner/loading-spinner` | Bouncing dots spinner (sm/md/lg, fullPage) |
+| `<Skeleton>` | `@/components/ui/skeleton/skeleton` | Shimmer skeleton for loading content (text/circle/rect) |
 | `<BaseModal>` | `@/components/ui/modal/base-modal` | Reusable modal with Escape close, overlay close, scroll lock |
 
 ---
@@ -353,6 +357,12 @@ If ANY rule is violated:
 
 ## 22. Do as much as minimal use of useffect see if alternative are available if not then go ahead  
 
+
+## 23. Make sure when u are done with all of the changes and are sure no further changes will be required for the tasks then u run tsc -b + vite build which must pass with zero errors
+
+
+## 24. Resuability and Scalability is key , Things must be extensible and reusable enforce by creating components in ui/shared folders so that it can reused over the application and consolidate the logic in hooks if it is being used in many places so that also becomes usable 
 If ANY rule is violated:
 → REGENERATE the solution
 ```
+

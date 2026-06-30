@@ -12,7 +12,7 @@ export default function WatchlistSection({ items }: WatchlistSectionProps) {
         <div key={s.ticker} className="watchlist-item">
           <div
             className="watchlist-color-box"
-            style={{ '--box-color': s.color }}
+            style={{ '--box-color': s.color } as React.CSSProperties}
           >
             {s.name.slice(0, 2).toUpperCase()}
           </div>

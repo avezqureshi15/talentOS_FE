@@ -1,5 +1,6 @@
 import type { Message, AIMessage, Suggestion, ContentBlock } from "@/app/chat/pages/chat.types";
-import { MOCK_USERS, MOCK_INTERVIEWERS, MOCK_SLOTS } from "@/components/shared/mentions/mock-api";
+import { MOCK_INTERVIEW_LIST } from "@/components/shared/mentions/mock-api";
+import { INTENT_LABELS } from "@/components/ui/command-card/command-card.constants";
 
 export function hasSuggestions(
   msg: Message
@@ -52,7 +53,7 @@ export type CommandExecutionData = {
 
 export type HybridQuestionData = {
   message_type: "HYBRID_QUESTION";
-  intent: "INQUIRE_HR_REQUEST" | "INQUIRE_EMPLOYEE" | "INQUIRE_APPLICANT";
+  intent: "INQUIRE_HR_REQUEST" | "INQUIRE_EMPLOYEE" | "INQUIRE_APPLICANT" | "INQUIRE_INTERVIEW";
   payload: {
     id_field: string;
     name_field: string;
@@ -60,10 +61,8 @@ export type HybridQuestionData = {
   };
 };
 
-const ALL_ITEMS = [...MOCK_USERS, ...MOCK_INTERVIEWERS, ...MOCK_SLOTS];
-
-export function resolveRelationalLabel(relationalId: string): string {
-  return ALL_ITEMS.find((item) => item.relationalId === relationalId)?.label ?? relationalId;
+export function resolveInterviewStatus(relationalId: string): string | null {
+  return MOCK_INTERVIEW_LIST.find((item) => item.relationalId === relationalId)?.meta?.status ?? null;
 }
 
 export function isCommandExecution(text: string): boolean {
@@ -102,4 +101,18 @@ export function parseHybridQuestion(text: string): HybridQuestionData | null {
   } catch {
     return null;
   }
+}
+
+export function resolveCommandTitle(title: string): string {
+  try {
+    const obj = JSON.parse(title);
+    if (obj?.message_type === "COMMAND_EXECUTION" && obj?.intent) {
+      return INTENT_LABELS[obj.intent] ?? obj.intent;
+    }
+    if (obj?.message_type === "HYBRID_QUESTION" && obj?.intent) {
+      return INTENT_LABELS[obj.intent] ?? obj.intent;
+    }
+  } catch {
+  }
+  return title;
 }

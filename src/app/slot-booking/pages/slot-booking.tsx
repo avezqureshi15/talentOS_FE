@@ -3,7 +3,7 @@ import BookingCalendar from "@/app/slot-booking/components/booking-calendar/book
 import SlotPicker from "@/app/slot-booking/components/slot-picker/slot-picker";
 import { Icon } from "@/components/ui/icons";
 import { BOOKING_LABELS, MOCK_SLOTS, TIMEZONES, CONTEXT_SECTIONS } from "./slot-booking.constants";
-import type { MockSlot, ContextSection } from "./slot-booking.constants";
+import type { MockSlot } from "./slot-booking.constants";
 import "./slot-booking.css";
 
 const SlotBooking = () => {

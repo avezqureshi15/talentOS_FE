@@ -1,5 +1,5 @@
 import httpClient from "@/services/http-client";
-import type { HiringRequest, HiringRequestsListResponse } from "@/services/hiring-requests/hiring-requests.types";
+import type { HiringRequestsListResponse } from "@/services/hiring-requests/hiring-requests.types";
 
 export const searchHiringRequests = async (
   q: string,

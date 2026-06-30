@@ -129,7 +129,7 @@ const HiringRequestsTable = ({
         ) : data.length === 0 ? (
           <div className="table-empty">{TABLE_EMPTY_STATE}</div>
         ) : (
-          data.map((item, idx) => (
+          data.map((item) => (
             <Link
               key={item.id}
               to={`/hiring-requests/${item.id}`}

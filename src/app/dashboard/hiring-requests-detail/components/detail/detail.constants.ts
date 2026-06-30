@@ -1,1 +1,1 @@
-export const DEFAULT_FILTER = "shortlisted";
+export const DEFAULT_FILTER = "all";

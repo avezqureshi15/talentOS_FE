@@ -20,7 +20,7 @@ const SCORE_FILTERS = [
   { value: "lt30", label: "< 30" },
 ];
 
-function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange }: ApplicantsProps) {
+function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam }: ApplicantsProps) {
   // justification: stores local status/screening overrides that can't persist to API yet
   const [localOverrides, setLocalOverrides] = useState<Record<string, { status?: ApplicantStatus; screening?: boolean }>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
@@ -86,9 +86,11 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
           value={filter}
           onChange={(e) => onFilterChange(e.target.value)}
           options={[
+            { value: "all", label: "All Candidates" },
             { value: "shortlisted", label: "Shortlisted" },
             { value: "non-shortlisted", label: "Non-shortlisted" },
-            { value: "all", label: "All Candidates" },
+            { value: "scheduled", label: "Scheduled" },
+            { value: "unscheduled", label: "Unscheduled" },
           ]}
         />
         <span className="filter-separator" />
@@ -110,25 +112,26 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
         const merged = { ...a, status: getLocalStatus(a) };
 
         return (
-          <ApplicantCard
-            key={a.id}
-            applicant={merged}
-            isOpen={isOpen}
-            isScreening={isScreening}
-            accordionTab={accordionTab}
-            onToggleOpen={(id) => setOpenId(isOpen ? null : id)}
-            onStartScreening={(id) => { setScreeningId(id); setOpenId(id); }}
-            onHrShortlist={(id) => { overrideStatus(id, "reviewing"); }}
-            onHrReject={setRejectConfirmId}
-            onScheduleRound1={setScheduleCandidateId}
-            onTabChange={setAccordionTab}
-            onCoverLetterReadMore={setCoverLetterId}
-            onAiSummaryReadMore={setAiSummaryId}
-            onDetailsReadMore={setDetailsId}
-            onTimeline={setTimelineId}
-            onFinalDecision={handleFinalDecision}
-            onViewRound={setRoundId}
-          />
+          <div key={a.id} data-applicant-id={a.id} data-highlight={applicantParam === a.id ? "true" : undefined}>
+            <ApplicantCard
+              applicant={merged}
+              isOpen={isOpen}
+              isScreening={isScreening}
+              accordionTab={accordionTab}
+              onToggleOpen={(id) => setOpenId(isOpen ? null : id)}
+              onStartScreening={(id) => { setScreeningId(id); setOpenId(id); }}
+              onHrShortlist={(id) => { overrideStatus(id, "reviewing"); }}
+              onHrReject={setRejectConfirmId}
+              onScheduleRound1={setScheduleCandidateId}
+              onTabChange={setAccordionTab}
+              onCoverLetterReadMore={setCoverLetterId}
+              onAiSummaryReadMore={setAiSummaryId}
+              onDetailsReadMore={setDetailsId}
+              onTimeline={setTimelineId}
+              onFinalDecision={handleFinalDecision}
+              onViewRound={setRoundId}
+            />
+          </div>
         );
       })}
 

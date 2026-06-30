@@ -1,3 +1,2 @@
-﻿// Hiring requests page types
-export type HiringRequestTab = "hiring-requests" | "action-center";
+﻿export type HiringRequestTab = "hiring-requests" | "interviews" | "action-center";
 export type ActionCenterSubTab = "slots" | "reviews";

@@ -21,6 +21,12 @@ export const ROOT_MENU: CommandEntry[] = [
     isWizardAction: true,
   },
   {
+    id: "interviews",
+    label: "Interviews",
+    icon: "bx bx-calendar-check",
+    isWizardAction: true,
+  },
+  {
     id: "employees",
     label: "Employees",
     icon: "bx bx-group",
@@ -35,6 +41,12 @@ export const ROOT_MENU: CommandEntry[] = [
         id: "employees-ping",
         label: "Ping",
         icon: "bx bx-message",
+        isWizardAction: true,
+      },
+      {
+        id: "employees-ask-slots",
+        label: "Ask Slots",
+        icon: "bx bx-clock",
         isWizardAction: true,
       },
     ],

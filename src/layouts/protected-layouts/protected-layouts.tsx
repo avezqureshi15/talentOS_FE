@@ -14,6 +14,7 @@ import { useCommandPalette } from "@/components/ui/command-palette/hooks/use-com
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import { ROUTES } from "@/constants/routes";
 import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
+import { useUiStore } from "@/store/ui.store";
 
 export default function ProtectedLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -73,6 +74,10 @@ export default function ProtectedLayout() {
     navigate("/hiring-requests?tab=action-center&highlight=true");
   }, [navigate]);
 
+  const handleInterviews = useCallback(() => {
+    navigate("/hiring-requests?tab=interviews");
+  }, [navigate]);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const k = KEYBOARD_SHORTCUTS;
@@ -88,14 +93,22 @@ export default function ProtectedLayout() {
         e.preventDefault();
         handleToggleSidebar();
       }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.INTERVIEWS.code) {
+        e.preventDefault();
+        handleInterviews();
+      }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.ACTION_CENTER.code) {
         e.preventDefault();
         handleActionCenter();
       }
+      if (e.altKey && e.code === k.SHORTCUTS.code) {
+        e.preventDefault();
+        useUiStore.getState().toggleShortcutsModal();
+      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [handleNewChat, handleHome, handleToggleSidebar, handleActionCenter]);
+  }, [handleNewChat, handleHome, handleToggleSidebar, handleActionCenter, handleInterviews]);
 
   const {
     isOpen: cmdOpen,

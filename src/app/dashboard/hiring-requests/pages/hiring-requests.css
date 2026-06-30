@@ -98,12 +98,22 @@
   border-bottom-color: var(--accent, #818cf8);
 }
 
-.hr-tab--highlight,
-.ac-tab--highlight {
-  animation: tab-pulse 2s ease-out;
+.hr-tab--blip {
+  position: relative;
 }
 
-@keyframes tab-pulse {
-  0% { background: rgba(79, 142, 247, 0.15); }
-  100% { background: transparent; }
+.hr-tab__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: blip-blink 1s ease-in-out 3;
+}
+
+@keyframes blip-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
 }

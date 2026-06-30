@@ -2,7 +2,7 @@ import { useState } from "react";
 import AccordionCard from "@/components/shared/accordion-card/accordion-card";
 import BaseModal from "@/components/ui/modal/base-modal";
 import { MOCK_REVIEWERS, REVIEWS_LABELS, REVIEW_INFO } from "./reviews-card.constants";
-import type { SidePanelContentProps } from "./reviews-card.types";
+import type { InterviewDetails, SidePanelContentProps } from "./reviews-card.types";
 import "./reviews.css";
 
 const Reviews = () => {

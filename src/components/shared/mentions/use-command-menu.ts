@@ -1,12 +1,15 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { CommandEntry, CommandItem, MenuLevel } from "./mentions.types";
 import { ROOT_MENU } from "./command-menu.config";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export const useCommandMenu = () => {
   const [stack, setStack] = useState<MenuLevel[]>([{ title: "", entries: ROOT_MENU }]);
   const [search, setSearch] = useState("");
   const [listItems, setListItems] = useState<CommandItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const currentLevel = stack[stack.length - 1];
   const isListView = currentLevel.entries.length === 1 && !!currentLevel.entries[0].fetcher;
@@ -20,21 +23,41 @@ export const useCommandMenu = () => {
       );
 
   const activeItems: (CommandEntry | CommandItem)[] = isListView ? listItems : filteredEntries;
+  const debouncedSearch = useDebounce(search, 300);
+
+  const queryKey = useMemo(
+    () => ["mentions", activeEntry?.id ?? "none", debouncedSearch],
+    [activeEntry?.id, debouncedSearch],
+  );
+
+  const { data: queryData, isLoading: isQueryLoading } = useQuery({
+    queryKey,
+    queryFn: async () => {
+      if (!activeEntry?.fetcher) return [];
+      return activeEntry.fetcher(debouncedSearch);
+    },
+    enabled: isListView && !!activeEntry?.fetcher,
+    staleTime: 30_000,
+    gcTime: 60_000,
+  });
 
   useEffect(() => {
     setSelectedIndex(0);
   }, [filteredEntries.length, listItems.length, stack.length]);
 
   useEffect(() => {
-    if (!isListView || !activeEntry?.fetcher) {
-      setListItems([]);
-      return;
+    if (queryData && isListView) {
+      setListItems(queryData);
     }
-    activeEntry.fetcher(search).then(setListItems);
-  }, [search, isListView, activeEntry]);
+  }, [queryData, isListView]);
 
   const loadWizardItems = useCallback((items: CommandItem[]) => {
     setStack([{ title: "", entries: [{ id: "wizard", label: "", fetcher: async () => items }] }]);
+    setSearch("");
+  }, []);
+
+  const loadWizardEntry = useCallback((entry: CommandEntry) => {
+    setStack([{ title: "", entries: [entry] }]);
     setSearch("");
   }, []);
 
@@ -46,7 +69,7 @@ export const useCommandMenu = () => {
 
   const navigateTo = useCallback((entry: CommandEntry) => {
     if (entry.children) {
-      setStack((prev) => [...prev, { title: entry.label, entries: entry.children }]);
+      setStack((prev) => [...prev, { title: entry.label, entries: entry.children ?? [] }]);
       setSearch("");
     } else if (entry.fetcher) {
       setStack((prev) => [...prev, { title: entry.label, entries: [entry] }]);
@@ -82,6 +105,17 @@ export const useCommandMenu = () => {
     return activeItems[selectedIndex] ?? null;
   }, [activeItems, selectedIndex]);
 
+  const loadMore = useCallback(async () => {
+    if (!activeEntry?.loadMore || isLoadingMore) return;
+    setIsLoadingMore(true);
+    try {
+      const newItems = await activeEntry.loadMore();
+      setListItems((prev) => [...prev, ...newItems]);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [activeEntry, isLoadingMore]);
+
   return {
     currentLevel,
     search,
@@ -95,11 +129,15 @@ export const useCommandMenu = () => {
     reset,
     resetToRoot,
     loadWizardItems,
+    loadWizardEntry,
     canGoBack,
     selectedIndex,
     setSelectedIndex,
     moveUp,
     moveDown,
     selectCurrentItem,
+    loadMore,
+    hasMore: activeEntry?.hasMore ?? false,
+    isLoadingMore: isLoadingMore || isQueryLoading,
   };
 };

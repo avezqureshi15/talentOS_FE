@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import HiringRequestsTable from "@/app/dashboard/hiring-requests/components/table/table";
 import Slots from "@/app/dashboard/hiring-requests/components/slots/slots";
 import Reviews from "@/app/dashboard/hiring-requests/components/reviews/reviews";
+import Interviews from "@/app/dashboard/hiring-requests/components/interviews/interviews";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useHiringRequests } from "@/app/dashboard/hiring-requests/hooks/use-hiring-requests";
@@ -60,12 +61,13 @@ const HiringRequests = () => {
           {HR_TABS.map((t) => (
             <button
               key={t.key}
-              className={`hr-tab${tab === t.key ? " hr-tab--active" : ""}${highlight && t.key === "action-center" ? " hr-tab--highlight" : ""}`}
+              className={`hr-tab${tab === t.key ? " hr-tab--active" : ""}${highlight && t.key === "action-center" ? " hr-tab--blip" : ""}`}
               onClick={() => setTab(t.key)}
               type="button"
             >
               <i className={t.icon} />
               {t.label}
+              {highlight && t.key === "action-center" && <span className="hr-tab__badge" />}
             </button>
           ))}
         </div>
@@ -91,13 +93,15 @@ const HiringRequests = () => {
           )
         )}
 
+        {tab === "interviews" && <Interviews />}
+
         {tab === "action-center" && (
           <div className="ac-content">
             <div className="ac-tabs">
               {ACTION_CENTER_TABS.map((st) => (
                 <button
                   key={st.key}
-                  className={`ac-tab${sub === st.key ? " ac-tab--active" : ""}${highlight ? " ac-tab--highlight" : ""}`}
+                  className={`ac-tab${sub === st.key ? " ac-tab--active" : ""}`}
                   onClick={() => setSearchParams({ tab: "action-center", sub: st.key })}
                   type="button"
                 >

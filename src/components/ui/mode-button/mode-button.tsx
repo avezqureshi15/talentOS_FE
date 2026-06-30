@@ -1,4 +1,3 @@
-import React from "react";
 import "./mode-button.css";
 import type { ModeButtonProps } from "./mode-button.types";
 

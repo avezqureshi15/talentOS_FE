@@ -1,16 +1,17 @@
-import React, { useEffect } from "react";
+import { useCallback } from "react";
 import SendButton from "@/components/ui/send-button/send-button";
 import ChatTokens from "./chat-tokens";
 import "./chat-input.css";
 import type { ChatInputProps } from "./chat-input.types";
 import { useMentionEngine } from "@/components/shared/mentions/use-mention-engine";
 import { useCommandMenu } from "@/components/shared/mentions/use-command-menu";
-import MentionPopup, { resolveMenuSelection } from "@/components/shared/mentions/mentions";
+import MentionPopup from "@/components/shared/mentions/mentions";
+import { resolveMenuSelection } from "@/components/shared/mentions/mentions.utils";
 import { WIZARD_LABELS } from "@/components/shared/mentions/mentions.constants";
 import { CHAT_INPUT_LABELS } from "./chat-input.constants";
-import type { WizardStage } from "@/components/shared/mentions/mentions.types";
 import { WIZARD_ACTIONS } from "@/components/shared/mentions/wizard.config";
 import { useAutoResize } from "./hooks/use-auto-resize";
+import { useWizard } from "./hooks/use-wizard";
 
 const ChatInput: React.FC<ChatInputProps> = ({
   mounted = true,
@@ -22,120 +23,63 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const { textareaRef } = useAutoResize(input);
   const engine = useMentionEngine();
   const menu = useCommandMenu();
-  const { show, tokens, wizardStage, wizardActionId, handleChange, startWizard, advanceWizard, reset } = engine;
+  const { show, tokens, wizardStage, wizardActionId, handleChange, insert, reset } = engine;
 
-  const isFullyTokenized = wizardActionId ? tokens.length === (WIZARD_ACTIONS[wizardActionId]?.totalTokens ?? 0) : false;
-  const isWizardActive = wizardStage > 0;
-  const loadStageItems = (i: number) => { const s = wizardActionId ? WIZARD_ACTIONS[wizardActionId]?.stages[i] : null; if (s) s.fetcher("").then((items) => menu.loadWizardItems(items)); };
+  const wizard = useWizard(engine, menu, onWizardComplete, input, setInput);
 
-  useEffect(() => { if (wizardStage >= 1) loadStageItems(wizardStage - 1); if (isWizardActive) textareaRef.current?.focus(); }, [wizardStage, tokens.length]);
+  const {
+    multiSelectedIds, isAskSlots, isFullyTokenized, isWizardActive,
+    handleWizardSelect, handleToggleMultiSelect, handleAskSlotsConfirm,
+    executeWizard, handleResetTokens,
+  } = wizard;
 
-  const handleStartWizard = (actionId: string) => { startWizard(actionId); setInput(""); };
-
-  const handleAdvanceWizard = (item: { id: string; label: string }) => {
-    const nf = advanceWizard(item);
-    if (!nf) { menu.resetToRoot(); return; }
-    nf().then((items) => menu.loadWizardItems(items));
-  };
-
-  const handleWizardSelect = (stage: WizardStage, item: { id: string; label: string }) => {
-    switch (stage) {
-      case 0: handleStartWizard(item.id); break;
-      case 1: case 2: case 3: handleAdvanceWizard(item); break;
-    }
-  };
-
-  const executeWizard = () => {
-    const rawText = input.trim(), entityToken = tokens.find(t => t.type === "entity"), applicantToken = tokens.find(t => t.type === "applicant"), interviewerToken = tokens.find(t => t.type === "interviewer"), slotToken = tokens.find(t => t.type === "slot");
-    if (entityToken) {
-      const intent = ({ "hr-request": "INQUIRE_HR_REQUEST", "applicants": "INQUIRE_APPLICANT" } as const)[wizardActionId ?? ""] ?? "INQUIRE_EMPLOYEE";
-      onWizardComplete?.({
-        message_type: "HYBRID_QUESTION",
-        intent,
-        payload: { id_field: entityToken.relationalId ?? entityToken.id, name_field: entityToken.label, raw_text_context: rawText },
-      });
-    } else {
-      onWizardComplete?.({
-        message_type: "COMMAND_EXECUTION",
-        intent: wizardActionId ?? "UNKNOWN",
-        payload: {
-          applicant_id: applicantToken?.relationalId ?? applicantToken?.id ?? "",
-          interviewer_id: interviewerToken?.relationalId ?? interviewerToken?.id ?? "",
-          slot_id: slotToken?.relationalId ?? slotToken?.id ?? "",
-          raw_text_context: rawText,
-        },
-      }, {
-        applicantName: applicantToken?.label ?? "",
-        interviewerName: interviewerToken?.label ?? "",
-        slotLabel: slotToken?.label ?? "",
-        rawText,
-      });
-    }
-    reset();
-    menu.resetToRoot();
-    setInput("");
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (show && !isWizardActive) {
       const items = menu.isListView ? menu.listItems : menu.filteredEntries;
-      if (items.length > 0) {
-        switch (e.key) {
-          case "ArrowDown":
+      if (items.length === 0) return;
+      switch (e.key) {
+        case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
+        case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
+        case "Enter":
+          if (!e.shiftKey) {
             e.preventDefault();
-            menu.moveDown();
-            return;
-          case "ArrowUp":
-            e.preventDefault();
-            menu.moveUp();
-            return;
-          case "Enter":
-            if (!e.shiftKey) {
-              e.preventDefault();
-              const current = menu.selectCurrentItem();
-              if (current) {
-                const result = resolveMenuSelection(current, menu.isListView, menu.activeEntry);
-                switch (result.action) {
-                  case "wizard":
-                    handleWizardSelect(result.stage, { id: current.id, label: current.label });
-                    break;
-                  case "navigate":
-                    menu.navigateTo(result.entry);
-                    break;
-                  default:
-                    engine.insert(result.text, input, setInput);
-                }
+            const current = menu.selectCurrentItem();
+            if (current) {
+              const result = resolveMenuSelection(current, menu.isListView, menu.activeEntry);
+              switch (result.action) {
+                case "wizard": handleWizardSelect(result.stage, { id: current.id, label: current.label }); break;
+                case "navigate": menu.navigateTo(result.entry); break;
+                default: insert(result.text, input, setInput); break;
               }
             }
-            return;
-        }
+          }
+          return;
       }
       return;
     }
 
     if (isWizardActive && show) {
+      if (isAskSlots && menu.listItems.length > 0) {
+        switch (e.key) {
+          case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
+          case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
+          case "Enter": if (!e.shiftKey) { e.preventDefault(); handleAskSlotsConfirm(); } return;
+          case "Escape": e.preventDefault(); reset(); menu.resetToRoot(); return;
+        }
+        return;
+      }
       if (menu.listItems.length > 0) {
         switch (e.key) {
-          case "ArrowDown":
-            e.preventDefault();
-            menu.moveDown();
-            return;
-          case "ArrowUp":
-            e.preventDefault();
-            menu.moveUp();
-            return;
+          case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
+          case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
           case "Enter":
             if (!e.shiftKey) {
               e.preventDefault();
               const item = menu.selectCurrentItem() as { id: string; label: string } | null;
-              if (item) handleWizardSelect(wizardStage, item);
+              if (item) handleWizardSelect(wizardStage as 0 | 1 | 2 | 3 | 4, item);
             }
             return;
-          case "Escape":
-            e.preventDefault();
-            reset();
-            menu.resetToRoot();
-            return;
+          case "Escape": e.preventDefault(); reset(); menu.resetToRoot(); return;
         }
       }
       return;
@@ -152,13 +96,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
       if (input.trim()) onSend();
     }
     handleChange(input, input.length);
-  };
+  }, [show, isWizardActive, isAskSlots, isFullyTokenized, input, menu, engine, reset, insert, setInput, handleWizardSelect, handleAskSlotsConfirm, executeWizard, handleChange, onSend]);
 
-  const handleResetTokens = () => {
-    setInput("");
-    reset();
-    menu.resetToRoot();
-  };
   return (
     <div className={`cui-fade-up cui-d3${mounted ? "" : " opacity-0"}`}>
       <div className="chat-input-root">
@@ -178,7 +117,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             </div>
             <SendButton
               disabled={!input.trim() && !isFullyTokenized}
-              onClick={() => { if (isFullyTokenized) { executeWizard(); } else if (input.trim()) { onSend(); } }}
+              onClick={() => { if (isFullyTokenized) executeWizard(); else if (input.trim()) onSend(); }}
             />
           </div>
           {isFullyTokenized && (
@@ -187,8 +126,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
           <MentionPopup
             show={show}
             menu={menu}
-            onInsert={(text) => engine.insert(text, input, setInput)}
+            onInsert={(text) => insert(text, input, setInput)}
             onWizardSelect={handleWizardSelect}
+            multiSelectedIds={multiSelectedIds}
+            onToggleMultiSelect={handleToggleMultiSelect}
             wizardStage={wizardStage}
             tokens={tokens}
           />
@@ -197,4 +138,5 @@ const ChatInput: React.FC<ChatInputProps> = ({
     </div>
   );
 };
+
 export default ChatInput;

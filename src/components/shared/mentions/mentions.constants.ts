@@ -19,6 +19,9 @@ export const TOKEN_ICONS: Record<string, string> = {
   interviewer: "bx bx-user-check",
   slot: "bx bx-clock",
   entity: "bx bx-briefcase-alt-2",
+  "ask-slots": "bx bx-clock",
+  "hiring-request": "bx bx-briefcase",
+  "interview": "bx bx-calendar-check",
 };
 
 export const ICON_RULES: { match: (id: string) => boolean; icon: string }[] = [

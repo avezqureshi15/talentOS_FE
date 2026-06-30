@@ -1,6 +1,6 @@
-import { useRef } from "react";
 import { SIDEBAR_LABELS } from "@/constants/constants";
 import type { ChatHistoryItem } from "@/components/ui/sidebar/sidebar.types";
+import { resolveCommandTitle } from "@/app/chat/components/chat-area/chat-area.utils";
 
 type ChatItemProps = {
   chat: ChatHistoryItem;
@@ -12,8 +12,6 @@ type ChatItemProps = {
   onToggleMenu: (id: string | null) => void;
   onStartRename: (id: string, title: string) => void;
   onDeleteTarget: (id: string) => void;
-  onCommitRename: (id: string) => void;
-  onCancelRename: () => void;
   onRenameInput: (value: string) => void;
   onKeyDownRename: (e: React.KeyboardEvent, chatId: string) => void;
   onBlurRename: (chatId: string) => void;
@@ -31,8 +29,6 @@ const ChatItem = ({
   onToggleMenu,
   onStartRename,
   onDeleteTarget,
-  onCommitRename,
-  onCancelRename,
   onRenameInput,
   onKeyDownRename,
   onBlurRename,
@@ -59,7 +55,7 @@ const ChatItem = ({
       ) : (
         <>
           <button onClick={() => onSelectChat(chat.id)} className="sidebar-subitem">
-            <span className="sidebar-subitem-title">{chat.title}</span>
+            <span className="sidebar-subitem-title">{resolveCommandTitle(chat.title)}</span>
           </button>
           <div className="sidebar-subitem-menu" onClick={(e) => e.stopPropagation()}>
             <button

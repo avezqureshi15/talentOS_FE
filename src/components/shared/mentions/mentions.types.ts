@@ -3,6 +3,7 @@ export type CommandItem = {
   label: string;
   description?: string;
   relationalId?: string;
+  meta?: Record<string, string>;
 };
 
 export type CommandEntry = {
@@ -14,6 +15,8 @@ export type CommandEntry = {
   fetcher?: (query: string) => Promise<CommandItem[]>;
   getInsertText?: (item?: CommandItem) => string;
   isWizardAction?: boolean;
+  hasMore?: boolean;
+  loadMore?: () => Promise<CommandItem[]>;
 };
 
 export type MenuLevel = {
@@ -21,7 +24,7 @@ export type MenuLevel = {
   entries: CommandEntry[];
 };
 
-export type TokenType = "action" | "applicant" | "interviewer" | "slot" | "entity";
+export type TokenType = "action" | "applicant" | "interviewer" | "slot" | "entity" | "ask-slots" | "hiring-request" | "interview";
 
 export type Token = {
   type: TokenType;
@@ -30,7 +33,7 @@ export type Token = {
   relationalId?: string;
 };
 
-export type WizardStage = 0 | 1 | 2 | 3;
+export type WizardStage = 0 | 1 | 2 | 3 | 4;
 
 export type WizardStageConfig = {
   stage: WizardStage;
@@ -65,6 +68,9 @@ export type MenuController = {
   moveUp: () => void;
   moveDown: () => void;
   selectCurrentItem: () => (CommandEntry | CommandItem) | null;
+  loadMore?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 };
 
 export type WizardExecutionPayload = {
@@ -74,10 +80,12 @@ export type WizardExecutionPayload = {
 };
 
 export type WizardExecutionSummary = {
+  hiringRequestName?: string;
   applicantName: string;
   interviewerName: string;
   slotLabel: string;
   rawText: string;
+  selectedEmployeeCount?: number;
 };
 
 export type HybridQuestionPayload = {
@@ -89,3 +97,5 @@ export type HybridQuestionPayload = {
     raw_text_context: string;
   };
 };
+
+export type MenuSelection = { action: "insert"; text: string } | { action: "navigate"; entry: CommandEntry } | { action: "wizard"; stage: WizardStage };

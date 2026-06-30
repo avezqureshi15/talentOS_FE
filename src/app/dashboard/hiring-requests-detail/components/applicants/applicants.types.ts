@@ -66,6 +66,7 @@ export type Applicant = {
   yearsOfExperience?: string;
   noticePeriod?: string;
   howDidYouHear?: string;
+  scheduled?: boolean;
   rounds?: InterviewRound[];
 };
 
@@ -79,6 +80,7 @@ export type ApplicantsProps = {
   onLoadMore?: () => void;
   scoreFilter?: string;
   onScoreFilterChange?: (value: string) => void;
+  applicantParam?: string | null;
 };
 
 export type AccordionTab = "details" | "cover-letter" | "ai-summary" | "rounds";

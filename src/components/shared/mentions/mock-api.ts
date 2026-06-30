@@ -30,10 +30,10 @@ export const MOCK_SLOTS: CommandItem[] = [
   { id: "slot-10", label: "2:00 PM - 3:00 PM", description: "Tue, Jul 1", relationalId: "slt_c0d1e2f3" },
 ];
 
-const MOCK_RECRUITMENTS: CommandItem[] = [
-  { id: "1", label: "Frontend Engineer", description: "Frontend Engineer Recruitment being performed" },
-  { id: "2", label: "Backend Engineer", description: "Backend Engineer Recruitment being performed" },
-  { id: "3", label: "Fullstack Developer", description: "Fullstack Engineer Recruitment being performed" },
+export const MOCK_RECRUITMENTS: CommandItem[] = [
+  { id: "1", label: "Frontend Engineer", description: "Frontend Engineer Recruitment", relationalId: "hr_abc123" },
+  { id: "2", label: "Backend Engineer", description: "Backend Engineer Recruitment", relationalId: "hr_def456" },
+  { id: "3", label: "Fullstack Developer", description: "Fullstack Developer Recruitment", relationalId: "hr_ghi789" },
 ];
 
 export const fetchMockUsers = async (query: string): Promise<CommandItem[]> => {
@@ -54,9 +54,27 @@ export const fetchMockRecruitments = async (query: string): Promise<CommandItem[
   );
 };
 
+export const MOCK_INTERVIEW_LIST: CommandItem[] = [
+  { id: "iv-1", label: "Frontend Engineer - Avez", description: "Today, 10:00 AM · Neel Mehta", relationalId: "iv_iv1", meta: { status: "upcoming" } },
+  { id: "iv-2", label: "Backend Engineer - Avinash", description: "Today, 2:00 PM · Priya Sharma", relationalId: "iv_iv2", meta: { status: "upcoming" } },
+  { id: "iv-3", label: "Fullstack Developer - Rahul", description: "Today, 4:00 PM · Arun Kumar", relationalId: "iv_iv3", meta: { status: "upcoming" } },
+  { id: "iv-4", label: "Frontend Engineer - Avez", description: "Tomorrow, 10:00 AM · Sneha Patel", relationalId: "iv_iv4", meta: { status: "upcoming" } },
+  { id: "iv-5", label: "Backend Engineer - Avinash", description: "Yesterday, 9:00 AM · Rahul Verma", relationalId: "iv_iv5", meta: { status: "completed" } },
+  { id: "iv-6", label: "Frontend Engineer - Mohit", description: "Jun 25, 11:00 AM · Ananya Gupta", relationalId: "iv_iv6", meta: { status: "completed" } },
+  { id: "iv-7", label: "DevOps Engineer - Sneha", description: "Jun 24, 3:00 PM · Vikram Singh", relationalId: "iv_iv7", meta: { status: "completed" } },
+  { id: "iv-8", label: "Data Scientist - Kiran", description: "Jun 23, 1:00 PM · Kavita Nair", relationalId: "iv_iv8", meta: { status: "completed" } },
+];
+
 export const fetchMockSlots = async (query: string): Promise<CommandItem[]> => {
   return MOCK_SLOTS.filter((s) =>
     s.label.toLowerCase().includes(query.toLowerCase()) ||
     s.description?.toLowerCase().includes(query.toLowerCase()),
+  );
+};
+
+export const fetchMockInterviews = async (query: string): Promise<CommandItem[]> => {
+  return MOCK_INTERVIEW_LIST.filter((iv) =>
+    iv.label.toLowerCase().includes(query.toLowerCase()) ||
+    (iv.description ?? "").toLowerCase().includes(query.toLowerCase()),
   );
 };

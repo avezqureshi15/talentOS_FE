@@ -3,6 +3,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
+  margin-top: var(--space-6);
   margin-bottom: var(--space-3);
   font-family: Sora, sans-serif;
   font-size: 14.5px;
@@ -25,28 +26,57 @@
   color: var(--accent);
 }
 
+.command-card__status {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.command-card__status--upcoming {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.command-card__status--completed {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.12);
+}
+
 .command-card__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 0;
 }
 
 .command-card__row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.command-card__row:last-child {
+  border-bottom: none;
 }
 
 .command-card__label {
-  color: var(--text-tertiary);
-  font-size: 13px;
+  flex: 0 0 120px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.04em;
 }
 
 .command-card__value {
+  flex: 1;
+  font-size: 13px;
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .command-card__context {

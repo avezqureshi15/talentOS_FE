@@ -1,0 +1,255 @@
+.interview-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.15s ease;
+}
+
+.interview-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.10);
+}
+
+.interview-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  gap: 12px;
+}
+
+.interview-header-left {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.interview-header-left .name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.interview-header-left .meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.interview-header-left .meta i {
+  font-size: 11px;
+  vertical-align: middle;
+  margin-right: 2px;
+}
+
+.interview-header-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.slot-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.slot-pill i {
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.room-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  text-decoration: none;
+}
+
+.room-btn i {
+  font-size: 13px;
+}
+
+.room-btn:hover {
+  background: var(--surface-glass-hover);
+  border-color: var(--text-muted);
+}
+
+.interview-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.info-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.12s ease;
+}
+
+.info-toggle:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.info-toggle--active {
+  background: rgba(79, 142, 247, 0.12);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.reschedule-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  height: 28px;
+  font-size: 11.5px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.reschedule-btn i {
+  font-size: 13px;
+}
+
+.reschedule-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(248, 113, 113, 0.5);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.12s ease;
+}
+
+.cancel-btn:hover {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: rgba(248, 113, 113, 0.8);
+}
+
+.interview-body {
+  padding: 10px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.interview-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.interview-table-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.interview-table-cell:nth-child(2n) {
+  border-right: none;
+}
+
+.interview-table-cell:nth-last-child(-n+2) {
+  border-bottom: none;
+}
+
+.interview-table-cell--full {
+  grid-column: 1 / -1;
+  border-right: none;
+}
+
+.interview-table-cell--full:nth-last-child(-n+2) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.interview-table-cell--full:last-child {
+  border-bottom: none;
+}
+
+.interview-table-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.interview-table-label i {
+  font-size: 11px;
+}
+
+.interview-table-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.interview-table-value a {
+  color: var(--accent);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.interview-table-value a:hover {
+  text-decoration: underline;
+}

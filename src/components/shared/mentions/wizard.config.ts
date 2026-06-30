@@ -1,30 +1,37 @@
 import type { WizardActionConfig } from "./mentions.types";
-import { fetchMockUsers, fetchMockInterviewers, fetchMockSlots, fetchMockRecruitments } from "./mock-api";
+import { fetchMockUsers, fetchMockInterviewers, fetchMockSlots, fetchMockRecruitments, fetchMockInterviews } from "./mock-api";
 
 export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
   "book-interview": {
     id: "book-interview",
     label: "Book Interview",
     icon: "bx bx-calendar-check",
-    totalTokens: 4,
+    totalTokens: 5,
     executionCue: "Press Enter to run automated interview booking via AI Assistant",
     stages: [
       {
         stage: 1,
+        header: "Select Hiring Request...",
+        fetcher: fetchMockRecruitments,
+        tokenType: "hiring-request",
+        isFinal: false,
+      },
+      {
+        stage: 2,
         header: "Select Applicant...",
         fetcher: fetchMockUsers,
         tokenType: "applicant",
         isFinal: false,
       },
       {
-        stage: 2,
+        stage: 3,
         header: "Assign Interviewer...",
         fetcher: fetchMockInterviewers,
         tokenType: "interviewer",
         isFinal: false,
       },
       {
-        stage: 3,
+        stage: 4,
         header: "Select Available Slot...",
         fetcher: fetchMockSlots,
         tokenType: "slot",
@@ -80,6 +87,22 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
       },
     ],
   },
+  "employees-ask-slots": {
+    id: "employees-ask-slots",
+    label: "Ask Slots",
+    icon: "bx bx-clock",
+    totalTokens: 2,
+    executionCue: "Press Enter to submit slot request via AI Assistant",
+    stages: [
+      {
+        stage: 1,
+        header: "Select Employees...",
+        fetcher: fetchMockUsers,
+        tokenType: "ask-slots",
+        isFinal: true,
+      },
+    ],
+  },
   "applicants": {
     id: "applicants",
     label: "Applicants",
@@ -92,6 +115,22 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
         header: "Select Applicant...",
         fetcher: fetchMockUsers,
         tokenType: "entity",
+        isFinal: true,
+      },
+    ],
+  },
+  "interviews": {
+    id: "interviews",
+    label: "Interviews",
+    icon: "bx bx-calendar-check",
+    totalTokens: 2,
+    executionCue: "Press Enter to ask about this interview",
+    stages: [
+      {
+        stage: 1,
+        header: "Select Interview...",
+        fetcher: fetchMockInterviews,
+        tokenType: "interview",
         isFinal: true,
       },
     ],

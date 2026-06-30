@@ -1,0 +1,130 @@
+.profile-modal {
+  width: 90%;
+  max-width: 520px;
+  max-height: 90vh;
+}
+
+.profile-modal__body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profile-modal__user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-modal__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--avatar-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.profile-modal__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-modal__name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.profile-modal__email {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.profile-modal__divider {
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.profile-modal__actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-modal__delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  color: #ef4444;
+  font-size: 13px;
+  font-family: var(--font-family);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.profile-modal__delete-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.profile-modal__confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: var(--radius-sm);
+}
+
+.profile-modal__confirm-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.profile-modal__confirm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.profile-modal__confirm-btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: 12px;
+  font-family: var(--font-family);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.profile-modal__confirm-btn--cancel {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.profile-modal__confirm-btn--cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-modal__confirm-btn--danger {
+  background: #ef4444;
+  color: #fff;
+}
+
+.profile-modal__confirm-btn--danger:hover {
+  background: #dc2626;
+}

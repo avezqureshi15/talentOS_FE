@@ -346,17 +346,6 @@
 }
 
 /* user */
-.sidebar-user {
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 14px;
-}
-
-.sidebar-user__row {
-  display: flex;
-  gap: 10px;
-  padding: 8px 10px;
-}
-
 .sidebar-avatar {
   width: 30px;
   height: 30px;

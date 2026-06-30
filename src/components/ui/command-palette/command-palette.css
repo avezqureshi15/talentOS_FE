@@ -11,7 +11,7 @@
 }
 
 .command-palette-modal {
-  width: 560px;
+  width: 480px;
   max-height: 480px;
   background: var(--bg-primary, #18181b);
   border: 1px solid rgba(255, 255, 255, 0.1);

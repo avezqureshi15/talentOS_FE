@@ -15,9 +15,9 @@ const ChatArea: React.FC<ChatAreaProps> = (props: ChatAreaProps) => {
   const [copiedMsgId, setCopiedMsgId] = useState<number | null>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
-  const { messages, hasStarted, isProcessing } = useChatStore();
+  const { messages, hasStarted, isProcessing, chatId, error } = useChatStore();
 
-  const { error, hasMore, loadMore, isLoadingMore } = useChatMessages();
+  const { hasMore, loadMore, isLoadingMore } = useChatMessages(chatId);
 
   const handleScroll = useCallback(() => {
     const el = containerRef.current;

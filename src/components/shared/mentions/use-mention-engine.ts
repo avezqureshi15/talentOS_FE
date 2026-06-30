@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import type { Token, WizardStage, WizardActionConfig, WizardStageConfig, CommandItem } from "./mentions.types";
 import { WIZARD_ACTIONS } from "./wizard.config";
 
-const MENTION_REGEX = /@(\w*)$/;
+export const MENTION_REGEX = /@(\w*)$/;
 
 export const useMentionEngine = () => {
   const [show, setShow] = useState(false);
@@ -66,6 +66,23 @@ export const useMentionEngine = () => {
     return null;
   }, [wizardActionId, wizardStage]);
 
+  const advanceWizardMulti = useCallback((items: CommandItem[]): void => {
+    const action = WIZARD_ACTIONS[wizardActionId ?? ""];
+    if (!action) return;
+    const stage = action.stages[wizardStage - 1];
+    if (!stage) return;
+
+    const newTokens: Token[] = items.map((item) => ({
+      type: stage.tokenType,
+      label: item.label,
+      id: item.id,
+      relationalId: item.relationalId,
+    }));
+    setTokens((prev) => [...prev, ...newTokens]);
+    setWizardStage((action.stages.length + 1) as WizardStage);
+    setShow(false);
+  }, [wizardActionId, wizardStage]);
+
   const reset = useCallback(() => {
     setTokens([]);
     setWizardStage(0);
@@ -89,6 +106,7 @@ export const useMentionEngine = () => {
     handleChange,
     startWizard,
     advanceWizard,
+    advanceWizardMulti,
     insert,
     reset,
   };

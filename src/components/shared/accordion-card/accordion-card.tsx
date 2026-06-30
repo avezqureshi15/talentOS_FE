@@ -11,10 +11,16 @@ const AccordionCard = ({
   interviewLabel, onViewInterview,
 }: AccordionCardProps) => {
   const [notified, setNotified] = useState(false);
+  const [resolved, setResolved] = useState(false);
 
   const handleNotify = () => {
     setNotified(true);
     setTimeout(() => setNotified(false), 2000);
+  };
+
+  const handleResolve = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setResolved((prev) => !prev);
   };
 
   return (
@@ -35,6 +41,14 @@ const AccordionCard = ({
           >
             <i className={`bx ${notified ? "bx-check" : "bx-bell"}`} />
             {notified ? ACCORDION_LABELS.NOTIFICATION_SENT : ACCORDION_LABELS.SEND_NOTIFICATION}
+          </button>
+          <button
+            className={`resolve-btn${resolved ? " resolve-btn--done" : ""}`}
+            onClick={handleResolve}
+            type="button"
+          >
+            <i className={`bx ${resolved ? "bx-check-circle" : "bx-check"}`} />
+            {resolved ? ACCORDION_LABELS.RESOLVED : ACCORDION_LABELS.RESOLVE}
           </button>
         </div>
       </div>

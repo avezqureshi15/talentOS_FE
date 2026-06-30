@@ -1,0 +1,56 @@
+.cancel-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: var(--space-2) var(--space-4) var(--space-4);
+}
+
+.cancel-modal-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cancel-modal-text strong {
+  color: var(--text-primary);
+}
+
+.cancel-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cancel-modal-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.cancel-modal-btn--cancel {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.cancel-modal-btn--cancel:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.cancel-modal-btn--confirm {
+  color: #fff;
+  background: rgba(248, 113, 113, 0.8);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.cancel-modal-btn--confirm:hover {
+  background: rgba(248, 113, 113, 1);
+  border-color: rgba(248, 113, 113, 0.5);
+}

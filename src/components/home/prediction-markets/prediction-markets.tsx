@@ -23,7 +23,7 @@ export default function PredictionMarkets({ rows }: PredictionMarketsProps) {
             <div className="prediction-bar-track">
               <div
                 className={`prediction-bar-fill prediction-bar-fill--${r.up ? "up" : "other"}`}
-                style={{ '--bar-width': r.prob }}
+                style={{ '--bar-width': r.prob } as React.CSSProperties}
               />
             </div>
             <span className="prediction-prob">{r.prob}</span>
