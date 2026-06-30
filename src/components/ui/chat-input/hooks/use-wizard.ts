@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import type { WizardStage, CommandItem } from "@/components/shared/mentions/mentions.types";
 import { WIZARD_ACTIONS } from "@/components/shared/mentions/wizard.config";
 import { WIZARD_REAL_DATA_SOURCES } from "@/components/shared/mentions/wizard-data-sources";
+import { MENTION_REGEX } from "@/components/shared/mentions/use-mention-engine";
 import type { ChatInputProps } from "../chat-input.types";
 
 type Engine = {
@@ -70,7 +71,7 @@ export const useWizard = (
 
   const handleStartWizard = useCallback((actionId: string) => {
     startWizard(actionId);
-    setInput("");
+    setInput(inputRef.current.replace(MENTION_REGEX, ""));
   }, [startWizard, setInput]);
 
   const handleAdvanceWizard = useCallback((item: { id: string; label: string }) => {

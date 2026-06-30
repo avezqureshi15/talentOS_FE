@@ -248,6 +248,9 @@ export const CHAT_STREAM_ENDPOINT = "/api/v1/chat/stream";
 export const BE_API_BASE_URL = "http://localhost:8001/api/v1";
 export const API_BASE_URL = "http://localhost:8001";
 
+/* ── APP ── */
+export const APP_URL = import.meta.env.VITE_APP_URL ?? "http://localhost:5173";
+
 export const QUERY_KEYS = {
   CHAT_STREAM: "chat-stream",
   CHAT_HISTORY: "chat-history",

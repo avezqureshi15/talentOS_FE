@@ -1,4 +1,5 @@
 import type { InterviewerReview } from "./reviews-card.types";
+import { APP_URL } from "@/constants/constants";
 
 export const REVIEWS_LABELS = {
   REVIEW_LINK: "Review",
@@ -14,6 +15,8 @@ export const REVIEWS_LABELS = {
   INTERVIEW_TYPE: "Interview Type",
   STATUS: "Status",
 } as const;
+
+const RATE_CANDIDATE_URL = `${APP_URL}/rate-candidate`;
 
 export const REVIEW_INFO = [
   { key: "interviewer" as const, label: REVIEWS_LABELS.INTERVIEWER },
@@ -32,7 +35,7 @@ export const MOCK_REVIEWERS: InterviewerReview[] = [
     name: "Avez Qureshi",
     email: "avez@webknot.in",
     contactNumber: "+91 98765 43210",
-    reviewLink: "https://review.webknot.in/avez/interview",
+    reviewLink: RATE_CANDIDATE_URL,
     interview: {
       round: "Technical Round 1",
       interviewer: "Avez Qureshi",
@@ -51,7 +54,7 @@ export const MOCK_REVIEWERS: InterviewerReview[] = [
     name: "Rahul Sharma",
     email: "rahul@webknot.in",
     contactNumber: "+91 98765 43211",
-    reviewLink: "https://review.webknot.in/rahul/feedback",
+    reviewLink: RATE_CANDIDATE_URL,
     interview: {
       round: "Technical Round 1",
       interviewer: "Rahul Sharma",
@@ -70,7 +73,7 @@ export const MOCK_REVIEWERS: InterviewerReview[] = [
     name: "Priya Patel",
     email: "priya@webknot.in",
     contactNumber: "+91 98765 43212",
-    reviewLink: "https://review.webknot.in/priya/eval",
+    reviewLink: RATE_CANDIDATE_URL,
     interview: {
       round: "Technical Round 2",
       interviewer: "Priya Patel",
