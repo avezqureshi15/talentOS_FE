@@ -38,6 +38,11 @@ export const useChatMessages = (chatId: string | null) => {
       setChatId(chatId);
       setStarted();
 
+      const existing = useChatStore.getState().messages;
+      if (existing.length > 0) {
+        return existing;
+      }
+
       const res = await fetchMessages(chatId, 20);
       const msgs = res.data.map(toFrontendMessage);
       setMessages(msgs);
