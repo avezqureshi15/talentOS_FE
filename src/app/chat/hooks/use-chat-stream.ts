@@ -6,8 +6,6 @@ import { getVisitorId } from "@/utils/visitor";
 import type { ContentBlock, StreamInput } from "@/app/chat/pages/chat.types";
 import {
   INITIAL_THINKING,
-  STEP_TOOL_NAME_LABEL,
-  STEP_FALLBACK_LABEL,
   GENERIC_ERROR_MESSAGE,
 } from "./use-chat-stream.constants";
 
@@ -31,9 +29,10 @@ export const useChatStream = () => {
     mutationFn: async ({ text, chatId: overrideId }: StreamInput) => {
       const baseId = Date.now();
       const aiMessageId = baseId + 1;
-      let accumulatedContent = "";
-      let currentThinking = INITIAL_THINKING;
-      let hasFinalContent = false;
+
+      let toolArgsAccumulator = "";
+      let extractedRequest: string | null = null;
+      let responseContent = "";
 
       setProcessing(true);
       setError(null);
@@ -48,34 +47,17 @@ export const useChatStream = () => {
       addMessage({
         id: aiMessageId,
         role: "ai",
-        content: [{ type: "thinking", text: currentThinking }],
+        content: [{ type: "thinking", text: INITIAL_THINKING }],
       });
 
       const buildContent = (): ContentBlock[] => {
-        const blocks: ContentBlock[] = [{ type: "thinking", text: currentThinking }];
-        if (accumulatedContent) {
-          blocks.push({ type: "markdown", content: accumulatedContent });
+        const blocks: ContentBlock[] = [
+          { type: "thinking", text: extractedRequest || INITIAL_THINKING },
+        ];
+        if (responseContent) {
+          blocks.push({ type: "markdown", content: responseContent });
         }
         return blocks;
-      };
-
-      const formatStepText = (step: {
-        type: string;
-        content: string;
-      }): string => {
-        switch (step.type) {
-          case "tool_name":
-            return STEP_TOOL_NAME_LABEL;
-          case "tool_args":
-            try {
-              const parsed = JSON.parse(step.content);
-              return parsed.request ?? STEP_FALLBACK_LABEL;
-            } catch {
-              return STEP_FALLBACK_LABEL;
-            }
-          default:
-            return step.content;
-        }
       };
 
       try {
@@ -86,7 +68,17 @@ export const useChatStream = () => {
           },
 
           onStep: (step) => {
-            currentThinking = formatStepText(step);
+            if (step.type === "tool_args") {
+              toolArgsAccumulator += step.content;
+              try {
+                const parsed = JSON.parse(toolArgsAccumulator);
+                if (parsed?.request) {
+                  extractedRequest = parsed.request;
+                }
+              } catch {
+                // JSON not yet complete
+              }
+            }
             updateMessage(aiMessageId, (m) => ({
               ...m,
               content: buildContent(),
@@ -94,8 +86,7 @@ export const useChatStream = () => {
           },
 
           onFinal: (block) => {
-            accumulatedContent += block.content;
-            hasFinalContent = true;
+            responseContent += block.content;
             updateMessage(aiMessageId, (m) => ({
               ...m,
               content: buildContent(),
@@ -108,13 +99,6 @@ export const useChatStream = () => {
         });
       } finally {
         // no-op
-      }
-
-      if (hasFinalContent) {
-        updateMessage(aiMessageId, (m) => ({
-          ...m,
-          content: [{ type: "markdown" as const, content: accumulatedContent }],
-        }));
       }
     },
 

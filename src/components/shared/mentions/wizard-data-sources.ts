@@ -82,6 +82,31 @@ function createCandidateEntry(): CommandEntry {
   return entry;
 }
 
+function createEmployeeEntry(): CommandEntry {
+  let currentPage = 1;
+  let currentQuery = "";
+  const entry: CommandEntry = {
+    id: "employee-search",
+    label: "Employees",
+    searchPlaceholder: "Search employees...",
+    hasMore: true,
+    fetcher: async (query: string) => {
+      currentQuery = query;
+      currentPage = 1;
+      const result = await fetchUsersForMentions(query, 1);
+      entry.hasMore = result.hasMore;
+      return result.items;
+    },
+    loadMore: async () => {
+      currentPage += 1;
+      const result = await fetchUsersForMentions(currentQuery, currentPage);
+      entry.hasMore = result.hasMore;
+      return result.items;
+    },
+  };
+  return entry;
+}
+
 export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceEntry>> = {
   "book-interview": {
     0: { createEntry: createHiringRequestEntry },
@@ -92,7 +117,13 @@ export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceE
     0: { createEntry: createHiringRequestEntry },
   },
   "employees-ping": {
-    0: { createEntry: createCandidateEntry },
+    0: { createEntry: createEmployeeEntry },
+  },
+  "employees-view": {
+    0: { createEntry: createEmployeeEntry },
+  },
+  "employees-ask-slots": {
+    0: { createEntry: createEmployeeEntry },
   },
   "applicants": {
     0: { createEntry: createCandidateEntry },
