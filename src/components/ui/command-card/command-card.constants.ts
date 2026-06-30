@@ -7,6 +7,21 @@ export const HYBRID_INTENT_ICONS: Record<string, string> = {
 
 export const HYBRID_INTENT_FALLBACK_ICON = "bx bx-id-card";
 
+export const INTENT_HEADER_ICONS: Record<string, string> = {
+  "book-interview": "bx bx-calendar-check",
+  "ASK_SLOTS": "bx bx-clock",
+  "interviews": "bx bx-calendar-check",
+  "employees-ping": "bx bx-message",
+  "hr-request": "bx bx-briefcase",
+  "applicants": "bx bx-user",
+  "employees-view": "bx bx-eye",
+  "employees-ask-slots": "bx bx-clock",
+  "INQUIRE_HR_REQUEST": "bx bx-briefcase",
+  "INQUIRE_APPLICANT": "bx bx-user",
+  "INQUIRE_EMPLOYEE": "bx bx-user",
+  "INQUIRE_INTERVIEW": "bx bx-calendar-check",
+};
+
 export const COMMAND_CARD_LABELS = {
   SLOT_BOOKING: "Slot Booking Request",
   PING: "Ping",

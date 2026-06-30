@@ -3,7 +3,7 @@ import Skeleton from "@/components/ui/skeleton/skeleton";
 import { useEntityResolution } from "@/hooks/use-entity-resolution";
 import { resolveInterviewStatus } from "@/app/chat/components/chat-area/chat-area.utils";
 import type { CommandCardProps } from "./command-card.types";
-import { HYBRID_INTENT_ICONS, HYBRID_INTENT_FALLBACK_ICON, COMMAND_CARD_LABELS } from "./command-card.constants";
+import { HYBRID_INTENT_ICONS, HYBRID_INTENT_FALLBACK_ICON, INTENT_HEADER_ICONS, INTENT_LABELS, COMMAND_CARD_LABELS } from "./command-card.constants";
 
 const EntityLabel = ({ label, loading }: { label: string | null | undefined; loading: boolean }) => {
   if (loading) return <Skeleton width="140px" height="16px" />;
@@ -32,6 +32,8 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
   ].filter((e) => e.id);
 
   const { resolved, loading } = useEntityResolution(entities);
+  const headerIcon = INTENT_HEADER_ICONS[data.intent] ?? "bx bx-terminal";
+  const headerLabel = INTENT_LABELS[data.intent] ?? data.intent;
 
   if (data.intent === "ASK_SLOTS") {
     const ids = data.payload.applicant_ids?.split(", ").filter(Boolean) ?? [];
@@ -77,6 +79,26 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
     );
   }
 
+  if (data.intent.startsWith("INQUIRE_")) {
+    return (
+      <div className="command-card">
+        <div className="command-card__header">
+          <i className={INTENT_HEADER_ICONS[data.intent] ?? HYBRID_INTENT_FALLBACK_ICON} />
+          <span>{headerLabel}</span>
+        </div>
+        <div className="command-card__body">
+          <div className="command-card__entity-chip">
+            <i className={INTENT_HEADER_ICONS[data.intent] ?? HYBRID_INTENT_FALLBACK_ICON} />
+            <span>{data.payload.name_field}</span>
+          </div>
+          {data.payload.raw_text_context && (
+            <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (data.intent === "employees-ping") {
     return (
       <div className="command-card">
@@ -100,8 +122,8 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
   return (
     <div className="command-card">
       <div className="command-card__header">
-        <i className="bx bx-calendar-check" />
-        <span>{COMMAND_CARD_LABELS.INTERVIEW_BOOKING}</span>
+        <i className={headerIcon} />
+        <span>{headerLabel}</span>
       </div>
       <div className="command-card__body">
         {data.payload.hiring_request_id && (
@@ -110,19 +132,24 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
             <EntityLabel label={resolved.hiringRequest} loading={loading} />
           </div>
         )}
-        <div className="command-card__row">
-          <span className="command-card__label">{COMMAND_CARD_LABELS.CANDIDATE}</span>
-          <EntityLabel label={resolved.applicant} loading={loading} />
-        </div>
-        <div className="command-card__row">
-          <span className="command-card__label">{COMMAND_CARD_LABELS.INTERVIEWER}</span>
-          <EntityLabel label={resolved.interviewer} loading={loading} />
-        </div>
-        <div className="command-card__row">
-          <span className="command-card__label">{COMMAND_CARD_LABELS.TIME_SLOT}</span>
-          {/* <span className="command-card__value">{data.payload.slot_id || COMMAND_CARD_LABELS.UNKNOWN}</span> */}
-          <span className="command-card__value">10:00 AM - 11:00 AM</span>
-        </div>
+        {data.payload.applicant_id && (
+          <div className="command-card__row">
+            <span className="command-card__label">{COMMAND_CARD_LABELS.CANDIDATE}</span>
+            <EntityLabel label={resolved.applicant} loading={loading} />
+          </div>
+        )}
+        {data.payload.interviewer_id && (
+          <div className="command-card__row">
+            <span className="command-card__label">{COMMAND_CARD_LABELS.INTERVIEWER}</span>
+            <EntityLabel label={resolved.interviewer} loading={loading} />
+          </div>
+        )}
+        {data.payload.slot_id && (
+          <div className="command-card__row">
+            <span className="command-card__label">{COMMAND_CARD_LABELS.TIME_SLOT}</span>
+            <span className="command-card__value">{data.payload.slot_id}</span>
+          </div>
+        )}
         {data.payload.raw_text_context && (
           <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
         )}

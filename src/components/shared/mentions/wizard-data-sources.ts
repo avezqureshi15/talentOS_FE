@@ -92,9 +92,9 @@ export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceE
     0: { createEntry: createHiringRequestEntry },
   },
   "employees-ping": {
-    1: { createEntry: createCandidateEntry },
+    0: { createEntry: createCandidateEntry },
   },
   "applicants": {
-    1: { createEntry: createCandidateEntry },
+    0: { createEntry: createCandidateEntry },
   },
 };
