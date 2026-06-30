@@ -2,14 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { streamChat } from "@/services/ai/chat-stream";
 import { useChatStore } from "@/store/chat.store";
 import { QUERY_KEYS } from "@/constants/constants";
-import { getVisitorId } from "@/utils/visitor";
 import type { ContentBlock, StreamInput } from "@/app/chat/pages/chat.types";
 import {
   INITIAL_THINKING,
   GENERIC_ERROR_MESSAGE,
 } from "./use-chat-stream.constants";
-
-const visitorId = getVisitorId();
 
 export const useChatStream = () => {
   const queryClient = useQueryClient();
@@ -62,7 +59,7 @@ export const useChatStream = () => {
 
       try {
         const effectiveChatId = overrideId ?? chatId;
-        await streamChat(text, effectiveChatId, visitorId, {
+        await streamChat(text, effectiveChatId, {
           onChatId: (id) => {
             setChatId(id);
           },

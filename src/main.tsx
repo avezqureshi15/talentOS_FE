@@ -2,11 +2,14 @@ import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router-dom'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import { router } from '@/router/routes'
+import { AuthProvider } from '@/app/auth/components/AuthProvider'
 import ErrorBoundary from '@/components/ui/error-boundary/error-boundary'
 import ErrorFallback from '@/components/ui/error-fallback/error-fallback'
 import LoadingSpinner from '@/components/ui/loading-spinner/loading-spinner'
 import { ERROR_FALLBACK_LABELS } from '@/constants/error-labels'
+import { GOOGLE_CLIENT_ID } from '@/constants/constants'
 import '@/index.css'
 import '@/app.css'
 
@@ -22,11 +25,15 @@ createRoot(document.getElementById('root')!).render(
         />
       }
     >
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
-          <RouterProvider router={router} />
-        </Suspense>
-      </QueryClientProvider>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
+              <RouterProvider router={router} />
+            </Suspense>
+          </AuthProvider>
+        </QueryClientProvider>
+      </GoogleOAuthProvider>
     </ErrorBoundary>
   </StrictMode>,
 )

@@ -1,5 +1,10 @@
-import { SIDEBAR_USER, PROFILE_MENU_ITEMS, PROFILE_DANGER_ITEM, LOGOUT_MODAL } from "@/constants/constants";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { PROFILE_MENU_ITEMS, PROFILE_DANGER_ITEM, LOGOUT_MODAL } from "@/constants/constants";
 import { useSidebarUserPopover } from "@/components/ui/sidebar/sidebar-user-popover/use-sidebar-user-popover";
+import { useAuth } from "@/app/auth/hooks/use-auth";
+import { ROUTES } from "@/constants/routes";
+import { getInitials } from "@/utils/user";
 import BaseModal from "@/components/ui/modal/base-modal";
 import ProfileModal from "@/components/ui/sidebar/sidebar-user-popover/profile-modal";
 import SettingsModal from "@/components/ui/sidebar/sidebar-user-popover/settings-modal";
@@ -8,6 +13,17 @@ import { useUiStore } from "@/store/ui.store";
 import "./sidebar-user-popover.css";
 
 const SidebarUserPopover = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const showShortcutsModal = useUiStore((s) => s.showShortcutsModal);
+  const closeShortcutsModal = useUiStore((s) => s.closeShortcutsModal);
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+    navigate(ROUTES.LOGIN, { replace: true });
+  }, [logout, navigate]);
+
   const {
     isOpen,
     onToggle,
@@ -17,17 +33,14 @@ const SidebarUserPopover = () => {
     closeModal,
   } = useSidebarUserPopover();
 
-  const showShortcutsModal = useUiStore((s) => s.showShortcutsModal);
-  const closeShortcutsModal = useUiStore((s) => s.closeShortcutsModal);
-
   return (
     <>
       <div className="sidebar-user" ref={popoverRef}>
         <button className="sidebar-user__trigger" onClick={onToggle} type="button">
-          <div className="sidebar-avatar">{SIDEBAR_USER.INITIALS}</div>
+          <div className="sidebar-avatar">{user ? getInitials(user.name) : "?"}</div>
           <div>
-            <div className="sidebar-user__name">{SIDEBAR_USER.NAME}</div>
-            <div className="sidebar-user__email">{SIDEBAR_USER.EMAIL}</div>
+            <div className="sidebar-user__name">{user?.name ?? "—"}</div>
+            <div className="sidebar-user__email">{user?.email ?? "—"}</div>
           </div>
         </button>
 
@@ -76,7 +89,7 @@ const SidebarUserPopover = () => {
             <button className="sidebar-delete-btn sidebar-delete-btn--cancel" onClick={closeModal}>
               {LOGOUT_MODAL.CANCEL}
             </button>
-            <button className="sidebar-delete-btn sidebar-delete-btn--confirm" onClick={closeModal}>
+            <button className="sidebar-delete-btn sidebar-delete-btn--confirm" onClick={handleLogout}>
               {LOGOUT_MODAL.CONFIRM}
             </button>
           </div>

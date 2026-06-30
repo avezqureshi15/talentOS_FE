@@ -1,6 +1,8 @@
-import { AUTH_STORAGE_KEY } from "./auth.constants";
+import { useContext } from "react";
+import { AuthContext } from "@/app/auth/components/auth-context";
 
 export const useAuth = () => {
-  const isAuthenticated = Boolean(localStorage.getItem(AUTH_STORAGE_KEY));
-  return { isAuthenticated };
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  return ctx;
 };

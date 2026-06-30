@@ -1,10 +1,9 @@
 import httpClient from "@/services/http-client";
-import { getVisitorId } from "@/utils/visitor";
 import { API_ENDPOINTS, PAGINATION } from "@/constants/api-endpoints";
 
 export type ChatHistoryItem = {
   id: string;
-  visitor_id: string;
+  user_id: number;
   title: string;
   created_at: string;
   updated_at: string;
@@ -41,9 +40,8 @@ export const fetchChats = async (
   offset = 0,
   limit = PAGINATION.DEFAULT_CHATS_PAGE_SIZE,
 ): Promise<ChatsResponse> => {
-  const visitorId = getVisitorId();
   const { data } = await httpClient.get<ChatsResponse>(API_ENDPOINTS.CHAT_CHATS, {
-    params: { visitor_id: visitorId, limit, offset },
+    params: { limit, offset },
   });
   return data;
 };

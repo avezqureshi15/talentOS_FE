@@ -1,0 +1,20 @@
+.talentos-logo-brand {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.talentos-logo-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.talentos-logo-os {
+  background: linear-gradient(135deg, #a0a0a0, #555);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

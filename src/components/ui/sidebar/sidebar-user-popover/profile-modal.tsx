@@ -1,6 +1,8 @@
 import { useState } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
-import { SIDEBAR_USER, PROFILE_MODAL } from "@/constants/constants";
+import { useAuth } from "@/app/auth/hooks/use-auth";
+import { getInitials } from "@/utils/user";
+import { PROFILE_MODAL } from "@/constants/constants";
 import "./profile-modal.css";
 
 type ProfileModalProps = {
@@ -9,6 +11,8 @@ type ProfileModalProps = {
 };
 
 const ProfileModal = ({ open, onClose }: ProfileModalProps) => {
+  const { user } = useAuth();
+
   // justification: showConfirm toggles the delete-all-chats confirmation UI
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -21,10 +25,10 @@ const ProfileModal = ({ open, onClose }: ProfileModalProps) => {
     <BaseModal open={open} onClose={onClose} title={PROFILE_MODAL.TITLE} icon={PROFILE_MODAL.ICON} className="profile-modal">
       <div className="profile-modal__body">
         <div className="profile-modal__user">
-          <div className="profile-modal__avatar">{SIDEBAR_USER.INITIALS}</div>
+          <div className="profile-modal__avatar">{user ? getInitials(user.name) : "?"}</div>
           <div className="profile-modal__info">
-            <div className="profile-modal__name">{SIDEBAR_USER.NAME}</div>
-            <div className="profile-modal__email">{SIDEBAR_USER.EMAIL}</div>
+            <div className="profile-modal__name">{user?.name ?? "\u2014"}</div>
+            <div className="profile-modal__email">{user?.email ?? "\u2014"}</div>
           </div>
         </div>
 

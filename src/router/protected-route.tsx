@@ -3,12 +3,16 @@ import { Navigate, Outlet } from "react-router-dom";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import { ROUTES } from "@/constants/routes";
-
-// TODO: Replace this placeholder with a real auth check from a store or context
-const isAuthenticated = true;
+import { useAuth } from "@/app/auth/hooks/use-auth";
 
 export default function ProtectedRoute() {
-  if (!isAuthenticated) {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <LoadingSpinner size="lg" fullPage />;
+  }
+
+  if (!user) {
     return <Navigate to={ROUTES.LOGIN} replace />;
   }
 

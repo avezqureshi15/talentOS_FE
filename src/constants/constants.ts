@@ -251,6 +251,10 @@ export const API_BASE_URL = "http://localhost:8001";
 /* ── APP ── */
 export const APP_URL = import.meta.env.VITE_APP_URL ?? "http://localhost:5173";
 
+/* ── AUTH ── */
+export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "";
+export const ACCESS_TOKEN_KEY = "auth_access_token";
+
 export const QUERY_KEYS = {
   CHAT_STREAM: "chat-stream",
   CHAT_HISTORY: "chat-history",

@@ -1,23 +1,27 @@
-import { API_BASE_URL, CHAT_STREAM_ENDPOINT } from "@/constants/constants";
+import { API_BASE_URL, CHAT_STREAM_ENDPOINT, ACCESS_TOKEN_KEY } from "@/constants/constants";
 import type { ChatStreamCallbacks, StreamChunk } from "./chat-stream.types";
 
 export const streamChat = async (
   message: string,
   chatId: string | null,
-  visitorId: string,
   callbacks: ChatStreamCallbacks,
 ): Promise<string | null> => {
   const url = `${API_BASE_URL}${CHAT_STREAM_ENDPOINT}`;
 
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify({
       message,
       chat_id: chatId,
-      visitor_id: visitorId,
     }),
   });
 
