@@ -147,7 +147,8 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
         {data.payload.slot_id && (
           <div className="command-card__row">
             <span className="command-card__label">{COMMAND_CARD_LABELS.TIME_SLOT}</span>
-            <span className="command-card__value">{data.payload.slot_id}</span>
+            {/* <span className="command-card__value">{data.payload.slot_id}</span> */}
+            <span className="command-card__value">10:00 AM - 11:00 AM</span>
           </div>
         )}
         {data.payload.raw_text_context && (

@@ -1,11 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import "./thinking.css";
+import { useChatStore } from "@/store/chat.store";
 import type { Props } from "./thinking.types";
 
 const ThinkingChip: React.FC<Props> = ({ text }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [visibleLength, setVisibleLength] = useState(0);
   const prevTextRef = useRef(text);
+  const isProcessing = useChatStore((s) => s.isProcessing);
+  const prevProcessingRef = useRef(isProcessing);
+
+  useEffect(() => {
+    if (prevProcessingRef.current && !isProcessing) {
+      setIsOpen(false);
+    }
+    prevProcessingRef.current = isProcessing;
+  }, [isProcessing]);
 
   useEffect(() => {
     if (text !== prevTextRef.current) {
