@@ -57,14 +57,14 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
   },
   "hr-request": {
     id: "hr-request",
-    label: "HR Request",
+    label: "Hiring Requests",
     icon: "bx bx-briefcase",
     totalTokens: 2,
-    executionCue: "Press Enter to send inquiry about this HR request",
+    executionCue: "Press Enter to send inquiry about Hiring Requests",
     stages: [
       {
         stage: 1,
-        header: "Select HR Request...",
+        header: "Select Hiring Requests...",
         fetcher: fetchMockRecruitments,
         tokenType: "entity",
         isFinal: true,

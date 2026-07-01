@@ -9,6 +9,7 @@ const ThinkingChip: React.FC<Props> = ({ text }) => {
   const prevTextRef = useRef(text);
   const isProcessing = useChatStore((s) => s.isProcessing);
   const prevProcessingRef = useRef(isProcessing);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     if (prevProcessingRef.current && !isProcessing) {
@@ -18,20 +19,30 @@ const ThinkingChip: React.FC<Props> = ({ text }) => {
   }, [isProcessing]);
 
   useEffect(() => {
-    if (text !== prevTextRef.current) {
-      setVisibleLength(0);
-      prevTextRef.current = text;
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      if (!isProcessing) {
+        setVisibleLength(text.length);
+      }
     }
-  }, [text]);
+  }, [isProcessing, text.length]);
 
   useEffect(() => {
+    if (text !== prevTextRef.current) {
+      setVisibleLength(isProcessing ? 0 : text.length);
+      prevTextRef.current = text;
+    }
+  }, [text, isProcessing]);
+
+  useEffect(() => {
+    if (!isProcessing) return;
     if (visibleLength < text.length) {
       const id = setInterval(() => {
         setVisibleLength((v) => Math.min(v + 1, text.length));
       }, 18);
       return () => clearInterval(id);
     }
-  }, [text, visibleLength]);
+  }, [text, visibleLength, isProcessing]);
 
   const displayed = text.slice(0, visibleLength);
 

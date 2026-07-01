@@ -10,7 +10,7 @@ export const ROOT_MENU: CommandEntry[] = [
   },
   {
     id: "hr-request",
-    label: "HR Request",
+    label: "Hiring Requests",
     icon: "bx bx-briefcase",
     isWizardAction: true,
   },
