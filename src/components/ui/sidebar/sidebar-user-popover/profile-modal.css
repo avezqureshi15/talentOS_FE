@@ -66,7 +66,7 @@
   padding: 10px 12px;
   border: none;
   background: transparent;
-  color: #ef4444;
+  color: var(--danger);
   font-size: 13px;
   font-family: var(--font-family);
   border-radius: var(--radius-sm);
@@ -75,7 +75,7 @@
 }
 
 .profile-modal__delete-btn:hover {
-  background: rgba(239, 68, 68, 0.08);
+  background: var(--danger-bg);
 }
 
 .profile-modal__confirm {
@@ -83,8 +83,8 @@
   flex-direction: column;
   gap: 12px;
   padding: 12px;
-  background: rgba(239, 68, 68, 0.06);
-  border: 1px solid rgba(239, 68, 68, 0.15);
+  background: var(--danger-bg-subtle);
+  border: 1px solid var(--danger-bg-strong);
   border-radius: var(--radius-sm);
 }
 
@@ -117,14 +117,14 @@
 }
 
 .profile-modal__confirm-btn--cancel:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border-default);
 }
 
 .profile-modal__confirm-btn--danger {
-  background: #ef4444;
-  color: #fff;
+  background: var(--danger);
+  color: var(--text-white);
 }
 
 .profile-modal__confirm-btn--danger:hover {
-  background: #dc2626;
+  background: var(--danger);
 }

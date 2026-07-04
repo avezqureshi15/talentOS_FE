@@ -1,8 +1,8 @@
 .thinking-section {
   margin-bottom: 16px;
-  border: 1px solid rgba(255,255,255,0.07);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  background: rgba(255,255,255,0.03);
+  background: var(--surface-elevated);
   overflow: hidden;
   width: 100%;
 }
@@ -16,12 +16,12 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: rgba(255,255,255,0.5);
+  color: var(--text-muted);
   font-size: 12px;
 }
 
 .thinking-section__header:hover {
-  background: rgba(255,255,255,0.04);
+  background: var(--ai-thought-bg);
 }
 
 .thinking-section__icon {
@@ -49,7 +49,7 @@
   padding: 4px 12px 12px;
   font-size: 12px;
   line-height: 1.6;
-  color: rgba(255,255,255,0.45);
+  color: var(--text-muted);
   white-space: pre-wrap;
   word-break: break-word;
 }

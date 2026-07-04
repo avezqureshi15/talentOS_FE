@@ -181,7 +181,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 .sidebar-menu-item {
@@ -203,11 +203,11 @@
 }
 
 .sidebar-menu-item--danger {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .sidebar-menu-item--danger:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--danger-bg);
 }
 
 /* rename input */
@@ -267,12 +267,12 @@
 }
 
 .sidebar-delete-btn--confirm {
-  background: #ef4444;
-  color: #fff;
+  background: var(--danger);
+  color: var(--text-white);
 }
 
 .sidebar-delete-btn--confirm:hover {
-  background: #dc2626;
+  background: var(--danger);
 }
 
 /* section header */
@@ -324,7 +324,7 @@
 .sidebar-brand-tagline {
   font-size: 10px;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-primary);
   margin-top: 6px;
 }
 
@@ -337,15 +337,15 @@
 }
 
 .sidebar-brand-web {
-  color: #fff;
+  color: var(--text-white);
 }
 
 .sidebar-brand-hyre {
-  color: #B0B5C0;
+  color: var(--brand-silver);
 }
 
 .sidebar-brand-ai {
-  color: #B0B5C0;
+  color: var(--brand-silver);
 }
 
 /* badge */

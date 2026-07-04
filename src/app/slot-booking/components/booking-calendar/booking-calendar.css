@@ -82,8 +82,8 @@
 }
 
 .cal-cell--selected {
-  background: rgba(255, 255, 255, 0.85) !important;
-  color: #0a0a0a;
+  background: var(--text-primary) !important;
+  color: var(--bg-primary);
   font-weight: 600;
 }
 

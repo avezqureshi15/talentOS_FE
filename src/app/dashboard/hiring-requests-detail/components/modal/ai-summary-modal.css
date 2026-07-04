@@ -22,6 +22,6 @@
   white-space: pre-wrap;
   word-break: break-word;
   overflow-y: auto;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--overlay-subtle);
+  border: 1px solid var(--input-icon-bg);
 }

@@ -5,8 +5,8 @@
   border-radius: 50%;
   border: none;
 
-  background: var(--send-btn-bg, #ffffff);
-  color: var(--send-btn-color, #fff);
+  background: var(--send-btn-bg, var(--text-white));
+  color: var(--send-btn-color, var(--text-white));
 
   display: flex;
   align-items: center;

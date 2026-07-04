@@ -1,7 +1,7 @@
 .cp-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--overlay);
   backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
@@ -13,10 +13,10 @@
 .command-palette-modal {
   width: 480px;
   max-height: 480px;
-  background: var(--bg-primary, #18181b);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-default);
   border-radius: 12px;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--shadow-xl);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -35,11 +35,11 @@
   align-items: center;
   gap: 10px;
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .cp-input-icon {
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--text-faint);
   flex-shrink: 0;
 }
 
@@ -48,19 +48,19 @@
   background: none;
   border: none;
   outline: none;
-  color: var(--text-primary, #fafafa);
+  color: var(--text-primary);
   font-size: 15px;
   line-height: 22px;
 }
 
 .cp-input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--ai-action-icon);
 }
 
 .cp-shortcut-hint {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-faint);
+  background: var(--chip-bg);
   padding: 2px 6px;
   border-radius: 4px;
   flex-shrink: 0;
@@ -77,7 +77,7 @@
 }
 
 .cp-body::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--bg-active);
   border-radius: 2px;
 }
 
@@ -86,7 +86,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--ai-action-icon);
   padding: 8px 16px 4px;
 }
 
@@ -100,13 +100,13 @@
   background: none;
   width: 100%;
   text-align: left;
-  color: var(--text-primary, #fafafa);
+  color: var(--text-primary);
   transition: background 0.1s;
 }
 
 .cp-item:hover,
 .cp-item--selected {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-hover);
 }
 
 .cp-item-icon {
@@ -120,13 +120,13 @@
 }
 
 .cp-item-icon--action {
-  background: rgba(99, 102, 241, 0.15);
-  color: #818cf8;
+  background: var(--accent-indigo-bg);
+  color: var(--accent-indigo-light);
 }
 
 .cp-item-icon--request {
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.5);
+  background: var(--surface-glass);
+  color: var(--input-icon-color);
 }
 
 .cp-item-label {
@@ -137,14 +137,14 @@
 
 .cp-item-sublabel {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   line-height: 16px;
 }
 
 .cp-empty {
   padding: 24px 16px;
   text-align: center;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--ai-action-icon);
   font-size: 13px;
 }
 

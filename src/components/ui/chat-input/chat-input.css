@@ -72,11 +72,11 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--input-icon-bg);
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
   padding: 4px 10px;
-  color: #fff;
+  color: var(--text-white);
   font-size: 14px;
   line-height: 1.4;
   white-space: nowrap;
@@ -101,18 +101,18 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 12px;
   font-weight: 700;
   line-height: 1;
   transition: background 0.15s ease;
   user-select: none;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--bg-active);
 }
 
 .ci-token-close:hover {
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  background: var(--text-faint);
+  color: var(--text-white);
 }
 
 .ci-token-close:focus-visible {
@@ -125,7 +125,7 @@
 .ci-execution-cue {
   text-align: center;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   margin-top: 4px;
   letter-spacing: 0.2px;
 }

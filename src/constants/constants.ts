@@ -1,6 +1,8 @@
 /* ── Storage Keys ── */
 export const STORAGE_KEYS = {
   VISITOR_ID: "talentos_visitor_id",
+  THEME: "talentos_theme",
+  AUTH_TOKEN: "token",
 } as const;
 
 /* ── Sidebar ── */
@@ -319,7 +321,9 @@ export const PROFILE_MODAL = {
 export const SETTINGS_MODAL = {
   TITLE: "Settings",
   ICON: "bx bx-cog",
-  EMPTY: "Settings panel coming soon.",
+  THEME_LABEL: "Theme",
+  THEME_DARK: "Dark",
+  THEME_LIGHT: "Light",
 } as const;
 
 export const KEYBOARD_SHORTCUTS_MODAL = {

@@ -19,7 +19,7 @@
   flex-direction: column;
   padding: 36px 32px;
   border-right: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.015);
+  background: var(--surface-elevated);
 }
 
 .rate-context .context-brand {
@@ -204,8 +204,8 @@
   font-size: 13px;
   font-weight: 600;
   font-family: inherit;
-  color: #0a0a0a;
-  background: rgba(255, 255, 255, 0.9);
+  color: var(--bg-primary);
+  background: var(--text-primary);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -217,8 +217,8 @@
 }
 
 .rate-submit-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+  background: var(--text-white);
+  box-shadow: 0 0 0 1px var(--border-strong);
 }
 
 .rate-submit-btn:active:not(:disabled) {
@@ -244,7 +244,7 @@
 
 .submitted-icon {
   font-size: 48px;
-  color: #22c55e;
+  color: var(--success);
 }
 
 .submitted-title {

@@ -37,13 +37,13 @@
 }
 
 .command-card__status--upcoming {
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.12);
+  color: var(--success);
+  background: var(--success-bg-strong);
 }
 
 .command-card__status--completed {
-  color: #f97316;
-  background: rgba(249, 115, 22, 0.12);
+  color: var(--warning-light);
+  background: var(--warning-bg-strong);
 }
 
 .command-card__body {
@@ -98,7 +98,7 @@
 }
 
 .command-card__question {
-  color: #fff;
+  color: var(--text-white);
   font-size: 15px;
   font-weight: 500;
   line-height: 1.5;

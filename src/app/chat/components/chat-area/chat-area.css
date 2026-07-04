@@ -27,8 +27,8 @@
 
 /* Error banner */
 .chat-area__error {
-  background: #7f1d1d;
-  color: #fca5a5;
+  background: var(--danger-banner-bg);
+  color: var(--danger-banner-text);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 13px;
@@ -69,6 +69,6 @@
 }
 
 .chat-copy-btn--copied {
-  color: var(--green, #22c55e) !important;
+  color: var(--green, var(--success)) !important;
 }
 

@@ -72,13 +72,13 @@
 }
 
 .status-active {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  background: var(--success-bg-strong);
+  color: var(--success);
 }
 
 .status-closed {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  background: var(--danger-bg-strong);
+  color: var(--danger);
 }
 
 /* location */
@@ -109,7 +109,7 @@
 
 /* skeleton loader */
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+  background: linear-gradient(90deg, var(--surface-card) 25%, var(--input-icon-bg) 50%, var(--surface-card) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 6px;
@@ -291,9 +291,9 @@
 }
 
 .pagination-btn-active {
-  background: var(--send-btn-bg, #ffffff);
-  color: var(--send-btn-color, #fff);
-  border-color: var(--send-btn-bg, #ffffff);
+  background: var(--send-btn-bg, var(--text-white));
+  color: var(--send-btn-color, var(--text-white));
+  border-color: var(--send-btn-bg, var(--text-white));
 }
 
 .pagination-btn-active:hover {

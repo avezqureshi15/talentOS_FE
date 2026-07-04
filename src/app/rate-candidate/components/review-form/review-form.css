@@ -42,11 +42,11 @@
 }
 
 .review-textarea--over {
-  border-color: #ef4444;
+  border-color: var(--danger);
 }
 
 .review-textarea--over:focus {
-  border-color: #ef4444;
+  border-color: var(--danger);
 }
 
 .review-counter {
@@ -56,5 +56,5 @@
 }
 
 .review-counter--over {
-  color: #ef4444;
+  color: var(--danger);
 }

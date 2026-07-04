@@ -12,15 +12,15 @@
   gap: 0;
   border-radius: 10px;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--overlay-subtle);
+  border: 1px solid var(--input-icon-bg);
 }
 
 .ad-row {
   display: flex;
   align-items: center;
   padding: 12px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .ad-row:last-child {
@@ -32,7 +32,7 @@
 }
 
 .ad-value--empty {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--ai-action-icon);
   text-align: center;
 }
 
@@ -40,7 +40,7 @@
   flex: 0 0 160px;
   font-size: 12px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

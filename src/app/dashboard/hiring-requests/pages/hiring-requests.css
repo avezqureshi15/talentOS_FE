@@ -47,7 +47,7 @@
 
 .hr-tab--active {
   color: var(--text-primary);
-  border-bottom-color: var(--accent, #818cf8);
+  border-bottom-color: var(--accent, var(--accent-indigo-light));
 }
 
 .hr-tab-placeholder {
@@ -95,7 +95,7 @@
 
 .ac-tab--active {
   color: var(--text-primary);
-  border-bottom-color: var(--accent, #818cf8);
+  border-bottom-color: var(--accent, var(--accent-indigo-light));
 }
 
 .hr-tab--blip {
@@ -109,7 +109,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ef4444;
+  background: var(--danger);
   animation: blip-blink 1s ease-in-out 3;
 }
 
