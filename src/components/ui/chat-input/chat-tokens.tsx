@@ -1,6 +1,6 @@
 import React from "react";
-import { TOKEN_ICONS } from "@/components/shared/mentions/mentions.constants";
-import type { Token } from "@/components/shared/mentions/mentions.types";
+import { TOKEN_ICONS } from "@/components/shared/mentions/constants";
+import type { Token } from "@/components/shared/mentions/types";
 
 type ChatTokensProps = {
   tokens: Token[];

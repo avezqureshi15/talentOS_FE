@@ -1,4 +1,4 @@
-import type { CommandItem } from "./mentions.types";
+import type { CommandItem } from "../types";
 
 export const MOCK_USERS: CommandItem[] = [
   { id: "1", label: "Avez", description: "avez@webknot.in", relationalId: "usr_a1b2c3d4" },

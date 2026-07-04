@@ -1,5 +1,5 @@
-import type { WizardActionConfig } from "./mentions.types";
-import { fetchMockUsers, fetchMockInterviewers, fetchMockSlots, fetchMockRecruitments, fetchMockInterviews } from "./mock-api";
+import type { WizardActionConfig } from "../types";
+import { fetchMockUsers, fetchMockInterviewers, fetchMockSlots, fetchMockRecruitments, fetchMockInterviews } from "../mock";
 
 export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
   "book-interview": {

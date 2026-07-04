@@ -1,12 +1,12 @@
-import "./mentions.css";
-import { MENTIONS_LABELS } from "./mentions.constants";
-import type { CommandItem, CommandEntry, WizardStage, Token, MenuController } from "./mentions.types";
-import { resolveMenuSelection } from "./mentions.utils";
-import MentionPopupHeader from "./mention-popup-header";
-import MentionPopupList from "./mention-popup-list";
+import "./mention-popup.css";
+import { MENTIONS_LABELS } from "../constants";
+import type { CommandItem, CommandEntry, WizardStage, Token, MenuController } from "../types";
+import { resolveMenuSelection } from "../utils";
+import MentionPopupHeader from "./mention-popup-header/mention-popup-header";
+import MentionPopupList from "./mention-popup-list/mention-popup-list";
 
-export type { MenuSelection } from "./mentions.utils";
-export { resolveMenuSelection } from "./mentions.utils";
+export type { MenuSelection } from "../utils";
+export { resolveMenuSelection } from "../utils";
 
 type MentionPopupProps = {
   show: boolean;

@@ -1,6 +1,6 @@
-import type { CommandItem, CommandEntry, WizardStage, Token, MenuSelection } from "./mentions.types";
-import { WIZARD_ACTIONS } from "./wizard.config";
-import { ICON_RULES, WIZARD_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP } from "./mentions.constants";
+import type { CommandItem, CommandEntry, WizardStage, Token, MenuSelection } from "../types";
+import { WIZARD_ACTIONS } from "../config/wizard.config";
+import { ICON_RULES, WIZARD_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP } from "../constants";
 
 export type { MenuSelection };
 

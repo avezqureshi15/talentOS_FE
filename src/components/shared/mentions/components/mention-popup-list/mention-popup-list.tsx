@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback } from "react";
-import { MENTIONS_LABELS } from "./mentions.constants";
-import type { CommandItem, CommandEntry } from "./mentions.types";
-import { groupSlots, getDefaultIcon } from "./mentions.utils";
+import { MENTIONS_LABELS } from "../../constants";
+import type { CommandItem, CommandEntry } from "../../types";
+import { groupSlots, getDefaultIcon } from "../../utils";
 
 type PopupListProps = {
   listItems: CommandItem[];

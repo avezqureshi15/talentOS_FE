@@ -317,6 +317,15 @@
   display: flex;
   flex-direction: column;
   line-height: 1.2;
+  padding-left: 16px;
+  padding-right: 8px;
+}
+
+.sidebar-brand-tagline {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 6px;
 }
 
 .sidebar-brand-name {
@@ -327,11 +336,16 @@
   line-height: 1;
 }
 
-.sidebar-brand-os {
-  background: linear-gradient(135deg, #a0a0a0, #555);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.sidebar-brand-web {
+  color: #fff;
+}
+
+.sidebar-brand-hyre {
+  color: #B0B5C0;
+}
+
+.sidebar-brand-ai {
+  color: #B0B5C0;
 }
 
 /* badge */

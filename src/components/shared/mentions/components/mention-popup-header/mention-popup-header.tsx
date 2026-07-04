@@ -1,5 +1,5 @@
-import type { WizardStage, Token } from "./mentions.types";
-import { getStageHeader } from "./mentions.utils";
+import type { WizardStage, Token } from "../../types";
+import { getStageHeader } from "../../utils";
 
 type PopupHeaderProps = {
   canGoBack: boolean;

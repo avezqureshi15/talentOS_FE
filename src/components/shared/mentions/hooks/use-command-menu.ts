@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import type { CommandEntry, CommandItem, MenuLevel } from "./mentions.types";
-import { ROOT_MENU } from "./command-menu.config";
+import type { CommandEntry, CommandItem, MenuLevel } from "../types";
+import { ROOT_MENU } from "../config/command-menu.config";
 import { useDebounce } from "@/hooks/use-debounce";
 
 export const useCommandMenu = () => {

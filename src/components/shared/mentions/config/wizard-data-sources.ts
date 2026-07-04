@@ -1,4 +1,4 @@
-import type { CommandEntry } from "./mentions.types";
+import type { CommandEntry } from "../types";
 import { fetchHiringRequestsForMentions } from "@/services/hiring-requests/hiring-request-mentions-fetcher";
 import { fetchCandidatesForMentions } from "@/services/applications/candidate-mentions-fetcher";
 import { fetchUsersForMentions } from "@/services/users/user-mentions-fetcher";

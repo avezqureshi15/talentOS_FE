@@ -1,4 +1,4 @@
-import type { CommandEntry } from "./mentions.types";
+import type { CommandEntry } from "../types";
 
 export const ROOT_MENU: CommandEntry[] = [
   {

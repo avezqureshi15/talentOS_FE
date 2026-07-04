@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import type { Token, WizardStage, WizardActionConfig, WizardStageConfig, CommandItem } from "./mentions.types";
-import { WIZARD_ACTIONS } from "./wizard.config";
+import type { Token, WizardStage, WizardActionConfig, WizardStageConfig, CommandItem } from "../types";
+import { WIZARD_ACTIONS } from "../config/wizard.config";
 
 export const MENTION_REGEX = /@(\w*)$/;
 

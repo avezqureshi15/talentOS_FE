@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import type { WizardStage, CommandItem } from "@/components/shared/mentions/mentions.types";
-import { WIZARD_ACTIONS } from "@/components/shared/mentions/wizard.config";
-import { WIZARD_REAL_DATA_SOURCES } from "@/components/shared/mentions/wizard-data-sources";
-import { MENTION_REGEX } from "@/components/shared/mentions/use-mention-engine";
+import type { WizardStage, CommandItem } from "@/components/shared/mentions/types";
+import { WIZARD_ACTIONS } from "@/components/shared/mentions/config/wizard.config";
+import { WIZARD_REAL_DATA_SOURCES } from "@/components/shared/mentions/config/wizard-data-sources";
+import { MENTION_REGEX } from "@/components/shared/mentions/hooks/use-mention-engine";
 import type { ChatInputProps } from "../chat-input.types";
 
 type Engine = {
