@@ -39,12 +39,12 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
       },
     ],
   },
-  "employees-ping": {
-    id: "employees-ping",
-    label: "Ping",
-    icon: "bx bx-message",
+  "employees-send-mail": {
+    id: "employees-send-mail",
+    label: "Send Mail",
+    icon: "bx bx-envelope",
     totalTokens: 2,
-    executionCue: "Press Enter to send ping via AI Assistant",
+    executionCue: "Press Enter to send mail via AI Assistant",
     stages: [
       {
         stage: 1,
@@ -103,10 +103,26 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
       },
     ],
   },
-  "applicants": {
-    id: "applicants",
-    label: "Applicants",
-    icon: "bx bx-user",
+  "applicants-send-mail": {
+    id: "applicants-send-mail",
+    label: "Send Mail",
+    icon: "bx bx-envelope",
+    totalTokens: 2,
+    executionCue: "Press Enter to send mail via AI Assistant",
+    stages: [
+      {
+        stage: 1,
+        header: "Select Applicant...",
+        fetcher: fetchMockUsers,
+        tokenType: "applicant",
+        isFinal: true,
+      },
+    ],
+  },
+  "applicants-view": {
+    id: "applicants-view",
+    label: "View Applicants",
+    icon: "bx bx-eye",
     totalTokens: 2,
     executionCue: "Press Enter to ask about this applicant",
     stages: [

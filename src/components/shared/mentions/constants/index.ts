@@ -20,13 +20,14 @@ export const TOKEN_ICONS: Record<string, string> = {
   slot: "bx bx-clock",
   entity: "bx bx-briefcase-alt-2",
   "ask-slots": "bx bx-clock",
+  "send-mail": "bx bx-envelope",
   "hiring-request": "bx bx-briefcase",
   "interview": "bx bx-calendar-check",
 };
 
 export const ICON_RULES: { match: (id: string) => boolean; icon: string }[] = [
   { match: (id) => id.endsWith("-view"), icon: "bx bx-eye" },
-  { match: (id) => id.includes("ping"), icon: "bx bx-message" },
+  { match: (id) => id.includes("send-mail") || id.includes("mail"), icon: "bx bx-envelope" },
   { match: (id) => id.endsWith("-slots") || id.includes("slot"), icon: "bx bx-clock" },
   { match: (id) => id.includes("ask"), icon: "bx bx-plus-circle" },
 ];

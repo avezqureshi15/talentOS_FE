@@ -7,4 +7,5 @@ export type ChatInputProps = {
   setInput: Dispatch<SetStateAction<string>>;
   onSend: () => void;
   onWizardComplete?: (payload: WizardExecutionPayload | HybridQuestionPayload, summary?: WizardExecutionSummary) => void;
+  showAurora?: boolean;
 };

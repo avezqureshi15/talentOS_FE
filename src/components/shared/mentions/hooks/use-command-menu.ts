@@ -4,6 +4,47 @@ import type { CommandEntry, CommandItem, MenuLevel } from "../types";
 import { ROOT_MENU } from "../config/command-menu.config";
 import { useDebounce } from "@/hooks/use-debounce";
 
+const SEARCH_KEYWORDS: Record<string, string[]> = {
+  mail: ["employees-send-mail", "applicants-send-mail"],
+  email: ["employees-send-mail", "applicants-send-mail"],
+  send: ["employees-send-mail", "applicants-send-mail"],
+  book: ["book-interview"],
+  schedule: ["book-interview"],
+  interview: ["book-interview", "interviews"],
+  view: ["employees-view", "applicants-view"],
+  see: ["employees-view", "applicants-view"],
+  list: ["employees-view", "applicants-view"],
+  ask: ["employees-ask-slots"],
+  slot: ["employees-ask-slots"],
+  availability: ["employees-ask-slots"],
+  hiring: ["hr-request"],
+  hr: ["hr-request"],
+  request: ["hr-request"],
+  applicant: ["applicants", "applicants-view", "applicants-send-mail"],
+  candidate: ["applicants", "applicants-view", "applicants-send-mail"],
+  employee: ["employees", "employees-view", "employees-send-mail"],
+  staff: ["employees", "employees-view"],
+  ping: ["employees-send-mail"],
+};
+
+function entryMatchesSearch(entry: CommandEntry, query: string): boolean {
+  const q = query.toLowerCase().trim();
+  if (!q) return true;
+
+  if (entry.label.toLowerCase().includes(q)) return true;
+  if (entry.id.toLowerCase().includes(q)) return true;
+  if (entry.children?.some((c) => c.label.toLowerCase().includes(q))) return true;
+
+  for (const [keyword, ids] of Object.entries(SEARCH_KEYWORDS)) {
+    if (keyword.includes(q) || q.includes(keyword)) {
+      if (ids.includes(entry.id)) return true;
+      if (entry.children?.some((c) => ids.includes(c.id))) return true;
+    }
+  }
+
+  return false;
+}
+
 export const useCommandMenu = () => {
   const [stack, setStack] = useState<MenuLevel[]>([{ title: "", entries: ROOT_MENU }]);
   const [search, setSearch] = useState("");
@@ -18,9 +59,7 @@ export const useCommandMenu = () => {
 
   const filteredEntries = isListView
     ? []
-    : currentLevel.entries.filter((e) =>
-        e.label.toLowerCase().includes(search.toLowerCase()),
-      );
+    : currentLevel.entries.filter((e) => entryMatchesSearch(e, search));
 
   const activeItems: (CommandEntry | CommandItem)[] = isListView ? listItems : filteredEntries;
   const debouncedSearch = useDebounce(search, 300);

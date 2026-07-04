@@ -12,15 +12,19 @@ import { useHeaderShare } from "./hooks/use-header-share";
 
 const HeaderLeft: React.FC<HeaderLeftProps> = ({
   sidebarOpen,
-  setSidebarOpen,
+  onToggleSidebar,
   Icon,
+  showHint,
+  onHintDismiss,
 }) => {
   if (sidebarOpen) return <div className="header-left-empty" />;
 
   return (
-    <IconButton onClick={() => setSidebarOpen(true)} title="Ctrl+Shift+S">
-      <Icon.Hamburger />
-    </IconButton>
+    <div className={`header-hamburger-wrapper${showHint ? " header-hamburger--hint" : ""}`}>
+      <IconButton onClick={() => { onToggleSidebar(); onHintDismiss(); }} title="Ctrl+Shift+S">
+        <Icon.Hamburger />
+      </IconButton>
+    </div>
   );
 };
 
@@ -36,12 +40,6 @@ const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
 
   return (
     <div className="header-right">
-      {/* {isChat && (
-        <IconButton>
-          <Icon.Dots />
-        </IconButton>
-      )} */}
-
       {isHiringDetail && (
         <ShareButton
           icon={<Icon.Share />}
@@ -64,8 +62,10 @@ const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
 const Header: React.FC<HeaderProps> = ({
   mounted,
   sidebarOpen,
-  setSidebarOpen,
+  onToggleSidebar,
   Icon,
+  showHint,
+  onHintDismiss,
 }) => {
   return (
     <header
@@ -73,8 +73,10 @@ const Header: React.FC<HeaderProps> = ({
     >
       <HeaderLeft
         sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+        onToggleSidebar={onToggleSidebar}
         Icon={Icon}
+        showHint={showHint}
+        onHintDismiss={onHintDismiss}
       />
 
       <HeaderRight Icon={Icon} />

@@ -3,6 +3,24 @@ import "./thinking.css";
 import { useChatStore } from "@/store/chat.store";
 import type { Props } from "./thinking.types";
 
+const BrainIcon = () => (
+  <svg
+    className="thinking-section__icon"
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+    <path d="M12 17h.01" />
+  </svg>
+);
+
 const ThinkingChip: React.FC<Props> = ({ text }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [visibleLength, setVisibleLength] = useState(0);
@@ -10,9 +28,11 @@ const ThinkingChip: React.FC<Props> = ({ text }) => {
   const isProcessing = useChatStore((s) => s.isProcessing);
   const prevProcessingRef = useRef(isProcessing);
   const initializedRef = useRef(false);
+  const [hasCompleted, setHasCompleted] = useState(false);
 
   useEffect(() => {
     if (prevProcessingRef.current && !isProcessing) {
+      setHasCompleted(true);
       setIsOpen(false);
     }
     prevProcessingRef.current = isProcessing;
@@ -23,6 +43,8 @@ const ThinkingChip: React.FC<Props> = ({ text }) => {
       initializedRef.current = true;
       if (!isProcessing) {
         setVisibleLength(text.length);
+        setHasCompleted(true);
+        setIsOpen(false);
       }
     }
   }, [isProcessing, text.length]);
@@ -46,6 +68,19 @@ const ThinkingChip: React.FC<Props> = ({ text }) => {
 
   const displayed = text.slice(0, visibleLength);
 
+  if (hasCompleted && !isOpen) {
+    return (
+      <button
+        className="thinking-section__collapsed"
+        onClick={() => setIsOpen(true)}
+        type="button"
+        title="Show thinking"
+      >
+        <span className="thinking-section__q">?</span>
+      </button>
+    );
+  }
+
   return (
     <div className="cui-fade-up thinking-section">
       <button
@@ -53,21 +88,7 @@ const ThinkingChip: React.FC<Props> = ({ text }) => {
         onClick={() => setIsOpen(!isOpen)}
         type="button"
       >
-        <svg
-          className="thinking-section__icon"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-          <path d="M12 17h.01" />
-        </svg>
+        {isProcessing ? <BrainIcon /> : <span className="thinking-section__q">?</span>}
         <span className="thinking-section__title">Thinking</span>
         <svg
           className={`thinking-section__chevron${isOpen ? " open" : ""}`}

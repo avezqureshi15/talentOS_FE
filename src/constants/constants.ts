@@ -3,7 +3,12 @@ export const STORAGE_KEYS = {
   VISITOR_ID: "talentos_visitor_id",
   THEME: "talentos_theme",
   AUTH_TOKEN: "token",
+  UX: "_ux",
 } as const;
+
+/* ── Timing ── */
+export const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+export const AURORA_AUTO_HIDE_MS = 8000;
 
 /* ── Sidebar ── */
 export const SIDEBAR_LABELS = {

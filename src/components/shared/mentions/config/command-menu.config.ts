@@ -18,7 +18,20 @@ export const ROOT_MENU: CommandEntry[] = [
     id: "applicants",
     label: "Applicants",
     icon: "bx bx-user",
-    isWizardAction: true,
+    children: [
+      {
+        id: "applicants-send-mail",
+        label: "Send Mail",
+        icon: "bx bx-envelope",
+        isWizardAction: true,
+      },
+      {
+        id: "applicants-view",
+        label: "View Applicants",
+        icon: "bx bx-eye",
+        isWizardAction: true,
+      },
+    ],
   },
   {
     id: "interviews",
@@ -38,9 +51,9 @@ export const ROOT_MENU: CommandEntry[] = [
         isWizardAction: true,
       },
       {
-        id: "employees-ping",
-        label: "Ping",
-        icon: "bx bx-message",
+        id: "employees-send-mail",
+        label: "Send Mail",
+        icon: "bx bx-envelope",
         isWizardAction: true,
       },
       {

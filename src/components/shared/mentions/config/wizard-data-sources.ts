@@ -116,7 +116,7 @@ export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceE
   "hr-request": {
     0: { createEntry: createHiringRequestEntry },
   },
-  "employees-ping": {
+  "employees-send-mail": {
     0: { createEntry: createEmployeeEntry },
   },
   "employees-view": {
@@ -125,7 +125,10 @@ export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceE
   "employees-ask-slots": {
     0: { createEntry: createEmployeeEntry },
   },
-  "applicants": {
+  "applicants-send-mail": {
+    0: { createEntry: createCandidateEntry },
+  },
+  "applicants-view": {
     0: { createEntry: createCandidateEntry },
   },
 };

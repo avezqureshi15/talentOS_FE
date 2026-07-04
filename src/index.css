@@ -121,9 +121,16 @@
   /* send button */
   --send-btn-bg: #ffffff;
   --send-btn-color: #000;
+  --send-btn-glow: rgba(255, 255, 255, 0.3);
+  --send-btn-glow-dim: rgba(128, 128, 128, 0.2);
 
   /* brand-specific */
   --brand-silver: #B0B5C0;
+
+  /* aurora animation colors */
+  --aurora-purple: #a855f7;
+  --aurora-pink: #ec4899;
+  --aurora-cyan: #06b6d4;
 
   /* semantic backgrounds */
   --danger-banner-bg: #7f1d1d;

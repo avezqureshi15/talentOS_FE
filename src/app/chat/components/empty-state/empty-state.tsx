@@ -4,10 +4,17 @@ import "./empty-state.css";
 import type { EmptyStateProps } from "./empty-state.types";
 import { CHAT_SUGGESTIONS, EMPTY_STATE } from "@/constants/constants";
 
-const EmptyState: React.FC<EmptyStateProps> = ({ onSuggestionClick }) => {
+const EmptyState: React.FC<EmptyStateProps> = ({ onSuggestionClick, showAurora }) => {
   return (
-    <div className="empty-state">
+    <div className={`empty-state${showAurora ? " empty-state--aurora" : ""}`}>
+      <div className="empty-state-aurora-bg" />
       <div className="empty-state-container">
+
+        {/* Welcome chip */}
+        <div className="empty-state-welcome-chip">
+          <span className="empty-state-welcome-chip__sparkle">✦</span>
+          Welcome to WebHyre AI
+        </div>
 
         {/* Greeting */}
         <div>

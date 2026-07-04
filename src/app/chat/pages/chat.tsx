@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import "./chat.css";
 
@@ -12,12 +12,38 @@ import { useChatStream } from "@/app/chat/hooks/use-chat-stream";
 import { useChatMessages } from "@/app/chat/hooks/use-chat-messages";
 
 import { useChatStore } from "@/store/chat.store";
+import { useAurora } from "@/hooks/use-aurora";
 import { CHAT_BASE_PATH } from "./chat.constants";
+import { STORAGE_KEYS, TWENTY_FOUR_HOURS } from "@/constants/constants";
+import { hasUxElapsed, patchUx } from "@/utils/storage";
 import type { WizardExecutionPayload, HybridQuestionPayload } from "@/components/shared/mentions/types";
 
 export default function Chat() {
-  const [input, setInput] = useState(""); // Controlled input value for the chat message field
+  const [input, setInput] = useState("");
   const { chatId: paramsChatId } = useParams();
+  const { show: showAurora, dismiss: dismissAurora } = useAurora();
+  const interactedRef = useRef(false);
+  const [emptyLeaving, setEmptyLeaving] = useState(false);
+
+  const handleInteraction = useCallback(() => {
+    if (!interactedRef.current) {
+      interactedRef.current = true;
+      dismissAurora();
+    }
+  }, [dismissAurora]);
+
+  useEffect(() => {
+    if (input && !interactedRef.current) {
+      handleInteraction();
+    }
+  }, [input, handleInteraction]);
+
+  useEffect(() => {
+    if (emptyLeaving) {
+      const timer = setTimeout(() => setEmptyLeaving(false), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [emptyLeaving]);
 
   const {
     hasStarted,
@@ -47,9 +73,14 @@ export default function Chat() {
   }, [paramsChatId]);
 
   const handleSend = (text: string) => {
+    handleInteraction();
     if (!chatId) {
       const newId = crypto.randomUUID();
       setChatId(newId);
+      if (hasUxElapsed(STORAGE_KEYS.UX, "ft", TWENTY_FOUR_HOURS)) {
+        patchUx(STORAGE_KEYS.UX, { ft: Date.now() });
+        setEmptyLeaving(true);
+      }
       window.history.replaceState(null, "", `${CHAT_BASE_PATH}${newId}`);
       chatStream.mutate({ text, chatId: newId });
     } else {
@@ -58,10 +89,11 @@ export default function Chat() {
   };
 
   const handleWizardComplete = (payload: WizardExecutionPayload | HybridQuestionPayload) => {
+    handleInteraction();
     handleSend(JSON.stringify(payload));
   };
 
-  const showLoading = chatId && isLoading && messages.length === 0;
+  const showLoading = chatId && !emptyLeaving && isLoading && messages.length === 0;
 
   if (showLoading) {
     return (
@@ -74,23 +106,27 @@ export default function Chat() {
   return (
     <ErrorBoundary>
       <div className="chat-flex">
-        {chatId ? (
+        {chatId && !emptyLeaving ? (
           <ChatArea onSend={handleSend} />
         ) : (
-          <EmptyState onSuggestionClick={(text) => setInput(text)} />
+          <div className={`empty-state-fade${emptyLeaving ? " empty-state-fade--leave" : ""}`}>
+            <EmptyState onSuggestionClick={(text) => { handleInteraction(); setInput(text); }} showAurora={showAurora} />
+          </div>
         )}
 
-        {(hasStarted || !chatId) && (
+        {(hasStarted || !chatId || emptyLeaving) && (
           <ChatInput
             mounted={false}
             input={input}
             setInput={setInput}
             onSend={() => {
               if (!input.trim() || isProcessing) return;
+              handleInteraction();
               handleSend(input);
               setInput("");
             }}
             onWizardComplete={handleWizardComplete}
+            showAurora={showAurora}
           />
         )}
       </div>

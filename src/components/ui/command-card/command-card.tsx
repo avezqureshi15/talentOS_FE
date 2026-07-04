@@ -60,6 +60,26 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
     );
   }
 
+  if (data.intent === "SEND_MAIL") {
+    return (
+      <div className="command-card">
+        <div className="command-card__header">
+          <i className="bx bx-envelope" />
+          <span>{COMMAND_CARD_LABELS.SEND_MAIL}</span>
+        </div>
+        <div className="command-card__body">
+          <div className="command-card__row">
+            <span className="command-card__label">{COMMAND_CARD_LABELS.EMPLOYEE}</span>
+            <EntityLabel label={resolved.applicant} loading={loading} />
+          </div>
+          {data.payload.raw_text_context && (
+            <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (data.intent === "interviews") {
     const interviewLabel = resolved.applicant ?? data.payload.interview_id;
     const status = resolveInterviewStatus(data.payload.interview_id ?? "");
@@ -90,26 +110,6 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
           <div className="command-card__entity-chip">
             <i className={INTENT_HEADER_ICONS[data.intent] ?? HYBRID_INTENT_FALLBACK_ICON} />
             <span>{data.payload.name_field}</span>
-          </div>
-          {data.payload.raw_text_context && (
-            <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  if (data.intent === "employees-ping") {
-    return (
-      <div className="command-card">
-        <div className="command-card__header">
-          <i className="bx bx-message" />
-          <span>{COMMAND_CARD_LABELS.PING}</span>
-        </div>
-        <div className="command-card__body">
-          <div className="command-card__row">
-            <span className="command-card__label">{COMMAND_CARD_LABELS.EMPLOYEE}</span>
-            <EntityLabel label={resolved.applicant} loading={loading} />
           </div>
           {data.payload.raw_text_context && (
             <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
