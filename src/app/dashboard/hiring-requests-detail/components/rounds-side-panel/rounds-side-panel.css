@@ -39,7 +39,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--text-faint);
 }
 
 /* ── Details rows ── */
@@ -123,18 +123,18 @@
 
 /* Interviewer verdicts */
 .rp-pill--reject {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  background: var(--danger-bg);
 }
 
 .rp-pill--hold {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+  background: var(--warning-bg);
 }
 
 .rp-pill--advance {
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+  background: var(--success-bg);
 }
 
 /* AI decisions */
@@ -144,18 +144,18 @@
 }
 
 .rp-pill--ai-selected {
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+  background: var(--success-bg);
 }
 
 .rp-pill--ai-rejected {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  background: var(--danger-bg);
 }
 
 .rp-pill--ai-conflict {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+  background: var(--warning-bg);
 }
 
 /* HR decisions */
@@ -165,13 +165,13 @@
 }
 
 .rp-pill--hr-approved {
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+  background: var(--success-bg);
 }
 
 .rp-pill--hr-rejected {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  background: var(--danger-bg);
 }
 
 /* ── Ratings ── */

@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import type { SearchResultItem, CommandPaletteSection } from "@/components/ui/command-palette/command-palette.types";
 import { COMMAND_PALETTE_LABELS, SEARCH_DEBOUNCE_MS } from "@/components/ui/command-palette/command-palette.constants";
 import { useHiringSearch } from "./use-hiring-search";
+import { useDebounce } from "@/hooks/use-debounce";
 
 type UseCommandPaletteReturn = {
   isOpen: boolean;
@@ -25,9 +26,8 @@ export const useCommandPalette = (
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debouncedQuery = useDebounce(query, SEARCH_DEBOUNCE_MS);
 
   const {
     data: results,
@@ -36,34 +36,16 @@ export const useCommandPalette = (
     isFetchingNextPage,
   } = useHiringSearch(debouncedQuery);
 
-  useEffect(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, SEARCH_DEBOUNCE_MS);
-
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-    };
-  }, [query]);
-
   const open = useCallback(() => {
     setIsOpen(true);
     setQuery("");
     setSelectedIndex(0);
-    setDebouncedQuery("");
   }, []);
 
   const close = useCallback(() => {
     setIsOpen(false);
     setQuery("");
     setSelectedIndex(0);
-    setDebouncedQuery("");
   }, []);
 
   useEffect(() => {

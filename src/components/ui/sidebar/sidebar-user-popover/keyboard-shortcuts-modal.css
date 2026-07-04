@@ -36,7 +36,7 @@
 
 .keyboard-shortcuts-modal__key {
   padding: 3px 8px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--input-icon-bg);
   border: 1px solid var(--border-subtle);
   border-radius: 5px;
   font-size: 11px;

@@ -42,7 +42,7 @@
 }
 
 .verdict-btn--active {
-  color: #fff;
+  color: var(--text-white);
 }
 
 /* Reject */
@@ -50,9 +50,9 @@
   color: var(--text-muted);
 }
 .verdict-btn--active.verdict--reject {
-  background: #ef4444;
-  border-color: #ef4444;
-  color: #fff;
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--text-white);
 }
 
 /* Hold */
@@ -60,9 +60,9 @@
   color: var(--text-muted);
 }
 .verdict-btn--active.verdict--hold {
-  background: #f59e0b;
-  border-color: #f59e0b;
-  color: #fff;
+  background: var(--warning);
+  border-color: var(--warning);
+  color: var(--text-white);
 }
 
 /* Advance */
@@ -70,7 +70,7 @@
   color: var(--text-muted);
 }
 .verdict-btn--active.verdict--advance {
-  background: #22c55e;
-  border-color: #22c55e;
-  color: #fff;
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--text-white);
 }

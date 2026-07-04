@@ -1,5 +1,5 @@
 .block-renderer__code {
-  background: #111;
+  background: var(--bg-secondary);
   padding: 12px;
 }
 

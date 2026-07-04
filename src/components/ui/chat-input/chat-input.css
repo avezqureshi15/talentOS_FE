@@ -57,6 +57,7 @@
 
 .chat-input-textarea::placeholder {
   color: var(--input-placeholder);
+  transition: opacity 0.15s ease;
 }
 
 /* --- Token Pills --- */
@@ -72,11 +73,11 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--input-icon-bg);
+  border: 1px solid var(--border-strong);
   border-radius: 6px;
   padding: 4px 10px;
-  color: #fff;
+  color: var(--text-white);
   font-size: 14px;
   line-height: 1.4;
   white-space: nowrap;
@@ -101,18 +102,18 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 12px;
   font-weight: 700;
   line-height: 1;
   transition: background 0.15s ease;
   user-select: none;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--bg-active);
 }
 
 .ci-token-close:hover {
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  background: var(--text-faint);
+  color: var(--text-white);
 }
 
 .ci-token-close:focus-visible {
@@ -125,7 +126,72 @@
 .ci-execution-cue {
   text-align: center;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   margin-top: 4px;
   letter-spacing: 0.2px;
+}
+
+/* ── Aurora Border Effect ── */
+
+.chat-input-aurora {
+  position: relative;
+  border-radius: 30px;
+}
+
+.chat-input-aurora::before,
+.chat-input-aurora::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat-input-aurora::before {
+  inset: -6px;
+  border-radius: 34px;
+  background: linear-gradient(
+    90deg,
+    var(--accent-indigo),
+    var(--aurora-purple),
+    var(--aurora-pink),
+    var(--warning-light),
+    var(--aurora-cyan),
+    var(--accent-indigo),
+    var(--aurora-purple),
+    var(--aurora-pink)
+  );
+  background-size: 400% 100%;
+  animation: aurora-flow 20s linear infinite;
+  filter: blur(20px);
+}
+
+.chat-input-aurora::after {
+  inset: -3px;
+  border-radius: 32px;
+  background: linear-gradient(
+    135deg,
+    var(--aurora-purple),
+    var(--aurora-cyan),
+    var(--accent-indigo),
+    var(--aurora-pink),
+    var(--aurora-purple)
+  );
+  background-size: 300% 100%;
+  animation: aurora-flow 24s linear infinite reverse;
+  filter: blur(10px);
+}
+
+.chat-input-aurora--active::before {
+  opacity: 0.85;
+}
+
+.chat-input-aurora--active::after {
+  opacity: 0.6;
+}
+
+@keyframes aurora-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 400% 50%; }
 }

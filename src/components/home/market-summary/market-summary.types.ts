@@ -1,7 +1,0 @@
-import type { NewsItem } from "@/components/home/home.types";
-
-export type MarketSummaryProps = {
-  items: NewsItem[];
-  openIndex: number;
-  onToggle: (index: number) => void;
-};

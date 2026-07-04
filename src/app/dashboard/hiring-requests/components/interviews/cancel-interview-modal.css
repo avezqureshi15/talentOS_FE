@@ -35,22 +35,22 @@
 
 .cancel-modal-btn--cancel {
   color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--surface-card);
+  border-color: var(--input-icon-bg);
 }
 
 .cancel-modal-btn--cancel:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: var(--surface-card-hover);
+  border-color: var(--surface-glass-hover);
 }
 
 .cancel-modal-btn--confirm {
-  color: #fff;
-  background: rgba(248, 113, 113, 0.8);
-  border-color: rgba(248, 113, 113, 0.3);
+  color: var(--text-white);
+  background: var(--danger-light-strong);
+  border-color: var(--danger-light-border);
 }
 
 .cancel-modal-btn--confirm:hover {
-  background: rgba(248, 113, 113, 1);
-  border-color: rgba(248, 113, 113, 0.5);
+  background: var(--danger-light);
+  border-color: var(--danger-light-muted);
 }

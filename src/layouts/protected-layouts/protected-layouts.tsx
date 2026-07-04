@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, Suspense } from "react";
+import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 
 import { Icon } from "@/components/ui/icons";
@@ -15,9 +15,27 @@ import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import { ROUTES } from "@/constants/routes";
 import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
 import { useUiStore } from "@/store/ui.store";
+import { STORAGE_KEYS } from "@/constants/constants";
+import { getUx, patchUx } from "@/utils/storage";
+import { useAurora } from "@/hooks/use-aurora";
+
+function getInitialSidebarState(): boolean {
+  const ux = getUx(STORAGE_KEYS.UX);
+  if (ux.sb === undefined) {
+    patchUx(STORAGE_KEYS.UX, { sb: false });
+    return false;
+  }
+  return ux.sb;
+}
 
 export default function ProtectedLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(getInitialSidebarState);
+  const { show: showAurora } = useAurora();
+  const ux = useMemo(() => getUx(STORAGE_KEYS.UX), []);
+  const showHint = !ux.sbh && !sidebarOpen && !showAurora;
+  const handleHintDismiss = useCallback(() => {
+    patchUx(STORAGE_KEYS.UX, { sbh: true });
+  }, []);
   const { chatId: paramsChatId } = useParams();
   const storeChatId = useChatStore((s) => s.chatId);
   const activeChatId = paramsChatId ?? storeChatId;
@@ -67,7 +85,11 @@ export default function ProtectedLayout() {
   }, [navigate]);
 
   const handleToggleSidebar = useCallback(() => {
-    setSidebarOpen((prev) => !prev);
+    setSidebarOpen((prev) => {
+      const next = !prev;
+      patchUx(STORAGE_KEYS.UX, { sb: next });
+      return next;
+    });
   }, []);
 
   const handleActionCenter = useCallback(() => {
@@ -145,8 +167,10 @@ export default function ProtectedLayout() {
         <Header
           mounted={false}
           sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
+          onToggleSidebar={handleToggleSidebar}
           Icon={Icon}
+          showHint={showHint}
+          onHintDismiss={handleHintDismiss}
         />
         <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>

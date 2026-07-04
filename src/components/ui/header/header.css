@@ -7,11 +7,22 @@
   height: 56px;
   flex-shrink: 0;
 
-  position: sticky;
+  position: relative;
   top: 0;
   z-index: 100;
 
   background: var(--bg-primary);
+}
+
+.header::after {
+  content: "";
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(to bottom, var(--bg-primary), transparent);
+  pointer-events: none;
 }
 
 /* left / right containers */
@@ -26,4 +37,23 @@
 .header-left-empty {
   width: 32px;
   height: 32px;
+}
+
+/* ── Sidebar hint — hamburger lines blip ── */
+
+.header-hamburger-wrapper {
+  position: relative;
+}
+
+.header-hamburger--hint .icon-btn svg line {
+  stroke: var(--text-secondary);
+}
+
+.header-hamburger--hint .icon-btn {
+  animation: hamburger-glow 2s ease-in-out infinite;
+}
+
+@keyframes hamburger-glow {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.08); }
 }

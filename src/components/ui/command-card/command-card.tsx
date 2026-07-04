@@ -60,6 +60,26 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
     );
   }
 
+  if (data.intent === "SEND_MAIL") {
+    return (
+      <div className="command-card">
+        <div className="command-card__header">
+          <i className="bx bx-envelope" />
+          <span>{COMMAND_CARD_LABELS.SEND_MAIL}</span>
+        </div>
+        <div className="command-card__body">
+          <div className="command-card__row">
+            <span className="command-card__label">{COMMAND_CARD_LABELS.EMPLOYEE}</span>
+            <EntityLabel label={resolved.applicant} loading={loading} />
+          </div>
+          {data.payload.raw_text_context && (
+            <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (data.intent === "interviews") {
     const interviewLabel = resolved.applicant ?? data.payload.interview_id;
     const status = resolveInterviewStatus(data.payload.interview_id ?? "");
@@ -99,26 +119,6 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
     );
   }
 
-  if (data.intent === "employees-ping") {
-    return (
-      <div className="command-card">
-        <div className="command-card__header">
-          <i className="bx bx-message" />
-          <span>{COMMAND_CARD_LABELS.PING}</span>
-        </div>
-        <div className="command-card__body">
-          <div className="command-card__row">
-            <span className="command-card__label">{COMMAND_CARD_LABELS.EMPLOYEE}</span>
-            <EntityLabel label={resolved.applicant} loading={loading} />
-          </div>
-          {data.payload.raw_text_context && (
-            <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
-          )}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="command-card">
       <div className="command-card__header">
@@ -147,7 +147,8 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
         {data.payload.slot_id && (
           <div className="command-card__row">
             <span className="command-card__label">{COMMAND_CARD_LABELS.TIME_SLOT}</span>
-            <span className="command-card__value">{data.payload.slot_id}</span>
+            {/* <span className="command-card__value">{data.payload.slot_id}</span> */}
+            <span className="command-card__value">10:00 AM - 11:00 AM</span>
           </div>
         )}
         {data.payload.raw_text_context && (

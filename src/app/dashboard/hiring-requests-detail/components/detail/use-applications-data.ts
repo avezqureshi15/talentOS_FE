@@ -107,7 +107,7 @@ function mapCandidate(app: {
     cvUrl: app.resume_url ?? "",
     status: "new",
     score: app.fit_score ?? undefined,
-    aiDecision: app.fit_score != null && app.fit_score >= 70 ? "shortlisted" : app.fit_score != null && app.fit_score < 40 ? "rejected" : "pending",
+    aiDecision: app.fit_score != null ? (app.fit_score >= 70 ? "shortlisted" : "rejected") : "pending",
     currentCtc: app.current_ctc ?? undefined,
     expectedCtc: app.expected_ctc ?? undefined,
     location: app.location ?? undefined,

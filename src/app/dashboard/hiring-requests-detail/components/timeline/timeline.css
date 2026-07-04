@@ -2,7 +2,7 @@
 .timeline-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: var(--overlay);
   backdrop-filter: blur(10px);
 
   display: flex;
@@ -27,10 +27,10 @@
   width: 420px;
   height: 100%;
 
-  background: rgba(18, 18, 18, 0.75);
+  background: var(--sheet-bg);
   backdrop-filter: blur(18px);
 
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid var(--input-icon-bg);
 
   transform: translateX(100%);
   transition: transform 0.22s ease;
@@ -52,7 +52,7 @@
   display: flex;
   justify-content: space-between;
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--input-icon-bg);
 }
 
 .title {
@@ -81,7 +81,7 @@
   bottom: 0;
 
   width: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border-default);
 }
 
 /* NODE */
@@ -101,9 +101,9 @@
   z-index: 2;
 }
 
-.dot.done { background: #22c55e; }
-.dot.active { background: #3b82f6; }
-.dot.pending { background: rgba(255,255,255,0.25); }
+.dot.done { background: var(--success); }
+.dot.active { background: var(--accent-blue); }
+.dot.pending { background: var(--text-faint); }
 
 /* CONTENT */
 .node-content {
@@ -119,14 +119,14 @@
   padding: 10px;
   border-radius: 10px;
 
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
 
   transition: 0.2s;
 }
 
 .node-header:hover {
-  background: rgba(255,255,255,0.07);
+  background: var(--surface-card-hover);
 }
 
 .node-title {
@@ -146,8 +146,8 @@
   padding: 10px;
 
   border-radius: 10px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
 
   display: flex;
   flex-direction: column;
@@ -167,8 +167,8 @@
   padding: 6px 10px;
   font-size: 11px;
 
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--surface-card);
+  border: 1px solid var(--input-icon-bg);
 
   color: var(--text-primary);
   border-radius: 8px;
@@ -177,7 +177,7 @@
 }
 
 .ghost-btn:hover {
-  background: rgba(255,255,255,0.08);
+  background: var(--input-icon-bg);
 }
 
 .dot {
@@ -191,17 +191,17 @@
 
 /* SUCCESS = green */
 .dot.success {
-  background: #22c55e;
+  background: var(--success);
 }
 
 /* QUEUED = blue */
 .dot.queued {
-  background: #3b82f6;
+  background: var(--accent-blue);
 }
 
 /* WAITING = yellow */
 .dot.waiting {
-  background: #f59e0b;
+  background: var(--warning);
 }
 
 .timeline-container {

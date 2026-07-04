@@ -26,7 +26,7 @@ export const fetchHiringRequestsForMentions = async (
     id: hr.id,
     label: hr.title,
     description: `${hr.department} · ${hr.location}`,
-    relationalId: hr.id,
+    relationalId: hr.supabase_job_id || hr.id,
   }));
 
   return { items, hasMore: res.has_more };

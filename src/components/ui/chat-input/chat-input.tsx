@@ -1,17 +1,17 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import SendButton from "@/components/ui/send-button/send-button";
 import ChatTokens from "./chat-tokens";
 import "./chat-input.css";
 import type { ChatInputProps } from "./chat-input.types";
-import { useMentionEngine } from "@/components/shared/mentions/use-mention-engine";
-import { useCommandMenu } from "@/components/shared/mentions/use-command-menu";
-import MentionPopup from "@/components/shared/mentions/mentions";
-import { resolveMenuSelection } from "@/components/shared/mentions/mentions.utils";
-import { WIZARD_LABELS } from "@/components/shared/mentions/mentions.constants";
-import { CHAT_INPUT_LABELS } from "./chat-input.constants";
-import { WIZARD_ACTIONS } from "@/components/shared/mentions/wizard.config";
+import { useMentionEngine } from "@/components/shared/mentions/hooks/use-mention-engine";
+import { useCommandMenu } from "@/components/shared/mentions/hooks/use-command-menu";
+import MentionPopup from "@/components/shared/mentions/components/mention-popup";
+import { resolveMenuSelection } from "@/components/shared/mentions/utils";
+import { WIZARD_LABELS } from "@/components/shared/mentions/constants";
+import { WIZARD_ACTIONS } from "@/components/shared/mentions/config/wizard.config";
 import { useAutoResize } from "./hooks/use-auto-resize";
 import { useWizard } from "./hooks/use-wizard";
+import { useTypingPlaceholder } from "./hooks/use-typing-placeholder";
 
 const ChatInput: React.FC<ChatInputProps> = ({
   mounted = true,
@@ -19,10 +19,24 @@ const ChatInput: React.FC<ChatInputProps> = ({
   setInput,
   onSend,
   onWizardComplete,
+  showAurora,
 }) => {
   const { textareaRef } = useAutoResize(input);
   const engine = useMentionEngine();
   const menu = useCommandMenu();
+  const [inputFocused, setInputFocused] = useState(false);
+
+  const PLACEHOLDER_PHRASES = [
+    "Ask anything...",
+    "@ Book Interview",
+    "@ Send Mail",
+    "@ View Hiring Requests",
+    "@ View Applicants",
+    "@ View Employees",
+    "@ Ask Slots",
+    "@ Check Interviews",
+  ];
+  useTypingPlaceholder(textareaRef, PLACEHOLDER_PHRASES, !input);
   const { show, tokens, wizardStage, wizardActionId, handleChange, insert, reset } = engine;
 
   const wizard = useWizard(engine, menu, onWizardComplete, input, setInput);
@@ -102,7 +116,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
     <div className={`cui-fade-up cui-d3${mounted ? "" : " opacity-0"}`}>
       <div className="chat-input-root">
         <div className="chat-input-container">
-          <div className="chat-input-wrapper">
+          <div className={`chat-input-aurora${showAurora ? " chat-input-aurora--active" : ""}`}>
+            <div className="chat-input-wrapper">
             <div className="chat-input-field-wrapper">
               <ChatTokens tokens={tokens} onReset={handleResetTokens} />
               <textarea
@@ -111,14 +126,17 @@ const ChatInput: React.FC<ChatInputProps> = ({
                 value={input}
                 onChange={(e) => { setInput(e.target.value); handleChange(e.target.value, e.target.value.length); }}
                 onKeyDown={handleKeyDown}
-                placeholder={CHAT_INPUT_LABELS.PLACEHOLDER}
+                onFocus={() => setInputFocused(true)}
+                onBlur={() => setInputFocused(false)}
                 rows={1}
               />
             </div>
             <SendButton
               disabled={!input.trim() && !isFullyTokenized}
               onClick={() => { if (isFullyTokenized) executeWizard(); else if (input.trim()) onSend(); }}
+              animate={showAurora && !inputFocused}
             />
+          </div>
           </div>
           {isFullyTokenized && (
             <div className="ci-execution-cue">{(wizardActionId ? WIZARD_ACTIONS[wizardActionId]?.executionCue : null) ?? WIZARD_LABELS.EXECUTION_CUE}</div>

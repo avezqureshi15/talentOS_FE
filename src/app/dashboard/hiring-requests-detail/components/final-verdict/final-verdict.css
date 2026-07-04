@@ -36,7 +36,7 @@
 
 .fv-sub-tab--active {
   color: var(--text-primary);
-  border-bottom-color: var(--accent, #818cf8);
+  border-bottom-color: var(--accent, var(--accent-indigo-light));
 }
 
 .fv-card-grid {

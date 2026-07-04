@@ -74,14 +74,14 @@
 }
 
 .rating-segment--active {
-  color: #0a0a0a;
-  background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(255, 255, 255, 0.85);
+  color: var(--bg-primary);
+  background: var(--text-primary);
+  border-color: var(--text-primary);
 }
 
 .rating-segment--active:hover {
-  color: #0a0a0a;
-  background: rgba(255, 255, 255, 0.92);
+  color: var(--bg-primary);
+  background: var(--text-primary);
 }
 
 .rating-rubric {

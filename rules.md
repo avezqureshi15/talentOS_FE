@@ -364,5 +364,8 @@ If ANY rule is violated:
 ## 24. Resuability and Scalability is key , Things must be extensible and reusable enforce by creating components in ui/shared folders so that it can reused over the application and consolidate the logic in hooks if it is being used in many places so that also becomes usable 
 If ANY rule is violated:
 → REGENERATE the solution
-```
 
+## 25. Strictly always use index.css , css variables , never hardcode css color values
+
+## 26. Use hooks useLocalStorage , useDebounce , useThemeStore which are globally created  
+```

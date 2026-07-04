@@ -20,7 +20,7 @@
   flex-direction: column;
   padding: 36px 32px;
   border-right: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.015);
+  background: var(--surface-elevated);
 }
 
 .context-brand {
@@ -209,7 +209,7 @@
 }
 
 .tz-select option {
-  background: #1a1a1a;
+  background: var(--bg-tertiary);
   color: var(--text-primary);
 }
 
@@ -229,8 +229,8 @@
   padding: 10px 22px;
   font-size: 13px;
   font-weight: 600;
-  color: #0a0a0a;
-  background: rgba(255, 255, 255, 0.9);
+  color: var(--bg-primary);
+  background: var(--text-primary);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -245,8 +245,8 @@
 }
 
 .booking-confirm-btn:hover {
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+  background: var(--text-white);
+  box-shadow: 0 0 0 1px var(--border-strong);
 }
 
 .booking-confirm-btn:active {
@@ -275,7 +275,7 @@
 
 .confirmed-icon {
   font-size: 48px;
-  color: #22c55e;
+  color: var(--success);
 }
 
 .confirmed-title {

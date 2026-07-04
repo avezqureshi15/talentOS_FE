@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import type { WizardStage, CommandItem } from "@/components/shared/mentions/mentions.types";
-import { WIZARD_ACTIONS } from "@/components/shared/mentions/wizard.config";
-import { WIZARD_REAL_DATA_SOURCES } from "@/components/shared/mentions/wizard-data-sources";
-import { MENTION_REGEX } from "@/components/shared/mentions/use-mention-engine";
+import type { WizardStage, CommandItem } from "@/components/shared/mentions/types";
+import { WIZARD_ACTIONS } from "@/components/shared/mentions/config/wizard.config";
+import { WIZARD_REAL_DATA_SOURCES } from "@/components/shared/mentions/config/wizard-data-sources";
+import { MENTION_REGEX } from "@/components/shared/mentions/hooks/use-mention-engine";
 import type { ChatInputProps } from "../chat-input.types";
 
 type Engine = {
@@ -116,7 +116,7 @@ export const useWizard = (
     const interviewToken = tokens.find(t => t.type === "interview");
 
     if (entityToken) {
-      const intent = ({ "hr-request": "INQUIRE_HR_REQUEST", "applicants": "INQUIRE_APPLICANT" } as const)[engine.wizardActionId ?? ""] ?? "INQUIRE_EMPLOYEE";
+      const intent = ({ "hr-request": "INQUIRE_HR_REQUEST", "applicants-view": "INQUIRE_APPLICANT" } as const)[engine.wizardActionId ?? ""] ?? "INQUIRE_EMPLOYEE";
       onWizardComplete?.(
         { message_type: "COMMAND_EXECUTION" as const, intent, payload: { id_field: entityToken.relationalId ?? entityToken.id, name_field: entityToken.label, raw_text_context: rawText } },
         { applicantName: entityToken.label, interviewerName: "", slotLabel: "", rawText, hiringRequestName: "" },
@@ -126,14 +126,26 @@ export const useWizard = (
         { message_type: "COMMAND_EXECUTION" as const, intent: "interviews", payload: { interview_id: interviewToken?.relationalId ?? interviewToken?.id ?? "", hiring_request_id: "", applicant_id: "", interviewer_id: "", slot_id: "", raw_text_context: rawText } },
         { applicantName: interviewToken.label, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
       );
-    } else if (engine.wizardActionId === "employees-ask-slots") {
-      const askTokens = tokens.filter(t => t.type === "ask-slots");
-      const employeeNames = askTokens.map(t => t.label).join(", ");
-      const employeeIds = askTokens.map(t => t.relationalId ?? t.id).join(", ");
-      onWizardComplete?.(
-        { message_type: "COMMAND_EXECUTION" as const, intent: "ASK_SLOTS", payload: { applicant_ids: employeeIds, raw_text_context: rawText } },
-        { applicantName: employeeNames, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: askTokens.length },
-      );
+      } else if (engine.wizardActionId === "employees-ask-slots") {
+        const askTokens = tokens.filter(t => t.type === "ask-slots");
+        const employeeNames = askTokens.map(t => t.label).join(", ");
+        const employeeIds = askTokens.map(t => t.relationalId ?? t.id).join(", ");
+        onWizardComplete?.(
+          { message_type: "COMMAND_EXECUTION" as const, intent: "ASK_SLOTS", payload: { applicant_ids: employeeIds, raw_text_context: rawText } },
+          { applicantName: employeeNames, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: askTokens.length },
+        );
+      } else if (engine.wizardActionId === "employees-send-mail") {
+        const mailToken = tokens.find(t => t.type === "applicant");
+        onWizardComplete?.(
+          { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", raw_text_context: rawText } },
+          { applicantName: mailToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 1 },
+        );
+      } else if (engine.wizardActionId === "applicants-send-mail") {
+        const mailToken = tokens.find(t => t.type === "applicant");
+        onWizardComplete?.(
+          { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", raw_text_context: rawText } },
+          { applicantName: mailToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 1 },
+        );
     } else {
       const intent = engine.wizardActionId ?? "UNKNOWN";
       onWizardComplete?.(

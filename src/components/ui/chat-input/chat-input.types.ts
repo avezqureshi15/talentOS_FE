@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { WizardExecutionPayload, HybridQuestionPayload, WizardExecutionSummary } from "@/components/shared/mentions/mentions.types";
+import type { WizardExecutionPayload, HybridQuestionPayload, WizardExecutionSummary } from "@/components/shared/mentions/types";
 
 export type ChatInputProps = {
   mounted?: boolean;
@@ -7,4 +7,5 @@ export type ChatInputProps = {
   setInput: Dispatch<SetStateAction<string>>;
   onSend: () => void;
   onWizardComplete?: (payload: WizardExecutionPayload | HybridQuestionPayload, summary?: WizardExecutionSummary) => void;
+  showAurora?: boolean;
 };
