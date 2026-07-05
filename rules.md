@@ -324,10 +324,41 @@ Content-Type: application/x-ndjson
 | `<LoadingSpinner>` | `@/components/ui/loading-spinner/loading-spinner` | Bouncing dots spinner (sm/md/lg, fullPage) |
 | `<Skeleton>` | `@/components/ui/skeleton/skeleton` | Shimmer skeleton for loading content (text/circle/rect) |
 | `<BaseModal>` | `@/components/ui/modal/base-modal` | Reusable modal with Escape close, overlay close, scroll lock |
+| `<ToastContainer>` | `@/components/ui/toast/toast-container` | Global toast renderer (mounted in `main.tsx` — available on all pages) |
+| `<Toast>` (internal) | `@/components/ui/toast/toast` | Single toast with icon, title, message, close button, exit animation |
+
+## 17. Toast System (MANDATORY)
+
+### Global Backend Error Toasts
+- ✅ Backend errors are automatically shown as toasts via the http-client response interceptor in `src/services/http-client.ts`
+- ✅ The interceptor extracts `error.response?.data?.error` → `detail` → `message` → `error.message` (fallback chain)
+- ✅ 401 errors that fail refresh also show a toast before redirecting to `/login`
+
+### Toast Store (Non-React Usage)
+- ✅ Zustand store `useToastStore` can be called outside React components via `useToastStore.getState().addToast(message, type, duration?, title?)`
+- ✅ Always import from `@/store/toast.store` and `@/components/ui/toast/toast.types`
+- ✅ Toast types: `ToastType.SUCCESS`, `ToastType.ERROR`, `ToastType.WARNING`, `ToastType.INFO`
+
+### useToast Hook (React Usage)
+- ✅ Use `useToast()` from `@/hooks/use-toast` in components: `toast.success()`, `toast.error()`, `toast.warning()`, `toast.info()`
+- ✅ Supports `title` (optional, bold header) and `duration` (optional, default 4000ms)
+- ✅ Never hand-roll inline toast/snackbar — always use the centralized system
+
+### Per-Request Opt-Out
+- ✅ Suppress global toast for a specific request by adding `{ toastOnError: false }` to the axios config
+- ✅ Only use when the calling code handles errors itself (e.g., TanStack Query `onError`)
+
+### Toast Component Rules
+- ✅ `toast.css` must use only CSS variables from `index.css` — zero hardcoded colors
+- ✅ Left border color indicates type: `--danger` (red), `--warning` (amber), `--success` (green), `--accent` (blue)
+- ✅ Glassmorphic background: `--sheet-bg` + `backdrop-filter: blur(16px)`
+- ✅ Shadow: `--shadow-xl` for visibility over any surface
+- ✅ Border-radius: `--radius-sm` (8px)
+- ✅ Always use `bx-*` icons from Boxicons (mapped in `toast.constants.ts`)
 
 ---
 
-## 17. Anti-Patterns (STRICTLY FORBIDDEN)
+## 18. Anti-Patterns (STRICTLY FORBIDDEN)
 
 - ❌ API calls inside components
 - ❌ Business logic in JSX

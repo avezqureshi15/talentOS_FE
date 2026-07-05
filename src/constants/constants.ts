@@ -1,6 +1,5 @@
 /* ── Storage Keys ── */
 export const STORAGE_KEYS = {
-  VISITOR_ID: "talentos_visitor_id",
   THEME: "talentos_theme",
   AUTH_TOKEN: "token",
   UX: "_ux",

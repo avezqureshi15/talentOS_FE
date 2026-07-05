@@ -10,6 +10,7 @@ import ErrorFallback from '@/components/ui/error-fallback/error-fallback'
 import LoadingSpinner from '@/components/ui/loading-spinner/loading-spinner'
 import { ERROR_FALLBACK_LABELS } from '@/constants/error-labels'
 import { GOOGLE_CLIENT_ID } from '@/constants/constants'
+import ToastContainer from '@/components/ui/toast/toast-container'
 import '@/index.css'
 import '@/app.css'
 
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')!).render(
             <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
               <RouterProvider router={router} />
             </Suspense>
+            <ToastContainer />
           </AuthProvider>
         </QueryClientProvider>
       </GoogleOAuthProvider>

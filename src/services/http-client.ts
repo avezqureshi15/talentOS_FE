@@ -1,6 +1,14 @@
 import axios from "axios";
 import { BE_API_BASE_URL } from "@/constants/constants";
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/app/auth/hooks/auth.constants";
+import { useToastStore } from "@/store/toast.store";
+import { ToastType } from "@/components/ui/toast/toast.types";
+
+declare module "axios" {
+  interface AxiosRequestConfig {
+    toastOnError?: boolean;
+  }
+}
 
 const DEFAULT_TIMEOUT = 15_000;
 
@@ -40,6 +48,15 @@ httpClient.interceptors.response.use(
     const originalRequest = error.config;
 
     if (error.response?.status !== 401 || originalRequest._retry) {
+      if (originalRequest?.toastOnError !== false) {
+        const message =
+          error.response?.data?.error ||
+          error.response?.data?.detail ||
+          error.response?.data?.message ||
+          error.message ||
+          "An unexpected error occurred";
+        useToastStore.getState().addToast(message, ToastType.ERROR);
+      }
       return Promise.reject(error);
     }
 
@@ -71,6 +88,12 @@ httpClient.interceptors.response.use(
       return httpClient(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError, null);
+      const message =
+        error.response?.data?.error ||
+        error.response?.data?.detail ||
+        error.message ||
+        "Session expired. Please sign in again.";
+      useToastStore.getState().addToast(message, ToastType.ERROR);
       localStorage.removeItem(ACCESS_TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
       localStorage.removeItem("auth_user");
