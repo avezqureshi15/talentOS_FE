@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import type { WizardStage, CommandItem } from "@/components/shared/mentions/types";
 import { WIZARD_ACTIONS } from "@/components/shared/mentions/config/wizard.config";
 import { WIZARD_REAL_DATA_SOURCES } from "@/components/shared/mentions/config/wizard-data-sources";
@@ -12,6 +12,7 @@ type Engine = {
   startWizard: (actionId: string) => ((query: string) => Promise<CommandItem[]>) | null;
   advanceWizard: (item: { id: string; label: string; relationalId?: string }) => (() => Promise<CommandItem[]>) | null;
   advanceWizardMulti: (items: CommandItem[]) => void;
+  advanceWizardMultiToNext: (items: CommandItem[]) => (() => Promise<CommandItem[]>) | null;
   reset: () => void;
   insert: (text: string, value: string, setValue: (v: string) => void) => void;
   handleChange: (value: string, cursorPos: number) => void;
@@ -39,13 +40,16 @@ export const useWizard = (
   const inputRef = useRef(input);
   inputRef.current = input;
 
-  const { wizardStage, wizardActionId, tokens, startWizard, advanceWizard, advanceWizardMulti, reset } = engine;
+  const { wizardStage, wizardActionId, tokens, startWizard, advanceWizard, advanceWizardMulti, advanceWizardMultiToNext, reset } = engine;
 
-  const isAskSlots = wizardActionId === "employees-ask-slots";
+  const isMultiSelectStage = useMemo(() => {
+    if (!wizardActionId || wizardStage === 0) return false;
+    const stage = WIZARD_ACTIONS[wizardActionId]?.stages[wizardStage - 1];
+    return stage?.isMultiSelect ?? false;
+  }, [wizardActionId, wizardStage]);
+
   const isFullyTokenized = wizardActionId
-    ? isAskSlots
-      ? wizardStage > (WIZARD_ACTIONS[wizardActionId]?.stages.length ?? 0)
-      : tokens.length === (WIZARD_ACTIONS[wizardActionId]?.totalTokens ?? 0)
+    ? wizardStage > (WIZARD_ACTIONS[wizardActionId]?.stages.length ?? 0)
     : false;
   const isWizardActive = wizardStage > 0;
 
@@ -105,6 +109,21 @@ export const useWizard = (
     setMultiSelectedIds([]);
     menu.resetToRoot();
   }, [menu.listItems, multiSelectedIds, advanceWizardMulti, menu]);
+
+  const handleMultiSelectConfirm = useCallback(() => {
+    const selected = menu.listItems.filter((item) => multiSelectedIds.includes(item.id));
+    if (selected.length === 0) return;
+
+    setMultiSelectedIds([]);
+    menu.resetToRoot();
+
+    if (engine.wizardActionId === "employees-ask-slots") {
+      advanceWizardMulti(selected);
+    } else {
+      const nf = advanceWizardMultiToNext(selected);
+      if (nf) nf().then((items) => menu.loadWizardItems(items));
+    }
+  }, [menu.listItems, multiSelectedIds, engine.wizardActionId, advanceWizardMulti, advanceWizardMultiToNext, menu]);
 
   const executeWizard = useCallback(() => {
     const rawText = inputRef.current.trim();
@@ -169,7 +188,7 @@ export const useWizard = (
   return {
     multiSelectedIds,
     setMultiSelectedIds,
-    isAskSlots,
+    isMultiSelectStage,
     isFullyTokenized,
     isWizardActive,
     handleStartWizard,
@@ -177,6 +196,7 @@ export const useWizard = (
     handleWizardSelect,
     handleToggleMultiSelect,
     handleAskSlotsConfirm,
+    handleMultiSelectConfirm,
     executeWizard,
     handleResetTokens,
     textareaRef,

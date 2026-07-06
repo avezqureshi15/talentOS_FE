@@ -52,6 +52,7 @@ export const useMentionEngine = () => {
     setTokens((prev) => [...prev, newToken]);
 
     if (stage.isFinal) {
+      setWizardStage((action.stages.length + 1) as WizardStage);
       setShow(false);
       return null;
     }
@@ -83,6 +84,36 @@ export const useMentionEngine = () => {
     setShow(false);
   }, [wizardActionId, wizardStage]);
 
+  const advanceWizardMultiToNext = useCallback((items: CommandItem[]): (() => Promise<CommandItem[]>) | null => {
+    const action = WIZARD_ACTIONS[wizardActionId ?? ""];
+    if (!action) return null;
+    const stage = action.stages[wizardStage - 1];
+    if (!stage) return null;
+
+    const newTokens: Token[] = items.map((item) => ({
+      type: stage.tokenType,
+      label: item.label,
+      id: item.id,
+      relationalId: item.relationalId,
+    }));
+    setTokens((prev) => [...prev, ...newTokens]);
+
+    if (stage.isFinal) {
+      setWizardStage((action.stages.length + 1) as WizardStage);
+      setShow(false);
+      return null;
+    }
+
+    const nextStageIdx = wizardStage;
+    const nextStage = action.stages[nextStageIdx];
+    if (nextStage) {
+      setWizardStage((nextStageIdx + 1) as WizardStage);
+      return () => nextStage.fetcher("");
+    }
+    setShow(false);
+    return null;
+  }, [wizardActionId, wizardStage]);
+
   const reset = useCallback(() => {
     setTokens([]);
     setWizardStage(0);
@@ -107,6 +138,7 @@ export const useMentionEngine = () => {
     startWizard,
     advanceWizard,
     advanceWizardMulti,
+    advanceWizardMultiToNext,
     insert,
     reset,
   };

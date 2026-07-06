@@ -1,5 +1,8 @@
+import { useLayoutEffect, useRef, useState, useMemo } from "react";
+import { createPortal } from "react-dom";
 import "./mention-popup.css";
 import { MENTIONS_LABELS } from "../constants";
+import { WIZARD_ACTIONS } from "../config/wizard.config";
 import type { CommandItem, CommandEntry, WizardStage, Token, MenuController } from "../types";
 import { resolveMenuSelection } from "../utils";
 import MentionPopupHeader from "./mention-popup-header/mention-popup-header";
@@ -17,11 +20,38 @@ type MentionPopupProps = {
   menu: MenuController;
   wizardStage: WizardStage;
   tokens: Token[];
+  anchorRef: React.RefObject<HTMLDivElement | null>;
 };
 
+const POPUP_WIDTH = 300;
+const GAP = 8;
+
 const MentionPopup = ({
-  show, onInsert, onWizardSelect, multiSelectedIds, onToggleMultiSelect, menu, wizardStage, tokens,
+  show, onInsert, onWizardSelect, multiSelectedIds, onToggleMultiSelect, menu, wizardStage, tokens, anchorRef,
 }: MentionPopupProps) => {
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [style, setStyle] = useState<React.CSSProperties>({ visibility: "hidden" });
+
+  const wizardActionId = tokens[0]?.id ?? "";
+  const isMultiSelectStage = useMemo(() => {
+    if (!wizardActionId || wizardStage === 0) return false;
+    const stage = WIZARD_ACTIONS[wizardActionId]?.stages[wizardStage - 1];
+    return stage?.isMultiSelect ?? false;
+  }, [wizardActionId, wizardStage]);
+
+  useLayoutEffect(() => {
+    if (!show || !anchorRef.current) return;
+    const rect = anchorRef.current.getBoundingClientRect();
+    setStyle({
+      position: "fixed",
+      bottom: `${window.innerHeight - rect.top + GAP}px`,
+      left: `${rect.left}px`,
+      width: `${POPUP_WIDTH}px`,
+      maxHeight: "300px",
+      overflowY: "auto",
+    });
+  }, [show, anchorRef]);
+
   if (!show) return null;
 
   const {
@@ -33,8 +63,6 @@ const MentionPopup = ({
 
   const multiIds = multiSelectedIds ?? [];
   const toggleMulti = onToggleMultiSelect ?? (() => {});
-  const wizardActionId = tokens[0]?.id ?? "";
-  const isMultiSelectStage = wizardStage > 0 && wizardActionId === "employees-ask-slots";
   const isSlotStage = wizardStage === 4;
   const isWizardActive = wizardStage > 0;
 
@@ -72,8 +100,8 @@ const MentionPopup = ({
     }
   };
 
-  return (
-    <div className="mention-popup">
+  const popup = (
+    <div ref={popupRef} className="mention-popup" style={style}>
       <MentionPopupHeader
         canGoBack={canGoBack}
         goBack={goBack}
@@ -111,6 +139,8 @@ const MentionPopup = ({
       />
     </div>
   );
+
+  return createPortal(popup, document.body);
 };
 
 export default MentionPopup;

@@ -3,23 +3,17 @@
 }
 
 .mention-popup {
-  position: absolute;
-  bottom: 120%;
-  left: 0;
+  background: var(--bg-tertiary);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 
-  width: 300px;
-  max-height: 300px;
-  overflow-y: auto;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
 
-  background: var(--bg-secondary);
-
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-xl);
 
   animation: popupFade 0.18s ease-out;
-  z-index: 1000;
+  z-index: 10001;
 }
 
 @keyframes popupFade {
@@ -39,7 +33,7 @@
   display: flex;
   align-items: center;
   padding: 4px 8px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-default);
   min-height: 28px;
 }
 
@@ -74,7 +68,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 8px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-default);
 }
 
 .mp-search-icon {

@@ -1,9 +1,11 @@
 import "./logo.css";
 
 const Logo = () => (
-  <div className="talentos-logo-brand">
-    <span className="talentos-logo-name">
-      Talent<span className="talentos-logo-os">OS</span>
+  <div className="webHire-logo-brand">
+    <span className="webHire-logo-name">
+      <span className="webHire-logo-web">web</span>
+      <span className="webHire-logo-hyre">Hyre</span>
+      <span className="webHire-logo-ai">.ai</span>
     </span>
   </div>
 );

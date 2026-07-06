@@ -39,7 +39,7 @@ export const CHAT_SUGGESTIONS = [
 ];
 
 export const EMPTY_STATE = {
-  GREETING: "Good to see you, Avez",
+  GREETING: "Good to see you",
 } as const;
 
 export const UI_LABELS = {

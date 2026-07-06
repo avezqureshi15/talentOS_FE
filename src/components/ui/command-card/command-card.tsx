@@ -11,6 +11,18 @@ const EntityLabel = ({ label, loading }: { label: string | null | undefined; loa
 };
 
 const CommandCard = ({ data, hybrid }: CommandCardProps) => {
+  const entities = [
+    { key: "hiringRequest", type: "hiring-request" as const, id: data?.payload?.hiring_request_id ?? "" },
+    { key: "applicant", type: "candidate" as const, id: data?.payload?.applicant_id ?? "" },
+    { key: "interviewer", type: "user" as const, id: data?.payload?.interviewer_id ?? "" },
+  ].filter((e) => e.id);
+
+  const { resolved, loading } = useEntityResolution(entities);
+
+  const ids = data?.payload?.applicant_ids?.split(", ").filter(Boolean) ?? [];
+  const empEntities = ids.map((id, i) => ({ key: `emp_${i}`, type: "candidate" as const, id }));
+  const { resolved: empResolved, loading: empLoading } = useEntityResolution(empEntities);
+
   if (hybrid) {
     return (
       <div className="command-card command-card--hybrid">
@@ -25,20 +37,10 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
 
   if (!data) return null;
 
-  const entities = [
-    { key: "hiringRequest", type: "hiring-request" as const, id: data.payload.hiring_request_id ?? "" },
-    { key: "applicant", type: "candidate" as const, id: data.payload.applicant_id ?? "" },
-    { key: "interviewer", type: "user" as const, id: data.payload.interviewer_id ?? "" },
-  ].filter((e) => e.id);
-
-  const { resolved, loading } = useEntityResolution(entities);
   const headerIcon = INTENT_HEADER_ICONS[data.intent] ?? "bx bx-terminal";
   const headerLabel = INTENT_LABELS[data.intent] ?? data.intent;
 
   if (data.intent === "ASK_SLOTS") {
-    const ids = data.payload.applicant_ids?.split(", ").filter(Boolean) ?? [];
-    const empEntities = ids.map((id, i) => ({ key: `emp_${i}`, type: "candidate" as const, id }));
-    const { resolved: empResolved, loading: empLoading } = useEntityResolution(empEntities);
     const empLabels = empEntities.map((e) => empResolved[e.key]).filter(Boolean);
 
     return (

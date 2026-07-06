@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import SendButton from "@/components/ui/send-button/send-button";
 import ChatTokens from "./chat-tokens";
 import "./chat-input.css";
@@ -22,6 +22,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   showAurora,
 }) => {
   const { textareaRef } = useAutoResize(input);
+  const containerRef = useRef<HTMLDivElement>(null);
   const engine = useMentionEngine();
   const menu = useCommandMenu();
   const [inputFocused, setInputFocused] = useState(false);
@@ -42,8 +43,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const wizard = useWizard(engine, menu, onWizardComplete, input, setInput);
 
   const {
-    multiSelectedIds, isAskSlots, isFullyTokenized, isWizardActive,
-    handleWizardSelect, handleToggleMultiSelect, handleAskSlotsConfirm,
+    multiSelectedIds, isMultiSelectStage, isFullyTokenized, isWizardActive,
+    handleWizardSelect, handleToggleMultiSelect, handleMultiSelectConfirm,
     executeWizard, handleResetTokens,
   } = wizard;
 
@@ -73,11 +74,11 @@ const ChatInput: React.FC<ChatInputProps> = ({
     }
 
     if (isWizardActive && show) {
-      if (isAskSlots && menu.listItems.length > 0) {
+      if (isMultiSelectStage && menu.listItems.length > 0) {
         switch (e.key) {
           case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
           case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
-          case "Enter": if (!e.shiftKey) { e.preventDefault(); handleAskSlotsConfirm(); } return;
+          case "Enter": if (!e.shiftKey) { e.preventDefault(); handleMultiSelectConfirm(); } return;
           case "Escape": e.preventDefault(); reset(); menu.resetToRoot(); return;
         }
         return;
@@ -110,12 +111,12 @@ const ChatInput: React.FC<ChatInputProps> = ({
       if (input.trim()) onSend();
     }
     handleChange(input, input.length);
-  }, [show, isWizardActive, isAskSlots, isFullyTokenized, input, menu, engine, reset, insert, setInput, handleWizardSelect, handleAskSlotsConfirm, executeWizard, handleChange, onSend]);
+  }, [show, isWizardActive, isMultiSelectStage, isFullyTokenized, input, menu, engine, reset, insert, setInput, handleWizardSelect, handleMultiSelectConfirm, executeWizard, handleChange, onSend]);
 
   return (
     <div className={`cui-fade-up cui-d3${mounted ? "" : " opacity-0"}`}>
       <div className="chat-input-root">
-        <div className="chat-input-container">
+        <div ref={containerRef} className="chat-input-container">
           <div className={`chat-input-aurora${showAurora ? " chat-input-aurora--active" : ""}`}>
             <div className="chat-input-wrapper">
             <div className="chat-input-field-wrapper">
@@ -150,6 +151,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             onToggleMultiSelect={handleToggleMultiSelect}
             wizardStage={wizardStage}
             tokens={tokens}
+            anchorRef={containerRef}
           />
         </div>
       </div>

@@ -1,19 +1,29 @@
-.talentos-logo-brand {
+.webHire-logo-brand {
   display: inline-flex;
   flex-direction: column;
   line-height: 1.2;
 }
 
-.talentos-logo-name {
+.webHire-logo-name {
   font-size: 18px;
   font-weight: 800;
-  color: var(--text-primary);
   letter-spacing: -0.02em;
   line-height: 1;
 }
 
-.talentos-logo-os {
-  background: linear-gradient(135deg, #a0a0a0, #555);
+.webHire-logo-web {
+  color: var(--text-white);
+}
+
+.webHire-logo-hyre {
+  background: linear-gradient(135deg, #b0b5c0, #8a8f9a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.webHire-logo-ai {
+  background: linear-gradient(135deg, #b0b5c0, #8a8f9a);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

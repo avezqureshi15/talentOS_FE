@@ -29,6 +29,7 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
         fetcher: fetchMockInterviewers,
         tokenType: "interviewer",
         isFinal: false,
+        isMultiSelect: true,
       },
       {
         stage: 4,
@@ -100,6 +101,7 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
         fetcher: fetchMockUsers,
         tokenType: "ask-slots",
         isFinal: true,
+        isMultiSelect: true,
       },
     ],
   },

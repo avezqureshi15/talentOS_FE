@@ -41,6 +41,7 @@ export type WizardStageConfig = {
   fetcher: (query: string) => Promise<CommandItem[]>;
   tokenType: TokenType;
   isFinal: boolean;
+  isMultiSelect?: boolean;
 };
 
 export type WizardActionConfig = {

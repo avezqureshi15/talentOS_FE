@@ -106,11 +106,17 @@ export default function Chat() {
   return (
     <ErrorBoundary>
       <div className="chat-flex">
-        {chatId && !emptyLeaving ? (
+        {chatId ? (
           <ChatArea onSend={handleSend} />
         ) : (
           <div className={`empty-state-fade${emptyLeaving ? " empty-state-fade--leave" : ""}`}>
             <EmptyState onSuggestionClick={(text) => { handleInteraction(); setInput(text); }} showAurora={showAurora} />
+          </div>
+        )}
+
+        {chatId && emptyLeaving && (
+          <div className="empty-state-fade empty-state-fade--overlay empty-state-fade--leave">
+            <EmptyState onSuggestionClick={(text) => { handleInteraction(); setInput(text); }} showAurora={false} />
           </div>
         )}
 
