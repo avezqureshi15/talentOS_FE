@@ -1,17 +1,13 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { formatDate } from "./applicants.utils";
 import { APPLICANT_LABELS } from "@/constants/constants";
+import { INFO_CHIPS } from "./applicants.constants";
 import type { ApplicantCardProps } from "./applicants.types";
 import CardDetailsTab from "./card-details-tab";
 import CardCoverLetterTab from "./card-cover-letter-tab";
 import CardAiSummaryTab from "./card-ai-summary-tab";
 import CardRoundsTab from "./card-rounds-tab";
-
-const AI_LABEL: Record<string, string> = {
-  shortlisted: APPLICANT_LABELS.AI_SHORTLISTED,
-  rejected: APPLICANT_LABELS.AI_REJECTED,
-  pending: APPLICANT_LABELS.AI_PENDING,
-};
+import InfoChipTooltip from "./info-chip-tooltip";
 
 const ApplicantCard = ({
   applicant: a,
@@ -34,6 +30,24 @@ const ApplicantCard = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
+  // justification: tracks hovered chip position and lines for portal tooltip
+  const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
+  const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showTooltip = useCallback((e: React.MouseEvent<HTMLSpanElement>, lines: string[]) => {
+    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    setTooltip({ lines, rect: e.currentTarget.getBoundingClientRect() });
+  }, []);
+
+  const hideTooltip = useCallback(() => {
+    tooltipTimerRef.current = setTimeout(() => setTooltip(null), 80);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current); };
+  }, []);
+
+  // justification: outside click listener for three-dots menu
   useEffect(() => {
     if (!menuOpen) return;
     const handleClick = (e: MouseEvent) => {
@@ -61,12 +75,28 @@ const ApplicantCard = ({
         </div>
 
         <div className="header-right">
-          {a.aiDecision && a.aiDecision !== "pending" && (
-            <span className={`ai-chip ai-chip--${a.aiDecision}`}>
-              <i className={`bx ${a.aiDecision === "shortlisted" ? "bx-check-circle" : "bx-x-circle"}`} />
-              {AI_LABEL[a.aiDecision]}
-            </span>
-          )}
+          <div className="info-chip-row">
+            {INFO_CHIPS.map((chip) => {
+              const hasActual = a[chip.actualKey] != null && a[chip.actualKey] !== "";
+              const hasExpected = a[chip.expectedKey] != null && a[chip.expectedKey] !== "";
+              if (!hasActual && !hasExpected) return null;
+              const tipLines: string[] = [chip.title];
+              const actual = a[chip.actualKey];
+              tipLines.push(`Actual : ${actual != null && actual !== "" ? actual : "—"}${chip.actualSuffix ?? ""}`);
+              const expected = a[chip.expectedKey];
+              tipLines.push(`Expected : ${expected != null && expected !== "" ? expected : "—"}${chip.expectedSuffix ?? ""}`);
+              return (
+                <span
+                  key={chip.label}
+                  className="info-chip info-chip--red"
+                  onMouseEnter={(e) => showTooltip(e, tipLines)}
+                  onMouseLeave={hideTooltip}
+                >
+                  {chip.label}
+                </span>
+              );
+            })}
+          </div>
 
           {a.score != null && (
             <div className={`ats-score ${a.score >= 70 ? "score-high" : a.score >= 40 ? "score-mid" : "score-low"}`}>
@@ -162,6 +192,7 @@ const ApplicantCard = ({
           {a.status === "hired" && <div className="hired-text">{APPLICANT_LABELS.CANDIDATE_HIRED}</div>}
         </div>
       )}
+      {tooltip && <InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} />}
     </div>
   );
 };

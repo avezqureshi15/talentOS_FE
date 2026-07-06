@@ -9,20 +9,14 @@ import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/compon
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import { APPLICANT_LABELS, MOCK_ROUNDS } from "@/constants/constants";
+import { SCORE_FILTERS, STATUS_FILTER_OPTIONS, STATUS_FILTER_LABELS, REJECT_FILTER_OPTIONS, REJECT_FILTER_LABELS } from "./applicants.constants";
 import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps } from "./applicants.types";
-
-const SCORE_FILTERS = [
-  { value: "all", label: "All Scores" },
-  { value: "gte80", label: "≥ 80" },
-  { value: "gte70", label: "≥ 70" },
-  { value: "gte50", label: "≥ 50" },
-  { value: "lt50", label: "< 50" },
-  { value: "lt30", label: "< 30" },
-];
 
 function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam }: ApplicantsProps) {
   // justification: stores local status/screening overrides that can't persist to API yet
   const [localOverrides, setLocalOverrides] = useState<Record<string, { status?: ApplicantStatus; screening?: boolean }>>({});
+  // justification: local UI state for rejected-by filter dropdown
+  const [rejectFilter, setRejectFilter] = useState("all");
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<string | null>(null);
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
@@ -85,25 +79,42 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
           placeholder="Filter"
           value={filter}
           onChange={(e) => onFilterChange(e.target.value)}
-          options={[
-            { value: "all", label: "All Candidates" },
-            { value: "shortlisted", label: "Shortlisted" },
-            { value: "non-shortlisted", label: "Non-shortlisted" },
-            { value: "scheduled", label: "Scheduled" },
-            { value: "unscheduled", label: "Unscheduled" },
-          ]}
+          options={STATUS_FILTER_OPTIONS}
         />
         <span className="filter-separator" />
-        {SCORE_FILTERS.map((opt) => (
-          <button
-            key={opt.value}
-            className={`score-filter-chip ${scoreFilter === opt.value ? "active" : ""}`}
-            onClick={() => onScoreFilterChange?.(opt.value)}
-            type="button"
-          >
-            {opt.label}
-          </button>
-        ))}
+        <Select
+          placeholder="All Scores"
+          value={scoreFilter === "all" ? "" : scoreFilter}
+          onChange={(e) => onScoreFilterChange?.(e.target.value || "all")}
+          options={SCORE_FILTERS.filter((o) => o.value !== "all").map((o) => ({ value: o.value, label: o.label }))}
+        />
+        <span className="filter-separator" />
+        <Select
+          placeholder="Rejected"
+          value={rejectFilter === "all" ? "" : rejectFilter}
+          onChange={(e) => setRejectFilter(e.target.value || "all")}
+          options={REJECT_FILTER_OPTIONS}
+        />
+      </div>
+      <div className="filter-chips">
+        {filter !== "all" && (
+          <span className="filter-chip">
+            {STATUS_FILTER_LABELS[filter]}
+            <i className="bx bx-x filter-chip-x" onClick={() => onFilterChange("all")} />
+          </span>
+        )}
+        {scoreFilter !== "all" && (
+          <span className="filter-chip">
+            Score: {SCORE_FILTERS.find((o) => o.value === scoreFilter)?.label ?? scoreFilter}
+            <i className="bx bx-x filter-chip-x" onClick={() => onScoreFilterChange?.("all")} />
+          </span>
+        )}
+        {rejectFilter !== "all" && (
+          <span className="filter-chip">
+            Rejected: {REJECT_FILTER_LABELS[rejectFilter]}
+            <i className="bx bx-x filter-chip-x" onClick={() => setRejectFilter("all")} />
+          </span>
+        )}
       </div>
       <div className="accordion-list">
       {data.map((a) => {
