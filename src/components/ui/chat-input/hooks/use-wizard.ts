@@ -35,6 +35,7 @@ export const useWizard = (
   input: string,
   setInput: (v: string) => void,
 ) => {
+  // justification: tracks which items are checked in multi-select wizard stages
   const [multiSelectedIds, setMultiSelectedIds] = useState<string[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const inputRef = useRef(input);
