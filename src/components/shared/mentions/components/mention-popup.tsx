@@ -1,8 +1,9 @@
-import { useLayoutEffect, useRef, useState, useMemo } from "react";
+import { useLayoutEffect, useRef, useState, useMemo, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 import "./mention-popup.css";
 import { MENTIONS_LABELS } from "../constants";
 import { WIZARD_ACTIONS } from "../config/wizard.config";
+import { COMMON_SLOTS_TAB_ID, COMMON_SLOTS_TAB_LABEL } from "./slot-tabs/slot-tabs.constants";
 import type { CommandItem, CommandEntry, WizardStage, Token, MenuController } from "../types";
 import { resolveMenuSelection } from "../utils";
 import MentionPopupHeader from "./mention-popup-header/mention-popup-header";
@@ -25,6 +26,7 @@ type MentionPopupProps = {
 
 const POPUP_WIDTH = 300;
 const GAP = 8;
+const ANIM_DURATION = 200;
 
 const MentionPopup = ({
   show, onInsert, onWizardSelect, multiSelectedIds, onToggleMultiSelect, menu, wizardStage, tokens, anchorRef,
@@ -32,6 +34,52 @@ const MentionPopup = ({
   const popupRef = useRef<HTMLDivElement>(null);
   const [style, setStyle] = useState<React.CSSProperties>({ visibility: "hidden" });
 
+  /* ── sidebar state ── */
+  const [sidebarMounted, setSidebarMounted] = useState(false);
+  const [sidebarClosing, setSidebarClosing] = useState(false);
+  const [activeTab, setActiveTab] = useState(COMMON_SLOTS_TAB_ID);
+  const sidebarTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const interviewerTokens = useMemo(
+    () => tokens.filter((t) => t.type === "interviewer").map((t) => ({ id: t.id, name: t.label })),
+    [tokens],
+  );
+  const showSidebar = interviewerTokens.length > 1 && wizardStage === 4;
+
+  /* Lock popup scroll when sidebar is mounted */
+  useEffect(() => {
+    const el = popupRef.current;
+    if (!el) return;
+    el.style.overflow = sidebarMounted ? "hidden" : "";
+    return () => { if (el) el.style.overflow = ""; };
+  }, [sidebarMounted]);
+
+  /* Cleanup sidebar timer */
+  useEffect(() => {
+    return () => { if (sidebarTimerRef.current) clearTimeout(sidebarTimerRef.current); };
+  }, []);
+
+  const openSidebar = useCallback(() => {
+    if (sidebarTimerRef.current) clearTimeout(sidebarTimerRef.current);
+    setSidebarClosing(false);
+    setSidebarMounted(true);
+  }, []);
+
+  const closeSidebar = useCallback(() => {
+    setSidebarClosing(true);
+    sidebarTimerRef.current = setTimeout(() => {
+      setSidebarMounted(false);
+      setSidebarClosing(false);
+      sidebarTimerRef.current = null;
+    }, ANIM_DURATION);
+  }, []);
+
+  const handleSidebarSelect = useCallback((tabId: string) => {
+    setActiveTab(tabId);
+    closeSidebar();
+  }, [closeSidebar]);
+
+  /* ── wizard helpers ── */
   const wizardActionId = tokens[0]?.id ?? "";
   const isMultiSelectStage = useMemo(() => {
     if (!wizardActionId || wizardStage === 0) return false;
@@ -100,6 +148,10 @@ const MentionPopup = ({
     }
   };
 
+  const activeInterviewerName = activeTab === COMMON_SLOTS_TAB_ID
+    ? null
+    : interviewerTokens.find((iv) => iv.id === activeTab)?.name ?? null;
+
   const popup = (
     <div ref={popupRef} className="mention-popup" style={style}>
       <MentionPopupHeader
@@ -121,6 +173,17 @@ const MentionPopup = ({
           onKeyDown={handleSearchKeyDown}
           autoFocus
         />
+        {showSidebar && (
+          <button
+            type="button"
+            className="st-toggle"
+            onClick={openSidebar}
+            aria-label="Select slot view"
+            title="Filter by interviewer"
+          >
+            <i className="bx bx-menu" />
+          </button>
+        )}
       </div>
       <MentionPopupList
         listItems={listItems}
@@ -136,7 +199,49 @@ const MentionPopup = ({
         isLoadingMore={isLoadingMore}
         multiSelectedIds={multiIds}
         onToggleMultiSelect={toggleMulti}
+        showSlotTabs={showSidebar}
       />
+      {sidebarMounted && (
+        <>
+          <div
+            className={`st-backdrop${sidebarClosing ? " st-backdrop--closing" : ""}`}
+            onClick={closeSidebar}
+          />
+          <aside className={`st-sidebar${sidebarClosing ? " st-sidebar--closing" : ""}`}>
+            <div className="st-sidebar-head">
+              <span>Slot View</span>
+              <button type="button" className="st-sidebar-close" onClick={closeSidebar}>
+                <i className="bx bx-x" />
+              </button>
+            </div>
+            <div className="st-sidebar-body">
+              <div className="st-section-label">Interviewers</div>
+              <button
+                type="button"
+                className={`st-sidebar-item${activeTab === COMMON_SLOTS_TAB_ID ? " st-sidebar-item--active" : ""}`}
+                onClick={() => handleSidebarSelect(COMMON_SLOTS_TAB_ID)}
+              >
+                {COMMON_SLOTS_TAB_LABEL}
+              </button>
+              {interviewerTokens.map((iv) => (
+                <button
+                  key={iv.id}
+                  type="button"
+                  className={`st-sidebar-item${activeTab === iv.id ? " st-sidebar-item--active" : ""}`}
+                  onClick={() => handleSidebarSelect(iv.id)}
+                >
+                  {iv.name}
+                </button>
+              ))}
+            </div>
+            <div className="st-sidebar-foot">
+              {activeInterviewerName
+                ? `Showing ${activeInterviewerName}'s slots`
+                : "Showing common availability"}
+            </div>
+          </aside>
+        </>
+      )}
     </div>
   );
 

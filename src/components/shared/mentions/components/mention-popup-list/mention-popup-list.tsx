@@ -2,6 +2,7 @@ import { useRef, useEffect, useCallback } from "react";
 import { MENTIONS_LABELS } from "../../constants";
 import type { CommandItem, CommandEntry } from "../../types";
 import { groupSlots, getDefaultIcon } from "../../utils";
+import SlotTabs from "../slot-tabs/slot-tabs";
 
 type PopupListProps = {
   listItems: CommandItem[];
@@ -17,12 +18,14 @@ type PopupListProps = {
   isLoadingMore: boolean | undefined;
   multiSelectedIds: string[];
   onToggleMultiSelect: (id: string) => void;
+  showSlotTabs?: boolean;
 };
 
 const MentionPopupList = ({
   listItems, filteredEntries, isListView, isSlotStage, isMultiSelectStage,
   selectedIndex, setSelectedIndex, onSelect,
   hasMore, loadMore, isLoadingMore, multiSelectedIds, onToggleMultiSelect,
+  showSlotTabs = false,
 }: PopupListProps) => {
   const bodyRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -144,7 +147,19 @@ const MentionPopupList = ({
   }, [listItems, selectedIndex, multiSelectedIds, onToggleMultiSelect, setSelectedIndex]);
 
   const renderContent = () => {
-    if (isSlotStage) return renderSlotGroups();
+    if (isSlotStage) {
+      if (showSlotTabs) {
+        return (
+          <SlotTabs
+            listItems={listItems}
+            selectedIndex={selectedIndex}
+            onSelect={onSelect}
+            setSelectedIndex={setSelectedIndex}
+          />
+        );
+      }
+      return renderSlotGroups();
+    }
     if (isMultiSelectStage) return renderMultiSelectList();
     if (isListView) return renderListView();
     return renderFilteredEntries();
