@@ -5,6 +5,7 @@ export type UserMentionsFetcherResultItem = {
   label: string;
   description: string;
   relationalId: string;
+  meta?: Record<string, string>;
 };
 
 export type UserMentionsFetcherPaginatedResult = {
@@ -23,6 +24,12 @@ export const fetchUsersForMentions = async (
     label: user.name,
     description: `${user.designation} · ${user.department}`,
     relationalId: user.emp_id,
+    meta: {
+      type: "interviewer",
+      email: user.email,
+      designation: user.designation,
+      department: user.department,
+    },
   }));
 
   return { items, hasMore: res.has_more };

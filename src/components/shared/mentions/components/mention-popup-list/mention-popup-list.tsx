@@ -1,8 +1,9 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { MENTIONS_LABELS } from "../../constants";
 import type { CommandItem, CommandEntry } from "../../types";
 import { groupSlots, getDefaultIcon } from "../../utils";
 import SlotTabs from "../slot-tabs/slot-tabs";
+import InfoChipTooltip from "@/components/ui/info-chip-tooltip/info-chip-tooltip";
 
 type PopupListProps = {
   listItems: CommandItem[];
@@ -29,6 +30,22 @@ const MentionPopupList = ({
 }: PopupListProps) => {
   const bodyRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+
+  const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
+  const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showTooltip = useCallback((e: React.MouseEvent<HTMLButtonElement>, lines: string[]) => {
+    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    setTooltip({ lines, rect: e.currentTarget.getBoundingClientRect() });
+  }, []);
+
+  const hideTooltip = useCallback(() => {
+    tooltipTimerRef.current = setTimeout(() => setTooltip(null), 80);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current); };
+  }, []);
 
   useEffect(() => {
     const el = bodyRef.current?.querySelector(".mp-item--selected");
@@ -73,6 +90,15 @@ const MentionPopupList = ({
     ));
   }, [listItems, selectedIndex, onSelect, setSelectedIndex]);
 
+  const buildTooltipLines = useCallback((item: CommandItem): string[] => {
+    const lines: string[] = [`Ask ${item.label} for Slots`];
+    const m = item.meta;
+    if (m?.email) lines.push(`Email: ${m.email}`);
+    if (m?.designation) lines.push(`Designation: ${m.designation}`);
+    if (m?.department) lines.push(`Department: ${m.department}`);
+    return lines;
+  }, []);
+
   const renderListView = useCallback(() => {
     if (listItems.length === 0) return <div className="mp-empty">{MENTIONS_LABELS.NO_RESULTS}</div>;
     return (
@@ -90,6 +116,17 @@ const MentionPopupList = ({
               <div className="mp-item-label">{item.label}</div>
               {item.description && <div className="mp-item-desc">{item.description}</div>}
             </div>
+            {item.meta?.type === "interviewer" && (
+              <button
+                className="mp-item-ask-slots"
+                onMouseEnter={(e) => showTooltip(e, buildTooltipLines(item))}
+                onMouseLeave={hideTooltip}
+                onClick={(e) => e.stopPropagation()}
+                type="button"
+              >
+                <i className="bx bx-calendar-plus" />
+              </button>
+            )}
           </div>
         ))}
         {hasMore && (
@@ -99,7 +136,7 @@ const MentionPopupList = ({
         )}
       </>
     );
-  }, [listItems, selectedIndex, onSelect, setSelectedIndex, hasMore, isLoadingMore]);
+  }, [listItems, selectedIndex, onSelect, setSelectedIndex, hasMore, isLoadingMore, showTooltip, hideTooltip, buildTooltipLines]);
 
   const renderFilteredEntries = useCallback(() => {
     if (filteredEntries.length === 0) return <div className="mp-empty">{MENTIONS_LABELS.NO_RESULTS}</div>;
@@ -141,10 +178,21 @@ const MentionPopupList = ({
             <div className="mp-item-label">{item.label}</div>
             {item.description && <div className="mp-item-desc">{item.description}</div>}
           </div>
+          {item.meta?.type === "interviewer" && (
+            <button
+              className="mp-item-ask-slots"
+              onMouseEnter={(e) => showTooltip(e, buildTooltipLines(item))}
+              onMouseLeave={hideTooltip}
+              onClick={(e) => e.stopPropagation()}
+              type="button"
+            >
+              <i className="bx bx-calendar-plus" />
+            </button>
+          )}
         </div>
       );
     });
-  }, [listItems, selectedIndex, multiSelectedIds, onToggleMultiSelect, setSelectedIndex]);
+  }, [listItems, selectedIndex, multiSelectedIds, onToggleMultiSelect, setSelectedIndex, showTooltip, hideTooltip, buildTooltipLines]);
 
   const renderContent = () => {
     if (isSlotStage) {
@@ -166,9 +214,12 @@ const MentionPopupList = ({
   };
 
   return (
-    <div ref={bodyRef} className="mp-body">
-      {renderContent()}
-    </div>
+    <>
+      <div ref={bodyRef} className="mp-body">
+        {renderContent()}
+      </div>
+      {tooltip && <InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} />}
+    </>
   );
 };
 

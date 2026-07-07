@@ -1,0 +1,47 @@
+.info-chip-tooltip {
+  position: fixed;
+  transform: translateX(-50%) translateY(-100%);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  z-index: 10002;
+}
+
+.info-chip-tip-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-white);
+}
+
+.info-chip-tip-line {
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.info-chip-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--border-default);
+}
+
+.info-chip-tooltip::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--bg-tertiary);
+  z-index: 1;
+}

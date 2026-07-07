@@ -7,7 +7,7 @@ import CardDetailsTab from "./card-details-tab";
 import CardCoverLetterTab from "./card-cover-letter-tab";
 import CardAiSummaryTab from "./card-ai-summary-tab";
 import CardRoundsTab from "./card-rounds-tab";
-import InfoChipTooltip from "./info-chip-tooltip";
+import InfoChipTooltip from "@/components/ui/info-chip-tooltip/info-chip-tooltip";
 
 const ApplicantCard = ({
   applicant: a,
@@ -99,7 +99,11 @@ const ApplicantCard = ({
           </div>
 
           {a.score != null && (
-            <div className={`ats-score ${a.score >= 70 ? "score-high" : a.score >= 40 ? "score-mid" : "score-low"}`}>
+            <div
+              className={`ats-score ${a.score >= 70 ? "score-high" : a.score >= 40 ? "score-mid" : "score-low"}`}
+              onMouseEnter={(e) => showTooltip(e, ["ATS score is calculated based on how the resume matches job description"])}
+              onMouseLeave={hideTooltip}
+            >
               {a.score}
             </div>
           )}
