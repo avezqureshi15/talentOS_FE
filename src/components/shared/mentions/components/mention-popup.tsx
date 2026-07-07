@@ -87,10 +87,50 @@ const MentionPopup = ({
     return stage?.isMultiSelect ?? false;
   }, [wizardActionId, wizardStage]);
 
+  const { currentLevel, search, setSearch, filteredEntries, listItems, isListView, activeEntry, canGoBack, selectedIndex, setSelectedIndex, navigateTo, goBack, moveUp, moveDown, selectCurrentItem, loadMore, hasMore, isLoadingMore } = menu;
+  const isSlotStage = wizardStage === 4;
+  const isWizardActive = wizardStage > 0;
+
+  const handleSelect = useCallback((current: CommandEntry | CommandItem) => {
+    const result = resolveMenuSelection(current, isListView, activeEntry);
+    switch (result.action) {
+      case "wizard": {
+        const item = { id: current.id, label: current.label };
+        onWizardSelect?.(result.stage, item);
+        break;
+      }
+      case "navigate":
+        navigateTo(result.entry);
+        break;
+      default:
+        if (isWizardActive && onWizardSelect && activeEntry) {
+          const item: CommandItem = { id: current.id, label: current.label };
+          onWizardSelect(wizardStage, item);
+        } else {
+          onInsert(result.text);
+        }
+    }
+  }, [isListView, activeEntry, isWizardActive, wizardStage, onWizardSelect, navigateTo, onInsert]);
+
+  const handleSearchKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    switch (e.key) {
+      case "ArrowDown": e.preventDefault(); moveDown(); break;
+      case "ArrowUp": e.preventDefault(); moveUp(); break;
+      case "Enter":
+        if (!e.shiftKey) {
+          e.preventDefault();
+          const current = selectCurrentItem();
+          if (current) handleSelect(current);
+        }
+        break;
+    }
+  }, [moveDown, moveUp, selectCurrentItem, handleSelect]);
+
   // justification: computes popup position relative to the anchor element
   useLayoutEffect(() => {
-    if (!show || !anchorRef.current) return;
-    const rect = anchorRef.current.getBoundingClientRect();
+    const anchor = anchorRef.current;
+    if (!show || !anchor) return;
+    const rect = anchor.getBoundingClientRect();
     setStyle({
       position: "fixed",
       bottom: `${window.innerHeight - rect.top + GAP}px`,
@@ -103,46 +143,8 @@ const MentionPopup = ({
 
   if (!show) return null;
 
-  const { currentLevel, search, setSearch, filteredEntries, listItems, isListView, activeEntry, canGoBack, selectedIndex, setSelectedIndex, navigateTo, goBack, moveUp, moveDown, selectCurrentItem, loadMore, hasMore, isLoadingMore } = menu;
-
   const multiIds = multiSelectedIds ?? [];
   const toggleMulti = onToggleMultiSelect ?? (() => {});
-  const isSlotStage = wizardStage === 4;
-  const isWizardActive = wizardStage > 0;
-
-  const handleSelect = (current: CommandEntry | CommandItem) => {
-    const result = resolveMenuSelection(current, isListView, activeEntry);
-    switch (result.action) {
-      case "wizard": {
-        const entry = current as CommandEntry;
-        onWizardSelect?.(result.stage, { id: entry.id, label: entry.label });
-        break;
-      }
-      case "navigate":
-        navigateTo(result.entry);
-        break;
-      default:
-        if (isWizardActive && onWizardSelect && activeEntry) {
-          onWizardSelect(wizardStage, current as CommandItem);
-        } else {
-          onInsert(result.text);
-        }
-    }
-  };
-
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    switch (e.key) {
-      case "ArrowDown": e.preventDefault(); moveDown(); break;
-      case "ArrowUp": e.preventDefault(); moveUp(); break;
-      case "Enter":
-        if (!e.shiftKey) {
-          e.preventDefault();
-          const current = selectCurrentItem();
-          if (current) handleSelect(current);
-        }
-        break;
-    }
-  };
 
   const searchPlaceholder = isListView && activeEntry?.searchPlaceholder ? activeEntry.searchPlaceholder : MENTIONS_LABELS.SEARCH;
   const activeInterviewerName = activeTab === COMMON_SLOTS_TAB_ID ? null : interviewerTokens.find((iv) => iv.id === activeTab)?.name ?? null;

@@ -1,8 +1,10 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { MENTIONS_LABELS } from "../../constants";
 import type { CommandItem, CommandEntry } from "../../types";
-import { groupSlots, getDefaultIcon } from "../../utils";
+import { getDefaultIcon } from "../../utils";
 import SlotTabs from "../slot-tabs/slot-tabs";
+import SearchableList from "./searchable-list";
+import MultiSelectList from "./multi-select-list";
 import InfoChipTooltip from "@/components/ui/info-chip-tooltip/info-chip-tooltip";
 
 type PopupListProps = {
@@ -30,21 +32,20 @@ const MentionPopupList = ({
 }: PopupListProps) => {
   const bodyRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
   const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const showTooltip = useCallback((e: React.MouseEvent<HTMLButtonElement>, lines: string[]) => {
-    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
-    setTooltip({ lines, rect: e.currentTarget.getBoundingClientRect() });
-  }, []);
 
   const hideTooltip = useCallback(() => {
     tooltipTimerRef.current = setTimeout(() => setTooltip(null), 80);
   }, []);
 
   useEffect(() => {
-    return () => { if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current); };
+    return () => {
+      if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+      if (observerRef.current) observerRef.current.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -53,42 +54,16 @@ const MentionPopupList = ({
   }, [selectedIndex]);
 
   useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
     if (!isListView || !loadMore || !hasMore || isLoadingMore) return;
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
-    const observer = new IntersectionObserver(
+    observerRef.current = new IntersectionObserver(
       (entries) => { if (entries[0]?.isIntersecting) loadMore(); },
       { root: bodyRef.current, rootMargin: "100px" },
     );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
+    observerRef.current.observe(sentinel);
   }, [isListView, loadMore, hasMore, isLoadingMore]);
-
-  const renderSlotGroups = useCallback(() => {
-    const groups = groupSlots(listItems);
-    if (groups.length === 0) return <div className="mp-empty">{MENTIONS_LABELS.NO_RESULTS}</div>;
-    return groups.map((group) => (
-      <div key={group.group} className="mp-slot-group">
-        <div className="mp-slot-group-header">{group.group}</div>
-        {group.items.map((item) => {
-          const globalIdx = listItems.indexOf(item);
-          return (
-            <div
-              key={item.id}
-              className={`mp-item${globalIdx === selectedIndex ? " mp-item--selected" : ""}`}
-              onClick={() => onSelect(item)}
-              onMouseEnter={() => setSelectedIndex(globalIdx)}
-            >
-              <div className="mp-item-icon mp-item-icon--slot"><i className="bx bx-clock" /></div>
-              <div className="mp-item-content">
-                <div className="mp-item-label">{item.label}</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    ));
-  }, [listItems, selectedIndex, onSelect, setSelectedIndex]);
 
   const buildTooltipLines = useCallback((item: CommandItem): string[] => {
     const lines: string[] = [`Ask ${item.label} for Slots`];
@@ -99,46 +74,61 @@ const MentionPopupList = ({
     return lines;
   }, []);
 
-  const renderListView = useCallback(() => {
-    if (listItems.length === 0) return <div className="mp-empty">{MENTIONS_LABELS.NO_RESULTS}</div>;
-    return (
-      <>
-        {listItems.map((item, i) => (
-          <div
-            key={item.id}
-            className={`mp-item${i === selectedIndex ? " mp-item--selected" : ""}`}
-            onClick={() => onSelect(item)}
-            onMouseEnter={() => setSelectedIndex(i)}
-          >
-            {item.meta?.status && <span className={`mp-item-status-dot mp-item-status-dot--${item.meta.status}`} />}
-            <div className="mp-item-avatar">{item.label.charAt(0).toUpperCase()}</div>
-            <div className="mp-item-content">
-              <div className="mp-item-label">{item.label}</div>
-              {item.description && <div className="mp-item-desc">{item.description}</div>}
-            </div>
-            {item.meta?.type === "interviewer" && (
-              <button
-                className="mp-item-ask-slots"
-                onMouseEnter={(e) => showTooltip(e, buildTooltipLines(item))}
-                onMouseLeave={hideTooltip}
-                onClick={(e) => e.stopPropagation()}
-                type="button"
-              >
-                <i className="bx bx-calendar-plus" />
-              </button>
-            )}
-          </div>
-        ))}
-        {hasMore && (
-          <div ref={sentinelRef} className="mp-sentinel">
-            {isLoadingMore && <span className="mp-loading">Loading more...</span>}
-          </div>
-        )}
-      </>
-    );
-  }, [listItems, selectedIndex, onSelect, setSelectedIndex, hasMore, isLoadingMore, showTooltip, hideTooltip, buildTooltipLines]);
+  const handleAskSlotsHover = useCallback((e: React.MouseEvent<HTMLButtonElement>, item: CommandItem) => {
+    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    setTooltip({ lines: buildTooltipLines(item), rect: e.currentTarget.getBoundingClientRect() });
+  }, [buildTooltipLines]);
 
-  const renderFilteredEntries = useCallback(() => {
+  const sentinel = hasMore ? (
+    <div ref={sentinelRef} className="mp-sentinel">
+      {isLoadingMore && <span className="mp-loading">Loading more...</span>}
+    </div>
+  ) : null;
+
+  const renderContent = () => {
+    if (isSlotStage) {
+      return (
+        <SlotTabs
+          listItems={listItems}
+          selectedIndex={selectedIndex}
+          onSelect={onSelect}
+          setSelectedIndex={setSelectedIndex}
+        />
+      );
+    }
+    if (isMultiSelectStage) {
+      if (listItems.length === 0) return <div className="mp-empty">{MENTIONS_LABELS.NO_RESULTS}</div>;
+      return (
+        <>
+          <MultiSelectList
+            listItems={listItems}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
+            multiSelectedIds={multiSelectedIds}
+            onToggleMultiSelect={onToggleMultiSelect}
+            onAskSlotsHover={handleAskSlotsHover}
+            onAskSlotsLeave={hideTooltip}
+          />
+          {sentinel}
+        </>
+      );
+    }
+    if (isListView) {
+      if (listItems.length === 0) return <div className="mp-empty">{MENTIONS_LABELS.NO_RESULTS}</div>;
+      return (
+        <>
+          <SearchableList
+            listItems={listItems}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
+            onSelect={onSelect}
+            onAskSlotsHover={handleAskSlotsHover}
+            onAskSlotsLeave={hideTooltip}
+          />
+          {sentinel}
+        </>
+      );
+    }
     if (filteredEntries.length === 0) return <div className="mp-empty">{MENTIONS_LABELS.NO_RESULTS}</div>;
     return filteredEntries.map((entry, i) => (
       <div
@@ -158,59 +148,6 @@ const MentionPopupList = ({
         )}
       </div>
     ));
-  }, [filteredEntries, selectedIndex, onSelect, setSelectedIndex]);
-
-  const renderMultiSelectList = useCallback(() => {
-    if (listItems.length === 0) return <div className="mp-empty">{MENTIONS_LABELS.NO_RESULTS}</div>;
-    const atMax = multiSelectedIds.length >= 10;
-    return listItems.map((item, i) => {
-      const isSelected = multiSelectedIds.includes(item.id);
-      return (
-        <div
-          key={item.id}
-          className={`mp-item${i === selectedIndex ? " mp-item--selected" : ""}${isSelected ? " mp-item--checked" : ""}${atMax && !isSelected ? " mp-item--dimmed" : ""}`}
-          onClick={() => { onToggleMultiSelect(item.id); setSelectedIndex(i); }}
-          onMouseEnter={() => setSelectedIndex(i)}
-        >
-          <div className="mp-item-check"><i className={`bx ${isSelected ? "bx-checkbox-checked" : "bx-checkbox"} mp-check-icon`} /></div>
-          <div className="mp-item-avatar">{item.label.charAt(0).toUpperCase()}</div>
-          <div className="mp-item-content">
-            <div className="mp-item-label">{item.label}</div>
-            {item.description && <div className="mp-item-desc">{item.description}</div>}
-          </div>
-          {item.meta?.type === "interviewer" && (
-            <button
-              className="mp-item-ask-slots"
-              onMouseEnter={(e) => showTooltip(e, buildTooltipLines(item))}
-              onMouseLeave={hideTooltip}
-              onClick={(e) => e.stopPropagation()}
-              type="button"
-            >
-              <i className="bx bx-calendar-plus" />
-            </button>
-          )}
-        </div>
-      );
-    });
-  }, [listItems, selectedIndex, multiSelectedIds, onToggleMultiSelect, setSelectedIndex, showTooltip, hideTooltip, buildTooltipLines]);
-
-  const renderContent = () => {
-    if (isSlotStage) {
-      if (showSlotTabs) {
-        return (
-          <SlotTabs
-            listItems={listItems}
-            selectedIndex={selectedIndex}
-            onSelect={onSelect}
-            setSelectedIndex={setSelectedIndex}
-          />
-        );
-      }
-      return renderSlotGroups();
-    }
-    if (isMultiSelectStage) return renderMultiSelectList();
-    if (isListView) return renderListView();
-    return renderFilteredEntries();
   };
 
   return (

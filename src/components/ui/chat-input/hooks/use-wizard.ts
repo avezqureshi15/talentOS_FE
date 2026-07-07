@@ -1,9 +1,11 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useCallback, useEffect, useRef, useMemo } from "react";
 import type { WizardStage, CommandItem } from "@/components/shared/mentions/types";
 import { WIZARD_ACTIONS } from "@/components/shared/mentions/config/wizard.config";
 import { WIZARD_REAL_DATA_SOURCES } from "@/components/shared/mentions/config/wizard-data-sources";
 import { MENTION_REGEX } from "@/components/shared/mentions/hooks/use-mention-engine";
 import type { ChatInputProps } from "../chat-input.types";
+import { useMultiSelect } from "./use-multi-select";
+import { useWizardExecution } from "./use-wizard-execution";
 
 type Engine = {
   wizardStage: number;
@@ -35,9 +37,7 @@ export const useWizard = (
   input: string,
   setInput: (v: string) => void,
 ) => {
-  // justification: tracks which items are checked in multi-select wizard stages
-  const [multiSelectedIds, setMultiSelectedIds] = useState<string[]>([]);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const { multiSelectedIds, setMultiSelectedIds, handleToggleMultiSelect, clearSelection } = useMultiSelect();
   const inputRef = useRef(input);
   inputRef.current = input;
 
@@ -54,6 +54,12 @@ export const useWizard = (
     : false;
   const isWizardActive = wizardStage > 0;
 
+  const { executeWizard } = useWizardExecution({
+    wizardActionId, tokens, onWizardComplete, reset,
+    resetMenu: menu.resetToRoot,
+    setInput, clearSelection, inputRef,
+  });
+
   const loadStageItems = useCallback((stageIdx: number) => {
     const action = wizardActionId ? WIZARD_ACTIONS[wizardActionId] : null;
     if (!action) return;
@@ -64,7 +70,8 @@ export const useWizard = (
 
     if (dataSource) {
       const entry = dataSource.createEntry();
-      entry.fetcher!("").then(() => menu.loadWizardEntry(entry));
+      if (!entry.fetcher) return;
+      entry.fetcher("").then(() => menu.loadWizardEntry(entry));
     } else {
       stage.fetcher("").then((items) => menu.loadWizardItems(items));
     }
@@ -95,27 +102,19 @@ export const useWizard = (
     }
   }, [handleStartWizard, handleAdvanceWizard]);
 
-  const handleToggleMultiSelect = useCallback((itemId: string) => {
-    setMultiSelectedIds((prev) => {
-      if (prev.includes(itemId)) return prev.filter((id) => id !== itemId);
-      if (prev.length >= 10) return prev;
-      return [...prev, itemId];
-    });
-  }, []);
-
   const handleAskSlotsConfirm = useCallback(() => {
     const selected = menu.listItems.filter((item) => multiSelectedIds.includes(item.id));
     if (selected.length === 0) return;
     advanceWizardMulti(selected);
     setMultiSelectedIds([]);
     menu.resetToRoot();
-  }, [menu.listItems, multiSelectedIds, advanceWizardMulti, menu]);
+  }, [menu.listItems, multiSelectedIds, advanceWizardMulti, menu, setMultiSelectedIds]);
 
   const handleMultiSelectConfirm = useCallback(() => {
     const selected = menu.listItems.filter((item) => multiSelectedIds.includes(item.id));
     if (selected.length === 0) return;
 
-    setMultiSelectedIds([]);
+    clearSelection();
     menu.resetToRoot();
 
     if (engine.wizardActionId === "employees-ask-slots") {
@@ -124,67 +123,14 @@ export const useWizard = (
       const nf = advanceWizardMultiToNext(selected);
       if (nf) nf().then((items) => menu.loadWizardItems(items));
     }
-  }, [menu.listItems, multiSelectedIds, engine.wizardActionId, advanceWizardMulti, advanceWizardMultiToNext, menu]);
-
-  const executeWizard = useCallback(() => {
-    const rawText = inputRef.current.trim();
-    const entityToken = tokens.find(t => t.type === "entity");
-    const hiringRequestToken = tokens.find(t => t.type === "hiring-request");
-    const applicantToken = tokens.find(t => t.type === "applicant");
-    const interviewerToken = tokens.find(t => t.type === "interviewer");
-    const slotToken = tokens.find(t => t.type === "slot");
-    const interviewToken = tokens.find(t => t.type === "interview");
-
-    if (entityToken) {
-      const intent = ({ "hr-request": "INQUIRE_HR_REQUEST", "applicants-view": "INQUIRE_APPLICANT" } as const)[engine.wizardActionId ?? ""] ?? "INQUIRE_EMPLOYEE";
-      onWizardComplete?.(
-        { message_type: "COMMAND_EXECUTION" as const, intent, payload: { id_field: entityToken.relationalId ?? entityToken.id, name_field: entityToken.label, raw_text_context: rawText } },
-        { applicantName: entityToken.label, interviewerName: "", slotLabel: "", rawText, hiringRequestName: "" },
-      );
-    } else if (interviewToken) {
-      onWizardComplete?.(
-        { message_type: "COMMAND_EXECUTION" as const, intent: "interviews", payload: { interview_id: interviewToken?.relationalId ?? interviewToken?.id ?? "", hiring_request_id: "", applicant_id: "", interviewer_id: "", slot_id: "", raw_text_context: rawText } },
-        { applicantName: interviewToken.label, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
-      );
-      } else if (engine.wizardActionId === "employees-ask-slots") {
-        const askTokens = tokens.filter(t => t.type === "ask-slots");
-        const employeeNames = askTokens.map(t => t.label).join(", ");
-        const employeeIds = askTokens.map(t => t.relationalId ?? t.id).join(", ");
-        onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent: "ASK_SLOTS", payload: { applicant_ids: employeeIds, raw_text_context: rawText } },
-          { applicantName: employeeNames, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: askTokens.length },
-        );
-      } else if (engine.wizardActionId === "employees-send-mail") {
-        const mailToken = tokens.find(t => t.type === "applicant");
-        onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", raw_text_context: rawText } },
-          { applicantName: mailToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 1 },
-        );
-      } else if (engine.wizardActionId === "applicants-send-mail") {
-        const mailToken = tokens.find(t => t.type === "applicant");
-        onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", raw_text_context: rawText } },
-          { applicantName: mailToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 1 },
-        );
-    } else {
-      const intent = engine.wizardActionId ?? "UNKNOWN";
-      onWizardComplete?.(
-        { message_type: "COMMAND_EXECUTION" as const, intent, payload: { hiring_request_id: hiringRequestToken?.relationalId ?? hiringRequestToken?.id ?? "", applicant_id: applicantToken?.relationalId ?? applicantToken?.id ?? "", interviewer_id: interviewerToken?.relationalId ?? interviewerToken?.id ?? "", slot_id: slotToken?.relationalId ?? slotToken?.id ?? "", raw_text_context: rawText } },
-        { hiringRequestName: hiringRequestToken?.label ?? "", applicantName: applicantToken?.label ?? "", interviewerName: interviewerToken?.label ?? "", slotLabel: slotToken?.label ?? "", rawText, selectedEmployeeCount: 0 },
-      );
-    }
-    reset();
-    menu.resetToRoot();
-    setInput("");
-    setMultiSelectedIds([]);
-  }, [tokens, engine.wizardActionId, onWizardComplete, reset, menu, setInput]);
+  }, [menu.listItems, multiSelectedIds, engine.wizardActionId, advanceWizardMulti, advanceWizardMultiToNext, menu, clearSelection]);
 
   const handleResetTokens = useCallback(() => {
     setInput("");
-    setMultiSelectedIds([]);
+    clearSelection();
     reset();
     menu.resetToRoot();
-  }, [setInput, reset, menu]);
+  }, [setInput, clearSelection, reset, menu]);
 
   return {
     multiSelectedIds,
@@ -200,6 +146,5 @@ export const useWizard = (
     handleMultiSelectConfirm,
     executeWizard,
     handleResetTokens,
-    textareaRef,
   };
 };

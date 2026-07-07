@@ -1,110 +1,53 @@
-import type { CommandEntry } from "../types";
+import type { CommandEntry, CommandItem } from "../types";
 import { fetchHiringRequestsForMentions } from "@/services/hiring-requests/hiring-request-mentions-fetcher";
 import { fetchCandidatesForMentions } from "@/services/applications/candidate-mentions-fetcher";
 import { fetchUsersForMentions } from "@/services/users/user-mentions-fetcher";
+
+type FetcherFn = (query: string, page: number) => Promise<{ items: CommandItem[]; hasMore: boolean }>;
 
 export type DataSourceEntry = {
   createEntry: () => CommandEntry;
 };
 
-function createHiringRequestEntry(): CommandEntry {
+function createPaginatableEntry(id: string, label: string, placeholder: string, fetch: FetcherFn): CommandEntry {
   let currentPage = 1;
   let currentQuery = "";
   const entry: CommandEntry = {
-    id: "hiring-request-search",
-    label: "Hiring Requests",
-    searchPlaceholder: "Search hiring requests...",
+    id,
+    label,
+    searchPlaceholder: placeholder,
     hasMore: true,
     fetcher: async (query: string) => {
       currentQuery = query;
       currentPage = 1;
-      const result = await fetchHiringRequestsForMentions(query, 1);
+      const result = await fetch(query, 1);
       entry.hasMore = result.hasMore;
       return result.items;
     },
     loadMore: async () => {
       currentPage += 1;
-      const result = await fetchHiringRequestsForMentions(currentQuery, currentPage);
+      const result = await fetch(currentQuery, currentPage);
       entry.hasMore = result.hasMore;
       return result.items;
     },
   };
   return entry;
+}
+
+function createHiringRequestEntry(): CommandEntry {
+  return createPaginatableEntry("hiring-request-search", "Hiring Requests", "Search hiring requests...", fetchHiringRequestsForMentions);
 }
 
 function createInterviewerEntry(): CommandEntry {
-  let currentPage = 1;
-  let currentQuery = "";
-  const entry: CommandEntry = {
-    id: "interviewer-search",
-    label: "Interviewers",
-    searchPlaceholder: "Search interviewers...",
-    hasMore: true,
-    fetcher: async (query: string) => {
-      currentQuery = query;
-      currentPage = 1;
-      const result = await fetchUsersForMentions(query, 1);
-      entry.hasMore = result.hasMore;
-      return result.items;
-    },
-    loadMore: async () => {
-      currentPage += 1;
-      const result = await fetchUsersForMentions(currentQuery, currentPage);
-      entry.hasMore = result.hasMore;
-      return result.items;
-    },
-  };
-  return entry;
+  return createPaginatableEntry("interviewer-search", "Interviewers", "Search interviewers...", fetchUsersForMentions);
 }
 
 function createCandidateEntry(): CommandEntry {
-  let currentPage = 1;
-  let currentQuery = "";
-  const entry: CommandEntry = {
-    id: "candidate-search",
-    label: "Candidates",
-    searchPlaceholder: "Search candidates...",
-    hasMore: true,
-    fetcher: async (query: string) => {
-      currentQuery = query;
-      currentPage = 1;
-      const result = await fetchCandidatesForMentions(query, 1);
-      entry.hasMore = result.hasMore;
-      return result.items;
-    },
-    loadMore: async () => {
-      currentPage += 1;
-      const result = await fetchCandidatesForMentions(currentQuery, currentPage);
-      entry.hasMore = result.hasMore;
-      return result.items;
-    },
-  };
-  return entry;
+  return createPaginatableEntry("candidate-search", "Candidates", "Search candidates...", fetchCandidatesForMentions);
 }
 
 function createEmployeeEntry(): CommandEntry {
-  let currentPage = 1;
-  let currentQuery = "";
-  const entry: CommandEntry = {
-    id: "employee-search",
-    label: "Employees",
-    searchPlaceholder: "Search employees...",
-    hasMore: true,
-    fetcher: async (query: string) => {
-      currentQuery = query;
-      currentPage = 1;
-      const result = await fetchUsersForMentions(query, 1);
-      entry.hasMore = result.hasMore;
-      return result.items;
-    },
-    loadMore: async () => {
-      currentPage += 1;
-      const result = await fetchUsersForMentions(currentQuery, currentPage);
-      entry.hasMore = result.hasMore;
-      return result.items;
-    },
-  };
-  return entry;
+  return createPaginatableEntry("employee-search", "Employees", "Search employees...", fetchUsersForMentions);
 }
 
 export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceEntry>> = {

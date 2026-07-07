@@ -1,17 +1,29 @@
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import SendButton from "@/components/ui/send-button/send-button";
 import ChatTokens from "./chat-tokens";
 import "./chat-input.css";
 import type { ChatInputProps } from "./chat-input.types";
+import type { WizardStage } from "@/components/shared/mentions/types";
 import { useMentionEngine } from "@/components/shared/mentions/hooks/use-mention-engine";
 import { useCommandMenu } from "@/components/shared/mentions/hooks/use-command-menu";
 import MentionPopup from "@/components/shared/mentions/components/mention-popup";
-import { resolveMenuSelection } from "@/components/shared/mentions/utils";
 import { WIZARD_LABELS } from "@/components/shared/mentions/constants";
 import { WIZARD_ACTIONS } from "@/components/shared/mentions/config/wizard.config";
 import { useAutoResize } from "./hooks/use-auto-resize";
 import { useWizard } from "./hooks/use-wizard";
 import { useTypingPlaceholder } from "./hooks/use-typing-placeholder";
+import { useChatKeydown } from "./hooks/use-chat-keydown";
+
+const PLACEHOLDER_PHRASES = [
+  "Ask anything...",
+  "@ Book Interview",
+  "@ Send Mail",
+  "@ View Hiring Requests",
+  "@ View Applicants",
+  "@ View Employees",
+  "@ Ask Slots",
+  "@ Check Interviews",
+];
 
 const ChatInput: React.FC<ChatInputProps> = ({
   mounted = true,
@@ -27,16 +39,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const menu = useCommandMenu();
   const [inputFocused, setInputFocused] = useState(false);
 
-  const PLACEHOLDER_PHRASES = [
-    "Ask anything...",
-    "@ Book Interview",
-    "@ Send Mail",
-    "@ View Hiring Requests",
-    "@ View Applicants",
-    "@ View Employees",
-    "@ Ask Slots",
-    "@ Check Interviews",
-  ];
   useTypingPlaceholder(textareaRef, PLACEHOLDER_PHRASES, !input);
   const { show, tokens, wizardStage, wizardActionId, handleChange, insert, reset } = engine;
 
@@ -48,70 +50,13 @@ const ChatInput: React.FC<ChatInputProps> = ({
     executeWizard, handleResetTokens,
   } = wizard;
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (show && !isWizardActive) {
-      const items = menu.isListView ? menu.listItems : menu.filteredEntries;
-      if (items.length === 0) return;
-      switch (e.key) {
-        case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
-        case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
-        case "Enter":
-          if (!e.shiftKey) {
-            e.preventDefault();
-            const current = menu.selectCurrentItem();
-            if (current) {
-              const result = resolveMenuSelection(current, menu.isListView, menu.activeEntry);
-              switch (result.action) {
-                case "wizard": handleWizardSelect(result.stage, { id: current.id, label: current.label }); break;
-                case "navigate": menu.navigateTo(result.entry); break;
-                default: insert(result.text, input, setInput); break;
-              }
-            }
-          }
-          return;
-      }
-      return;
-    }
-
-    if (isWizardActive && show) {
-      if (isMultiSelectStage && menu.listItems.length > 0) {
-        switch (e.key) {
-          case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
-          case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
-          case "Enter": if (!e.shiftKey) { e.preventDefault(); handleMultiSelectConfirm(); } return;
-          case "Escape": e.preventDefault(); reset(); menu.resetToRoot(); return;
-        }
-        return;
-      }
-      if (menu.listItems.length > 0) {
-        switch (e.key) {
-          case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
-          case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
-          case "Enter":
-            if (!e.shiftKey) {
-              e.preventDefault();
-              const item = menu.selectCurrentItem() as { id: string; label: string } | null;
-              if (item) handleWizardSelect(wizardStage as 0 | 1 | 2 | 3 | 4, item);
-            }
-            return;
-          case "Escape": e.preventDefault(); reset(); menu.resetToRoot(); return;
-        }
-      }
-      return;
-    }
-
-    if (isFullyTokenized && e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      executeWizard();
-      return;
-    }
-
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      if (input.trim()) onSend();
-    }
-    handleChange(input, input.length);
-  }, [show, isWizardActive, isMultiSelectStage, isFullyTokenized, input, menu, engine, reset, insert, setInput, handleWizardSelect, handleMultiSelectConfirm, executeWizard, handleChange, onSend]);
+  const handleKeyDown = useChatKeydown({
+    show, isWizardActive, isMultiSelectStage, isFullyTokenized,
+    input, setInput, onSend, executeWizard,
+    menu,
+    engine: { reset, insert, handleChange },
+    wizard: { handleWizardSelect, handleMultiSelectConfirm },
+  });
 
   return (
     <div className={`cui-fade-up cui-d3${mounted ? "" : " opacity-0"}`}>

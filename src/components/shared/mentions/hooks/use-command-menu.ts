@@ -57,11 +57,15 @@ export const useCommandMenu = () => {
   const activeEntry = isListView ? currentLevel.entries[0] : null;
   const canGoBack = stack.length > 1;
 
-  const filteredEntries = isListView
-    ? []
-    : currentLevel.entries.filter((e) => entryMatchesSearch(e, search));
+  const filteredEntries = useMemo(
+    () => isListView ? [] : currentLevel.entries.filter((e) => entryMatchesSearch(e, search)),
+    [isListView, currentLevel.entries, search],
+  );
 
-  const activeItems: (CommandEntry | CommandItem)[] = isListView ? listItems : filteredEntries;
+  const activeItems: (CommandEntry | CommandItem)[] = useMemo(
+    () => isListView ? listItems : filteredEntries,
+    [isListView, listItems, filteredEntries],
+  );
   const debouncedSearch = useDebounce(search, 300);
 
   const queryKey = useMemo(
@@ -141,7 +145,8 @@ export const useCommandMenu = () => {
   }, [activeItems.length]);
 
   const selectCurrentItem = useCallback((): (CommandEntry | CommandItem) | null => {
-    return activeItems[selectedIndex] ?? null;
+    const idx = Math.min(selectedIndex, activeItems.length - 1);
+    return activeItems[idx] ?? null;
   }, [activeItems, selectedIndex]);
 
   const loadMore = useCallback(async () => {

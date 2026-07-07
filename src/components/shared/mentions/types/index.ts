@@ -33,7 +33,7 @@ export type Token = {
   relationalId?: string;
 };
 
-export type WizardStage = 0 | 1 | 2 | 3 | 4;
+export type WizardStage = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type WizardStageConfig = {
   stage: WizardStage;

@@ -52,7 +52,7 @@ export const useMentionEngine = () => {
     setTokens((prev) => [...prev, newToken]);
 
     if (stage.isFinal) {
-      setWizardStage((action.stages.length + 1) as WizardStage);
+      setWizardStage((action.stages.length + 1));
       setShow(false);
       return null;
     }
@@ -60,7 +60,7 @@ export const useMentionEngine = () => {
     const nextStageIdx = wizardStage;
     const nextStage = action.stages[nextStageIdx];
     if (nextStage) {
-      setWizardStage((nextStageIdx + 1) as WizardStage);
+      setWizardStage((nextStageIdx + 1));
       return () => nextStage.fetcher("");
     }
     setShow(false);
@@ -80,7 +80,7 @@ export const useMentionEngine = () => {
       relationalId: item.relationalId,
     }));
     setTokens((prev) => [...prev, ...newTokens]);
-    setWizardStage((action.stages.length + 1) as WizardStage);
+    setWizardStage((action.stages.length + 1));
     setShow(false);
   }, [wizardActionId, wizardStage]);
 
@@ -99,7 +99,7 @@ export const useMentionEngine = () => {
     setTokens((prev) => [...prev, ...newTokens]);
 
     if (stage.isFinal) {
-      setWizardStage((action.stages.length + 1) as WizardStage);
+      setWizardStage((action.stages.length + 1));
       setShow(false);
       return null;
     }
@@ -107,7 +107,7 @@ export const useMentionEngine = () => {
     const nextStageIdx = wizardStage;
     const nextStage = action.stages[nextStageIdx];
     if (nextStage) {
-      setWizardStage((nextStageIdx + 1) as WizardStage);
+      setWizardStage((nextStageIdx + 1));
       return () => nextStage.fetcher("");
     }
     setShow(false);

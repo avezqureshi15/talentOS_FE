@@ -1,0 +1,68 @@
+import { useCallback } from "react";
+import type { WizardExecutionPayload, HybridQuestionPayload, WizardExecutionSummary } from "@/components/shared/mentions/types";
+
+type Token = { type: string; label: string; id: string; relationalId?: string };
+
+type ExecutionDeps = {
+  wizardActionId: string | null;
+  tokens: Token[];
+  onWizardComplete?: (payload: WizardExecutionPayload | HybridQuestionPayload, summary?: WizardExecutionSummary) => void;
+  reset: () => void;
+  resetMenu: () => void;
+  setInput: (v: string) => void;
+  clearSelection: () => void;
+  inputRef: React.RefObject<string>;
+};
+
+export const useWizardExecution = ({
+  wizardActionId, tokens, onWizardComplete, reset, resetMenu, setInput, clearSelection, inputRef,
+}: ExecutionDeps) => {
+  const executeWizard = useCallback(() => {
+    const rawText = inputRef.current?.trim() ?? "";
+    const entityToken = tokens.find(t => t.type === "entity");
+    const hiringRequestToken = tokens.find(t => t.type === "hiring-request");
+    const applicantToken = tokens.find(t => t.type === "applicant");
+    const interviewerToken = tokens.find(t => t.type === "interviewer");
+    const slotToken = tokens.find(t => t.type === "slot");
+    const interviewToken = tokens.find(t => t.type === "interview");
+
+    if (entityToken) {
+      const intent = ({ "hr-request": "INQUIRE_HR_REQUEST", "applicants-view": "INQUIRE_APPLICANT" } as const)[wizardActionId ?? ""] ?? "INQUIRE_EMPLOYEE";
+      onWizardComplete?.(
+        { message_type: "COMMAND_EXECUTION" as const, intent, payload: { id_field: entityToken.relationalId ?? entityToken.id, name_field: entityToken.label, raw_text_context: rawText } },
+        { applicantName: entityToken.label, interviewerName: "", slotLabel: "", rawText, hiringRequestName: "" },
+      );
+    } else if (interviewToken) {
+      onWizardComplete?.(
+        { message_type: "COMMAND_EXECUTION" as const, intent: "interviews", payload: { interview_id: interviewToken?.relationalId ?? interviewToken?.id ?? "", hiring_request_id: "", applicant_id: "", interviewer_id: "", slot_id: "", raw_text_context: rawText } },
+        { applicantName: interviewToken.label, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
+      );
+    } else if (wizardActionId === "employees-ask-slots") {
+      const askTokens = tokens.filter(t => t.type === "ask-slots");
+      const employeeNames = askTokens.map(t => t.label).join(", ");
+      const employeeIds = askTokens.map(t => t.relationalId ?? t.id).join(", ");
+      onWizardComplete?.(
+        { message_type: "COMMAND_EXECUTION" as const, intent: "ASK_SLOTS", payload: { applicant_ids: employeeIds, raw_text_context: rawText } },
+        { applicantName: employeeNames, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: askTokens.length },
+      );
+    } else if (wizardActionId === "employees-send-mail" || wizardActionId === "applicants-send-mail") {
+      const mailToken = tokens.find(t => t.type === "applicant");
+      onWizardComplete?.(
+        { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", raw_text_context: rawText } },
+        { applicantName: mailToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 1 },
+      );
+    } else {
+      const intent = wizardActionId ?? "UNKNOWN";
+      onWizardComplete?.(
+        { message_type: "COMMAND_EXECUTION" as const, intent, payload: { hiring_request_id: hiringRequestToken?.relationalId ?? hiringRequestToken?.id ?? "", applicant_id: applicantToken?.relationalId ?? applicantToken?.id ?? "", interviewer_id: interviewerToken?.relationalId ?? interviewerToken?.id ?? "", slot_id: slotToken?.relationalId ?? slotToken?.id ?? "", raw_text_context: rawText } },
+        { hiringRequestName: hiringRequestToken?.label ?? "", applicantName: applicantToken?.label ?? "", interviewerName: interviewerToken?.label ?? "", slotLabel: slotToken?.label ?? "", rawText, selectedEmployeeCount: 0 },
+      );
+    }
+    reset();
+    resetMenu();
+    setInput("");
+    clearSelection();
+  }, [tokens, wizardActionId, onWizardComplete, reset, resetMenu, setInput, clearSelection, inputRef]);
+
+  return { executeWizard };
+};
