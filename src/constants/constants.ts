@@ -229,6 +229,7 @@ export const APPLICANT_LABELS = {
   LOCATION: "Location",
   NOTICE_PERIOD: "Notice Period",
   HOW_DID_YOU_HEAR: "How did you hear",
+  WILLING_TO_RELOCATE: "Willing to Relocate",
   SELECT_CANDIDATE: "Select Candidate",
   REJECT_CANDIDATE: "Reject Candidate",
   NO_ROUNDS: "No interview rounds recorded yet.",

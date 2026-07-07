@@ -8,6 +8,7 @@ export type ApplicantDetailsModalProps = {
     yearsOfExperience?: string;
     noticePeriod?: string;
     howDidYouHear?: string;
+    willingToRelocate?: string;
   };
   onClose: () => void;
 };

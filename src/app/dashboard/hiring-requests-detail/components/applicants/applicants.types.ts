@@ -67,6 +67,7 @@ export type Applicant = {
   noticePeriod?: string;
   howDidYouHear?: string;
   scheduled?: boolean;
+  willingToRelocate?: boolean;
   rounds?: InterviewRound[];
 };
 

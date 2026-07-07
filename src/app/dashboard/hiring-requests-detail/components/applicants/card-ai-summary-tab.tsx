@@ -1,5 +1,6 @@
 import { truncateText } from "./applicants.utils";
 import { APPLICANT_LABELS } from "@/constants/constants";
+import MarkdownRenderer from "@/app/chat/components/chat-area/block-renderer/blocks/markdown/markdown";
 
 type Props = {
   aiSummary: string;
@@ -17,14 +18,14 @@ const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore }: Props) => {
         {APPLICANT_LABELS.AI_SUMMARY}
       </div>
       {aiSum ? (
-        <p className="cover-letter-text">
-          {aiSum.text}
+        <div className="cover-letter-text">
+          <MarkdownRenderer content={aiSum.text} />
           {aiSum.truncated && (
             <button className="read-more" onClick={(e) => { e.stopPropagation(); onReadMore(applicantId); }}>
               {APPLICANT_LABELS.READ_MORE}
             </button>
           )}
-        </p>
+        </div>
       ) : (
         <p className="cover-letter-text">{APPLICANT_LABELS.NO_AI_SUMMARY}</p>
       )}

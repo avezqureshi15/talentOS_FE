@@ -12,14 +12,13 @@
   display: flex;
 }
 
-.ai-text {
+.ai-body .md-root {
   flex: 1;
   padding: 16px;
   border-radius: 10px;
   font-size: 13px;
   line-height: 1.7;
   color: var(--text-secondary);
-  white-space: pre-wrap;
   word-break: break-word;
   overflow-y: auto;
   background: var(--overlay-subtle);

@@ -91,6 +91,7 @@ function mapCandidate(app: {
   how_did_you_hear: string | null;
   linkedin_url: string | null;
   scheduled?: boolean;
+  willing_to_relocate?: boolean;
 }): Applicant {
   return {
     id: app.id,
@@ -114,6 +115,7 @@ function mapCandidate(app: {
     yearsOfExperience: app.years_of_experience ?? undefined,
     noticePeriod: app.notice_period ?? undefined,
     howDidYouHear: app.how_did_you_hear ?? undefined,
+    willingToRelocate: app.willing_to_relocate ?? undefined,
     rounds: MOCK_ROUNDS,
   };
 }

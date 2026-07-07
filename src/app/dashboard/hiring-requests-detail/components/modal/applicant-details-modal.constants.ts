@@ -8,6 +8,7 @@ export const APPLICANT_DETAILS_MODAL = {
   EXPERIENCE: "Experience",
   NOTICE_PERIOD: "Notice Period",
   HOW_DID_YOU_HEAR: "How did you hear",
+  WILLING_TO_RELOCATE: "Willing to Relocate",
   IMMEDIATE: "Immediate",
   LPA_SUFFIX: " LPA",
   YRS_SUFFIX: " yrs",
@@ -21,6 +22,7 @@ export const LABEL_MAP: Record<keyof ApplicantDetailsModalProps["details"], stri
   location: APPLICANT_DETAILS_MODAL.LOCATION,
   yearsOfExperience: APPLICANT_DETAILS_MODAL.EXPERIENCE,
   noticePeriod: APPLICANT_DETAILS_MODAL.NOTICE_PERIOD,
+  willingToRelocate: APPLICANT_DETAILS_MODAL.WILLING_TO_RELOCATE,
   howDidYouHear: APPLICANT_DETAILS_MODAL.HOW_DID_YOU_HEAR,
 };
 

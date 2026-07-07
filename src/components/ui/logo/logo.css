@@ -1,28 +1,28 @@
-.webHire-logo-brand {
+.webHyre-logo-brand {
   display: inline-flex;
   flex-direction: column;
   line-height: 1.2;
 }
 
-.webHire-logo-name {
+.webHyre-logo-name {
   font-size: 18px;
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1;
 }
 
-.webHire-logo-web {
+.webHyre-logo-web {
   color: var(--text-white);
 }
 
-.webHire-logo-hyre {
+.webHyre-logo-hyre {
   background: linear-gradient(135deg, #b0b5c0, #8a8f9a);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.webHire-logo-ai {
+.webHyre-logo-ai {
   background: linear-gradient(135deg, #b0b5c0, #8a8f9a);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

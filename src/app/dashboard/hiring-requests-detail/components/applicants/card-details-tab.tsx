@@ -1,13 +1,14 @@
 import { APPLICANT_LABELS } from "@/constants/constants";
 import type { Applicant } from "./applicants.types";
 
-const DETAILS_ROWS: { key: keyof Applicant; label: string; suffix?: string }[] = [
+const DETAILS_ROWS: { key: keyof Applicant; label: string; suffix?: string; boolean?: true }[] = [
   { key: "currentCtc", label: APPLICANT_LABELS.CURRENT_CTC, suffix: " LPA" },
   { key: "expectedCtc", label: APPLICANT_LABELS.EXPECTED_CTC, suffix: " LPA" },
   { key: "location", label: APPLICANT_LABELS.LOCATION },
   { key: "yearsOfExperience", label: APPLICANT_LABELS.YEARS_OF_EXPERIENCE, suffix: " yrs" },
   { key: "noticePeriod", label: APPLICANT_LABELS.NOTICE_PERIOD, suffix: " days" },
   { key: "howDidYouHear", label: APPLICANT_LABELS.HOW_DID_YOU_HEAR },
+  { key: "willingToRelocate", label: APPLICANT_LABELS.WILLING_TO_RELOCATE, boolean: true },
 ];
 
 const DETAIL_VALUE_MAP = (a: Applicant): Record<string, string | undefined> => ({
@@ -17,6 +18,7 @@ const DETAIL_VALUE_MAP = (a: Applicant): Record<string, string | undefined> => (
   yearsOfExperience: a.yearsOfExperience,
   noticePeriod: a.noticePeriod,
   howDidYouHear: a.howDidYouHear,
+  willingToRelocate: a.willingToRelocate === true ? "Yes" : a.willingToRelocate === false ? "No" : undefined,
 });
 
 type Props = {

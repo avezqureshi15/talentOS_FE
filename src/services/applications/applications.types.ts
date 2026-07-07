@@ -17,6 +17,7 @@ export type EvaluatedCandidate = {
   notice_period: string | null;
   how_did_you_hear: string | null;
   linkedin_url: string | null;
+  willing_to_relocate?: boolean;
 };
 
 export type EvaluatedCandidatesResponse = {

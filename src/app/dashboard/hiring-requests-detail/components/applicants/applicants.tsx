@@ -250,6 +250,7 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
             yearsOfExperience: a.yearsOfExperience,
             noticePeriod: a.noticePeriod,
             howDidYouHear: a.howDidYouHear,
+            willingToRelocate: a.willingToRelocate === true ? "Yes" : a.willingToRelocate === false ? "No" : undefined,
           }}
           onClose={() => setDetailsId(null)}
         />
