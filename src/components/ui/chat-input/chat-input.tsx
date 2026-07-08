@@ -3,7 +3,6 @@ import SendButton from "@/components/ui/send-button/send-button";
 import ChatTokens from "./chat-tokens";
 import "./chat-input.css";
 import type { ChatInputProps } from "./chat-input.types";
-import type { WizardStage } from "@/components/shared/mentions/types";
 import { useMentionEngine } from "@/components/shared/mentions/hooks/use-mention-engine";
 import { useCommandMenu } from "@/components/shared/mentions/hooks/use-command-menu";
 import MentionPopup from "@/components/shared/mentions/components/mention-popup";

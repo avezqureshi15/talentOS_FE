@@ -1,5 +1,3 @@
-import { MENTIONS_LABELS } from "../constants";
-
 type MentionPopupSearchProps = {
   search: string;
   onSearch: (v: string) => void;

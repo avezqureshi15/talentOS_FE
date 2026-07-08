@@ -28,7 +28,6 @@ const MentionPopupList = ({
   listItems, filteredEntries, isListView, isSlotStage, isMultiSelectStage,
   selectedIndex, setSelectedIndex, onSelect,
   hasMore, loadMore, isLoadingMore, multiSelectedIds, onToggleMultiSelect,
-  showSlotTabs = false,
 }: PopupListProps) => {
   const bodyRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);

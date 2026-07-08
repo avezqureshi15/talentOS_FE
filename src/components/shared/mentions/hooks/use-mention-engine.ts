@@ -1,5 +1,7 @@
 import { useState, useCallback } from "react";
 import type { Token, WizardStage, WizardActionConfig, WizardStageConfig, CommandItem } from "../types";
+
+const asWizardStage = (n: number): WizardStage => Math.min(5, Math.max(0, n)) as WizardStage;
 import { WIZARD_ACTIONS } from "../config/wizard.config";
 
 export const MENTION_REGEX = /@(\w*)$/;
@@ -52,7 +54,7 @@ export const useMentionEngine = () => {
     setTokens((prev) => [...prev, newToken]);
 
     if (stage.isFinal) {
-      setWizardStage((action.stages.length + 1));
+      setWizardStage(asWizardStage(action.stages.length + 1));
       setShow(false);
       return null;
     }
@@ -60,7 +62,7 @@ export const useMentionEngine = () => {
     const nextStageIdx = wizardStage;
     const nextStage = action.stages[nextStageIdx];
     if (nextStage) {
-      setWizardStage((nextStageIdx + 1));
+      setWizardStage(asWizardStage(nextStageIdx + 1));
       return () => nextStage.fetcher("");
     }
     setShow(false);
@@ -80,7 +82,7 @@ export const useMentionEngine = () => {
       relationalId: item.relationalId,
     }));
     setTokens((prev) => [...prev, ...newTokens]);
-    setWizardStage((action.stages.length + 1));
+    setWizardStage(asWizardStage(action.stages.length + 1));
     setShow(false);
   }, [wizardActionId, wizardStage]);
 
@@ -99,7 +101,7 @@ export const useMentionEngine = () => {
     setTokens((prev) => [...prev, ...newTokens]);
 
     if (stage.isFinal) {
-      setWizardStage((action.stages.length + 1));
+      setWizardStage(asWizardStage(action.stages.length + 1));
       setShow(false);
       return null;
     }
@@ -107,7 +109,7 @@ export const useMentionEngine = () => {
     const nextStageIdx = wizardStage;
     const nextStage = action.stages[nextStageIdx];
     if (nextStage) {
-      setWizardStage((nextStageIdx + 1));
+      setWizardStage(asWizardStage(nextStageIdx + 1));
       return () => nextStage.fetcher("");
     }
     setShow(false);

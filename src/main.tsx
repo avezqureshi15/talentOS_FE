@@ -12,7 +12,7 @@ import { ERROR_FALLBACK_LABELS } from '@/constants/error-labels'
 import { GOOGLE_CLIENT_ID } from '@/constants/constants'
 import ToastContainer from '@/components/ui/toast/toast-container'
 import '@/index.css'
-import '@/app.css'
+import '@/App.css'
 
 const queryClient = new QueryClient()
 
