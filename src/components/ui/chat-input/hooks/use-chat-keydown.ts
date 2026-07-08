@@ -2,29 +2,6 @@ import { useCallback } from "react";
 import type { WizardStage, CommandEntry, CommandItem } from "@/components/shared/mentions/types";
 import { resolveMenuSelection } from "@/components/shared/mentions/utils";
 
-type Menu = {
-  isListView: boolean;
-  listItems: CommandItem[];
-  filteredEntries: (CommandEntry | CommandItem)[];
-  activeEntry: CommandEntry | null;
-  moveDown: () => void;
-  moveUp: () => void;
-  selectCurrentItem: () => CommandEntry | CommandItem | null;
-  navigateTo: (entry: CommandEntry) => void;
-  resetToRoot: () => void;
-};
-
-type WizardHandlers = {
-  handleWizardSelect: (stage: WizardStage, item: { id: string; label: string }) => void;
-  handleMultiSelectConfirm: () => void;
-};
-
-type Engine = {
-  reset: () => void;
-  insert: (text: string, value: string, setValue: (v: string) => void) => void;
-  handleChange: (value: string, cursorPos: number) => void;
-};
-
 type Deps = {
   show: boolean;
   isWizardActive: boolean;
@@ -34,32 +11,48 @@ type Deps = {
   setInput: (v: string) => void;
   onSend: () => void;
   executeWizard: () => void;
-  menu: Menu;
-  engine: Engine;
-  wizard: WizardHandlers;
+  wizardStage: WizardStage;
+  isListView: boolean;
+  listItems: CommandItem[];
+  filteredEntries: CommandEntry[];
+  activeEntry: CommandEntry | null;
+  moveDown: () => void;
+  moveUp: () => void;
+  selectCurrentItem: () => CommandEntry | CommandItem | null;
+  navigateTo: (entry: CommandEntry) => void;
+  resetToRoot: () => void;
+  reset: () => void;
+  insert: (text: string, value: string, setValue: (v: string) => void) => void;
+  handleChange: (value: string, cursorPos: number) => void;
+  handleWizardSelect: (stage: WizardStage, item: { id: string; label: string }) => void;
+  handleMultiSelectConfirm: () => void;
 };
 
 export const useChatKeydown = ({
   show, isWizardActive, isMultiSelectStage, isFullyTokenized,
-  input, setInput, onSend, executeWizard, menu, engine, wizard,
+  input, setInput, onSend, executeWizard, wizardStage,
+  isListView, listItems, filteredEntries, activeEntry,
+  moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
+  reset, insert, handleChange,
+  handleWizardSelect, handleMultiSelectConfirm,
 }: Deps) => {
   return useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (show && !isWizardActive) {
-      const items = menu.isListView ? menu.listItems : menu.filteredEntries;
+      const items = isListView ? listItems : filteredEntries;
       if (items.length === 0) return;
       switch (e.key) {
-        case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
-        case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
+        case "ArrowDown": e.preventDefault(); moveDown(); return;
+        case "ArrowUp": e.preventDefault(); moveUp(); return;
         case "Enter":
           if (!e.shiftKey) {
             e.preventDefault();
-            const current = menu.selectCurrentItem();
+            const current = selectCurrentItem();
             if (current) {
-              const result = resolveMenuSelection(current, menu.isListView, menu.activeEntry);
+              const result = resolveMenuSelection(current, isListView, activeEntry);
               switch (result.action) {
-                case "wizard": wizard.handleWizardSelect(result.stage, { id: current.id, label: current.label }); break;
-                case "navigate": menu.navigateTo(result.entry); break;
-                default: engine.insert(result.text, input, setInput); break;
+                case "wizard": handleWizardSelect(result.stage, { id: current.id, label: current.label }); break;
+                case "navigate": navigateTo(result.entry); break;
+                default: insert(result.text, input, setInput); break;
               }
             }
           }
@@ -69,27 +62,27 @@ export const useChatKeydown = ({
     }
 
     if (isWizardActive && show) {
-      if (isMultiSelectStage && menu.listItems.length > 0) {
+      if (isMultiSelectStage && listItems.length > 0) {
         switch (e.key) {
-          case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
-          case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
-          case "Enter": if (!e.shiftKey) { e.preventDefault(); wizard.handleMultiSelectConfirm(); } return;
-          case "Escape": e.preventDefault(); engine.reset(); menu.resetToRoot(); return;
+          case "ArrowDown": e.preventDefault(); moveDown(); return;
+          case "ArrowUp": e.preventDefault(); moveUp(); return;
+          case "Enter": if (!e.shiftKey) { e.preventDefault(); handleMultiSelectConfirm(); } return;
+          case "Escape": e.preventDefault(); reset(); resetToRoot(); return;
         }
         return;
       }
-      if (menu.listItems.length > 0) {
+      if (listItems.length > 0) {
         switch (e.key) {
-          case "ArrowDown": e.preventDefault(); menu.moveDown(); return;
-          case "ArrowUp": e.preventDefault(); menu.moveUp(); return;
+          case "ArrowDown": e.preventDefault(); moveDown(); return;
+          case "ArrowUp": e.preventDefault(); moveUp(); return;
           case "Enter":
             if (!e.shiftKey) {
               e.preventDefault();
-              const item = menu.selectCurrentItem();
-              if (item) wizard.handleWizardSelect(wizardStage as WizardStage, { id: item.id, label: item.label });
+              const item = selectCurrentItem();
+              if (item) handleWizardSelect(wizardStage, { id: item.id, label: item.label });
             }
             return;
-          case "Escape": e.preventDefault(); engine.reset(); menu.resetToRoot(); return;
+          case "Escape": e.preventDefault(); reset(); resetToRoot(); return;
         }
       }
       return;
@@ -105,6 +98,10 @@ export const useChatKeydown = ({
       e.preventDefault();
       if (input.trim()) onSend();
     }
-    engine.handleChange(input, input.length);
-  }, [show, isWizardActive, isMultiSelectStage, isFullyTokenized, input, setInput, onSend, executeWizard, menu, engine, wizard]);
+    handleChange(input, input.length);
+  }, [
+    show, isWizardActive, isMultiSelectStage, isFullyTokenized, input, setInput, onSend, executeWizard, wizardStage,
+    isListView, listItems, filteredEntries, activeEntry, moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
+    reset, insert, handleChange, handleWizardSelect, handleMultiSelectConfirm,
+  ]);
 };

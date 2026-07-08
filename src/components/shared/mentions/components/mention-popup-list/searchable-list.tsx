@@ -1,4 +1,5 @@
 import type { CommandItem } from "../../types";
+import AskSlotsButton from "./ask-slots-button";
 
 type SearchableListProps = {
   listItems: CommandItem[];
@@ -27,17 +28,7 @@ const SearchableList = ({
           <div className="mp-item-label">{item.label}</div>
           {item.description && <div className="mp-item-desc">{item.description}</div>}
         </div>
-        {item.meta?.type === "interviewer" && (
-          <button
-            className="mp-item-ask-slots"
-            onMouseEnter={(e) => onAskSlotsHover(e, item)}
-            onMouseLeave={onAskSlotsLeave}
-            onClick={(e) => e.stopPropagation()}
-            type="button"
-          >
-            <i className="bx bx-calendar-plus" />
-          </button>
-        )}
+        <AskSlotsButton item={item} onAskSlotsHover={onAskSlotsHover} onAskSlotsLeave={onAskSlotsLeave} />
       </div>
     ))}
   </>

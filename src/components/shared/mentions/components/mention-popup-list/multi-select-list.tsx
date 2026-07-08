@@ -1,4 +1,6 @@
 import type { CommandItem } from "../../types";
+import { MAX_SELECTION } from "@/components/ui/chat-input/hooks/use-multi-select";
+import AskSlotsButton from "./ask-slots-button";
 
 type MultiSelectListProps = {
   listItems: CommandItem[];
@@ -9,8 +11,6 @@ type MultiSelectListProps = {
   onAskSlotsHover: (e: React.MouseEvent<HTMLButtonElement>, item: CommandItem) => void;
   onAskSlotsLeave: () => void;
 };
-
-const MAX_SELECTION = 10;
 
 const MultiSelectList = ({
   listItems, selectedIndex, setSelectedIndex,
@@ -35,17 +35,7 @@ const MultiSelectList = ({
               <div className="mp-item-label">{item.label}</div>
               {item.description && <div className="mp-item-desc">{item.description}</div>}
             </div>
-            {item.meta?.type === "interviewer" && (
-              <button
-                className="mp-item-ask-slots"
-                onMouseEnter={(e) => onAskSlotsHover(e, item)}
-                onMouseLeave={onAskSlotsLeave}
-                onClick={(e) => e.stopPropagation()}
-                type="button"
-              >
-                <i className="bx bx-calendar-plus" />
-              </button>
-            )}
+            <AskSlotsButton item={item} onAskSlotsHover={onAskSlotsHover} onAskSlotsLeave={onAskSlotsLeave} />
           </div>
         );
       })}

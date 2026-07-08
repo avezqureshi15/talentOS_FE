@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-const MAX_SELECTION = 10;
+export const MAX_SELECTION = 10;
 
 export const useMultiSelect = () => {
   const [multiSelectedIds, setMultiSelectedIds] = useState<string[]>([]);

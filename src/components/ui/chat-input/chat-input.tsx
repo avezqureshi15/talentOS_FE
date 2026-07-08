@@ -50,12 +50,18 @@ const ChatInput: React.FC<ChatInputProps> = ({
     executeWizard, handleResetTokens,
   } = wizard;
 
+  const {
+    isListView, listItems, filteredEntries, activeEntry,
+    moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
+  } = menu;
+
   const handleKeyDown = useChatKeydown({
     show, isWizardActive, isMultiSelectStage, isFullyTokenized,
-    input, setInput, onSend, executeWizard,
-    menu,
-    engine: { reset, insert, handleChange },
-    wizard: { handleWizardSelect, handleMultiSelectConfirm },
+    input, setInput, onSend, executeWizard, wizardStage,
+    isListView, listItems, filteredEntries, activeEntry,
+    moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
+    reset, insert, handleChange,
+    handleWizardSelect, handleMultiSelectConfirm,
   });
 
   return (
@@ -70,7 +76,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
                 ref={textareaRef}
                 className="chat-input-textarea"
                 value={input}
-                onChange={(e) => { setInput(e.target.value); handleChange(e.target.value, e.target.value.length); }}
+                onChange={(e) => { setInput(e.target.value); handleChange(e.target.value, e.target.selectionStart); }}
                 onKeyDown={handleKeyDown}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => setInputFocused(false)}
@@ -95,6 +101,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             multiSelectedIds={multiSelectedIds}
             onToggleMultiSelect={handleToggleMultiSelect}
             wizardStage={wizardStage}
+            isMultiSelectStage={isMultiSelectStage}
             tokens={tokens}
             anchorRef={containerRef}
           />

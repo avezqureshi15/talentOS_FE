@@ -26,38 +26,55 @@ export const useWizardExecution = ({
     const slotToken = tokens.find(t => t.type === "slot");
     const interviewToken = tokens.find(t => t.type === "interview");
 
-    if (entityToken) {
-      const intent = ({ "hr-request": "INQUIRE_HR_REQUEST", "applicants-view": "INQUIRE_APPLICANT" } as const)[wizardActionId ?? ""] ?? "INQUIRE_EMPLOYEE";
-      onWizardComplete?.(
-        { message_type: "COMMAND_EXECUTION" as const, intent, payload: { id_field: entityToken.relationalId ?? entityToken.id, name_field: entityToken.label, raw_text_context: rawText } },
-        { applicantName: entityToken.label, interviewerName: "", slotLabel: "", rawText, hiringRequestName: "" },
-      );
-    } else if (interviewToken) {
-      onWizardComplete?.(
-        { message_type: "COMMAND_EXECUTION" as const, intent: "interviews", payload: { interview_id: interviewToken?.relationalId ?? interviewToken?.id ?? "", hiring_request_id: "", applicant_id: "", interviewer_id: "", slot_id: "", raw_text_context: rawText } },
-        { applicantName: interviewToken.label, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
-      );
-    } else if (wizardActionId === "employees-ask-slots") {
-      const askTokens = tokens.filter(t => t.type === "ask-slots");
-      const employeeNames = askTokens.map(t => t.label).join(", ");
-      const employeeIds = askTokens.map(t => t.relationalId ?? t.id).join(", ");
-      onWizardComplete?.(
-        { message_type: "COMMAND_EXECUTION" as const, intent: "ASK_SLOTS", payload: { applicant_ids: employeeIds, raw_text_context: rawText } },
-        { applicantName: employeeNames, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: askTokens.length },
-      );
-    } else if (wizardActionId === "employees-send-mail" || wizardActionId === "applicants-send-mail") {
-      const mailToken = tokens.find(t => t.type === "applicant");
-      onWizardComplete?.(
-        { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", raw_text_context: rawText } },
-        { applicantName: mailToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 1 },
-      );
-    } else {
-      const intent = wizardActionId ?? "UNKNOWN";
-      onWizardComplete?.(
-        { message_type: "COMMAND_EXECUTION" as const, intent, payload: { hiring_request_id: hiringRequestToken?.relationalId ?? hiringRequestToken?.id ?? "", applicant_id: applicantToken?.relationalId ?? applicantToken?.id ?? "", interviewer_id: interviewerToken?.relationalId ?? interviewerToken?.id ?? "", slot_id: slotToken?.relationalId ?? slotToken?.id ?? "", raw_text_context: rawText } },
-        { hiringRequestName: hiringRequestToken?.label ?? "", applicantName: applicantToken?.label ?? "", interviewerName: interviewerToken?.label ?? "", slotLabel: slotToken?.label ?? "", rawText, selectedEmployeeCount: 0 },
-      );
+    const mode = entityToken ? "entity"
+      : interviewToken ? "interview"
+      : wizardActionId === "employees-ask-slots" ? "ask-slots"
+      : wizardActionId === "employees-send-mail" || wizardActionId === "applicants-send-mail" ? "send-mail"
+      : "default";
+
+    switch (mode) {
+      case "entity": {
+        const intent = ({ "hr-request": "INQUIRE_HR_REQUEST", "applicants-view": "INQUIRE_APPLICANT" } as const)[wizardActionId ?? ""] ?? "INQUIRE_EMPLOYEE";
+        onWizardComplete?.(
+          { message_type: "COMMAND_EXECUTION" as const, intent, payload: { id_field: entityToken?.relationalId ?? entityToken?.id ?? "", name_field: entityToken?.label ?? "", raw_text_context: rawText } },
+          { applicantName: entityToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, hiringRequestName: "" },
+        );
+        break;
+      }
+      case "interview": {
+        onWizardComplete?.(
+          { message_type: "COMMAND_EXECUTION" as const, intent: "interviews", payload: { interview_id: interviewToken?.relationalId ?? interviewToken?.id ?? "", hiring_request_id: "", applicant_id: "", interviewer_id: "", slot_id: "", raw_text_context: rawText } },
+          { applicantName: interviewToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
+        );
+        break;
+      }
+      case "ask-slots": {
+        const askTokens = tokens.filter(t => t.type === "ask-slots");
+        const employeeNames = askTokens.map(t => t.label).join(", ");
+        const employeeIds = askTokens.map(t => t.relationalId ?? t.id).join(", ");
+        onWizardComplete?.(
+          { message_type: "COMMAND_EXECUTION" as const, intent: "ASK_SLOTS", payload: { applicant_ids: employeeIds, raw_text_context: rawText } },
+          { applicantName: employeeNames, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: askTokens.length },
+        );
+        break;
+      }
+      case "send-mail": {
+        const mailToken = tokens.find(t => t.type === "applicant");
+        onWizardComplete?.(
+          { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", raw_text_context: rawText } },
+          { applicantName: mailToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 1 },
+        );
+        break;
+      }
+      default: {
+        const intent = wizardActionId ?? "UNKNOWN";
+        onWizardComplete?.(
+          { message_type: "COMMAND_EXECUTION" as const, intent, payload: { hiring_request_id: hiringRequestToken?.relationalId ?? hiringRequestToken?.id ?? "", applicant_id: applicantToken?.relationalId ?? applicantToken?.id ?? "", interviewer_id: interviewerToken?.relationalId ?? interviewerToken?.id ?? "", slot_id: slotToken?.relationalId ?? slotToken?.id ?? "", raw_text_context: rawText } },
+          { hiringRequestName: hiringRequestToken?.label ?? "", applicantName: applicantToken?.label ?? "", interviewerName: interviewerToken?.label ?? "", slotLabel: slotToken?.label ?? "", rawText, selectedEmployeeCount: 0 },
+        );
+      }
     }
+
     reset();
     resetMenu();
     setInput("");

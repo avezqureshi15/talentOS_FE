@@ -2,7 +2,6 @@ import { useLayoutEffect, useRef, useState, useMemo, useCallback, useEffect } fr
 import { createPortal } from "react-dom";
 import "./mention-popup.css";
 import { MENTIONS_LABELS } from "../constants";
-import { WIZARD_ACTIONS } from "../config/wizard.config";
 import { COMMON_SLOTS_TAB_ID } from "./slot-tabs/slot-tabs.constants";
 import type { CommandItem, CommandEntry, WizardStage, Token, MenuController } from "../types";
 import { resolveMenuSelection } from "../utils";
@@ -21,6 +20,7 @@ type MentionPopupProps = {
   onToggleMultiSelect?: (itemId: string) => void;
   menu: MenuController;
   wizardStage: WizardStage;
+  isMultiSelectStage: boolean;
   tokens: Token[];
   anchorRef: React.RefObject<HTMLDivElement | null>;
 };
@@ -30,7 +30,7 @@ const GAP = 8;
 const ANIM_DURATION = 200;
 
 const MentionPopup = ({
-  show, onInsert, onWizardSelect, multiSelectedIds, onToggleMultiSelect, menu, wizardStage, tokens, anchorRef,
+  show, onInsert, onWizardSelect, multiSelectedIds, onToggleMultiSelect, menu, wizardStage, isMultiSelectStage, tokens, anchorRef,
 }: MentionPopupProps) => {
   const popupRef = useRef<HTMLDivElement>(null);
   // justification: tracks popup position computed from anchor rect
@@ -79,13 +79,6 @@ const MentionPopup = ({
     setActiveTab(tabId);
     closeSidebar();
   }, [closeSidebar]);
-
-  const wizardActionId = tokens[0]?.id ?? "";
-  const isMultiSelectStage = useMemo(() => {
-    if (!wizardActionId || wizardStage === 0) return false;
-    const stage = WIZARD_ACTIONS[wizardActionId]?.stages[wizardStage - 1];
-    return stage?.isMultiSelect ?? false;
-  }, [wizardActionId, wizardStage]);
 
   const { currentLevel, search, setSearch, filteredEntries, listItems, isListView, activeEntry, canGoBack, selectedIndex, setSelectedIndex, navigateTo, goBack, moveUp, moveDown, selectCurrentItem, loadMore, hasMore, isLoadingMore } = menu;
   const isSlotStage = wizardStage === 4;
