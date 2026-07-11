@@ -63,12 +63,39 @@
   gap: 12px;
 }
 
-.ac-description {
+.ac-info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.ac-info-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+}
+
+.ac-info-chip i {
+  font-size: 12px;
+}
+
+.ac-info-text {
   font-size: 13px;
   color: var(--text-muted);
   line-height: 1.5;
-  margin: 0;
-  padding: 0 2px;
 }
 
 .ac-tabs {

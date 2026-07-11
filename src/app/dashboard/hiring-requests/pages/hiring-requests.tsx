@@ -9,7 +9,7 @@ import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useHiringRequests } from "@/app/dashboard/hiring-requests/hooks/use-hiring-requests";
 import type { HiringRequestsFilters } from "@/services/hiring-requests/hiring-requests.types";
-import { QUERY_KEYS, HR_TABS, ALERTS_TABS, ALERTS_DESCRIPTION } from "@/constants/constants";
+import { QUERY_KEYS, HR_TABS, ALERTS_TABS, ALERTS_CHIP_LABEL, ALERTS_DESCRIPTION } from "@/constants/constants";
 import "./hiring-requests.css";
 
 const HiringRequests = () => {
@@ -97,7 +97,10 @@ const HiringRequests = () => {
 
         {tab === "alerts" && (
           <div className="ac-content">
-            <p className="ac-description">{ALERTS_DESCRIPTION}</p>
+            <div className="ac-info-card">
+              <span className="ac-info-chip"><i className="bx bx-info-circle" /> {ALERTS_CHIP_LABEL}</span>
+              <span className="ac-info-text">{ALERTS_DESCRIPTION}</span>
+            </div>
             <div className="ac-tabs">
               {ALERTS_TABS.map((st) => (
                 <button

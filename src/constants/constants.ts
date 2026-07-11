@@ -309,8 +309,10 @@ export const ALERTS_TABS = [
   { key: "reviews", label: "Reviews", icon: "bx bx-check-shield" },
 ] as const;
 
+export const ALERTS_CHIP_LABEL = "Info";
+
 export const ALERTS_DESCRIPTION =
-  "This section displays employees who have not submitted their interview slots despite receiving a reminder notification.";
+  "This section lists employees who missed the slot submission or candidate review deadline after a reminder.";
 
 export const PROFILE_MENU_ITEMS = [
   { id: "profile", label: "Profile", icon: "bx bx-user" },
