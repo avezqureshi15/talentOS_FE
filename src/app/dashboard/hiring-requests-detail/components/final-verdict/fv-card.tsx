@@ -4,7 +4,7 @@ import CardDetailsTab from "@/app/dashboard/hiring-requests-detail/components/ap
 import CardCoverLetterTab from "@/app/dashboard/hiring-requests-detail/components/applicants/card-cover-letter-tab";
 import CardAiSummaryTab from "@/app/dashboard/hiring-requests-detail/components/applicants/card-ai-summary-tab";
 import CardRoundsTab from "@/app/dashboard/hiring-requests-detail/components/applicants/card-rounds-tab";
-import type { Applicant, AccordionTab, InterviewRound } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import type { Applicant, AccordionTab } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 
 const AI_LABEL: Record<string, string> = {
   shortlisted: APPLICANT_LABELS.AI_SHORTLISTED,
@@ -22,7 +22,7 @@ type FvCardProps = {
   onAiSummaryReadMore: (id: string) => void;
   onDetailsReadMore: (id: string) => void;
   onTimeline: (id: string) => void;
-  onViewRound: (round: InterviewRound) => void;
+  onViewRound: (roundId: string) => void;
 };
 
 const FvCard = ({

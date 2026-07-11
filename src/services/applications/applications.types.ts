@@ -33,6 +33,29 @@ export type RoundFromApi = {
 
 export type RoundsApiResponse = RoundFromApi[];
 
+export type RoundDetailApiResponse = {
+  id: string;
+  round: string | null;
+  duration: string | null;
+  interview_type: string | null;
+  occurred_on: string | null;
+  slot: string | null;
+  status: string | null;
+  candidate: string | null;
+  role: string | null;
+  jd_label: string | null;
+  interviewer: string | null;
+  decisions: Record<string, string>;
+  ai_summary: string | null;
+  strong_matches: string[];
+  gaps_and_concerns: string[];
+  ratings: { label: string; score: number; max_score: number; entity_type?: string }[];
+  skills: string[];
+  notes: string | null;
+  remarks_hr: string | null;
+  remarks_interviewer: string | null;
+};
+
 export type EvaluatedCandidatesResponse = {
   data: EvaluatedCandidate[];
 };

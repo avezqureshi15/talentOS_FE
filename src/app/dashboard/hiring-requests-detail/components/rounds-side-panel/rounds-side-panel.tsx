@@ -1,6 +1,12 @@
+import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import BaseModal from "@/components/ui/modal/base-modal";
-import type { RoundsSidePanelProps, PanelContentProps, RowProps } from "./rounds-side-panel.types";
-import { ROUNDS_PANEL_LABELS, ROUNDS_FALLBACK, VERDICT_LABELS, AI_LABELS, HR_LABELS } from "./rounds-side-panel.constants";
+import PanelSkeleton from "./panel-skeleton";
+import ReadMoreText from "./read-more-text";
+import { useRoundDetail } from "./use-round-detail";
+import type { RoundsSidePanelProps, PanelContentProps, RowProps, ExpandableAiSummaryProps } from "./rounds-side-panel.types";
+import { ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK, VERDICT_LABELS, AI_LABELS, HR_LABELS, AI_SUMMARY_MAX_LENGTH } from "./rounds-side-panel.constants";
 import "./rounds-side-panel.css";
 
 const verdictIcon: Record<string, string> = {
@@ -22,13 +28,9 @@ const hrIcon: Record<string, string> = {
   rejected: "bx bx-x-circle",
 };
 
-const AI_LINE_RENDERERS = [
-  { match: (l: string) => l.endsWith(":"), Component: ({ l, i }: { l: string; i: number }) => <span key={i} className="rp-ai-heading">{l}</span> },
-  { match: (l: string) => l.startsWith("•"), Component: ({ l, i }: { l: string; i: number }) => <span key={i} className="rp-ai-bullet">{l}</span> },
-  { match: () => true, Component: ({ l, i }: { l: string; i: number }) => <p key={i} className="rp-ai-text">{l}</p> },
-];
+const RoundsSidePanel = ({ open, roundId, onClose }: RoundsSidePanelProps) => {
+  const { data: round, isLoading, isError, refetch } = useRoundDetail(roundId);
 
-const RoundsSidePanel = ({ open, round, onClose }: RoundsSidePanelProps) => {
   return (
     <BaseModal
       open={open}
@@ -36,6 +38,15 @@ const RoundsSidePanel = ({ open, round, onClose }: RoundsSidePanelProps) => {
       title={ROUNDS_PANEL_LABELS.TITLE}
       variant="slide-right"
     >
+      {isLoading && <PanelSkeleton />}
+      {isError && (
+        <div className="rp-status rp-status--error">
+          <p>{ROUNDS_PANEL_STATUS.ERROR}</p>
+          <button className="action-link action-link-btn" onClick={() => refetch()} type="button">
+            {ROUNDS_PANEL_STATUS.RETRY}
+          </button>
+        </div>
+      )}
       {round && <PanelContent round={round} />}
     </BaseModal>
   );
@@ -44,12 +55,17 @@ const RoundsSidePanel = ({ open, round, onClose }: RoundsSidePanelProps) => {
 const PanelContent = ({ round }: PanelContentProps) => {
   if (!round) return null;
 
-  const avg = round.ratings.length > 0
-    ? (round.ratings.reduce((s, r) => s + r.score, 0) / round.ratings.length).toFixed(1)
+  const interviewerRatings = round.ratings.filter((r) => r.entityType === "interviewer");
+  const avg = interviewerRatings.length > 0
+    ? (interviewerRatings.reduce((s, r) => s + r.score, 0) / interviewerRatings.length).toFixed(1)
     : null;
+  const avgMax = interviewerRatings.length > 0 ? interviewerRatings[0].maxScore : 5;
+
+  const hasBullets = round.strongMatches.length > 0 || round.gapsAndConcerns.length > 0;
 
   return (
     <div className="rp-content">
+      {/* ── HEADER: Interview Info + Decisions ── */}
       <span className="rp-badge">{round.round}</span>
 
       <div className="rp-divider" />
@@ -59,16 +75,13 @@ const PanelContent = ({ round }: PanelContentProps) => {
         <div className="rp-details">
           <Row label="Interviewer" icon="bx bx-user" value={round.interviewer} />
           <Row label="Hiring Role" icon="bx bx-briefcase" value={round.role} />
-          <Row label="JD" icon="bx bx-file" value={round.jdLabel} />
+          {round.jdLabel && (
+            <div className="rp-row">
+              <span className="rp-row-label"><i className="bx bx-file" /> JD</span>
+              <span className="rp-row-value"><ReadMoreText text={round.jdLabel} /></span>
+            </div>
+          )}
           <Row label="With Whom" icon="bx bx-user-voice" value={round.candidate} />
-        </div>
-      </div>
-
-      <div className="rp-divider" />
-
-      <div className="rp-group">
-        <span className="rp-group-title">Schedule Details</span>
-        <div className="rp-details">
           <Row label="Occurred On" icon="bx bx-calendar" value={round.occurredOn} />
           <Row label="Slot" icon="bx bx-clock" value={round.slot} />
           <Row label="Duration" icon="bx bx-stopwatch" value={round.duration} />
@@ -77,49 +90,79 @@ const PanelContent = ({ round }: PanelContentProps) => {
         </div>
       </div>
 
-      <div className="rp-divider" />
+      {round.verdict || round.aiDecision || round.hrDecision ? (
+        <>
+          <div className="rp-divider" />
+          <div className="rp-group">
+            <span className="rp-group-title">Decisions</span>
+            <div className="rp-decision-cards">
+              {round.verdict && (
+                <div className="rp-decision-card">
+                  <span className="rp-decision-label">Interviewer</span>
+                  <span className={`rp-pill rp-pill--${round.verdict}`}>
+                    <i className={verdictIcon[round.verdict] ?? "bx bx-help-circle"} />
+                    {VERDICT_LABELS[round.verdict] ?? round.verdict}
+                  </span>
+                </div>
+              )}
+              {round.aiDecision && (
+                <div className="rp-decision-card">
+                  <span className="rp-decision-label">AI Decision</span>
+                  <span className={`rp-pill rp-pill--ai-${round.aiDecision}`}>
+                    <i className={aiIcon[round.aiDecision] ?? "bx bx-help-circle"} />
+                    {AI_LABELS[round.aiDecision] ?? round.aiDecision}
+                  </span>
+                </div>
+              )}
+              {round.hrDecision && (
+                <div className="rp-decision-card">
+                  <span className="rp-decision-label">HR Decision</span>
+                  <span className={`rp-pill rp-pill--hr-${round.hrDecision}`}>
+                    <i className={hrIcon[round.hrDecision] ?? "bx bx-help-circle"} />
+                    {HR_LABELS[round.hrDecision] ?? round.hrDecision}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      ) : null}
 
-      <div className="rp-group">
-        <span className="rp-group-title">Decisions</span>
-        <div className="rp-decision-cards">
-          <div className="rp-decision-card">
-            <span className="rp-decision-label">Interviewer</span>
-            <span className={`rp-pill rp-pill--${round.verdict}`}>
-              <i className={verdictIcon[round.verdict]} />
-              {VERDICT_LABELS[round.verdict]}
-            </span>
-          </div>
-          <div className="rp-decision-card">
-            <span className="rp-decision-label">AI Decision</span>
-            <span className={`rp-pill rp-pill--ai-${round.aiDecision}`}>
-              <i className={aiIcon[round.aiDecision]} />
-              {AI_LABELS[round.aiDecision]}
-            </span>
-          </div>
-          <div className="rp-decision-card">
-            <span className="rp-decision-label">HR Decision</span>
-            <span className={`rp-pill rp-pill--hr-${round.hrDecision}`}>
-              <i className={hrIcon[round.hrDecision]} />
-              {HR_LABELS[round.hrDecision]}
-            </span>
-          </div>
-        </div>
-      </div>
-
+      {/* ── BODY: AI Summary ── */}
       <div className="rp-divider" />
 
       <div className="rp-group">
         <span className="rp-group-title">AI Summary</span>
-        <div className="rp-ai-summary">
-          {round.aiSummary.split("\n").map((line, i) => {
-            const trimmed = line.trim();
-            if (!trimmed) return null;
-            const renderer = AI_LINE_RENDERERS.find((r) => r.match(trimmed));
-            return renderer ? <renderer.Component l={trimmed} i={i} /> : null;
-          })}
+        <div className="rp-ai-summary md-content">
+          {round.aiSummary ? (
+            <ExpandableAiSummary text={round.aiSummary} />
+          ) : hasBullets ? null : (
+            <p className="rp-ai-empty">{ROUNDS_FALLBACK.NO_AI_SUMMARY}</p>
+          )}
+          {round.strongMatches.length > 0 && (
+            <>
+              <span className="rp-ai-subheading">Strong Matches</span>
+              <ul>
+                {round.strongMatches.map((m, i) => (
+                  <li key={i}>{m}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          {round.gapsAndConcerns.length > 0 && (
+            <>
+              <span className="rp-ai-subheading">Gaps & Concerns</span>
+              <ul>
+                {round.gapsAndConcerns.map((g, i) => (
+                  <li key={i}>{g}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </div>
 
+      {/* ── FOOTER: Ratings + Skills + Notes ── */}
       <div className="rp-divider" />
 
       <div className="rp-group">
@@ -127,12 +170,12 @@ const PanelContent = ({ round }: PanelContentProps) => {
         <div className="rp-ratings">
           {round.ratings.map((r, i) => (
             <div key={i} className="rp-rating-row">
-              <span className="rp-rating-label">{r.label}</span>
+              <span className="rp-rating-label">{r.label === "fitscore" ? "ATS Score" : r.label}</span>
               <span className="rp-rating-score">{r.score}/{r.maxScore}</span>
             </div>
           ))}
         </div>
-        {avg && <span className="rp-avg">Average: {avg}/4</span>}
+        {avg && <span className="rp-avg">Average: {avg}/{avgMax}</span>}
       </div>
 
       {round.skills.length > 0 && (
@@ -159,11 +202,39 @@ const PanelContent = ({ round }: PanelContentProps) => {
   );
 };
 
-const Row = ({ label, icon, value }: RowProps) => (
-  <div className="rp-row">
-    <span className="rp-row-label"><i className={icon} /> {label}</span>
-    <span className="rp-row-value">{value}</span>
-  </div>
-);
+const ExpandableAiSummary = ({ text }: ExpandableAiSummaryProps) => {
+  // justification: tracks expand/collapse toggle for AI summary text
+  const [expanded, setExpanded] = useState(false);
+  const needsTruncation = text.length > AI_SUMMARY_MAX_LENGTH;
+
+  if (!needsTruncation) {
+    return <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>;
+  }
+
+  return (
+    <>
+      {expanded ? (
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+      ) : (
+        <div className="truncated-wrap truncated-wrap--fade rp-ai-text">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+        </div>
+      )}
+      <button className="show-more-btn" onClick={() => setExpanded((v) => !v)} type="button">
+        {expanded ? <>Show less <i className="bx bx-chevron-up" /></> : <>Show more <i className="bx bx-chevron-down" /></>}
+      </button>
+    </>
+  );
+};
+
+const Row = ({ label, icon, value }: RowProps) => {
+  if (!value) return null;
+  return (
+    <div className="rp-row">
+      <span className="rp-row-label"><i className={icon} /> {label}</span>
+      <span className="rp-row-value">{value}</span>
+    </div>
+  );
+};
 
 export default RoundsSidePanel;

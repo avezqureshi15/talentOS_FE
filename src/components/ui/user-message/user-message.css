@@ -28,3 +28,31 @@
 
   border-radius: var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl);
 }
+
+.truncated-wrap {
+  position: relative;
+}
+
+.truncated-wrap--fade {
+  max-height: 5.4em;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+.show-more-btn {
+  display: block;
+  margin-top: 4px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.show-more-btn:hover {
+  opacity: 0.8;
+}

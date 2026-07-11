@@ -8,7 +8,7 @@ import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/compon
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import { FINAL_VERDICT_SUB_TABS } from "./final-verdict.constants";
 import type { FinalVerdictProps, FinalVerdictSubTab } from "./final-verdict.types";
-import type { AccordionTab, InterviewRound } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import type { AccordionTab } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import FvCard from "./fv-card";
 import "./final-verdict.css";
 
@@ -20,7 +20,7 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
   const [aiSummaryId, setAiSummaryId] = useState<string | null>(null);
   const [detailsId, setDetailsId] = useState<string | null>(null);
-  const [selectedRound, setSelectedRound] = useState<InterviewRound | null>(null);
+  const [selectedRound, setSelectedRound] = useState<string | null>(null);
 
   const filter = subTab === "selected" ? "hired" : "rejected";
   const { applicants, isLoading, hasMore, fetchNext } = useApplicationsData(
@@ -98,7 +98,7 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
 
           <RoundsSidePanel
             open={!!selectedRound}
-            round={selectedRound}
+            roundId={selectedRound}
             onClose={() => setSelectedRound(null)}
           />
 

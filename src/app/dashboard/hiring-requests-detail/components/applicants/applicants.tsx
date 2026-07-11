@@ -8,7 +8,7 @@ import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/mo
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
-import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps, InterviewRound } from "./applicants.types";
+import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps } from "./applicants.types";
 
 function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam }: ApplicantsProps) {
   // justification: stores local status/screening overrides that can't persist to API yet
@@ -21,7 +21,7 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
   const [finalCandidateId, setFinalCandidateId] = useState<string | null>(null);
   const [finalDecision, setFinalDecision] = useState<"selected" | "rejected" | null>(null);
-  const [selectedRound, setSelectedRound] = useState<InterviewRound | null>(null);
+  const [selectedRound, setSelectedRound] = useState<string | null>(null);
   const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
   const [scheduleCandidateId, setScheduleCandidateId] = useState<string | null>(null);
   // justification: tracks which candidate's shortlist modal is open
@@ -171,7 +171,7 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
       {data.map((a) => (<CoverLetterModal key={`cl-${a.id}`} open={coverLetterId === a.id} applicantName={a.name} coverLetter={a.coverLetter ?? ""} onClose={() => setCoverLetterId(null)} />))}
       {data.map((a) => (<AiSummaryModal key={`ai-${a.id}`} open={aiSummaryId === a.id} applicantName={a.name} aiSummary={a.aiSummary ?? ""} onClose={() => setAiSummaryId(null)} />))}
 
-      <RoundsSidePanel open={!!selectedRound} round={selectedRound} onClose={() => setSelectedRound(null)} />
+      <RoundsSidePanel open={!!selectedRound} roundId={selectedRound} onClose={() => setSelectedRound(null)} />
 
       {data.map((a) => (<ApplicantDetailsModal
           key={`det-${a.id}`}

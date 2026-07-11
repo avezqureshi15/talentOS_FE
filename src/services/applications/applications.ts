@@ -1,5 +1,5 @@
 import httpClient from "@/services/http-client";
-import type { EvaluatedCandidate, EvaluatedCandidatesResponse, PaginatedEvaluatedCandidatesResponse, RoundsApiResponse } from "./applications.types";
+import type { EvaluatedCandidate, EvaluatedCandidatesResponse, PaginatedEvaluatedCandidatesResponse, RoundDetailApiResponse, RoundsApiResponse } from "./applications.types";
 import { API_ENDPOINTS, FILTER_DEFAULTS } from "@/constants/api-endpoints";
 
 export const fetchApplications = async (jobId?: string, status?: string): Promise<EvaluatedCandidate[]> => {
@@ -20,6 +20,13 @@ export const fetchApplicationById = async (applicationId: string): Promise<Evalu
 export const fetchRoundsByCandidateId = async (candidateId: number): Promise<RoundsApiResponse> => {
   const { data } = await httpClient.get<RoundsApiResponse>(
     `${API_ENDPOINTS.ROUNDS}candidate/${candidateId}`,
+  );
+  return data;
+};
+
+export const fetchRoundDetail = async (roundId: string): Promise<RoundDetailApiResponse> => {
+  const { data } = await httpClient.get<RoundDetailApiResponse>(
+    `${API_ENDPOINTS.ROUNDS}${roundId}`,
   );
   return data;
 };

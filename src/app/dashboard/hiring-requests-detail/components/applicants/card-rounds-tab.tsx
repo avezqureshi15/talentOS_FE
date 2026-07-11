@@ -1,10 +1,9 @@
 import { APPLICANT_LABELS } from "@/constants/constants";
 import { useApplicationRounds } from "./hooks/use-application-rounds";
-import type { InterviewRound } from "./applicants.types";
 
 type Props = {
   candidateId: number;
-  onViewRound?: (round: InterviewRound) => void;
+  onViewRound?: (roundId: string) => void;
 };
 
 const CardRoundsTab = ({ candidateId, onViewRound }: Props) => {
@@ -48,7 +47,7 @@ const CardRoundsTab = ({ candidateId, onViewRound }: Props) => {
             <button
               key={r.id}
               className="round-chip"
-              onClick={(e) => { e.stopPropagation(); onViewRound?.(r); }}
+              onClick={(e) => { e.stopPropagation(); onViewRound?.(r.id); }}
               type="button"
             >
               {r.round}

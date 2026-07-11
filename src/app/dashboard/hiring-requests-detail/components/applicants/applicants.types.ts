@@ -1,28 +1,6 @@
 export type ApplicantStatus =
   | "new" | "reviewing" | "shortlisted" | "rejected" | "hired";
 
-export type InterviewRound = {
-  id: string;
-  round: string;
-  interviewer: string;
-  role: string;
-  jdHref: string;
-  jdLabel: string;
-  candidate: string;
-  occurredOn: string;
-  slot: string;
-  duration: string;
-  interviewType: string;
-  status: string;
-  ratings: { label: string; score: number; maxScore: number }[];
-  skills: string[];
-  notes: string;
-  aiSummary: string;
-  verdict: "reject" | "hold" | "advance";
-  aiDecision: "pending" | "selected" | "rejected" | "conflict";
-  hrDecision: "pending" | "approved" | "rejected";
-};
-
 export type ApplicantCardProps = {
   applicant: Applicant;
   isOpen: boolean;
@@ -39,7 +17,7 @@ export type ApplicantCardProps = {
   onTimeline: (id: string) => void;
   onScheduleRound1: (id: string) => void;
   onFinalDecision: (id: string, decision: "selected" | "rejected") => void;
-  onViewRound?: (round: InterviewRound) => void;
+  onViewRound?: (roundId: string) => void;
 };
 
 export type AiDecision = "shortlisted" | "rejected" | "pending";
@@ -69,7 +47,6 @@ export type Applicant = {
   howDidYouHear?: string;
   scheduled?: boolean;
   willingToRelocate?: boolean;
-  rounds?: InterviewRound[];
 };
 
 export type ApplicantsProps = {
@@ -124,5 +101,5 @@ export type CardExpandedContentProps = {
   onDetailsReadMore: (id: string) => void;
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
-  onViewRound?: (round: InterviewRound) => void;
+  onViewRound?: (roundId: string) => void;
 };
