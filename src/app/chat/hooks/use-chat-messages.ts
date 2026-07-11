@@ -45,8 +45,11 @@ export const useChatMessages = (chatId: string | null) => {
 
       const res = await fetchMessages(chatId, 20);
       const msgs = res.data.map(toFrontendMessage);
-      setMessages(msgs);
-      setHasMore(res.has_more);
+      // Don't overwrite if messages were added in the meantime (e.g. by useChatStream)
+      if (useChatStore.getState().messages.length === 0) {
+        setMessages(msgs);
+        setHasMore(res.has_more);
+      }
       return msgs;
     },
     enabled: !!chatId,

@@ -47,7 +47,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   );
 
   const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
-  const jobId = hiringRequest.supabase_job_id ?? undefined;
+  const jobId = hiringRequest.id;
   const { applicants, isLoading: appsLoading, hasMore, fetchNext } = useApplicationsData(
     jobId,
     filter,

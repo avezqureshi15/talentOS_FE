@@ -12,7 +12,7 @@ export const fetchApplications = async (jobId?: string, status?: string): Promis
 
 export const fetchApplicationById = async (applicationId: string): Promise<EvaluatedCandidate> => {
   const { data } = await httpClient.get<EvaluatedCandidate>(
-    `${API_ENDPOINTS.APPLICATIONS_BY_ID}${applicationId}`,
+    `${API_ENDPOINTS.APPLICATIONS_BY_ID}candidate/${applicationId}`,
   );
   return data;
 };
