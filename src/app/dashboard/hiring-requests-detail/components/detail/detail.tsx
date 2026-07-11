@@ -182,7 +182,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           )}
 
           {segment === "final-verdict" && (
-            <FinalVerdict jobId={hiringRequest.supabase_job_id ?? ""} />
+            <FinalVerdict jobId={hiringRequest.external_job_id ?? ""} />
           )}
         </ErrorBoundary>
       </div>

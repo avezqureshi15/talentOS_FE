@@ -9,7 +9,7 @@ export type HiringRequest = {
   benefits: string[];
   is_active: boolean;
   custom_evaluation_criteria: string;
-  supabase_job_id: string | null;
+  external_job_id: string | null;
   deleted_at: string | null;
   created_at: string;
   updated_at: string;
