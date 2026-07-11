@@ -50,6 +50,15 @@ function createEmployeeEntry(): CommandEntry {
   return createPaginatableEntry("employee-search", "Employees", "Search employees...", fetchUsersForMentions);
 }
 
+function createEmployeeWithSlotsEntry(): CommandEntry {
+  return createPaginatableEntry(
+    "employee-slots-search",
+    "Employees",
+    "Search employees...",
+    (query, page) => fetchUsersForMentions(query, page, true),
+  );
+}
+
 export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceEntry>> = {
   "book-interview": {
     0: { createEntry: createHiringRequestEntry },
@@ -66,7 +75,7 @@ export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceE
     0: { createEntry: createEmployeeEntry },
   },
   "employees-ask-slots": {
-    0: { createEntry: createEmployeeEntry },
+    0: { createEntry: createEmployeeWithSlotsEntry },
   },
   "applicants-send-mail": {
     0: { createEntry: createCandidateEntry },

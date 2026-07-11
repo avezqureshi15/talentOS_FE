@@ -8,6 +8,7 @@ type AskSlotsButtonProps = {
 
 const AskSlotsButton = ({ item, onAskSlotsHover, onAskSlotsLeave }: AskSlotsButtonProps) => {
   if (item.meta?.type !== "interviewer") return null;
+  if (item.meta?.has_slots === "true") return null;
   return (
     <button
       className="mp-item-ask-slots"

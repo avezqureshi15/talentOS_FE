@@ -8,6 +8,8 @@ export type UserItem = {
   name: string;
   designation: string;
   department: string;
+  slots_count?: number;
+  has_slots?: boolean;
 };
 
 export type UserDetailResponse = {
@@ -40,9 +42,11 @@ export const fetchUsers = async (
   q?: string,
   page: number = 1,
   per_page: number = 20,
+  slotsInfo?: boolean,
 ): Promise<PaginatedUsersResponse> => {
   const params: Record<string, string | number> = { page, per_page };
   if (q) params.q = q;
+  if (slotsInfo) params.slotsInfo = "true";
   const { data } = await httpClient.get<PaginatedUsersResponse>(API_ENDPOINTS.USERS, { params });
   return data;
 };

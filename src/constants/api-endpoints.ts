@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
   HIRING_REQUESTS_STATUS: "/hiring-requests/:id/status",
   ROUNDS: "/rounds/",
   USERS: "/users/",
+  SLOTS: "/slots/",
 } as const;
 
 export const PAGINATION = {
