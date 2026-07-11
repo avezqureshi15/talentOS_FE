@@ -9,6 +9,7 @@ export const API_ENDPOINTS = {
   HIRING_REQUESTS_LOCATIONS: "/hiring-requests/locations",
   HIRING_REQUESTS_TYPES: "/hiring-requests/types",
   HIRING_REQUESTS_STATUS: "/hiring-requests/:id/status",
+  ROUNDS: "/rounds/",
   USERS: "/users/",
 } as const;
 

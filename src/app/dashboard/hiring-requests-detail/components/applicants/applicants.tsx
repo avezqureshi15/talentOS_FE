@@ -8,8 +8,7 @@ import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/mo
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
-import { MOCK_ROUNDS } from "@/constants/constants";
-import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps } from "./applicants.types";
+import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps, InterviewRound } from "./applicants.types";
 
 function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam }: ApplicantsProps) {
   // justification: stores local status/screening overrides that can't persist to API yet
@@ -22,7 +21,7 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
   const [finalCandidateId, setFinalCandidateId] = useState<string | null>(null);
   const [finalDecision, setFinalDecision] = useState<"selected" | "rejected" | null>(null);
-  const [roundId, setRoundId] = useState<string | null>(null);
+  const [selectedRound, setSelectedRound] = useState<InterviewRound | null>(null);
   const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
   const [scheduleCandidateId, setScheduleCandidateId] = useState<string | null>(null);
   // justification: tracks which candidate's shortlist modal is open
@@ -33,7 +32,6 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
   const [shortlistRemarks, setShortlistRemarks] = useState("");
   // justification: tracks which candidate's final selection warning modal is open
   const [finalConfirmId, setFinalConfirmId] = useState<string | null>(null);
-  const selectedRound = roundId ? MOCK_ROUNDS.find((r) => r.id === roundId) ?? null : null;
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -124,7 +122,9 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
               isOpen={isOpen}
               isScreening={isScreening}
               accordionTab={accordionTab}
-              onToggleOpen={(id) => setOpenId(isOpen ? null : id)}
+              onToggleOpen={(id) => {
+                if (isOpen) { setOpenId(null); } else { setOpenId(id); setAccordionTab("details"); }
+              }}
               onStartScreening={(id) => { setScreeningId(id); setOpenId(id); }}
               onHrShortlist={(id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); }}
               onHrReject={setRejectConfirmId}
@@ -135,7 +135,7 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
               onDetailsReadMore={setDetailsId}
               onTimeline={setTimelineId}
               onFinalDecision={handleFinalDecision}
-              onViewRound={setRoundId}
+              onViewRound={setSelectedRound}
             />
           </div>
         );
@@ -171,7 +171,7 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
       {data.map((a) => (<CoverLetterModal key={`cl-${a.id}`} open={coverLetterId === a.id} applicantName={a.name} coverLetter={a.coverLetter ?? ""} onClose={() => setCoverLetterId(null)} />))}
       {data.map((a) => (<AiSummaryModal key={`ai-${a.id}`} open={aiSummaryId === a.id} applicantName={a.name} aiSummary={a.aiSummary ?? ""} onClose={() => setAiSummaryId(null)} />))}
 
-      <RoundsSidePanel open={!!roundId} round={selectedRound} onClose={() => setRoundId(null)} />
+      <RoundsSidePanel open={!!selectedRound} round={selectedRound} onClose={() => setSelectedRound(null)} />
 
       {data.map((a) => (<ApplicantDetailsModal
           key={`det-${a.id}`}

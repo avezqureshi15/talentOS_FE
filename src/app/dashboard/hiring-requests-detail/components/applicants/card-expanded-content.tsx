@@ -43,7 +43,7 @@ const CardExpandedContent = ({
 
     {accordionTab === "details" && <CardDetailsTab applicant={a} onDetailsReadMore={onDetailsReadMore} />}
     {accordionTab === "cover-letter" && <CardCoverLetterTab coverLetter={a.coverLetter ?? ""} applicantId={a.id} onReadMore={onCoverLetterReadMore} />}
-    {accordionTab === "rounds" && <CardRoundsTab rounds={a.rounds} onViewRound={onViewRound} />}
+    {accordionTab === "rounds" && <CardRoundsTab candidateId={a.candidateId} onViewRound={onViewRound} />}
     {accordionTab === "ai-summary" && <CardAiSummaryTab aiSummary={a.aiSummary ?? ""} applicantId={a.id} onReadMore={onAiSummaryReadMore} />}
 
     {a.status === "rejected" && <div className="rejected-text">{APPLICANT_LABELS.CANDIDATE_REJECTED}</div>}

@@ -39,13 +39,14 @@ export type ApplicantCardProps = {
   onTimeline: (id: string) => void;
   onScheduleRound1: (id: string) => void;
   onFinalDecision: (id: string, decision: "selected" | "rejected") => void;
-  onViewRound?: (roundId: string) => void;
+  onViewRound?: (round: InterviewRound) => void;
 };
 
 export type AiDecision = "shortlisted" | "rejected" | "pending";
 
 export type Applicant = {
   id: string;
+  candidateId: number;
   name: string;
   email?: string;
   phone?: string;
@@ -123,5 +124,5 @@ export type CardExpandedContentProps = {
   onDetailsReadMore: (id: string) => void;
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
-  onViewRound?: (roundId: string) => void;
+  onViewRound?: (round: InterviewRound) => void;
 };

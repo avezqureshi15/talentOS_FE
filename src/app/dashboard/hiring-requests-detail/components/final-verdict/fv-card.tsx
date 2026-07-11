@@ -4,7 +4,7 @@ import CardDetailsTab from "@/app/dashboard/hiring-requests-detail/components/ap
 import CardCoverLetterTab from "@/app/dashboard/hiring-requests-detail/components/applicants/card-cover-letter-tab";
 import CardAiSummaryTab from "@/app/dashboard/hiring-requests-detail/components/applicants/card-ai-summary-tab";
 import CardRoundsTab from "@/app/dashboard/hiring-requests-detail/components/applicants/card-rounds-tab";
-import type { Applicant, AccordionTab } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import type { Applicant, AccordionTab, InterviewRound } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 
 const AI_LABEL: Record<string, string> = {
   shortlisted: APPLICANT_LABELS.AI_SHORTLISTED,
@@ -22,7 +22,7 @@ type FvCardProps = {
   onAiSummaryReadMore: (id: string) => void;
   onDetailsReadMore: (id: string) => void;
   onTimeline: (id: string) => void;
-  onViewRound: (roundId: string) => void;
+  onViewRound: (round: InterviewRound) => void;
 };
 
 const FvCard = ({
@@ -96,7 +96,7 @@ const FvCard = ({
 
         {accordionTab === "details" && <CardDetailsTab applicant={a} onDetailsReadMore={onDetailsReadMore} />}
         {accordionTab === "cover-letter" && <CardCoverLetterTab coverLetter={a.coverLetter ?? ""} applicantId={a.id} onReadMore={onCoverLetterReadMore} />}
-        {accordionTab === "rounds" && <CardRoundsTab rounds={a.rounds} onViewRound={onViewRound} />}
+        {accordionTab === "rounds" && <CardRoundsTab candidateId={a.candidateId} onViewRound={onViewRound} />}
         {accordionTab === "ai-summary" && <CardAiSummaryTab aiSummary={a.aiSummary ?? ""} applicantId={a.id} onReadMore={onAiSummaryReadMore} />}
 
         {a.status === "rejected" && <div className="rejected-text">{APPLICANT_LABELS.CANDIDATE_REJECTED}</div>}

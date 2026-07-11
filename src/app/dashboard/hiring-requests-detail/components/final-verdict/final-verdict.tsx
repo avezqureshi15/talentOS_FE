@@ -6,10 +6,9 @@ import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
-import { MOCK_ROUNDS } from "@/constants/constants";
 import { FINAL_VERDICT_SUB_TABS } from "./final-verdict.constants";
 import type { FinalVerdictProps, FinalVerdictSubTab } from "./final-verdict.types";
-import type { AccordionTab } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import type { AccordionTab, InterviewRound } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import FvCard from "./fv-card";
 import "./final-verdict.css";
 
@@ -21,7 +20,7 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
   const [aiSummaryId, setAiSummaryId] = useState<string | null>(null);
   const [detailsId, setDetailsId] = useState<string | null>(null);
-  const [roundId, setRoundId] = useState<string | null>(null);
+  const [selectedRound, setSelectedRound] = useState<InterviewRound | null>(null);
 
   const filter = subTab === "selected" ? "hired" : "rejected";
   const { applicants, isLoading, hasMore, fetchNext } = useApplicationsData(
@@ -29,8 +28,6 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
     filter,
     true,
   );
-
-  const selectedRound = roundId ? MOCK_ROUNDS.find((r) => r.id === roundId) ?? null : null;
 
   return (
     <div className="final-verdict">
@@ -61,13 +58,15 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
                 applicant={a}
                 isOpen={openId === a.id}
                 accordionTab={accordionTab}
-                onToggleOpen={(id) => setOpenId(openId === id ? null : id)}
+                onToggleOpen={(id) => {
+                  if (openId === id) { setOpenId(null); } else { setOpenId(id); setAccordionTab("details"); }
+                }}
                 onTabChange={setAccordionTab}
                 onCoverLetterReadMore={setCoverLetterId}
                 onAiSummaryReadMore={setAiSummaryId}
                 onDetailsReadMore={setDetailsId}
                 onTimeline={setTimelineId}
-                onViewRound={setRoundId}
+                onViewRound={setSelectedRound}
               />
             ))}
             {hasMore && (
@@ -98,9 +97,9 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
           ))}
 
           <RoundsSidePanel
-            open={!!roundId}
+            open={!!selectedRound}
             round={selectedRound}
-            onClose={() => setRoundId(null)}
+            onClose={() => setSelectedRound(null)}
           />
 
           {applicants.map((a) => (

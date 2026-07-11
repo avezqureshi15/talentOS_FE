@@ -233,6 +233,8 @@ export const APPLICANT_LABELS = {
   SELECT_CANDIDATE: "Select Candidate",
   REJECT_CANDIDATE: "Reject Candidate",
   NO_ROUNDS: "No interview rounds recorded yet.",
+  LOADING_ROUNDS: "Loading rounds...",
+  RETRY_ROUNDS: "Retry loading rounds",
   HR_SHORTLIST: "Shortlist",
   HR_REJECT: "Reject",
   SCHEDULE_ROUND_1: "Schedule Round 1",
@@ -278,6 +280,7 @@ export const QUERY_KEYS = {
   LOCATIONS: "locations",
   TYPES: "types",
   APPLICATIONS: "applications",
+  ROUNDS: "rounds",
 } as const;
 
 export const QUERY_CONFIG = {

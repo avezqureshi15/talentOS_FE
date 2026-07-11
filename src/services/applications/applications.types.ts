@@ -1,5 +1,6 @@
 export type EvaluatedCandidate = {
   id: string;
+  candidate_id: number;
   job_id: string;
   name: string | null;
   email: string | null;
@@ -19,6 +20,18 @@ export type EvaluatedCandidate = {
   linkedin_url: string | null;
   willing_to_relocate?: boolean;
 };
+
+export type RoundFromApi = {
+  id: string;
+  candidate_id: number | null;
+  slot_id: string | null;
+  jd_id: string | null;
+  name: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RoundsApiResponse = RoundFromApi[];
 
 export type EvaluatedCandidatesResponse = {
   data: EvaluatedCandidate[];

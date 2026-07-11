@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchApplicationsPaginated } from "@/services/applications/applications";
 import { PAGINATION } from "@/constants/api-endpoints";
-import { QUERY_KEYS, MOCK_ROUNDS } from "@/constants/constants";
+import { QUERY_KEYS } from "@/constants/constants";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 
 type UseApplicationsDataResult = {
@@ -76,6 +76,7 @@ export const useApplicationsData = (
 
 function mapCandidate(app: {
   id: string;
+  candidate_id: number;
   name: string | null;
   email: string | null;
   phone: string | null;
@@ -95,6 +96,7 @@ function mapCandidate(app: {
 }): Applicant {
   return {
     id: app.id,
+    candidateId: app.candidate_id,
     name: app.name ?? "",
     email: app.email ?? "",
     phone: app.phone ?? "",
@@ -116,6 +118,5 @@ function mapCandidate(app: {
     noticePeriod: app.notice_period ?? undefined,
     howDidYouHear: app.how_did_you_hear ?? undefined,
     willingToRelocate: app.willing_to_relocate ?? undefined,
-    rounds: MOCK_ROUNDS,
   };
 }
