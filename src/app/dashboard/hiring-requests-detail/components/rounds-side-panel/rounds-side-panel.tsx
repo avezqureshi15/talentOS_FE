@@ -1,32 +1,11 @@
-import { useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import BaseModal from "@/components/ui/modal/base-modal";
 import PanelSkeleton from "./panel-skeleton";
 import ReadMoreText from "./read-more-text";
+import ExpandableAiSummary from "./expandable-ai-summary";
 import { useRoundDetail } from "./use-round-detail";
-import type { RoundsSidePanelProps, PanelContentProps, RowProps, ExpandableAiSummaryProps } from "./rounds-side-panel.types";
-import { ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK, VERDICT_LABELS, AI_LABELS, HR_LABELS, AI_SUMMARY_MAX_LENGTH } from "./rounds-side-panel.constants";
+import type { RoundsSidePanelProps, PanelContentProps, RowProps } from "./rounds-side-panel.types";
+import { ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK, VERDICT_LABELS, AI_LABELS, HR_LABELS, VERDICT_ICONS, AI_ICONS, HR_ICONS } from "./rounds-side-panel.constants";
 import "./rounds-side-panel.css";
-
-const verdictIcon: Record<string, string> = {
-  reject: "bx bx-x-circle",
-  hold: "bx bx-clockr",
-  advance: "bx bx-check-double",
-};
-
-const aiIcon: Record<string, string> = {
-  pending: "bx bx-hourglass",
-  selected: "bx bx-check-circle",
-  rejected: "bx bx-x-circle",
-  conflict: "bx bx-error",
-};
-
-const hrIcon: Record<string, string> = {
-  pending: "bx bx-hourglass",
-  approved: "bx bx-check-double",
-  rejected: "bx bx-x-circle",
-};
 
 const RoundsSidePanel = ({ open, roundId, onClose }: RoundsSidePanelProps) => {
   const { data: round, isLoading, isError, refetch } = useRoundDetail(roundId);
@@ -100,7 +79,7 @@ const PanelContent = ({ round }: PanelContentProps) => {
                 <div className="rp-decision-card">
                   <span className="rp-decision-label">Interviewer</span>
                   <span className={`rp-pill rp-pill--${round.verdict}`}>
-                    <i className={verdictIcon[round.verdict] ?? "bx bx-help-circle"} />
+                    <i className={VERDICT_ICONS[round.verdict] ?? "bx bx-help-circle"} />
                     {VERDICT_LABELS[round.verdict] ?? round.verdict}
                   </span>
                 </div>
@@ -109,7 +88,7 @@ const PanelContent = ({ round }: PanelContentProps) => {
                 <div className="rp-decision-card">
                   <span className="rp-decision-label">AI Decision</span>
                   <span className={`rp-pill rp-pill--ai-${round.aiDecision}`}>
-                    <i className={aiIcon[round.aiDecision] ?? "bx bx-help-circle"} />
+                    <i className={AI_ICONS[round.aiDecision] ?? "bx bx-help-circle"} />
                     {AI_LABELS[round.aiDecision] ?? round.aiDecision}
                   </span>
                 </div>
@@ -118,7 +97,7 @@ const PanelContent = ({ round }: PanelContentProps) => {
                 <div className="rp-decision-card">
                   <span className="rp-decision-label">HR Decision</span>
                   <span className={`rp-pill rp-pill--hr-${round.hrDecision}`}>
-                    <i className={hrIcon[round.hrDecision] ?? "bx bx-help-circle"} />
+                    <i className={HR_ICONS[round.hrDecision] ?? "bx bx-help-circle"} />
                     {HR_LABELS[round.hrDecision] ?? round.hrDecision}
                   </span>
                 </div>
@@ -199,31 +178,6 @@ const PanelContent = ({ round }: PanelContentProps) => {
         <p className="rp-notes">{round.notes || ROUNDS_FALLBACK.NO_NOTES}</p>
       </div>
     </div>
-  );
-};
-
-const ExpandableAiSummary = ({ text }: ExpandableAiSummaryProps) => {
-  // justification: tracks expand/collapse toggle for AI summary text
-  const [expanded, setExpanded] = useState(false);
-  const needsTruncation = text.length > AI_SUMMARY_MAX_LENGTH;
-
-  if (!needsTruncation) {
-    return <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>;
-  }
-
-  return (
-    <>
-      {expanded ? (
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
-      ) : (
-        <div className="truncated-wrap truncated-wrap--fade rp-ai-text">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
-        </div>
-      )}
-      <button className="show-more-btn" onClick={() => setExpanded((v) => !v)} type="button">
-        {expanded ? <>Show less <i className="bx bx-chevron-up" /></> : <>Show more <i className="bx bx-chevron-down" /></>}
-      </button>
-    </>
   );
 };
 
