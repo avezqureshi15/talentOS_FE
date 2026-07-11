@@ -140,6 +140,7 @@ export const API_BASE_URL = "http://localhost:8001";
 
 /* ── APP ── */
 export const APP_URL = import.meta.env.VITE_APP_URL ?? "http://localhost:5173";
+export const SLOT_DURATION_MINUTES = Number(import.meta.env.VITE_SLOT_DURATION_MINUTES ?? 30);
 
 /* ── AUTH ── */
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "";

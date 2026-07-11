@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import BookingCalendar from "@/app/slot-booking/components/booking-calendar/booking-calendar";
 import SlotPicker from "@/app/slot-booking/components/slot-picker/slot-picker";
 import { Icon } from "@/components/ui/icons";
-import { BOOKING_LABELS, MOCK_SLOTS, TIMEZONES, CONTEXT_SECTIONS } from "./slot-booking.constants";
+import { BOOKING_LABELS, MOCK_SLOTS, CONTEXT_SECTIONS } from "./slot-booking.constants";
 import type { MockSlot } from "./slot-booking.constants";
 import "./slot-booking.css";
 
@@ -10,9 +10,6 @@ const SlotBooking = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [confirmed, setConfirmed] = useState(false);
-  const [timezone, setTimezone] = useState(
-    Intl.DateTimeFormat().resolvedOptions().timeZone,
-  );
 
   const handleToggleSlot = useCallback((value: string) => {
     setSelectedSlots((prev) =>
@@ -126,20 +123,6 @@ const SlotBooking = () => {
           </div>
 
           <div className="action-bottom">
-            <div className="action-tz-picker">
-              <i className="bx bx-globe" />
-              <select
-                className="tz-select"
-                value={timezone}
-                onChange={(e) => setTimezone(e.target.value)}
-              >
-                {TIMEZONES.map((tz) => (
-                  <option key={tz.value} value={tz.value}>{tz.label}</option>
-                ))}
-              </select>
-              <i className="bx bx-chevron-down tz-arrow" />
-            </div>
-
             {selectedSlots.length > 0 && (
               <button className="booking-confirm-btn" onClick={handleConfirm} type="button">
                 <i className="bx bx-calendar-check" />

@@ -1,3 +1,5 @@
+import { SLOT_DURATION_MINUTES } from "@/constants/constants";
+
 export const BOOKING_LABELS = {
   CONFIRM: "Confirm Booking",
   CONFIRMED: "Booking Confirmed",
@@ -15,13 +17,13 @@ export type ContextSection =
 export const CONTEXT_SECTIONS: ContextSection[] = [
   { type: "brand" },
   { type: "divider" },
-  { type: "badge", text: "Technical Round 1" },
-  { type: "title", text: "Frontend Engineer" },
+  { type: "badge", text: "Availability Request" },
+  { type: "title", text: "Select Your Preferred Slots" },
   {
     type: "meta",
     items: [
-      { icon: "bx bx-clock", text: "30 Minutes" },
-      { icon: "bx bx-video", text: "Google Meet / Zoom" },
+      { icon: "bx bx-clock", text: `${SLOT_DURATION_MINUTES} Minutes` },
+      { icon: "bx bx-video", text: "Google Meet" },
     ],
   },
   { type: "divider" },
@@ -29,7 +31,7 @@ export const CONTEXT_SECTIONS: ContextSection[] = [
     type: "note",
     icon: "bx bx-info-circle",
     heading: "Instructions",
-    text: "Please select 3 slots that work best for your timezone. The interviewer will confirm one of your chosen slots.",
+    text: "Please select your preferred open slots. The HR team will use these to schedule events on your calendar.",
   },
 ];
 
@@ -61,12 +63,15 @@ const toValue = (h: number, m: number, endH: number, endM: number) =>
   `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}-${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}`;
 
 const genSlots = () => {
+  const duration = SLOT_DURATION_MINUTES;
   const slots: MockSlot[] = [];
   const unavailable = new Set(["10:00-10:30", "11:30-12:00", "13:00-13:30", "14:30-15:00", "16:30-17:00"]);
   for (let h = 9; h < 18; h++) {
-    for (let m = 0; m < 60; m += 30) {
-      const endH = m === 0 ? h : h + 1;
-      const endM = m === 0 ? 30 : 0;
+    for (let m = 0; m < 60; m += duration) {
+      const totalStart = h * 60 + m;
+      const totalEnd = totalStart + duration;
+      const endH = Math.floor(totalEnd / 60);
+      const endM = totalEnd % 60;
       const value = toValue(h, m, endH, endM);
       slots.push({
         label: `${fmt(h, m)} – ${fmt(endH, endM)}`,
