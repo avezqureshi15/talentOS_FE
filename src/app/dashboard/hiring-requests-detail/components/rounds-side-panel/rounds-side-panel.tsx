@@ -60,7 +60,7 @@ const PanelContent = ({ round }: PanelContentProps) => {
               <span className="rp-row-value"><ReadMoreText text={round.jdLabel} /></span>
             </div>
           )}
-          <Row label="With Whom" icon="bx bx-user-voice" value={round.candidate} />
+          <Row label="Candidate" icon="bx bx-user-voice" value={round.candidate} />
           <Row label="Occurred On" icon="bx bx-calendar" value={round.occurredOn} />
           <Row label="Slot" icon="bx bx-clock" value={round.slot} />
           <Row label="Duration" icon="bx bx-stopwatch" value={round.duration} />

@@ -39,7 +39,9 @@ const ChatArea: React.FC<ChatAreaProps> = (props: ChatAreaProps) => {
   }, [messages]);
 
   useEffect(() => {
-    if (autoScroll) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (autoScroll && containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
   }, [messages, autoScroll]);
 
   const handleCopy = useCallback(async (id: number) => {
