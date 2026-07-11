@@ -28,6 +28,10 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
   const [roundId, setRoundId] = useState<string | null>(null);
   const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
   const [scheduleCandidateId, setScheduleCandidateId] = useState<string | null>(null);
+  const [shortlistCandidateId, setShortlistCandidateId] = useState<string | null>(null);
+  const [shortlistStep, setShortlistStep] = useState<1 | 2>(1);
+  const [shortlistRemarks, setShortlistRemarks] = useState("");
+  const [finalConfirmId, setFinalConfirmId] = useState<string | null>(null);
   const selectedRound = roundId ? MOCK_ROUNDS.find((r) => r.id === roundId) ?? null : null;
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -131,7 +135,7 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
               accordionTab={accordionTab}
               onToggleOpen={(id) => setOpenId(isOpen ? null : id)}
               onStartScreening={(id) => { setScreeningId(id); setOpenId(id); }}
-              onHrShortlist={(id) => { overrideStatus(id, "reviewing"); }}
+              onHrShortlist={(id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); }}
               onHrReject={setRejectConfirmId}
               onScheduleRound1={setScheduleCandidateId}
               onTabChange={setAccordionTab}
@@ -197,6 +201,105 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
               type="button"
             >
               Reject
+            </button>
+          </div>
+        </div>
+      </BaseModal>
+
+      {/* Step 1: HR Remarks */}
+      <BaseModal
+        open={!!shortlistCandidateId && shortlistStep === 1}
+        onClose={() => setShortlistCandidateId(null)}
+        title={APPLICANT_LABELS.HR_REMARKS_TITLE}
+      >
+        <div className="confirm-body">
+          <textarea
+            className="remarks-textarea"
+            placeholder={APPLICANT_LABELS.HR_REMARKS_PLACEHOLDER}
+            value={shortlistRemarks}
+            onChange={(e) => setShortlistRemarks(e.target.value)}
+            rows={4}
+          />
+          <div className="confirm-actions">
+            <button className="confirm-btn confirm-cancel" onClick={() => setShortlistCandidateId(null)} type="button">
+              Cancel
+            </button>
+            <button
+              className="confirm-btn confirm-proceed"
+              onClick={() => setShortlistStep(2)}
+              type="button"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </BaseModal>
+
+      {/* Step 2: Move to Next Round or Final Selection */}
+      <BaseModal
+        open={!!shortlistCandidateId && shortlistStep === 2}
+        onClose={() => setShortlistCandidateId(null)}
+        title={APPLICANT_LABELS.HR_SHORTLIST}
+      >
+        <div className="confirm-body">
+          <p>Proceed with {data.find((a) => a.id === shortlistCandidateId)?.name ?? "candidate"}?</p>
+          <div className="confirm-actions">
+            <button className="confirm-btn confirm-cancel" onClick={() => setShortlistCandidateId(null)} type="button">
+              Cancel
+            </button>
+            <button
+              className="confirm-btn confirm-proceed"
+              onClick={() => {
+                if (shortlistCandidateId) {
+                  setScreeningId(shortlistCandidateId);
+                  setOpenId(shortlistCandidateId);
+                }
+                setShortlistCandidateId(null);
+              }}
+              type="button"
+            >
+              {APPLICANT_LABELS.MOVE_TO_NEXT_ROUND}
+            </button>
+            <button
+              className="confirm-btn confirm-danger"
+              onClick={() => {
+                setFinalConfirmId(shortlistCandidateId);
+                setShortlistCandidateId(null);
+              }}
+              type="button"
+            >
+              {APPLICANT_LABELS.FINAL_SELECTION}
+            </button>
+          </div>
+        </div>
+      </BaseModal>
+
+      {/* Final Selection Warning */}
+      <BaseModal
+        open={!!finalConfirmId}
+        onClose={() => setFinalConfirmId(null)}
+        title={APPLICANT_LABELS.FINAL_SELECTION}
+      >
+        <div className="confirm-body">
+          <p className="warning-text">
+            <i className="bx bx-error-circle"></i> {APPLICANT_LABELS.FINAL_SELECTION_WARNING}
+          </p>
+          <div className="confirm-actions">
+            <button className="confirm-btn confirm-cancel" onClick={() => setFinalConfirmId(null)} type="button">
+              Cancel
+            </button>
+            <button
+              className="confirm-btn confirm-danger"
+              onClick={() => {
+                if (finalConfirmId) {
+                  overrideStatus(finalConfirmId, "hired");
+                  setScreeningId(null);
+                }
+                setFinalConfirmId(null);
+              }}
+              type="button"
+            >
+              Confirm
             </button>
           </div>
         </div>

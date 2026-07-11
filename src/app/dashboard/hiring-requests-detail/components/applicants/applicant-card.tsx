@@ -121,6 +121,12 @@ const ApplicantCard = ({
             </>
           )}
 
+          {a.status === "new" && isScreening && (
+            <button className="btn shortlist compact" onClick={(e) => { e.stopPropagation(); onScheduleRound1(a.id); }}>
+              <i className="bx bx-check" /> {APPLICANT_LABELS.SCHEDULE_NEXT_ROUND}
+            </button>
+          )}
+
           {a.status === "reviewing" && !isScreening && (
             <button className="screen-btn compact" onClick={(e) => { e.stopPropagation(); onStartScreening(a.id); }}>
               {APPLICANT_LABELS.START_SCREENING}

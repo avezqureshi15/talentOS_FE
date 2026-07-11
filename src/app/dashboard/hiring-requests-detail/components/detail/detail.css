@@ -989,3 +989,39 @@
 .confirm-danger:hover:not(:disabled) {
   opacity: 0.85;
 }
+
+.remarks-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  resize: vertical;
+  min-height: 80px;
+  margin-bottom: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.remarks-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.warning-text {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: var(--danger);
+  line-height: 1.5;
+}
+
+.warning-text i {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
