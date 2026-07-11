@@ -301,13 +301,16 @@ export const PER_PAGE_OPTIONS = [5, 10, 50] as const;
 export const HR_TABS = [
   { key: "hiring-requests", label: "All Hiring Requests", icon: "bx bx-briefcase" },
   { key: "interviews", label: "Interviews", icon: "bx bx-calendar-check" },
-  { key: "action-center", label: "Action Center", icon: "bx bx-bell" },
+  { key: "alerts", label: "Alerts", icon: "bx bx-bell" },
 ] as const;
 
-export const ACTION_CENTER_TABS = [
+export const ALERTS_TABS = [
   { key: "slots", label: "Slots", icon: "bx bx-stopwatch" },
   { key: "reviews", label: "Reviews", icon: "bx bx-check-shield" },
 ] as const;
+
+export const ALERTS_DESCRIPTION =
+  "This section displays employees who have not submitted their interview slots despite receiving a reminder notification.";
 
 export const PROFILE_MENU_ITEMS = [
   { id: "profile", label: "Profile", icon: "bx bx-user" },
@@ -350,7 +353,7 @@ export const KEYBOARD_SHORTCUTS_LIST = [
   { label: "New Chat", keys: "Ctrl+Shift+C" },
   { label: "Hiring Requests", keys: "Ctrl+Shift+H" },
   { label: "Interviews", keys: "Ctrl+Shift+I" },
-  { label: "Action Center", keys: "Ctrl+Shift+A" },
+  { label: "Alerts", keys: "Ctrl+Shift+A" },
   { label: "Search", keys: "Ctrl+K" },
   { label: "Toggle Sidebar", keys: "Ctrl+Shift+S" },
   { label: "Shortcuts Menu", keys: "Alt+K" },

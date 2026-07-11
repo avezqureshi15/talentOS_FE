@@ -63,6 +63,14 @@
   gap: 12px;
 }
 
+.ac-description {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0 2px;
+}
+
 .ac-tabs {
   display: flex;
   gap: 0;

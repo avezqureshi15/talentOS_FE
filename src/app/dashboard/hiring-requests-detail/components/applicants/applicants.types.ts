@@ -85,3 +85,43 @@ export type ApplicantsProps = {
 };
 
 export type AccordionTab = "details" | "cover-letter" | "ai-summary" | "rounds";
+
+export type ApplicantFiltersProps = {
+  filter: string;
+  onFilterChange: (value: string) => void;
+  scoreFilter: string;
+  onScoreFilterChange?: (value: string) => void;
+};
+
+export type ApplicantActionModalsProps = {
+  data: Applicant[];
+  finalCandidateId: string | null;
+  finalDecision: "selected" | "rejected" | null;
+  onCloseFinalDecision: () => void;
+  confirmFinalDecision: () => void;
+  rejectConfirmId: string | null;
+  onCloseReject: () => void;
+  onConfirmReject: () => void;
+  shortlistCandidateId: string | null;
+  shortlistStep: 1 | 2;
+  shortlistRemarks: string;
+  onShortlistRemarksChange: (value: string) => void;
+  onShortlistOk: () => void;
+  onMoveToNextRound: () => void;
+  onOpenFinalSelectionWarning: () => void;
+  onCloseShortlist: () => void;
+  finalConfirmId: string | null;
+  onConfirmHire: () => void;
+  onCloseFinalConfirm: () => void;
+};
+
+export type CardExpandedContentProps = {
+  applicant: Applicant;
+  accordionTab: AccordionTab;
+  onTabChange: (tab: AccordionTab) => void;
+  onTimeline: (id: string) => void;
+  onDetailsReadMore: (id: string) => void;
+  onCoverLetterReadMore: (id: string) => void;
+  onAiSummaryReadMore: (id: string) => void;
+  onViewRound?: (roundId: string) => void;
+};

@@ -1,2 +1,2 @@
-﻿export type HiringRequestTab = "hiring-requests" | "interviews" | "action-center";
-export type ActionCenterSubTab = "slots" | "reviews";
+﻿export type HiringRequestTab = "hiring-requests" | "interviews" | "alerts";
+export type AlertsSubTab = "slots" | "reviews";

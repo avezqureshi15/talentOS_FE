@@ -9,7 +9,7 @@ import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useHiringRequests } from "@/app/dashboard/hiring-requests/hooks/use-hiring-requests";
 import type { HiringRequestsFilters } from "@/services/hiring-requests/hiring-requests.types";
-import { QUERY_KEYS, HR_TABS, ACTION_CENTER_TABS } from "@/constants/constants";
+import { QUERY_KEYS, HR_TABS, ALERTS_TABS, ALERTS_DESCRIPTION } from "@/constants/constants";
 import "./hiring-requests.css";
 
 const HiringRequests = () => {
@@ -61,13 +61,13 @@ const HiringRequests = () => {
           {HR_TABS.map((t) => (
             <button
               key={t.key}
-              className={`hr-tab${tab === t.key ? " hr-tab--active" : ""}${highlight && t.key === "action-center" ? " hr-tab--blip" : ""}`}
+              className={`hr-tab${tab === t.key ? " hr-tab--active" : ""}${highlight && t.key === "alerts" ? " hr-tab--blip" : ""}`}
               onClick={() => setTab(t.key)}
               type="button"
             >
               <i className={t.icon} />
               {t.label}
-              {highlight && t.key === "action-center" && <span className="hr-tab__badge" />}
+              {highlight && t.key === "alerts" && <span className="hr-tab__badge" />}
             </button>
           ))}
         </div>
@@ -95,14 +95,15 @@ const HiringRequests = () => {
 
         {tab === "interviews" && <Interviews />}
 
-        {tab === "action-center" && (
+        {tab === "alerts" && (
           <div className="ac-content">
+            <p className="ac-description">{ALERTS_DESCRIPTION}</p>
             <div className="ac-tabs">
-              {ACTION_CENTER_TABS.map((st) => (
+              {ALERTS_TABS.map((st) => (
                 <button
                   key={st.key}
                   className={`ac-tab${sub === st.key ? " ac-tab--active" : ""}`}
-                  onClick={() => setSearchParams({ tab: "action-center", sub: st.key })}
+                  onClick={() => setSearchParams({ tab: "alerts", sub: st.key })}
                   type="button"
                 >
                   <i className={st.icon} />

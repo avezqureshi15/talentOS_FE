@@ -92,8 +92,8 @@ export default function ProtectedLayout() {
     });
   }, []);
 
-  const handleActionCenter = useCallback(() => {
-    navigate("/hiring-requests?tab=action-center&highlight=true");
+  const handleAlerts = useCallback(() => {
+    navigate("/hiring-requests?tab=alerts&highlight=true");
   }, [navigate]);
 
   const handleInterviews = useCallback(() => {
@@ -119,9 +119,9 @@ export default function ProtectedLayout() {
         e.preventDefault();
         handleInterviews();
       }
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.ACTION_CENTER.code) {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.ALERTS.code) {
         e.preventDefault();
-        handleActionCenter();
+        handleAlerts();
       }
       if (e.altKey && e.code === k.SHORTCUTS.code) {
         e.preventDefault();
@@ -130,7 +130,7 @@ export default function ProtectedLayout() {
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [handleNewChat, handleHome, handleToggleSidebar, handleActionCenter, handleInterviews]);
+  }, [handleNewChat, handleHome, handleToggleSidebar, handleAlerts, handleInterviews]);
 
   const {
     isOpen: cmdOpen,

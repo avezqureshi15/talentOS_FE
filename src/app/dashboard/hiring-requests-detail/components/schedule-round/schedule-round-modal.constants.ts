@@ -1,6 +1,7 @@
 import type { Interviewer, DaySchedule } from "./schedule-round-modal.types";
 
 export const SR_LABELS = {
+  ROUND_TITLE_DEFAULT: "Untitled Round",
   STEP_1_TITLE: "Select Interviewer & Time Slot",
   STEP_1_DESC: "Choose an interviewer and pick a slot from their availability.",
   INTERVIEWER_PLACEHOLDER: "Search interviewer...",

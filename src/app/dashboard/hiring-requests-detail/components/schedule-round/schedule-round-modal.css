@@ -15,6 +15,54 @@
   min-height: 0;
 }
 
+.sr-title-row {
+  padding-top: 16px;
+}
+
+.sr-round-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: text;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+  margin: -2px -6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.sr-round-title:hover {
+  background: var(--surface-card);
+}
+
+.sr-round-title i {
+  font-size: 14px;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.sr-round-title:hover i {
+  opacity: 1;
+}
+
+.sr-round-title-input {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--surface-card);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 4px 8px;
+  outline: none;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
 .sr-step-header {
   display: flex;
   flex-direction: column;

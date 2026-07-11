@@ -136,10 +136,10 @@ const Sidebar: React.FC<SidebarProps> = ({
             <span className="sidebar-shortcut">Ctrl+Shift+I</span>
           </button>
           </Link>
-          <Link to="/hiring-requests?tab=action-center">
+          <Link to="/hiring-requests?tab=alerts">
           <button className="sidebar-item">
             <span className="bx bx-bell text-lg" ></span>
-            <span className="sidebar-item-label">Action Center</span>
+            <span className="sidebar-item-label">Alerts</span>
             <span className="sidebar-shortcut">Ctrl+Shift+A</span>
           </button>
           </Link>
