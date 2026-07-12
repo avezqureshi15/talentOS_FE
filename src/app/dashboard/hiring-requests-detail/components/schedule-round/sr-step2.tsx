@@ -2,8 +2,7 @@ import { SR_LABELS } from "./schedule-round-modal.constants";
 
 type SrStep2Props = {
   candidateName: string;
-  interviewerName: string;
-  interviewerRole: string;
+  interviewerNames: string;
   slotDate: string;
   slotTime: string;
   gmeetEnabled: boolean;
@@ -11,7 +10,7 @@ type SrStep2Props = {
   invitePreview: string;
 };
 
-const SrStep2 = ({ candidateName, interviewerName, interviewerRole, slotDate, slotTime, gmeetEnabled, onToggleGmeet, invitePreview }: SrStep2Props) => (
+const SrStep2 = ({ candidateName, interviewerNames, slotDate, slotTime, gmeetEnabled, onToggleGmeet, invitePreview }: SrStep2Props) => (
   <>
     <div className="sr-summary">
       <div className="sr-summary-row">
@@ -25,7 +24,7 @@ const SrStep2 = ({ candidateName, interviewerName, interviewerRole, slotDate, sl
         <div className="sr-summary-icon"><i className="bx bx-briefcase" /></div>
         <div className="sr-summary-content">
           <span className="sr-summary-label">{SR_LABELS.INTERVIEWER_LABEL}</span>
-          <span className="sr-summary-value">{interviewerName} &middot; {interviewerRole}</span>
+          <span className="sr-summary-value">{interviewerNames}</span>
         </div>
       </div>
       <div className="sr-summary-row">

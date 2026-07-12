@@ -162,6 +162,8 @@ export const QUERY_KEYS = {
   ROUNDS: "rounds",
   ROUND_DETAIL: "round-detail",
   SLOT_FORM: "slot-form",
+  INTERVIEWER_SLOTS: "interviewer-slots",
+  INTERVIEWER_SEARCH: "interviewer-search",
 } as const;
 
 export const QUERY_CONFIG = {

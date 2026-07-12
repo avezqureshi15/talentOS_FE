@@ -2,21 +2,18 @@ export type ScheduleStep = 1 | 2 | 3;
 
 export type Interviewer = {
   id: string;
+  emp_id: string;
   name: string;
-  role: string;
+  designation: string;
+  department: string;
+  email: string;
+  slots_count: number;
+  has_slots: boolean;
 };
 
-export type SlotStatus = "available" | "unavailable";
-
-export type TimeSlot = {
-  time: string;
-  status: SlotStatus;
-};
-
-export type DaySchedule = {
-  day: string;
-  date: string;
-  slots: TimeSlot[];
+export type SlotTab = {
+  id: string;
+  label: string;
 };
 
 export type ScheduleRoundModalProps = {
