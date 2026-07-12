@@ -20,6 +20,8 @@ export type ScheduleRoundModalProps = {
   open: boolean;
   candidateName: string;
   candidateId: string;
+  candidateNumberId?: number;
+  jdId?: string;
   onClose: () => void;
   onScheduled: (candidateId: string) => void;
 };

@@ -67,6 +67,7 @@ function mapInterviewItem(item: InterviewApiItem): InterviewEntity {
 
   return {
     id: item.id,
+    roundName: item.round_name,
     interviewerName: item.interviewer.name,
     candidateName: item.candidate.name ?? item.candidate.email ?? "Unknown",
     candidateId: item.candidate.id,

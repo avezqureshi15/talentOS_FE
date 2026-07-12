@@ -21,6 +21,7 @@ export const API_ENDPOINTS = {
   FINAL_VERDICT: "/applications/{candidate_id}/final-verdict",
   FINAL_VERDICTS: "/applications/final-verdicts",
   INTERVIEWS: "/interviews",
+  INTERVIEWS_BOOKING: "/interviews/booking",
   ALERTS: "/alerts",
 } as const;
 

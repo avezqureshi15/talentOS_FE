@@ -42,7 +42,7 @@ export const REJECT_FILTER_LABELS: Record<string, string> = {
 
 export const INFO_CHIP_SKIP_KEYS = new Set(["fitscore", "summary", "summary_md", "rejected_status", "rejected_reason", "strong_matches", "gaps_and_concerns"]);
 
-export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round"]);
+export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round", "interview_scheduled"]);
 
 export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   state: "waiting_for_review",
@@ -86,7 +86,7 @@ export const MOVE_TO_NEXT_ROUND_CONFIG: StateConfig = {
 
 export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
   state: "interview_scheduled",
-  chip: { label: "Interview scheduled", variant: "warning" },
+  chip: { label: "Interview scheduled", variant: "info" },
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],

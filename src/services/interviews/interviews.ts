@@ -17,3 +17,31 @@ export const fetchInterviews = async (
   );
   return data;
 };
+
+export type BookInterviewPayload = {
+  round_name: string;
+  slot_id: string;
+  jd_id: string;
+  candidate_id: number;
+  interviewer_ids: number[];
+  create_google_meet: boolean;
+};
+
+export type BookInterviewResponse = {
+  id: string;
+  round_id: string;
+  slot_id: string | null;
+  event_id: string | null;
+  meet_link: string | null;
+  status: string;
+};
+
+export const bookInterview = async (
+  payload: BookInterviewPayload,
+): Promise<BookInterviewResponse> => {
+  const { data } = await httpClient.post<BookInterviewResponse>(
+    API_ENDPOINTS.INTERVIEWS_BOOKING,
+    payload,
+  );
+  return data;
+};

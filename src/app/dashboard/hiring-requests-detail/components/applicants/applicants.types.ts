@@ -100,6 +100,7 @@ export type ApplicantsProps = {
   onScoreFilterChange?: (value: string) => void;
   applicantParam?: string | null;
   onRefresh?: () => void;
+  jdId: string;
 };
 
 export type AccordionTab = "details" | "cover-letter" | "ai-summary" | "rounds";

@@ -178,6 +178,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 onScoreFilterChange={setScoreFilter}
                 applicantParam={applicantParam}
                 onRefresh={refresh}
+                jdId={hiringRequest.id}
               />
             )
           )}

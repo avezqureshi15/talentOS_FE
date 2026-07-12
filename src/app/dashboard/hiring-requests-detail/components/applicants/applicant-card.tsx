@@ -76,14 +76,14 @@ const ApplicantCard = ({
         <div className="header-left" onClick={() => { if (canExpand) onToggleOpen(a.id); }}>
           <div className="name">
             {a.name}
+          </div>
+          <div className="meta">
+            {a.email && <span><i className="bx bx-envelope"></i> {a.email}</span>}
             {stateConfig.chip && (
               <span className={`state-chip state-chip--${stateConfig.chip.variant}`}>
                 {stateConfig.chip.label}
               </span>
             )}
-          </div>
-          <div className="meta">
-            {a.email && <span><i className="bx bx-envelope"></i> {a.email}</span>}
             {a.appliedAt && (
               <span className="applied-date">
                 <i className="bx bx-calendar"></i> {APPLICANT_LABELS.APPLIED} {formatDate(a.appliedAt)}

@@ -1,5 +1,6 @@
 export type InterviewEntity = {
   id: string;
+  roundName: string;
   interviewerName: string;
   candidateName: string;
   candidateId: string;

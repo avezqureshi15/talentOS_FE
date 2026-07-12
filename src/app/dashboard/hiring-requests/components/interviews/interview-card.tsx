@@ -8,7 +8,7 @@ const InterviewCard = ({ interview, isOpen, onToggleOpen, onReschedule, onCancel
     <div className="interview-card">
       <div className="interview-header">
         <div className="interview-header-left" onClick={() => onToggleOpen(interview.id)}>
-          <div className="name">{interview.interviewerName}</div>
+          <div className="name">{interview.roundName}</div>
           <div className="meta">
             <span><i className="bx bx-user" /> {interview.candidateName}</span>
             <span><i className="bx bx-briefcase" /> {interview.position}</span>
@@ -66,6 +66,10 @@ const InterviewCard = ({ interview, isOpen, onToggleOpen, onReschedule, onCancel
             <div className="interview-table-cell">
               <span className="interview-table-label"><i className="bx bx-briefcase" /> Position</span>
               <span className="interview-table-value">{interview.position}</span>
+            </div>
+            <div className="interview-table-cell">
+              <span className="interview-table-label"><i className="bx bx-layer" /> Round</span>
+              <span className="interview-table-value">{interview.roundName}</span>
             </div>
             <div className="interview-table-cell">
               <span className="interview-table-label"><i className="bx bx-time-five" /> Slot Timing</span>

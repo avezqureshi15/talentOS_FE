@@ -29,6 +29,7 @@ function computeHiringState(
       return isScreening ? "move_to_next_round" : "shortlisted";
     case "move_to_next_round":
       return "move_to_next_round";
+    case "interview_scheduled":
     case "scheduled":
       return "interview_scheduled";
     case "rejected":
