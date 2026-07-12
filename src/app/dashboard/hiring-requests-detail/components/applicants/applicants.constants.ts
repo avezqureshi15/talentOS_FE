@@ -79,7 +79,7 @@ export const MOVE_TO_NEXT_ROUND_CONFIG: StateConfig = {
   showInfoChips: true,
   showExpandedContent: true,
   actions: [
-    { label: "Schedule Interview", icon: "bx bx-calendar", variant: "schedule", handler: "onScheduleInterview" },
+    { label: "Schedule Round", icon: "bx bx-calendar", variant: "schedule", handler: "onScheduleInterview" },
   ],
   menuActions: ["select", "reject"],
 };

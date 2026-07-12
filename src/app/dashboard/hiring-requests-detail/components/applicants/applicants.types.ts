@@ -1,4 +1,4 @@
-export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "rejected" | "scheduled";
+export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "move_to_next_round" | "rejected" | "scheduled";
 
 export type HiringState =
   | "waiting_for_review"
@@ -99,6 +99,7 @@ export type ApplicantsProps = {
   scoreFilter?: string;
   onScoreFilterChange?: (value: string) => void;
   applicantParam?: string | null;
+  onRefresh?: () => void;
 };
 
 export type AccordionTab = "details" | "cover-letter" | "ai-summary" | "rounds";

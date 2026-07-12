@@ -48,7 +48,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
 
   const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
   const jobId = hiringRequest.id;
-  const { applicants, isLoading: appsLoading, hasMore, fetchNext } = useApplicationsData(
+  const { applicants, isLoading: appsLoading, hasMore, fetchNext, refresh } = useApplicationsData(
     jobId,
     filter,
     segment === "applicants",
@@ -177,6 +177,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 scoreFilter={scoreFilter}
                 onScoreFilterChange={setScoreFilter}
                 applicantParam={applicantParam}
+                onRefresh={refresh}
               />
             )
           )}

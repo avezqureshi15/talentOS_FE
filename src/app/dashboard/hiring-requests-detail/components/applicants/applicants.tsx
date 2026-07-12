@@ -19,7 +19,7 @@ type LocalOverride = {
   finalVerdict?: string;
 };
 
-function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam }: ApplicantsProps) {
+function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam, onRefresh }: ApplicantsProps) {
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<string | null>(null);
@@ -91,6 +91,7 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     }
     setFinalCandidateId(null);
     setFinalDecision(null);
+    onRefresh?.();
   };
 
   const handleShortlistOk = async () => {
@@ -140,6 +141,7 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
       setScreeningId(null);
     }
     setFinalConfirmId(null);
+    onRefresh?.();
   };
 
   const confirmRejectFromEvaluation = async (id: string) => {
@@ -169,6 +171,7 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     setRejectConfirmId(null);
     setRejectRemarks("");
     setRejectStep(1);
+    onRefresh?.();
   };
 
   const closeFinalDecision = () => {

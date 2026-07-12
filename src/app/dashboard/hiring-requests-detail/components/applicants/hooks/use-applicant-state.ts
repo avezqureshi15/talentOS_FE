@@ -20,13 +20,15 @@ function computeHiringState(
   if (applicant.finalVerdict === "selected") return "selected";
   if (applicant.finalVerdict === "rejected") return "rejected";
 
-  const status = applicant.status;
+  const status = applicant.status?.toLowerCase();
 
   switch (status) {
     case "under_evaluation":
       return "under_evaluation";
     case "shortlisted":
       return isScreening ? "move_to_next_round" : "shortlisted";
+    case "move_to_next_round":
+      return "move_to_next_round";
     case "scheduled":
       return "interview_scheduled";
     case "rejected":

@@ -97,6 +97,7 @@ function mapCandidate(app: {
   willing_to_relocate?: boolean;
   current_round_id?: string;
   final_verdict?: string;
+  status?: string | null;
   reviews?: Record<string, unknown> | null;
   review_verdict?: string | null;
 }): Applicant {
@@ -114,7 +115,7 @@ function mapCandidate(app: {
     linkedinUrl: app.linkedin_url ?? "",
     scheduled: app.scheduled ?? false,
     cvUrl: app.resume_url ?? "",
-    status: "new",
+    status: (app.status?.toLowerCase() as Applicant["status"]) ?? "new",
     score: app.fit_score ?? undefined,
     aiDecision: app.fit_score != null ? (app.fit_score >= 70 ? "shortlisted" : "rejected") : "pending",
     currentCtc: app.current_ctc ?? undefined,
