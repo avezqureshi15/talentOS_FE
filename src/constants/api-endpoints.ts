@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
   REVIEWS_ROUND: "/reviews/round",
   FINAL_VERDICT: "/applications/{candidate_id}/final-verdict",
   FINAL_VERDICTS: "/applications/final-verdicts",
+  INTERVIEWS: "/interviews",
 } as const;
 
 export const PAGINATION = {
@@ -30,6 +31,7 @@ export const PAGINATION = {
   DEFAULT_CMD_PALETTE_PAGE_SIZE: 5,
   APPLICATIONS_PER_PAGE: 15,
   APPLICATIONS_SEARCH_SIZE: 20,
+  INTERVIEWS_PER_PAGE: 20,
 } as const;
 
 export const FILTER_DEFAULTS = {

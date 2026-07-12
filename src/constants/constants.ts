@@ -157,6 +157,7 @@ export const QUERY_KEYS = {
   TYPES: "types",
   APPLICATIONS: "applications",
   FINAL_VERDICTS: "final-verdicts",
+  INTERVIEWS: "interviews",
   ROUNDS: "rounds",
   ROUND_DETAIL: "round-detail",
   SLOT_FORM: "slot-form",

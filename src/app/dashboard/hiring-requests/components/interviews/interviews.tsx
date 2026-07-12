@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { INTERVIEW_SUB_TABS, MOCK_INTERVIEWS, NO_INTERVIEWS_LABEL } from "./interviews.constants";
+import { INTERVIEW_SUB_TABS, NO_INTERVIEWS_LABEL } from "./interviews.constants";
 import type { InterviewSubTab } from "./interviews.types";
+import { useInterviewsData } from "./hooks/use-interviews-data";
 import InterviewCard from "./interview-card";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import CancelInterviewModal from "./cancel-interview-modal";
@@ -14,9 +15,7 @@ const Interviews = () => {
   const [rescheduleFor, setRescheduleFor] = useState<{ candidateName: string; candidateId: string } | null>(null);
   const [cancelCandidate, setCancelCandidate] = useState<string | null>(null);
 
-  const filtered = MOCK_INTERVIEWS.filter((iv) =>
-    sub === "incoming" ? iv.slotDate !== "Yesterday" : iv.slotDate === "Yesterday"
-  );
+  const { interviews, hasMore, isLoading, page, setPage } = useInterviewsData(sub);
 
   const handleReschedule = useCallback((candidateName: string, candidateId: string) => {
     setRescheduleFor({ candidateName, candidateId });
@@ -45,7 +44,7 @@ const Interviews = () => {
           <button
             key={st.key}
             className={`interviews-tab${sub === st.key ? " interviews-tab--active" : ""}`}
-            onClick={() => { setSub(st.key); setOpenId(null); }}
+            onClick={() => { setSub(st.key); setOpenId(null); setPage(1); }}
             type="button"
           >
             <i className={st.icon} />
@@ -55,20 +54,43 @@ const Interviews = () => {
       </div>
 
       <div className="accordion-list">
-        {filtered.length === 0 ? (
+        {isLoading ? (
+          <div className="hr-tab-placeholder">Loading...</div>
+        ) : interviews.length === 0 ? (
           <div className="hr-tab-placeholder">{NO_INTERVIEWS_LABEL}</div>
         ) : (
-          filtered.map((iv) => (
-            <InterviewCard
-              key={iv.id}
-              interview={iv}
-              isOpen={openId === iv.id}
-              onToggleOpen={(id) => setOpenId(openId === id ? null : id)}
-              onReschedule={handleReschedule}
-              onCancel={handleCancelStart}
-              onNavigateToApplicant={handleNavigateToApplicant}
-            />
-          ))
+          <>
+            {interviews.map((iv) => (
+              <InterviewCard
+                key={iv.id}
+                interview={iv}
+                isOpen={openId === iv.id}
+                onToggleOpen={(id) => setOpenId(openId === id ? null : id)}
+                onReschedule={handleReschedule}
+                onCancel={handleCancelStart}
+                onNavigateToApplicant={handleNavigateToApplicant}
+              />
+            ))}
+            <div className="pagination-row">
+              <button
+                className="pagination-btn"
+                disabled={page <= 1}
+                onClick={() => setPage(page - 1)}
+                type="button"
+              >
+                <i className="bx bx-chevron-left" /> Previous
+              </button>
+              <span className="pagination-info">Page {page}</span>
+              <button
+                className="pagination-btn"
+                disabled={!hasMore}
+                onClick={() => setPage(page + 1)}
+                type="button"
+              >
+                Next <i className="bx bx-chevron-right" />
+              </button>
+            </div>
+          </>
         )}
       </div>
 
