@@ -21,6 +21,8 @@ export type EvaluatedCandidate = {
   willing_to_relocate?: boolean;
   current_round_id?: string;
   final_verdict?: string;
+  rejected_status: string[];
+  rejected_reason: string | null;
 };
 
 export type RoundFromApi = {
@@ -56,6 +58,8 @@ export type RoundDetailApiResponse = {
   notes: string | null;
   remarks_hr: string | null;
   remarks_interviewer: string | null;
+  rejected_status: string[];
+  rejected_reason: string | null;
 };
 
 export type EvaluatedCandidatesResponse = {

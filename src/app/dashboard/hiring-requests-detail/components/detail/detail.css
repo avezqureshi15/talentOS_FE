@@ -829,6 +829,42 @@
   gap: 4px;
 }
 
+.info-chip-row--rejection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.rejection-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+  border: 1px solid var(--danger-light-border);
+  white-space: nowrap;
+}
+
+.rejection-section {
+  margin-bottom: 12px;
+}
+
+.rejection-chip-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.rejection-text {
+  color: var(--danger);
+  font-size: 13px;
+  margin: 0;
+}
+
 .info-chip {
   display: inline-flex;
   font-size: 10px;

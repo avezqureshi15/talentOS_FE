@@ -84,6 +84,8 @@ export type Applicant = {
   willingToRelocate?: boolean;
   currentRoundId?: string;
   finalVerdict?: string;
+  rejectedStatus?: string[];
+  rejectedReason?: string;
 };
 
 export type ApplicantsProps = {

@@ -33,6 +33,8 @@ function mapRoundDetail(api: RoundDetailApiResponse): RoundDetail {
     aiSummary: api.ai_summary ?? "",
     strongMatches: Array.isArray(api.strong_matches) ? api.strong_matches : [],
     gapsAndConcerns: Array.isArray(api.gaps_and_concerns) ? api.gaps_and_concerns : [],
+    rejectedStatus: Array.isArray(api.rejected_status) ? api.rejected_status : [],
+    rejectedReason: api.rejected_reason ?? undefined,
   };
 
   if ("interviewer_decision" in decisions) {

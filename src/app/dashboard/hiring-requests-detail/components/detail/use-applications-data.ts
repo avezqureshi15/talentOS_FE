@@ -97,6 +97,8 @@ function mapCandidate(app: {
   willing_to_relocate?: boolean;
   current_round_id?: string;
   final_verdict?: string;
+  rejected_status?: string[];
+  rejected_reason?: string | null;
 }): Applicant {
   return {
     id: app.id,
@@ -124,5 +126,7 @@ function mapCandidate(app: {
     willingToRelocate: app.willing_to_relocate ?? undefined,
     currentRoundId: app.current_round_id ?? undefined,
     finalVerdict: app.final_verdict ?? undefined,
+    rejectedStatus: app.rejected_status ?? [],
+    rejectedReason: app.rejected_reason ?? undefined,
   };
 }

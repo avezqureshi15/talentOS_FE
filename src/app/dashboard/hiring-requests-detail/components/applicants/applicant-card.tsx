@@ -117,7 +117,15 @@ const ApplicantCard = ({
             </div>
           )}
 
-          {stateConfig.actions.length > 0 && onAction && <span className="header-action-divider" />}
+          {a.rejectedStatus && a.rejectedStatus.length > 0 && (
+            <div className="info-chip-row--rejection">
+              {a.rejectedStatus.map((s, i) => (
+                <span key={i} className="rejection-chip">{s}</span>
+              ))}
+            </div>
+          )}
+
+          {stateConfig.actions.length > 0 && <span className="header-action-divider" />}
 
           {stateConfig.actions.map((action) => (
             onAction && (

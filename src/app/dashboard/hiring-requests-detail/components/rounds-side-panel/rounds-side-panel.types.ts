@@ -20,6 +20,8 @@ export type RoundDetail = {
   aiDecision?: "pending" | "selected" | "rejected" | "conflict";
   hrDecision?: "pending" | "shortlisted" | "rejected";
   remarksHr?: string;
+  rejectedStatus: string[];
+  rejectedReason?: string;
 };
 
 export type RoundsSidePanelProps = {

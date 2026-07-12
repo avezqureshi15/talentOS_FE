@@ -45,7 +45,7 @@ const CardExpandedContent = ({
     {accordionTab === "details" && <CardDetailsTab applicant={a} onDetailsReadMore={onDetailsReadMore} />}
     {accordionTab === "cover-letter" && <CardCoverLetterTab coverLetter={a.coverLetter ?? ""} applicantId={a.id} onReadMore={onCoverLetterReadMore} />}
     {accordionTab === "rounds" && <CardRoundsTab candidateId={a.candidateId} onViewRound={onViewRound} />}
-    {accordionTab === "ai-summary" && <CardAiSummaryTab aiSummary={a.aiSummary ?? ""} applicantId={a.id} onReadMore={onAiSummaryReadMore} />}
+    {accordionTab === "ai-summary" && <CardAiSummaryTab aiSummary={a.aiSummary ?? ""} applicantId={a.id} onReadMore={onAiSummaryReadMore} rejectedStatus={a.rejectedStatus} rejectedReason={a.rejectedReason} />}
 
     {stateConfig.footerBadge && (
       <div className={stateConfig.footerBadge.className}>{stateConfig.footerBadge.text}</div>

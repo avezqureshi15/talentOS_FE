@@ -93,14 +93,27 @@ const PanelContent = ({ round }: PanelContentProps) => {
                   </span>
                 </div>
               )}
-              {(round.aiSummary || hasBullets) && (
+              {(round.aiSummary || hasBullets || round.rejectedStatus.length > 0 || round.rejectedReason) && (
                 <div className="rp-decision-card" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
                   <span className="rp-decision-label">AI Remarks</span>
                   <div className="rp-ai-summary md-content" style={{ padding: 0, border: "none", background: "transparent", width: "100%" }}>
                     {round.aiSummary ? (
                       <ExpandableAiSummary text={round.aiSummary} />
-                    ) : hasBullets ? null : (
+                    ) : hasBullets ? null : round.rejectedStatus.length === 0 && !round.rejectedReason ? (
                       <p className="rp-ai-empty">{ROUNDS_FALLBACK.NO_AI_SUMMARY}</p>
+                    ) : null}
+                    {round.rejectedStatus.length > 0 && (
+                      <>
+                        <span className="rp-ai-subheading">Rejection Reasons</span>
+                        <div className="rp-rejection-chip-group">
+                          {round.rejectedStatus.map((s, i) => (
+                            <span key={i} className="rp-rejection-chip">{s}</span>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                    {round.rejectedReason && (
+                      <p className="rp-rejection-text">{round.rejectedReason}</p>
                     )}
                     {round.strongMatches.length > 0 && (
                       <>

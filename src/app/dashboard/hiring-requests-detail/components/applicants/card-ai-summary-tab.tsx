@@ -6,10 +6,13 @@ type Props = {
   aiSummary: string;
   applicantId: string;
   onReadMore: (id: string) => void;
+  rejectedStatus?: string[];
+  rejectedReason?: string;
 };
 
-const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore }: Props) => {
+const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, rejectedStatus, rejectedReason }: Props) => {
   const aiSum = aiSummary ? truncateText(aiSummary, 50) : null;
+  const hasRejection = (rejectedStatus && rejectedStatus.length > 0) || !!rejectedReason;
 
   return (
     <div className="cover-letter">
@@ -17,6 +20,20 @@ const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore }: Props) => {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5Z" /></svg>
         {APPLICANT_LABELS.AI_SUMMARY}
       </div>
+      {hasRejection && (
+        <div className="rejection-section">
+          {rejectedStatus && rejectedStatus.length > 0 && (
+            <div className="rejection-chip-group">
+              {rejectedStatus.map((s, i) => (
+                <span key={i} className="rejection-chip">{s}</span>
+              ))}
+            </div>
+          )}
+          {rejectedReason && (
+            <p className="rejection-text">{rejectedReason}</p>
+          )}
+        </div>
+      )}
       {aiSum ? (
         <div className="cover-letter-text">
           <MarkdownRenderer content={aiSum.text} />
