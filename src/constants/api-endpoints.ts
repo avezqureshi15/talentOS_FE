@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   SLOTS_CREATE: "/slots/",
   SLOTS_EMPLOYEE: "/slots/by-employee",
   FORMS_VALIDATE: "/forms/validate/",
+  FORMS_SUBMIT: "/forms/",
   ASK_FORM: "/ask-form",
   REVIEWS_ROUND: "/reviews/round",
   FINAL_VERDICT: "/applications/{candidate_id}/final-verdict",
