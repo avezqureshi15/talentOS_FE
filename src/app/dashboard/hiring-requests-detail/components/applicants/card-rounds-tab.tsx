@@ -1,9 +1,15 @@
 import { APPLICANT_LABELS } from "@/constants/constants";
+import { VERDICT_CONFIG } from "./card-rounds-tab.constants";
 import { useApplicationRounds } from "./hooks/use-application-rounds";
 
 type Props = {
   candidateId: number;
   onViewRound?: (roundId: string) => void;
+};
+
+const verdictLabel = (v: string | null): string => {
+  if (!v) return "-";
+  return VERDICT_CONFIG[v] ?? v;
 };
 
 const CardRoundsTab = ({ candidateId, onViewRound }: Props) => {
@@ -42,15 +48,20 @@ const CardRoundsTab = ({ candidateId, onViewRound }: Props) => {
         {APPLICANT_LABELS.ROUNDS}
       </div>
       {rounds && rounds.length > 0 ? (
-        <div className="rounds-chips">
+        <div className="rounds-table">
+          <div className="rounds-table-header">
+            <span className="rounds-table-cell rounds-table-cell--name">Round</span>
+            <span className="rounds-table-cell rounds-table-cell--verdict">Verdict</span>
+          </div>
           {rounds.map((r) => (
             <button
               key={r.id}
-              className="round-chip"
+              className="rounds-table-row"
               onClick={(e) => { e.stopPropagation(); onViewRound?.(r.id); }}
               type="button"
             >
-              {r.round}
+              <span className="rounds-table-cell rounds-table-cell--name">{r.round}</span>
+              <span className="rounds-table-cell rounds-table-cell--verdict">{verdictLabel(r.roundVerdict)}</span>
             </button>
           ))}
         </div>

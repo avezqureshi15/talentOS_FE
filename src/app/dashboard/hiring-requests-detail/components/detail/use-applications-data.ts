@@ -19,32 +19,31 @@ const LIMIT = PAGINATION.APPLICATIONS_PER_PAGE;
 
 export const useApplicationsData = (
   jobId?: string,
-  filter: string = "ALL",
+  filter: string = "all",
   enabled: boolean = true,
   pageSize?: number,
   minScore?: number,
   maxScore?: number,
 ): UseApplicationsDataResult => {
   const limit = pageSize ?? LIMIT;
-  const isScheduleFilter = filter === "scheduled" || filter === "unscheduled";
-  const status = isScheduleFilter ? "ALL" : filter.toUpperCase().replace("-", "_");
-  const schedule = isScheduleFilter ? filter : undefined;
+  const roundVerdict = filter === "all" ? undefined : filter;
 
   const query = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, status, minScore, maxScore, pageSize, schedule],
+    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, roundVerdict, minScore, maxScore, pageSize],
     queryFn: ({ pageParam }) =>
       fetchApplicationsPaginated(
         jobId,
-        status === "ALL" ? undefined : status,
+        undefined,
         minScore,
         maxScore,
         undefined,
         undefined,
         limit,
         pageParam as number,
-        schedule,
+        undefined,
         undefined,
         "false",
+        roundVerdict,
       ),
     initialPageParam: 0,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {

@@ -43,6 +43,7 @@ export const fetchApplicationsPaginated = async (
   schedule?: string,
   q?: string,
   finalVerdict?: string,
+  roundVerdict?: string,
 ): Promise<PaginatedEvaluatedCandidatesResponse> => {
   const params: Record<string, string> = {};
   if (jobId) params.job_id = jobId;
@@ -56,6 +57,7 @@ export const fetchApplicationsPaginated = async (
   if (schedule && schedule !== FILTER_DEFAULTS.ALL) params.schedule = schedule;
   if (q) params.q = q;
   if (finalVerdict !== undefined) params.final_verdict = finalVerdict;
+  if (roundVerdict && roundVerdict !== FILTER_DEFAULTS.ALL) params.round_verdict = roundVerdict;
   const { data } = await httpClient.get<PaginatedEvaluatedCandidatesResponse>(
     API_ENDPOINTS.APPLICATIONS,
     { params },

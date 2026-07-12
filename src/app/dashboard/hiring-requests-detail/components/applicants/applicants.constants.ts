@@ -9,35 +9,15 @@ export const SCORE_FILTERS = [
   { value: "lt30", label: "< 30" },
 ] as const;
 
-export const STATUS_FILTER_OPTIONS = [
+export const ROUND_VERDICT_FILTERS = [
   { value: "all", label: "All Candidates" },
-  { value: "shortlisted", label: "Shortlisted" },
-  { value: "non-shortlisted", label: "Non-shortlisted" },
-  { value: "scheduled", label: "Scheduled" },
-  { value: "unscheduled", label: "Unscheduled" },
-];
+  { value: "selected", label: "Shortlisted" },
+  { value: "rejected", label: "Rejected" },
+] as const;
 
-export const STATUS_FILTER_LABELS: Record<string, string> = {
-  shortlisted: "Shortlisted",
-  "non-shortlisted": "Non-shortlisted",
-  scheduled: "Scheduled",
-  unscheduled: "Unscheduled",
-};
-
-export const REJECT_FILTER_OPTIONS = [
-  { value: "yoe", label: "Years of Experience" },
-  { value: "budget", label: "Budget" },
-  { value: "location", label: "Location" },
-  { value: "notice-period", label: "Notice Period" },
-  { value: "experience", label: "Experience" },
-];
-
-export const REJECT_FILTER_LABELS: Record<string, string> = {
-  yoe: "Years of Experience",
-  budget: "Budget",
-  location: "Location",
-  "notice-period": "Notice Period",
-  experience: "Experience",
+export const ROUND_VERDICT_LABELS: Record<string, string> = {
+  selected: "Shortlisted",
+  rejected: "Rejected",
 };
 
 export const INFO_CHIP_SKIP_KEYS = new Set(["fitscore", "summary", "summary_md", "rejected_status", "rejected_reason", "strong_matches", "gaps_and_concerns"]);
