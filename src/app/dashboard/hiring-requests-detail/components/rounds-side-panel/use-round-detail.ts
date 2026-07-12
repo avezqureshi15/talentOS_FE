@@ -29,6 +29,7 @@ function mapRoundDetail(api: RoundDetailApiResponse): RoundDetail {
     ratings,
     skills: api.skills,
     notes: api.notes ?? "",
+    remarksHr: api.remarks_hr ?? undefined,
     aiSummary: api.ai_summary ?? "",
     strongMatches: Array.isArray(api.strong_matches) ? api.strong_matches : [],
     gapsAndConcerns: Array.isArray(api.gaps_and_concerns) ? api.gaps_and_concerns : [],

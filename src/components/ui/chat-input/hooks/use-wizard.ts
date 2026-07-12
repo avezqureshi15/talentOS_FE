@@ -144,8 +144,7 @@ export const useWizard = (
     if (engine.wizardActionId === "employees-ask-slots") {
       advanceWizardMulti(selected);
     } else {
-      const nf = advanceWizardMultiToNext(selected);
-      if (nf) nf().then((items) => menu.loadWizardItems(items));
+      advanceWizardMultiToNext(selected);
     }
   }, [menu.listItems, multiSelectedIds, engine.wizardActionId, advanceWizardMulti, advanceWizardMultiToNext, menu, clearSelection]);
 

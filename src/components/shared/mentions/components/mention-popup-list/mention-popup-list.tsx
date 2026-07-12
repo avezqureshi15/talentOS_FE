@@ -6,6 +6,7 @@ import SlotTabs from "../slot-tabs/slot-tabs";
 import SearchableList from "./searchable-list";
 import MultiSelectList from "./multi-select-list";
 import InfoChipTooltip from "@/components/ui/info-chip-tooltip/info-chip-tooltip";
+import Skeleton from "@/components/ui/skeleton/skeleton";
 
 type PopupListProps = {
   listItems: CommandItem[];
@@ -18,6 +19,7 @@ type PopupListProps = {
   onSelect: (item: CommandEntry | CommandItem) => void;
   hasMore: boolean | undefined;
   loadMore?: () => void;
+  isLoading: boolean | undefined;
   isLoadingMore: boolean | undefined;
   multiSelectedIds: string[];
   onToggleMultiSelect: (id: string) => void;
@@ -27,7 +29,7 @@ type PopupListProps = {
 const MentionPopupList = ({
   listItems, filteredEntries, isListView, isSlotStage, isMultiSelectStage,
   selectedIndex, setSelectedIndex, onSelect,
-  hasMore, loadMore, isLoadingMore, multiSelectedIds, onToggleMultiSelect,
+  hasMore, loadMore, isLoading, isLoadingMore, multiSelectedIds, onToggleMultiSelect,
 }: PopupListProps) => {
   const bodyRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -89,6 +91,15 @@ const MentionPopupList = ({
     setItemTooltip({ lines, rect: e.currentTarget.getBoundingClientRect() });
   }, []);
 
+  const renderSkeleton = () => (
+    <div className="mp-skeleton">
+      <div className="mp-skeleton-row"><Skeleton variant="text" width="60%" /><Skeleton variant="text" width="80%" /></div>
+      <div className="mp-skeleton-row"><Skeleton variant="text" width="45%" /><Skeleton variant="text" width="90%" /></div>
+      <div className="mp-skeleton-row"><Skeleton variant="text" width="70%" /><Skeleton variant="text" width="55%" /></div>
+      <div className="mp-skeleton-row"><Skeleton variant="text" width="50%" /><Skeleton variant="text" width="75%" /></div>
+    </div>
+  );
+
   const sentinel = hasMore ? (
     <div ref={sentinelRef} className="mp-sentinel">
       {isLoadingMore && <span className="mp-loading">Loading more...</span>}
@@ -96,7 +107,10 @@ const MentionPopupList = ({
   ) : null;
 
   const renderContent = () => {
+    if (listItems.length === 0 && filteredEntries.length === 0 && isLoading) return renderSkeleton();
+
     if (isSlotStage) {
+      if (listItems.length === 0) return <div className="mp-empty">{MENTIONS_LABELS.NO_RESULTS}</div>;
       return (
         <SlotTabs
           listItems={listItems}

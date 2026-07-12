@@ -164,7 +164,7 @@
   background: var(--surface-glass);
 }
 
-.rp-pill--hr-approved {
+.rp-pill--hr-shortlisted {
   color: var(--success);
   background: var(--success-bg);
 }

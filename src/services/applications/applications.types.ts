@@ -19,6 +19,8 @@ export type EvaluatedCandidate = {
   how_did_you_hear: string | null;
   linkedin_url: string | null;
   willing_to_relocate?: boolean;
+  current_round_id?: string;
+  final_verdict?: string;
 };
 
 export type RoundFromApi = {

@@ -93,6 +93,8 @@ function mapCandidate(app: {
   linkedin_url: string | null;
   scheduled?: boolean;
   willing_to_relocate?: boolean;
+  current_round_id?: string;
+  final_verdict?: string;
 }): Applicant {
   return {
     id: app.id,
@@ -118,5 +120,7 @@ function mapCandidate(app: {
     noticePeriod: app.notice_period ?? undefined,
     howDidYouHear: app.how_did_you_hear ?? undefined,
     willingToRelocate: app.willing_to_relocate ?? undefined,
+    currentRoundId: app.current_round_id ?? undefined,
+    finalVerdict: app.final_verdict ?? undefined,
   };
 }

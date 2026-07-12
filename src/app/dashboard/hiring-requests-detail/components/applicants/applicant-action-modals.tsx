@@ -9,6 +9,10 @@ const ApplicantActionModals = ({
   onCloseFinalDecision,
   confirmFinalDecision,
   rejectConfirmId,
+  rejectRemarks,
+  rejectStep,
+  onRejectRemarksChange,
+  onRejectNextStep,
   onCloseReject,
   onConfirmReject,
   shortlistCandidateId,
@@ -53,8 +57,39 @@ const ApplicantActionModals = ({
         </div>
       </BaseModal>
 
+      {/* Reject — Step 1: HR Remarks */}
       <BaseModal
-        open={!!rejectConfirmId}
+        open={!!rejectConfirmId && rejectStep === 1}
+        onClose={onCloseReject}
+        title={APPLICANT_LABELS.HR_REMARKS_TITLE}
+      >
+        <div className="confirm-body">
+          <textarea
+            className="remarks-textarea"
+            placeholder={APPLICANT_LABELS.HR_REMARKS_PLACEHOLDER}
+            value={rejectRemarks}
+            onChange={(e) => onRejectRemarksChange(e.target.value)}
+            rows={4}
+          />
+          <div className="confirm-actions">
+            <button className="confirm-btn confirm-cancel" onClick={onCloseReject} type="button">
+              Cancel
+            </button>
+            <button
+              className="confirm-btn confirm-danger"
+              disabled={rejectRemarks.trim() === ""}
+              onClick={onRejectNextStep}
+              type="button"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </BaseModal>
+
+      {/* Reject — Step 2: Confirmation */}
+      <BaseModal
+        open={!!rejectConfirmId && rejectStep === 2}
         onClose={onCloseReject}
         title={APPLICANT_LABELS.HR_REJECT}
       >
@@ -69,6 +104,7 @@ const ApplicantActionModals = ({
         </div>
       </BaseModal>
 
+      {/* Shortlist — Step 1: HR Remarks */}
       <BaseModal
         open={!!shortlistCandidateId && shortlistStep === 1}
         onClose={onCloseShortlist}
@@ -86,13 +122,19 @@ const ApplicantActionModals = ({
             <button className="confirm-btn confirm-cancel" onClick={onCloseShortlist} type="button">
               Cancel
             </button>
-            <button className="confirm-btn confirm-proceed" onClick={onShortlistOk} type="button">
+            <button
+              className="confirm-btn confirm-proceed"
+              disabled={shortlistRemarks.trim() === ""}
+              onClick={onShortlistOk}
+              type="button"
+            >
               OK
             </button>
           </div>
         </div>
       </BaseModal>
 
+      {/* Shortlist — Step 2: Choose outcome */}
       <BaseModal
         open={!!shortlistCandidateId && shortlistStep === 2}
         onClose={onCloseShortlist}

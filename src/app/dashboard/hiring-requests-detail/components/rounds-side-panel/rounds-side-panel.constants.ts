@@ -22,7 +22,7 @@ export const AI_LABELS: Record<string, string> = {
 
 export const HR_LABELS: Record<string, string> = {
   pending: "Pending",
-  approved: "Approved",
+  shortlisted: "Shortlisted",
   rejected: "Rejected",
 };
 
@@ -44,9 +44,11 @@ export const AI_ICONS: Record<string, string> = {
 
 export const HR_ICONS: Record<string, string> = {
   pending: "bx bx-hourglass",
-  approved: "bx bx-check-double",
+  shortlisted: "bx bx-check-circle",
   rejected: "bx bx-x-circle",
 };
+
+export const HR_REMARKS_LABEL = "HR Remarks";
 
 export const ROUNDS_FALLBACK = {
   NO_NOTES: "No notes provided.",

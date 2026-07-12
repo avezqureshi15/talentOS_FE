@@ -8,11 +8,19 @@ import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/mo
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
+import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
+import { fetchMockApplicants } from "@/services/mock/mock-applicants";
+import { useApplicantActions } from "./hooks/use-applicant-actions";
 import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps } from "./applicants.types";
 
-function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam }: ApplicantsProps) {
-  // justification: stores local status/screening overrides that can't persist to API yet
-  const [localOverrides, setLocalOverrides] = useState<Record<string, { status?: ApplicantStatus; screening?: boolean }>>({});
+type LocalOverride = {
+  status?: ApplicantStatus;
+  screening?: boolean;
+  finalVerdict?: string;
+};
+
+function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam }: ApplicantsProps) {
+  const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<string | null>(null);
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
@@ -23,15 +31,23 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
   const [finalDecision, setFinalDecision] = useState<"selected" | "rejected" | null>(null);
   const [selectedRound, setSelectedRound] = useState<string | null>(null);
   const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
+  const [rejectRemarks, setRejectRemarks] = useState("");
+  const [rejectStep, setRejectStep] = useState<1 | 2>(1);
   const [scheduleCandidateId, setScheduleCandidateId] = useState<string | null>(null);
-  // justification: tracks which candidate's shortlist modal is open
   const [shortlistCandidateId, setShortlistCandidateId] = useState<string | null>(null);
-  // justification: tracks which step (1 = remarks, 2 = choose outcome) of the shortlist modal
   const [shortlistStep, setShortlistStep] = useState<1 | 2>(1);
-  // justification: stores the HR's remarks typed in step 1
   const [shortlistRemarks, setShortlistRemarks] = useState("");
-  // justification: tracks which candidate's final selection warning modal is open
   const [finalConfirmId, setFinalConfirmId] = useState<string | null>(null);
+  const [mockData, setMockData] = useState<Applicant[] | null>(null);
+
+  // justification: fallback to mock API when no prop data is provided
+  useEffect(() => {
+    if (!propData) {
+      fetchMockApplicants().then(setMockData);
+    }
+  }, [propData]);
+
+  const data = propData ?? mockData ?? [];
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -55,19 +71,45 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
     setLocalOverrides((prev) => ({ ...prev, [id]: { ...prev[id], status } }));
   };
 
-  const handleFinalDecision = (id: string, decision: "selected" | "rejected") => {
-    setFinalCandidateId(id);
-    setFinalDecision(decision);
+  const overrideFinalVerdict = (id: string, verdict: string) => {
+    setLocalOverrides((prev) => ({ ...prev, [id]: { ...prev[id], finalVerdict: verdict } }));
   };
 
-  const confirmFinalDecision = () => {
+  const confirmFinalDecision = async () => {
     if (!finalCandidateId || !finalDecision) return;
-    overrideStatus(finalCandidateId, finalDecision === "selected" ? "hired" : "rejected");
+    const applicant = data.find((a) => a.id === finalCandidateId);
+    if (applicant) {
+      try {
+        const verdict = finalDecision === "selected" ? "SELECTED" as const : "REJECTED" as const;
+        await updateFinalVerdict(applicant.candidateId, verdict);
+        overrideFinalVerdict(finalCandidateId, verdict);
+      } catch {
+        overrideFinalVerdict(finalCandidateId, finalDecision === "selected" ? "selected" : "rejected");
+      }
+    } else {
+      overrideFinalVerdict(finalCandidateId, finalDecision === "selected" ? "selected" : "rejected");
+    }
     setFinalCandidateId(null);
     setFinalDecision(null);
   };
 
-  const handleShortlistOk = () => setShortlistStep(2);
+  const handleShortlistOk = async () => {
+    const applicant = data.find((a) => a.id === shortlistCandidateId);
+    if (!applicant?.currentRoundId) { setShortlistStep(2); return; }
+    try {
+      await updateReviewByRound(applicant.currentRoundId, {
+        entity_type: "hr",
+        reviews: { remarks: shortlistRemarks },
+        verdict: "shortlisted",
+      });
+    } catch {
+      // API failure shouldn't block the UI flow
+    }
+    if (shortlistCandidateId) {
+      overrideStatus(shortlistCandidateId, "shortlisted");
+    }
+    setShortlistStep(2);
+  };
 
   const handleMoveToNextRound = () => {
     if (shortlistCandidateId) {
@@ -82,20 +124,51 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
     setShortlistCandidateId(null);
   };
 
-  const handleConfirmFinalHire = () => {
+  const handleConfirmFinalHire = async () => {
     if (finalConfirmId) {
-      overrideStatus(finalConfirmId, "hired");
+      const applicant = data.find((a) => a.id === finalConfirmId);
+      if (applicant) {
+        try {
+          await updateFinalVerdict(applicant.candidateId, "SELECTED");
+          overrideFinalVerdict(finalConfirmId, "selected");
+        } catch {
+          overrideFinalVerdict(finalConfirmId, "selected");
+        }
+      } else {
+        overrideFinalVerdict(finalConfirmId, "selected");
+      }
       setScreeningId(null);
     }
     setFinalConfirmId(null);
   };
 
-  const confirmReject = () => {
+  const confirmRejectFromEvaluation = async (id: string) => {
+    setRejectConfirmId(id);
+    setRejectStep(1);
+    setRejectRemarks("");
+  };
+
+  const confirmReject = async () => {
+    const applicant = data.find((a) => a.id === rejectConfirmId);
+    if (applicant?.currentRoundId) {
+      try {
+        await updateReviewByRound(applicant.currentRoundId, {
+          entity_type: "hr",
+          reviews: { remarks: rejectRemarks },
+          verdict: "reject",
+        });
+      } catch {
+        // API failure shouldn't block the UI flow
+      }
+    }
     if (rejectConfirmId) {
       overrideStatus(rejectConfirmId, "rejected");
+      overrideFinalVerdict(rejectConfirmId, "rejected");
       setScreeningId(null);
     }
     setRejectConfirmId(null);
+    setRejectRemarks("");
+    setRejectStep(1);
   };
 
   const closeFinalDecision = () => {
@@ -105,7 +178,23 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
 
   const closeShortlist = () => setShortlistCandidateId(null);
 
-  const getLocalStatus = (a: Applicant): ApplicantStatus => localOverrides[a.id]?.status ?? a.status;
+  const getLocalApplicant = (a: Applicant): Applicant => ({
+    ...a,
+    status: localOverrides[a.id]?.status ?? a.status,
+    finalVerdict: localOverrides[a.id]?.finalVerdict ?? a.finalVerdict,
+  });
+
+  const {
+    handleAction,
+    handleMenuAction,
+  } = useApplicantActions({
+    onShortlist: (id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); },
+    onRejectFromEvaluation: confirmRejectFromEvaluation,
+    onMoveToNextRound: (id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); },
+    onScheduleInterview: (id) => { setScheduleCandidateId(id); },
+    onMenuSelect: (id) => { setFinalCandidateId(id); setFinalDecision("selected"); },
+    onMenuReject: (id) => { setFinalCandidateId(id); setFinalDecision("rejected"); },
+  });
 
   return (
     <>
@@ -114,7 +203,7 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
       {data.map((a) => {
         const isOpen = openId === a.id;
         const isScreening = screeningId === a.id;
-        const merged = { ...a, status: getLocalStatus(a) };
+        const merged = getLocalApplicant(a);
         return (
           <div key={a.id} data-applicant-id={a.id} data-highlight={applicantParam === a.id ? "true" : undefined}>
             <ApplicantCard
@@ -125,16 +214,13 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
               onToggleOpen={(id) => {
                 if (isOpen) { setOpenId(null); } else { setOpenId(id); setAccordionTab("details"); }
               }}
-              onStartScreening={(id) => { setScreeningId(id); setOpenId(id); }}
-              onHrShortlist={(id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); }}
-              onHrReject={setRejectConfirmId}
-              onScheduleRound1={setScheduleCandidateId}
+              onAction={handleAction}
+              onMenuAction={handleMenuAction}
               onTabChange={setAccordionTab}
               onCoverLetterReadMore={setCoverLetterId}
               onAiSummaryReadMore={setAiSummaryId}
               onDetailsReadMore={setDetailsId}
               onTimeline={setTimelineId}
-              onFinalDecision={handleFinalDecision}
               onViewRound={setSelectedRound}
             />
           </div>
@@ -149,7 +235,11 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
         onCloseFinalDecision={closeFinalDecision}
         confirmFinalDecision={confirmFinalDecision}
         rejectConfirmId={rejectConfirmId}
-        onCloseReject={() => setRejectConfirmId(null)}
+        rejectRemarks={rejectRemarks}
+        rejectStep={rejectStep}
+        onRejectRemarksChange={setRejectRemarks}
+        onRejectNextStep={() => setRejectStep(2)}
+        onCloseReject={() => { setRejectConfirmId(null); setRejectRemarks(""); setRejectStep(1); }}
         onConfirmReject={confirmReject}
         shortlistCandidateId={shortlistCandidateId}
         shortlistStep={shortlistStep}
@@ -164,7 +254,7 @@ function Applicants({ data, openId, setOpenId, filter, onFilterChange, hasMore, 
         onCloseFinalConfirm={() => setFinalConfirmId(null)}
       />
 
-      <ScheduleRoundModal open={!!scheduleCandidateId} candidateName={data.find((a) => a.id === scheduleCandidateId)?.name ?? ""} candidateId={scheduleCandidateId ?? ""} onClose={() => setScheduleCandidateId(null)} onScheduled={(id) => { overrideStatus(id, "shortlisted"); setScreeningId(null); }} />
+      <ScheduleRoundModal open={!!scheduleCandidateId} candidateName={data.find((a) => a.id === scheduleCandidateId)?.name ?? ""} candidateId={scheduleCandidateId ?? ""} onClose={() => setScheduleCandidateId(null)} onScheduled={(id) => { overrideStatus(id, "scheduled"); setScreeningId(null); }} />
 
       <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 

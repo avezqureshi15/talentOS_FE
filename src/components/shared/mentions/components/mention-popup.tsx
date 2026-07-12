@@ -82,7 +82,7 @@ const ANIM_DURATION = 200;
     closeSidebar();
   }, [closeSidebar, onInterviewerChange]);
 
-  const { currentLevel, search, setSearch, filteredEntries, listItems, isListView, activeEntry, canGoBack, selectedIndex, setSelectedIndex, navigateTo, goBack, moveUp, moveDown, selectCurrentItem, loadMore, hasMore, isLoadingMore } = menu;
+  const { currentLevel, search, setSearch, filteredEntries, listItems, isListView, activeEntry, canGoBack, selectedIndex, setSelectedIndex, navigateTo, goBack, moveUp, moveDown, selectCurrentItem, loadMore, hasMore, isLoading, isLoadingMore } = menu;
   const isSlotStage = wizardStage === 4;
   const isWizardActive = wizardStage > 0;
 
@@ -131,6 +131,7 @@ const ANIM_DURATION = 200;
       bottom: `${window.innerHeight - rect.top + GAP}px`,
       left: `${rect.left}px`,
       width: `${POPUP_WIDTH}px`,
+      minHeight: "220px",
       maxHeight: "300px",
       overflowY: "auto",
     });
@@ -174,6 +175,7 @@ const ANIM_DURATION = 200;
         onSelect={handleSelect}
         hasMore={hasMore}
         loadMore={loadMore}
+        isLoading={isLoading}
         isLoadingMore={isLoadingMore}
         multiSelectedIds={multiIds}
         onToggleMultiSelect={toggleMulti}

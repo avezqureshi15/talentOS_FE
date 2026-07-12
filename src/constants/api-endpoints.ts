@@ -16,6 +16,8 @@ export const API_ENDPOINTS = {
   SLOTS_EMPLOYEE: "/slots/by-employee",
   FORMS_VALIDATE: "/forms/validate/",
   ASK_FORM: "/ask-form",
+  REVIEWS_ROUND: "/reviews/round",
+  FINAL_VERDICT: "/applications/{candidate_id}/final-verdict",
 } as const;
 
 export const PAGINATION = {

@@ -18,7 +18,8 @@ export type RoundDetail = {
   gapsAndConcerns: string[];
   verdict?: "reject" | "hold" | "advance";
   aiDecision?: "pending" | "selected" | "rejected" | "conflict";
-  hrDecision?: "pending" | "approved" | "rejected";
+  hrDecision?: "pending" | "shortlisted" | "rejected";
+  remarksHr?: string;
 };
 
 export type RoundsSidePanelProps = {

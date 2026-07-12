@@ -4,7 +4,7 @@ import ReadMoreText from "./read-more-text";
 import ExpandableAiSummary from "./expandable-ai-summary";
 import { useRoundDetail } from "./use-round-detail";
 import type { RoundsSidePanelProps, PanelContentProps, RowProps } from "./rounds-side-panel.types";
-import { ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK, VERDICT_LABELS, AI_LABELS, HR_LABELS, VERDICT_ICONS, AI_ICONS, HR_ICONS } from "./rounds-side-panel.constants";
+import { ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK, VERDICT_LABELS, AI_LABELS, HR_LABELS, VERDICT_ICONS, AI_ICONS, HR_ICONS, HR_REMARKS_LABEL } from "./rounds-side-panel.constants";
 import "./rounds-side-panel.css";
 
 const RoundsSidePanel = ({ open, roundId, onClose }: RoundsSidePanelProps) => {
@@ -69,7 +69,7 @@ const PanelContent = ({ round }: PanelContentProps) => {
         </div>
       </div>
 
-      {round.verdict || round.aiDecision || round.hrDecision ? (
+      {round.verdict || round.aiDecision || round.hrDecision || round.aiSummary || hasBullets ? (
         <>
           <div className="rp-divider" />
           <div className="rp-group">
@@ -93,6 +93,38 @@ const PanelContent = ({ round }: PanelContentProps) => {
                   </span>
                 </div>
               )}
+              {(round.aiSummary || hasBullets) && (
+                <div className="rp-decision-card" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                  <span className="rp-decision-label">AI Remarks</span>
+                  <div className="rp-ai-summary md-content" style={{ padding: 0, border: "none", background: "transparent", width: "100%" }}>
+                    {round.aiSummary ? (
+                      <ExpandableAiSummary text={round.aiSummary} />
+                    ) : hasBullets ? null : (
+                      <p className="rp-ai-empty">{ROUNDS_FALLBACK.NO_AI_SUMMARY}</p>
+                    )}
+                    {round.strongMatches.length > 0 && (
+                      <>
+                        <span className="rp-ai-subheading">Strong Matches</span>
+                        <ul>
+                          {round.strongMatches.map((m, i) => (
+                            <li key={i}>{m}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                    {round.gapsAndConcerns.length > 0 && (
+                      <>
+                        <span className="rp-ai-subheading">Gaps & Concerns</span>
+                        <ul>
+                          {round.gapsAndConcerns.map((g, i) => (
+                            <li key={i}>{g}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
               {round.hrDecision && (
                 <div className="rp-decision-card">
                   <span className="rp-decision-label">HR Decision</span>
@@ -102,44 +134,16 @@ const PanelContent = ({ round }: PanelContentProps) => {
                   </span>
                 </div>
               )}
+              {round.remarksHr && (
+                <div className="rp-decision-card" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                  <span className="rp-decision-label">{HR_REMARKS_LABEL}</span>
+                  <span className="rp-row-value"><ReadMoreText text={round.remarksHr} /></span>
+                </div>
+              )}
             </div>
           </div>
         </>
       ) : null}
-
-      {/* ── BODY: AI Summary ── */}
-      <div className="rp-divider" />
-
-      <div className="rp-group">
-        <span className="rp-group-title">AI Summary</span>
-        <div className="rp-ai-summary md-content">
-          {round.aiSummary ? (
-            <ExpandableAiSummary text={round.aiSummary} />
-          ) : hasBullets ? null : (
-            <p className="rp-ai-empty">{ROUNDS_FALLBACK.NO_AI_SUMMARY}</p>
-          )}
-          {round.strongMatches.length > 0 && (
-            <>
-              <span className="rp-ai-subheading">Strong Matches</span>
-              <ul>
-                {round.strongMatches.map((m, i) => (
-                  <li key={i}>{m}</li>
-                ))}
-              </ul>
-            </>
-          )}
-          {round.gapsAndConcerns.length > 0 && (
-            <>
-              <span className="rp-ai-subheading">Gaps & Concerns</span>
-              <ul>
-                {round.gapsAndConcerns.map((g, i) => (
-                  <li key={i}>{g}</li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </div>
 
       {/* ── FOOTER: Ratings + Skills + Notes ── */}
       <div className="rp-divider" />

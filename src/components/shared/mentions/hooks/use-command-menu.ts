@@ -101,6 +101,7 @@ export const useCommandMenu = () => {
 
   const loadWizardEntry = useCallback((entry: CommandEntry) => {
     setStack([{ title: "", entries: [entry] }]);
+    setListItems([]);
     setSearch("");
   }, []);
 
@@ -182,6 +183,7 @@ export const useCommandMenu = () => {
     selectCurrentItem,
     loadMore,
     hasMore: activeEntry?.hasMore ?? false,
+    isLoading: isQueryLoading,
     isLoadingMore: isLoadingMore || isQueryLoading,
   };
 };

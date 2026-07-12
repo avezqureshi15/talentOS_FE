@@ -69,6 +69,7 @@ export type MenuController = {
   moveUp: () => void;
   moveDown: () => void;
   selectCurrentItem: () => (CommandEntry | CommandItem) | null;
+  isLoading?: boolean;
   loadMore?: () => void;
   hasMore?: boolean;
   isLoadingMore?: boolean;

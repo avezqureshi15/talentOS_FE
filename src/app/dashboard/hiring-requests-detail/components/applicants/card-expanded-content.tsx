@@ -7,6 +7,7 @@ import type { CardExpandedContentProps } from "./applicants.types";
 
 const CardExpandedContent = ({
   applicant: a,
+  stateConfig,
   accordionTab,
   onTabChange,
   onTimeline,
@@ -46,8 +47,9 @@ const CardExpandedContent = ({
     {accordionTab === "rounds" && <CardRoundsTab candidateId={a.candidateId} onViewRound={onViewRound} />}
     {accordionTab === "ai-summary" && <CardAiSummaryTab aiSummary={a.aiSummary ?? ""} applicantId={a.id} onReadMore={onAiSummaryReadMore} />}
 
-    {a.status === "rejected" && <div className="rejected-text">{APPLICANT_LABELS.CANDIDATE_REJECTED}</div>}
-    {a.status === "hired" && <div className="hired-text">{APPLICANT_LABELS.CANDIDATE_HIRED}</div>}
+    {stateConfig.footerBadge && (
+      <div className={stateConfig.footerBadge.className}>{stateConfig.footerBadge.text}</div>
+    )}
   </div>
 );
 

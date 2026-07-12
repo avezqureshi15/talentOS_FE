@@ -1,5 +1,42 @@
-export type ApplicantStatus =
-  | "new" | "reviewing" | "shortlisted" | "rejected" | "hired";
+export type ApplicantStatus = "under_evaluation" | "shortlisted" | "rejected" | "scheduled";
+
+export type HiringState =
+  | "waiting_for_review"
+  | "under_evaluation"
+  | "shortlisted"
+  | "move_to_next_round"
+  | "interview_scheduled"
+  | "rejected"
+  | "selected";
+
+export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move";
+
+export type ActionConfig = {
+  label: string;
+  icon: string;
+  variant: ActionVariant;
+  handler: string;
+};
+
+export type ChipConfig = {
+  label: string;
+  variant: "success" | "danger" | "warning" | "info" | "neutral";
+};
+
+export type MenuAction = "select" | "reject";
+
+export type StateConfig = {
+  state: HiringState;
+  chip?: ChipConfig;
+  showInfoChips: boolean;
+  actions: ActionConfig[];
+  menuActions: MenuAction[];
+  showExpandedContent: boolean;
+  footerBadge?: {
+    text: string;
+    className: string;
+  };
+};
 
 export type ApplicantCardProps = {
   applicant: Applicant;
@@ -7,16 +44,13 @@ export type ApplicantCardProps = {
   isScreening: boolean;
   accordionTab: AccordionTab;
   onToggleOpen: (id: string) => void;
-  onStartScreening: (id: string) => void;
-  onHrShortlist: (id: string) => void;
-  onHrReject: (id: string) => void;
+  onAction: (handlerKey: string, id: string) => void;
+  onMenuAction: (action: MenuAction, id: string) => void;
   onTabChange: (tab: AccordionTab) => void;
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
   onDetailsReadMore: (id: string) => void;
   onTimeline: (id: string) => void;
-  onScheduleRound1: (id: string) => void;
-  onFinalDecision: (id: string, decision: "selected" | "rejected") => void;
   onViewRound?: (roundId: string) => void;
 };
 
@@ -47,10 +81,12 @@ export type Applicant = {
   howDidYouHear?: string;
   scheduled?: boolean;
   willingToRelocate?: boolean;
+  currentRoundId?: string;
+  finalVerdict?: string;
 };
 
 export type ApplicantsProps = {
-  data: Applicant[];
+  data?: Applicant[];
   openId: string | null;
   setOpenId: (id: string | null) => void;
   filter: string;
@@ -78,6 +114,10 @@ export type ApplicantActionModalsProps = {
   onCloseFinalDecision: () => void;
   confirmFinalDecision: () => void;
   rejectConfirmId: string | null;
+  rejectRemarks: string;
+  rejectStep: 1 | 2;
+  onRejectRemarksChange: (value: string) => void;
+  onRejectNextStep: () => void;
   onCloseReject: () => void;
   onConfirmReject: () => void;
   shortlistCandidateId: string | null;
@@ -95,6 +135,7 @@ export type ApplicantActionModalsProps = {
 
 export type CardExpandedContentProps = {
   applicant: Applicant;
+  stateConfig: StateConfig;
   accordionTab: AccordionTab;
   onTabChange: (tab: AccordionTab) => void;
   onTimeline: (id: string) => void;

@@ -451,6 +451,51 @@
   padding-top: 4px;
 }
 
+/* selected state */
+.selected-text {
+  font-size: 11.5px;
+  color: var(--success-light);
+  padding-top: 4px;
+}
+
+/* state chips in card header */
+.state-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.state-chip--success {
+  background: var(--success-bg, rgba(34, 197, 94, 0.12));
+  color: var(--success-light, #22c55e);
+}
+
+.state-chip--danger {
+  background: var(--danger-bg, rgba(239, 68, 68, 0.12));
+  color: var(--danger-light, #ef4444);
+}
+
+.state-chip--warning {
+  background: var(--warning-bg, rgba(245, 158, 11, 0.12));
+  color: var(--warning-light, #f59e0b);
+}
+
+.state-chip--info {
+  background: var(--info-bg, rgba(59, 130, 246, 0.12));
+  color: var(--info-light, #3b82f6);
+}
+
+.state-chip--neutral {
+  background: var(--neutral-bg, rgba(107, 114, 128, 0.12));
+  color: var(--neutral-light, #6b7280);
+}
+
 
 
 /* header layout split */
