@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import SendButton from "@/components/ui/send-button/send-button";
 import ChatTokens from "./chat-tokens";
 import "./chat-input.css";
@@ -6,8 +6,10 @@ import type { ChatInputProps } from "./chat-input.types";
 import { useMentionEngine } from "@/components/shared/mentions/hooks/use-mention-engine";
 import { useCommandMenu } from "@/components/shared/mentions/hooks/use-command-menu";
 import MentionPopup from "@/components/shared/mentions/components/mention-popup";
+import { COMMON_SLOTS_TAB_ID } from "@/components/shared/mentions/components/slot-tabs/slot-tabs.constants";
 import { WIZARD_LABELS } from "@/components/shared/mentions/constants";
 import { WIZARD_ACTIONS } from "@/components/shared/mentions/config/wizard.config";
+import { fetchSlotsByEmployee } from "@/services/slots/slots";
 import { useAutoResize } from "./hooks/use-auto-resize";
 import { useWizard } from "./hooks/use-wizard";
 import { useTypingPlaceholder } from "./hooks/use-typing-placeholder";
@@ -53,6 +55,19 @@ const ChatInput: React.FC<ChatInputProps> = ({
     isListView, listItems, filteredEntries, activeEntry,
     moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
   } = menu;
+
+  const handleInterviewerChange = useCallback((tabId: string) => {
+    const interviewerTokens = tokens.filter((t) => t.type === "interviewer");
+    if (tabId === COMMON_SLOTS_TAB_ID) {
+      Promise.all(interviewerTokens.map((t) => fetchSlotsByEmployee(t.id)))
+        .then((all) => menu.loadWizardItems(all.flat()));
+    } else {
+      const token = interviewerTokens.find((t) => t.id === tabId);
+      if (token) {
+        fetchSlotsByEmployee(token.id).then((items) => menu.loadWizardItems(items));
+      }
+    }
+  }, [tokens, menu]);
 
   const handleKeyDown = useChatKeydown({
     show, isWizardActive, isMultiSelectStage, isFullyTokenized,
@@ -103,6 +118,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             isMultiSelectStage={isMultiSelectStage}
             tokens={tokens}
             anchorRef={containerRef}
+            onInterviewerChange={handleInterviewerChange}
           />
         </div>
       </div>

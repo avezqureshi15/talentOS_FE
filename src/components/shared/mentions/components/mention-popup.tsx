@@ -23,14 +23,15 @@ type MentionPopupProps = {
   isMultiSelectStage: boolean;
   tokens: Token[];
   anchorRef: React.RefObject<HTMLDivElement | null>;
+  onInterviewerChange?: (interviewerId: string) => void;
 };
 
 const POPUP_WIDTH = 300;
 const GAP = 8;
 const ANIM_DURATION = 200;
 
-const MentionPopup = ({
-  show, onInsert, onWizardSelect, multiSelectedIds, onToggleMultiSelect, menu, wizardStage, isMultiSelectStage, tokens, anchorRef,
+  const MentionPopup = ({
+  show, onInsert, onWizardSelect, multiSelectedIds, onToggleMultiSelect, menu, wizardStage, isMultiSelectStage, tokens, anchorRef, onInterviewerChange,
 }: MentionPopupProps) => {
   const popupRef = useRef<HTMLDivElement>(null);
   // justification: tracks popup position computed from anchor rect
@@ -44,7 +45,7 @@ const MentionPopup = ({
   const [activeTab, setActiveTab] = useState(COMMON_SLOTS_TAB_ID);
   const sidebarTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const interviewerTokens = useMemo(
-    () => tokens.filter((t) => t.type === "interviewer").map((t) => ({ id: t.id, name: t.label })),
+    () => tokens.filter((t) => t.type === "interviewer").map((t) => ({ id: t.id, name: t.label, relationalId: t.relationalId })),
     [tokens],
   );
   const showSidebar = interviewerTokens.length > 1 && wizardStage === 4;
@@ -77,8 +78,9 @@ const MentionPopup = ({
 
   const handleSidebarSelect = useCallback((tabId: string) => {
     setActiveTab(tabId);
+    onInterviewerChange?.(tabId);
     closeSidebar();
-  }, [closeSidebar]);
+  }, [closeSidebar, onInterviewerChange]);
 
   const { currentLevel, search, setSearch, filteredEntries, listItems, isListView, activeEntry, canGoBack, selectedIndex, setSelectedIndex, navigateTo, goBack, moveUp, moveDown, selectCurrentItem, loadMore, hasMore, isLoadingMore } = menu;
   const isSlotStage = wizardStage === 4;

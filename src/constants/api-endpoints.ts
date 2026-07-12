@@ -12,6 +12,10 @@ export const API_ENDPOINTS = {
   ROUNDS: "/rounds/",
   USERS: "/users/",
   SLOTS: "/slots/",
+  SLOTS_CREATE: "/slots/",
+  SLOTS_EMPLOYEE: "/slots/by-employee",
+  FORMS_VALIDATE: "/forms/validate/",
+  ASK_FORM: "/ask-form",
 } as const;
 
 export const PAGINATION = {

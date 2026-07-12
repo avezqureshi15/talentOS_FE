@@ -39,7 +39,12 @@ function createHiringRequestEntry(): CommandEntry {
 }
 
 function createInterviewerEntry(): CommandEntry {
-  return createPaginatableEntry("interviewer-search", "Interviewers", "Search interviewers...", fetchUsersForMentions);
+  return createPaginatableEntry(
+    "interviewer-search",
+    "Interviewers",
+    "Search interviewers...",
+    (query, page) => fetchUsersForMentions(query, page, true),
+  );
 }
 
 function createCandidateEntry(): CommandEntry {

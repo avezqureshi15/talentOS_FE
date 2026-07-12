@@ -23,7 +23,9 @@ export const fetchUsersForMentions = async (
   const items: UserMentionsFetcherResultItem[] = res.data.map((user) => ({
     id: String(user.id),
     label: user.name,
-    description: `${user.designation} · ${user.department}`,
+    description: slotsInfo && user.slots_count !== undefined
+      ? `${user.slots_count} slot${user.slots_count === 1 ? "" : "s"} available`
+      : `${user.designation} · ${user.department}`,
     relationalId: user.emp_id,
     meta: {
       type: "interviewer",

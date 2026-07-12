@@ -6,4 +6,6 @@ export const SLOT_PICKER_LABELS = {
   START_LABEL: "Start",
   END_LABEL: "End",
   ADD: "Add",
+  CUSTOM_SLOTS_TITLE: "Custom Slots",
+  REMOVE: "Remove",
 } as const;

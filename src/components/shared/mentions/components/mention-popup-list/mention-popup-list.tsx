@@ -34,10 +34,15 @@ const MentionPopupList = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
+  const [itemTooltip, setItemTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
   const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hideTooltip = useCallback(() => {
-    tooltipTimerRef.current = setTimeout(() => setTooltip(null), 80);
+    setTooltip(null);
+  }, []);
+
+  const hideItemTooltip = useCallback(() => {
+    setItemTooltip(null);
   }, []);
 
   useEffect(() => {
@@ -65,18 +70,24 @@ const MentionPopupList = ({
   }, [isListView, loadMore, hasMore, isLoadingMore]);
 
   const buildTooltipLines = useCallback((item: CommandItem): string[] => {
-    const lines: string[] = [`Ask ${item.label} for Slots`];
-    const m = item.meta;
-    if (m?.email) lines.push(`Email: ${m.email}`);
-    if (m?.designation) lines.push(`Designation: ${m.designation}`);
-    if (m?.department) lines.push(`Department: ${m.department}`);
-    return lines;
+    return [`Ask ${item.label} for Slots`];
   }, []);
 
   const handleAskSlotsHover = useCallback((e: React.MouseEvent<HTMLButtonElement>, item: CommandItem) => {
-    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    setItemTooltip(null);
     setTooltip({ lines: buildTooltipLines(item), rect: e.currentTarget.getBoundingClientRect() });
   }, [buildTooltipLines]);
+
+  const handleItemHover = useCallback((e: React.MouseEvent<HTMLDivElement>, item: CommandItem) => {
+    const m = item.meta;
+    if (m?.type !== "interviewer") return;
+    const lines: string[] = [];
+    if (m.email) lines.push(`Email: ${m.email}`);
+    if (m.designation) lines.push(`Designation: ${m.designation}`);
+    if (lines.length === 0) return;
+    setTooltip(null);
+    setItemTooltip({ lines, rect: e.currentTarget.getBoundingClientRect() });
+  }, []);
 
   const sentinel = hasMore ? (
     <div ref={sentinelRef} className="mp-sentinel">
@@ -107,6 +118,8 @@ const MentionPopupList = ({
             onToggleMultiSelect={onToggleMultiSelect}
             onAskSlotsHover={handleAskSlotsHover}
             onAskSlotsLeave={hideTooltip}
+            onItemHover={handleItemHover}
+            onItemLeave={hideItemTooltip}
           />
           {sentinel}
         </>
@@ -123,6 +136,8 @@ const MentionPopupList = ({
             onSelect={onSelect}
             onAskSlotsHover={handleAskSlotsHover}
             onAskSlotsLeave={hideTooltip}
+            onItemHover={handleItemHover}
+            onItemLeave={hideItemTooltip}
           />
           {sentinel}
         </>
@@ -155,6 +170,7 @@ const MentionPopupList = ({
         {renderContent()}
       </div>
       {tooltip && <InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} />}
+      {itemTooltip && <InfoChipTooltip lines={itemTooltip.lines} rect={itemTooltip.rect} />}
     </>
   );
 };

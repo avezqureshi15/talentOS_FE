@@ -29,9 +29,14 @@
   transition: all 0.15s ease;
 }
 
-.cal-nav-btn:hover {
+.cal-nav-btn:hover:not(:disabled) {
   background: var(--surface-glass-hover);
   color: var(--text-primary);
+}
+
+.cal-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
 .cal-nav-btn i {
@@ -77,7 +82,7 @@
   font-family: inherit;
 }
 
-.cal-cell:hover:not(.cal-cell--past):not(.cal-cell--empty) {
+.cal-cell:hover:not(.cal-cell--disabled):not(.cal-cell--empty) {
   background: var(--surface-glass-hover);
 }
 
@@ -87,7 +92,7 @@
   font-weight: 600;
 }
 
-.cal-cell--past {
+.cal-cell--disabled {
   color: var(--text-faint);
   cursor: default;
 }

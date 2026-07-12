@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useMemo } from "react";
-import type { WizardStage, CommandItem } from "@/components/shared/mentions/types";
+import type { WizardStage, CommandEntry, CommandItem } from "@/components/shared/mentions/types";
 import { WIZARD_ACTIONS } from "@/components/shared/mentions/config/wizard.config";
 import { WIZARD_REAL_DATA_SOURCES } from "@/components/shared/mentions/config/wizard-data-sources";
 import { MENTION_REGEX } from "@/components/shared/mentions/hooks/use-mention-engine";
+import { fetchSlotsByEmployee } from "@/services/slots/slots";
 import type { ChatInputProps } from "../chat-input.types";
 import { useMultiSelect } from "./use-multi-select";
 import { useWizardExecution } from "./use-wizard-execution";
@@ -66,6 +67,29 @@ export const useWizard = (
     const stage = action.stages[stageIdx];
     if (!stage) return;
 
+    if (stage.tokenType === "slot") {
+      const interviewerToken = tokens.find((t) => t.type === "interviewer");
+      const empId = interviewerToken?.id;
+      if (empId) {
+        const entry: CommandEntry = {
+          id: "slot-search",
+          label: "Available Slots",
+          searchPlaceholder: "Search slots...",
+          hasMore: false,
+          fetcher: async (query: string) => {
+            const items = await fetchSlotsByEmployee(empId);
+            if (!query) return items;
+            const q = query.toLowerCase();
+            return items.filter(
+              (s) => s.label.toLowerCase().includes(q) || (s.description ?? "").toLowerCase().includes(q),
+            );
+          },
+        };
+        entry.fetcher?.("").then(() => menu.loadWizardEntry(entry));
+        return;
+      }
+    }
+
     const dataSource = wizardActionId ? WIZARD_REAL_DATA_SOURCES[wizardActionId]?.[stageIdx] : null;
 
     if (dataSource) {
@@ -75,7 +99,7 @@ export const useWizard = (
     } else {
       stage.fetcher("").then((items) => menu.loadWizardItems(items));
     }
-  }, [wizardActionId, menu]);
+  }, [wizardActionId, menu, tokens]);
 
   useEffect(() => {
     if (wizardStage >= 1) loadStageItems(wizardStage - 1);

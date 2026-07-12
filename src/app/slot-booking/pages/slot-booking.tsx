@@ -1,57 +1,71 @@
-import { useState, useCallback } from "react";
 import BookingCalendar from "@/app/slot-booking/components/booking-calendar/booking-calendar";
 import SlotPicker from "@/app/slot-booking/components/slot-picker/slot-picker";
+import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import { Icon } from "@/components/ui/icons";
-import { BOOKING_LABELS, MOCK_SLOTS, CONTEXT_SECTIONS } from "./slot-booking.constants";
-import type { MockSlot } from "./slot-booking.constants";
+import { BOOKING_LABELS, FORM_ERRORS, CONTEXT_SECTIONS } from "./slot-booking.constants";
+import { useSlotBooking } from "@/app/slot-booking/hooks/use-slot-booking";
 import "./slot-booking.css";
 
 const SlotBooking = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
-  const [confirmed, setConfirmed] = useState(false);
+  const {
+    formId,
+    formValid,
+    formLoading,
+    formError,
+    formErrorMessage,
+    selectedDate,
+    setSelectedDate,
+    selectedSlots,
+    customSlots,
+    slots,
+    totalSlotsCount,
+    isSubmitting,
+    isConfirmed,
+    handleToggleSlot,
+    handleAddCustomSlot,
+    handleRemoveCustomSlot,
+    handleConfirm,
+  } = useSlotBooking();
 
-  const handleToggleSlot = useCallback((value: string) => {
-    setSelectedSlots((prev) =>
-      prev.includes(value) ? prev.filter((s) => s !== value) : [...prev, value],
+  if (!formId) {
+    return (
+      <div className="booking-page">
+        <div className="booking-confirmed">
+          <ErrorFallback title="Missing Link" message={FORM_ERRORS.MISSING} />
+        </div>
+      </div>
     );
-  }, []);
+  }
 
-  const handleConfirm = useCallback(() => {
-    setConfirmed(true);
-  }, []);
+  if (formLoading) {
+    return (
+      <div className="booking-page">
+        <div className="booking-confirmed">
+          <LoadingSpinner size="lg" fullPage />
+        </div>
+      </div>
+    );
+  }
 
-  const slots: MockSlot[] = selectedDate ? MOCK_SLOTS : [];
+  if (formError || !formValid) {
+    return (
+      <div className="booking-page">
+        <div className="booking-confirmed">
+          <ErrorFallback title="Booking Unavailable" message={formErrorMessage} />
+        </div>
+      </div>
+    );
+  }
 
-  /* Payload shape when sending to backend:
-     {
-       date: "2026-06-26",
-       time_slots: ["10:00-10:30", "11:00-11:30"],
-       timezone: "Asia/Kolkata",
-     }
-     Backend stores:
-     {
-       id: uuid,
-       date: date,
-       time_slots: string[],
-       timezone: string,
-       status: "pending" | "confirmed" | "cancelled",
-       created_at: timestamp,
-       updated_at: timestamp,
-     }
-  */
-
-  if (confirmed) {
+  if (isConfirmed) {
     return (
       <div className="booking-page">
         <div className="booking-confirmed">
           <i className="bx bx-check-circle confirmed-icon" />
           <h2 className="confirmed-title">{BOOKING_LABELS.CONFIRMED}</h2>
           <p className="confirmed-desc">
-            {selectedDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
-            {selectedSlots.length > 0 && (
-              <> &middot; {selectedSlots.length} slot{selectedSlots.length > 1 ? "s" : ""}</>
-            )}
+            {totalSlotsCount} slot{totalSlotsCount > 1 ? "s" : ""} submitted
           </p>
         </div>
       </div>
@@ -118,19 +132,25 @@ const SlotBooking = () => {
                 slots={slots}
                 selectedSlots={selectedSlots}
                 onToggleSlot={handleToggleSlot}
+                customSlots={customSlots}
+                onAddCustomSlot={handleAddCustomSlot}
+                onRemoveCustomSlot={handleRemoveCustomSlot}
               />
             </div>
           </div>
 
           <div className="action-bottom">
-            {selectedSlots.length > 0 && (
-              <button className="booking-confirm-btn" onClick={handleConfirm} type="button">
-                <i className="bx bx-calendar-check" />
-                {BOOKING_LABELS.CONFIRM} ({selectedSlots.length})
+            {totalSlotsCount > 0 && (
+              <button className="booking-confirm-btn" onClick={handleConfirm} type="button" disabled={isSubmitting}>
+                <i className={`bx ${isSubmitting ? "bx-loader-alt bx-spin" : "bx-calendar-check"}`} />
+                {isSubmitting
+                  ? "Submitting..."
+                  : `${BOOKING_LABELS.CONFIRM} (${totalSlotsCount})`
+                }
               </button>
             )}
 
-            {selectedSlots.length === 0 && (
+            {totalSlotsCount === 0 && (
               <p className="booking-hint">{BOOKING_LABELS.NO_SLOTS}</p>
             )}
           </div>

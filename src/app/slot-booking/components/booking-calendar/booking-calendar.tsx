@@ -7,8 +7,17 @@ const BookingCalendar = ({ selectedDate, onChangeDate }: BookingCalendarProps) =
   const year = selectedDate.getFullYear();
   const month = selectedDate.getMonth();
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  const maxDate = useMemo(() => {
+    const d = new Date(today);
+    d.setDate(today.getDate() + 3);
+    return d;
+  }, [today]);
 
   const days = useMemo(() => {
     const firstOfMonth = new Date(year, month, 1);
@@ -24,17 +33,35 @@ const BookingCalendar = ({ selectedDate, onChangeDate }: BookingCalendarProps) =
   const prevMonth = () => onChangeDate(new Date(year, month - 1, 1));
   const nextMonth = () => onChangeDate(new Date(year, month + 1, 1));
 
+  const canGoPrev = useMemo(() => {
+    const prev = new Date(year, month - 1, 1);
+    return prev < today;
+  }, [year, month, today]);
+
+  const canGoNext = useMemo(() => {
+    const next = new Date(year, month + 1, 1);
+    next.setHours(0, 0, 0, 0);
+    return next <= maxDate;
+  }, [year, month, maxDate]);
+
   const sameDay = (a: Date, b: Date) =>
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
 
+  const isInRange = (date: Date) =>
+    date >= today && date <= maxDate;
+
   return (
     <div className="booking-calendar">
       <div className="cal-header">
-        <button className="cal-nav-btn" onClick={prevMonth} type="button"><i className="bx bx-chevron-left" /></button>
+        <button className="cal-nav-btn" onClick={prevMonth} type="button" disabled={!canGoPrev}>
+          <i className="bx bx-chevron-left" />
+        </button>
         <span className="cal-month-label">{MONTH_LABELS[month]} {year}</span>
-        <button className="cal-nav-btn" onClick={nextMonth} type="button"><i className="bx bx-chevron-right" /></button>
+        <button className="cal-nav-btn" onClick={nextMonth} type="button" disabled={!canGoNext}>
+          <i className="bx bx-chevron-right" />
+        </button>
       </div>
 
       <div className="cal-day-labels">
@@ -48,15 +75,15 @@ const BookingCalendar = ({ selectedDate, onChangeDate }: BookingCalendarProps) =
           if (d === null) return <div key={`empty-${i}`} className="cal-cell cal-cell--empty" />;
 
           const date = new Date(year, month, d);
-          const isPast = date < today;
+          const inRange = isInRange(date);
           const isSelected = sameDay(date, selectedDate);
 
           return (
             <button
               key={d}
-              className={`cal-cell${isSelected ? " cal-cell--selected" : ""}${isPast ? " cal-cell--past" : ""}`}
-              onClick={() => !isPast && onChangeDate(date)}
-              disabled={isPast}
+              className={`cal-cell${isSelected ? " cal-cell--selected" : ""}${!inRange ? " cal-cell--disabled" : ""}`}
+              onClick={() => inRange && onChangeDate(date)}
+              disabled={!inRange}
               type="button"
             >
               {d}

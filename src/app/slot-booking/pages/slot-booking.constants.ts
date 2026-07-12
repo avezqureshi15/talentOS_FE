@@ -3,7 +3,25 @@ import { SLOT_DURATION_MINUTES } from "@/constants/constants";
 export const BOOKING_LABELS = {
   CONFIRM: "Confirm Booking",
   CONFIRMED: "Booking Confirmed",
+  CONFIRM_FAILED: "Failed to confirm booking. Please try again.",
   NO_SLOTS: "Select at least one slot to continue",
+  LOADING_FORM: "Loading booking details...",
+} as const;
+
+export const FORM_ERRORS = {
+  MISSING: "Missing booking link. Please contact HR.",
+  INVALID: "Invalid booking link. Please contact HR.",
+  NOT_FOUND: "This booking link was not found. Please contact HR.",
+  EXPIRED: "This booking link has expired. Please contact HR for a new one.",
+  ALREADY_SUBMITTED: "You have already submitted your slot preferences. Please contact HR if you need to make any changes.",
+  UNKNOWN: "Something went wrong. Please try again or contact HR.",
+} as const;
+
+export const SLOT_VALIDATION = {
+  MIN_HOUR: 9,
+  MAX_HOUR: 19,
+  PAST_TIME_MSG: "Cannot add slots in the past. Please select a future time.",
+  OUT_OF_RANGE_MSG: "Slots must be between 9:00 AM and 7:00 PM.",
 } as const;
 
 export type ContextSection =
@@ -56,11 +74,12 @@ export type MockSlot = {
 const fmt = (h: number, m: number) => {
   const period = h >= 12 ? "PM" : "AM";
   const hour12 = h % 12 || 12;
-  return `${hour12}:${String(m).padStart(2, "0")} ${period}`;
+  const mins = String(Math.round(m)).padStart(2, "0");
+  return `${hour12}:${mins} ${period}`;
 };
 
 const toValue = (h: number, m: number, endH: number, endM: number) =>
-  `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}-${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}`;
+  `${String(h).padStart(2, "0")}:${String(Math.round(m)).padStart(2, "0")}-${String(endH).padStart(2, "0")}:${String(Math.round(endM)).padStart(2, "0")}`;
 
 const genSlots = () => {
   const duration = SLOT_DURATION_MINUTES;

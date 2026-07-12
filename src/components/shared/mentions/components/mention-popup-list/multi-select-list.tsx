@@ -10,12 +10,14 @@ type MultiSelectListProps = {
   onToggleMultiSelect: (id: string) => void;
   onAskSlotsHover: (e: React.MouseEvent<HTMLButtonElement>, item: CommandItem) => void;
   onAskSlotsLeave: () => void;
+  onItemHover?: (e: React.MouseEvent<HTMLDivElement>, item: CommandItem) => void;
+  onItemLeave?: () => void;
 };
 
 const MultiSelectList = ({
   listItems, selectedIndex, setSelectedIndex,
   multiSelectedIds, onToggleMultiSelect,
-  onAskSlotsHover, onAskSlotsLeave,
+  onAskSlotsHover, onAskSlotsLeave, onItemHover, onItemLeave,
 }: MultiSelectListProps) => {
   const atMax = multiSelectedIds.length >= MAX_SELECTION;
   return (
@@ -30,7 +32,7 @@ const MultiSelectList = ({
             onMouseEnter={() => setSelectedIndex(i)}
           >
             <div className="mp-item-check"><i className={`bx ${isSelected ? "bx-checkbox-checked" : "bx-checkbox"} mp-check-icon`} /></div>
-            <div className="mp-item-avatar">{item.label.charAt(0).toUpperCase()}</div>
+            <div className="mp-item-avatar" onMouseEnter={(e) => onItemHover?.(e, item)} onMouseLeave={onItemLeave}>{item.label.charAt(0).toUpperCase()}</div>
             <div className="mp-item-content">
               <div className="mp-item-label">{item.label}</div>
               {item.description && <div className="mp-item-desc">{item.description}</div>}

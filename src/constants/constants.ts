@@ -158,6 +158,7 @@ export const QUERY_KEYS = {
   APPLICATIONS: "applications",
   ROUNDS: "rounds",
   ROUND_DETAIL: "round-detail",
+  SLOT_FORM: "slot-form",
 } as const;
 
 export const QUERY_CONFIG = {
