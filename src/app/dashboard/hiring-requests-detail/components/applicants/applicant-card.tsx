@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { formatDate } from "./applicants.utils";
 import { APPLICANT_LABELS } from "@/constants/constants";
-import { INFO_CHIPS } from "./applicants.constants";
+import { INFO_CHIP_SKIP_KEYS } from "./applicants.constants";
 import { useApplicantState } from "./hooks/use-applicant-state";
 import CardExpandedContent from "./card-expanded-content";
 import InfoChipTooltip from "@/components/ui/info-chip-tooltip/info-chip-tooltip";
@@ -59,6 +59,17 @@ const ApplicantCard = ({
   const showExpanded = isOpen && (stateConfig.showExpandedContent || readOnly);
   const showMenu = stateConfig.menuActions.length > 0 && a.finalVerdict == null && !readOnly;
 
+  const infoChips = useMemo(() => {
+    if (!a.reviews) return [];
+    return Object.entries(a.reviews).flatMap(([key, value]) => {
+      if (INFO_CHIP_SKIP_KEYS.has(key)) return [];
+      if (typeof value === "object" && value != null && "actual" in value && "expected" in value) {
+        return [{ key, value: value as { actual: string | number; expected: string | number } }];
+      }
+      return [];
+    });
+  }, [a.reviews]);
+
   return (
     <div className="accordion-card">
       <div className="accordion-header">
@@ -84,23 +95,21 @@ const ApplicantCard = ({
         <div className="header-right">
           {stateConfig.showInfoChips && (
             <div className="info-chip-row">
-              {INFO_CHIPS.map((chip) => {
-                const hasActual = a[chip.actualKey] != null && a[chip.actualKey] !== "";
-                const hasExpected = a[chip.expectedKey] != null && a[chip.expectedKey] !== "";
+              {infoChips.map((chip) => {
+                const actual = chip.value.actual;
+                const expected = chip.value.expected;
+                const hasActual = actual != null && actual !== "" && actual !== "?";
+                const hasExpected = expected != null && expected !== "" && expected !== "?";
                 if (!hasActual && !hasExpected) return null;
-                const tipLines: string[] = [chip.title];
-                const actual = a[chip.actualKey];
-                tipLines.push(`Actual : ${actual != null && actual !== "" ? actual : "—"}${chip.actualSuffix ?? ""}`);
-                const expected = a[chip.expectedKey];
-                tipLines.push(`Expected : ${expected != null && expected !== "" ? expected : "—"}${chip.expectedSuffix ?? ""}`);
+                const tipLines: string[] = [chip.key, `Actual : ${hasActual ? actual : "—"}`, `Expected : ${hasExpected ? expected : "—"}`];
                 return (
                   <span
-                    key={chip.label}
+                    key={chip.key}
                     className="info-chip info-chip--red"
                     onMouseEnter={(e) => showTooltip(e, tipLines)}
                     onMouseLeave={hideTooltip}
                   >
-                    {chip.label}
+                    {chip.key}
                   </span>
                 );
               })}
@@ -117,9 +126,9 @@ const ApplicantCard = ({
             </div>
           )}
 
-          {a.rejectedStatus && a.rejectedStatus.length > 0 && (
+          {a.reviews && Array.isArray(a.reviews.rejected_status) && (a.reviews.rejected_status as unknown[]).length > 0 && (
             <div className="info-chip-row--rejection">
-              {a.rejectedStatus.map((s, i) => (
+              {(a.reviews.rejected_status as unknown as string[]).map((s, i) => (
                 <span key={i} className="rejection-chip">{s}</span>
               ))}
             </div>

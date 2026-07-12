@@ -1,4 +1,4 @@
-export type ApplicantStatus = "under_evaluation" | "shortlisted" | "rejected" | "scheduled";
+export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "rejected" | "scheduled";
 
 export type HiringState =
   | "waiting_for_review"
@@ -84,8 +84,8 @@ export type Applicant = {
   willingToRelocate?: boolean;
   currentRoundId?: string;
   finalVerdict?: string;
-  rejectedStatus?: string[];
-  rejectedReason?: string;
+  reviews?: Record<string, unknown>;
+  reviewVerdict?: string;
 };
 
 export type ApplicantsProps = {

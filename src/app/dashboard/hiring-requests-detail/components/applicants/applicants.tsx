@@ -155,7 +155,7 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
         await updateReviewByRound(applicant.currentRoundId, {
           entity_type: "hr",
           reviews: { remarks: rejectRemarks },
-          verdict: "reject",
+          verdict: "rejected",
         });
       } catch {
         // API failure shouldn't block the UI flow

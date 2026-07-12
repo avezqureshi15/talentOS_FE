@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { STATE_CONFIGS } from "../applicants.constants";
+import { STATE_CONFIGS, INFO_CHIP_STATUSES } from "../applicants.constants";
 import type { Applicant, HiringState, StateConfig } from "../applicants.types";
 
 export function useApplicantState(
@@ -8,7 +8,8 @@ export function useApplicantState(
 ): StateConfig {
   return useMemo(() => {
     const hiringState = computeHiringState(applicant, isScreening);
-    return STATE_CONFIGS[hiringState] ?? STATE_CONFIGS.under_evaluation;
+    const config = STATE_CONFIGS[hiringState] ?? STATE_CONFIGS.under_evaluation;
+    return { ...config, showInfoChips: INFO_CHIP_STATUSES.has(hiringState) };
   }, [applicant, isScreening]);
 }
 

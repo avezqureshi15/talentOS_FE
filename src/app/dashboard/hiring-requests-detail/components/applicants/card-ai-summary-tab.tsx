@@ -6,12 +6,13 @@ type Props = {
   aiSummary: string;
   applicantId: string;
   onReadMore: (id: string) => void;
-  rejectedStatus?: string[];
-  rejectedReason?: string;
+  reviews?: Record<string, unknown>;
 };
 
-const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, rejectedStatus, rejectedReason }: Props) => {
+const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, reviews }: Props) => {
   const aiSum = aiSummary ? truncateText(aiSummary, 50) : null;
+  const rejectedStatus = reviews?.rejected_status as string[] | undefined;
+  const rejectedReason = reviews?.rejected_reason as string | undefined;
   const hasRejection = (rejectedStatus && rejectedStatus.length > 0) || !!rejectedReason;
 
   return (

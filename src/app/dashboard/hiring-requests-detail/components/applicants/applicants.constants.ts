@@ -1,4 +1,4 @@
-﻿import type { Applicant, StateConfig } from "./applicants.types";
+﻿import type { StateConfig } from "./applicants.types";
 
 export const SCORE_FILTERS = [
   { value: "all", label: "All Scores" },
@@ -40,22 +40,9 @@ export const REJECT_FILTER_LABELS: Record<string, string> = {
   experience: "Experience",
 };
 
-export type InfoChipConfig = {
-  label: string;
-  title: string;
-  actualKey: keyof Applicant;
-  expectedKey: keyof Applicant;
-  actualSuffix?: string;
-  expectedSuffix?: string;
-};
+export const INFO_CHIP_SKIP_KEYS = new Set(["fitscore", "summary", "summary_md", "rejected_status", "rejected_reason", "strong_matches", "gaps_and_concerns"]);
 
-export const INFO_CHIPS: InfoChipConfig[] = [
-  { label: "YOE", title: "Years Of Experience", actualKey: "yearsOfExperience", expectedKey: "experienceYears", actualSuffix: " yrs", expectedSuffix: " yrs" },
-  { label: "BUDGET", title: "Budget", actualKey: "currentCtc", expectedKey: "expectedCtc", actualSuffix: " LPA", expectedSuffix: " LPA" },
-  { label: "LOCATION", title: "Location", actualKey: "location", expectedKey: "location" },
-  { label: "NOTICE PERIOD", title: "Notice Period", actualKey: "noticePeriod", expectedKey: "noticePeriod", actualSuffix: " days", expectedSuffix: " days" },
-  { label: "EXPERIENCE", title: "Experience", actualKey: "experienceYears", expectedKey: "yearsOfExperience", actualSuffix: " yrs", expectedSuffix: " yrs" },
-];
+export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round"]);
 
 export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   state: "waiting_for_review",
