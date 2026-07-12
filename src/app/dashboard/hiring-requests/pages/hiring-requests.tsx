@@ -2,8 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import HiringRequestsTable from "@/app/dashboard/hiring-requests/components/table/table";
-import Slots from "@/app/dashboard/hiring-requests/components/slots/slots";
-import Reviews from "@/app/dashboard/hiring-requests/components/reviews/reviews";
+import Alerts from "@/app/dashboard/hiring-requests/components/alerts/alerts";
 import Interviews from "@/app/dashboard/hiring-requests/components/interviews/interviews";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
@@ -114,7 +113,7 @@ const HiringRequests = () => {
                 </button>
               ))}
             </div>
-            {sub === "slots" ? <Slots /> : sub === "reviews" ? <Reviews /> : <div className="hr-tab-placeholder">Coming soon</div>}
+            <Alerts sub={sub as "slots" | "reviews"} />
           </div>
         )}
 

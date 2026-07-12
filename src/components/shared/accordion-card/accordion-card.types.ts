@@ -11,4 +11,5 @@ export type AccordionCardProps = {
   jdLabel?: string;
   interviewLabel?: string;
   onViewInterview?: () => void;
+  onResolve?: (id: string) => void;
 };

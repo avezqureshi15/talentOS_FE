@@ -9,6 +9,7 @@ const AccordionCard = ({
   isOpen, onToggleOpen,
   jdHref, jdLabel,
   interviewLabel, onViewInterview,
+  onResolve,
 }: AccordionCardProps) => {
   const [notified, setNotified] = useState(false);
   const [resolved, setResolved] = useState(false);
@@ -20,7 +21,11 @@ const AccordionCard = ({
 
   const handleResolve = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setResolved((prev) => !prev);
+    if (onResolve) {
+      onResolve(id);
+    } else {
+      setResolved((prev) => !prev);
+    }
   };
 
   return (
