@@ -82,12 +82,12 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
       try {
         const verdict = finalDecision === "selected" ? "SELECTED" as const : "REJECTED" as const;
         await updateFinalVerdict(applicant.candidateId, verdict);
-        overrideFinalVerdict(finalCandidateId, verdict);
+        overrideFinalVerdict(finalCandidateId, finalDecision);
       } catch {
-        overrideFinalVerdict(finalCandidateId, finalDecision === "selected" ? "selected" : "rejected");
+        overrideFinalVerdict(finalCandidateId, finalDecision);
       }
     } else {
-      overrideFinalVerdict(finalCandidateId, finalDecision === "selected" ? "selected" : "rejected");
+      overrideFinalVerdict(finalCandidateId, finalDecision);
     }
     setFinalCandidateId(null);
     setFinalDecision(null);

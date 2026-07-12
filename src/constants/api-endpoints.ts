@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
   ASK_FORM: "/ask-form",
   REVIEWS_ROUND: "/reviews/round",
   FINAL_VERDICT: "/applications/{candidate_id}/final-verdict",
+  FINAL_VERDICTS: "/applications/final-verdicts",
 } as const;
 
 export const PAGINATION = {

@@ -10,7 +10,8 @@ import type { ApplicantCardProps } from "./applicants.types";
 const ApplicantCard = ({
   applicant: a,
   isOpen,
-  isScreening,
+  isScreening = false,
+  readOnly = false,
   accordionTab,
   onToggleOpen,
   onAction,
@@ -54,12 +55,14 @@ const ApplicantCard = ({
   }, [menuOpen]);
 
   const isFinal = stateConfig.state === "rejected" || stateConfig.state === "selected";
-  const showMenu = stateConfig.menuActions.length > 0 && a.finalVerdict == null;
+  const canExpand = readOnly || !isFinal;
+  const showExpanded = isOpen && (stateConfig.showExpandedContent || readOnly);
+  const showMenu = stateConfig.menuActions.length > 0 && a.finalVerdict == null && !readOnly;
 
   return (
     <div className="accordion-card">
       <div className="accordion-header">
-        <div className="header-left" onClick={() => { if (!isFinal) onToggleOpen(a.id); }}>
+        <div className="header-left" onClick={() => { if (canExpand) onToggleOpen(a.id); }}>
           <div className="name">
             {a.name}
             {stateConfig.chip && (
@@ -114,19 +117,21 @@ const ApplicantCard = ({
             </div>
           )}
 
-          {stateConfig.actions.length > 0 && <span className="header-action-divider" />}
+          {stateConfig.actions.length > 0 && onAction && <span className="header-action-divider" />}
 
           {stateConfig.actions.map((action) => (
-            <button
-              key={action.handler}
-              className={`btn ${action.variant === "shortlist" || action.variant === "schedule" ? "shortlist" : action.variant === "reject" ? "reject" : "screen-btn"} compact`}
-              onClick={(e) => { e.stopPropagation(); onAction(action.handler, a.id); }}
-            >
-              {action.icon && <i className={action.icon} />} {action.label}
-            </button>
+            onAction && (
+              <button
+                key={action.handler}
+                className={`btn ${action.variant === "shortlist" || action.variant === "schedule" ? "shortlist" : action.variant === "reject" ? "reject" : "screen-btn"} compact`}
+                onClick={(e) => { e.stopPropagation(); onAction(action.handler, a.id); }}
+              >
+                {action.icon && <i className={action.icon} />} {action.label}
+              </button>
+            )
           ))}
 
-          {showMenu && (
+          {showMenu && onMenuAction && (
             <>
               <span className="header-action-divider" />
               <div className="three-dots-wrapper" ref={menuRef}>
@@ -157,7 +162,7 @@ const ApplicantCard = ({
         </div>
       </div>
 
-      {isOpen && stateConfig.showExpandedContent && (
+      {showExpanded && (
         <CardExpandedContent
           applicant={a}
           stateConfig={stateConfig}

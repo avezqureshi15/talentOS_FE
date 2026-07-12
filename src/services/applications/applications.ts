@@ -42,6 +42,7 @@ export const fetchApplicationsPaginated = async (
   offset?: number,
   schedule?: string,
   q?: string,
+  finalVerdict?: string,
 ): Promise<PaginatedEvaluatedCandidatesResponse> => {
   const params: Record<string, string> = {};
   if (jobId) params.job_id = jobId;
@@ -54,8 +55,25 @@ export const fetchApplicationsPaginated = async (
   if (offset !== undefined) params.offset = String(offset);
   if (schedule && schedule !== FILTER_DEFAULTS.ALL) params.schedule = schedule;
   if (q) params.q = q;
+  if (finalVerdict !== undefined) params.final_verdict = finalVerdict;
   const { data } = await httpClient.get<PaginatedEvaluatedCandidatesResponse>(
     API_ENDPOINTS.APPLICATIONS,
+    { params },
+  );
+  return data;
+};
+
+export const fetchFinalVerdicts = async (
+  candidateStatus?: string,
+  limit?: number,
+  offset?: number,
+): Promise<PaginatedEvaluatedCandidatesResponse> => {
+  const params: Record<string, string> = {};
+  if (candidateStatus) params.candidate_status = candidateStatus;
+  if (limit !== undefined) params.limit = String(limit);
+  if (offset !== undefined) params.offset = String(offset);
+  const { data } = await httpClient.get<PaginatedEvaluatedCandidatesResponse>(
+    API_ENDPOINTS.FINAL_VERDICTS,
     { params },
   );
   return data;

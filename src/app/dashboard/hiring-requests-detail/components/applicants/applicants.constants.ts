@@ -63,7 +63,7 @@ export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],
-  menuActions: [],
+  menuActions: ["select", "reject"],
 };
 
 export const UNDER_EVALUATION_CONFIG: StateConfig = {
@@ -74,7 +74,7 @@ export const UNDER_EVALUATION_CONFIG: StateConfig = {
     { label: "Shortlist", icon: "bx bx-check", variant: "shortlist", handler: "onShortlist" },
     { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation" },
   ],
-  menuActions: [],
+  menuActions: ["select", "reject"],
 };
 
 export const SHORTLISTED_CONFIG: StateConfig = {
@@ -84,7 +84,7 @@ export const SHORTLISTED_CONFIG: StateConfig = {
   actions: [
     { label: "Move to Next Round", icon: "bx bx-right-arrow", variant: "move", handler: "onMoveToNextRound" },
   ],
-  menuActions: ["select"],
+  menuActions: ["select", "reject"],
 };
 
 export const MOVE_TO_NEXT_ROUND_CONFIG: StateConfig = {
@@ -94,7 +94,7 @@ export const MOVE_TO_NEXT_ROUND_CONFIG: StateConfig = {
   actions: [
     { label: "Schedule Interview", icon: "bx bx-calendar", variant: "schedule", handler: "onScheduleInterview" },
   ],
-  menuActions: [],
+  menuActions: ["select", "reject"],
 };
 
 export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
@@ -103,7 +103,7 @@ export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],
-  menuActions: [],
+  menuActions: ["select", "reject"],
 };
 
 export const REJECTED_CONFIG: StateConfig = {

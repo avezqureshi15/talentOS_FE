@@ -41,11 +41,12 @@ export type StateConfig = {
 export type ApplicantCardProps = {
   applicant: Applicant;
   isOpen: boolean;
-  isScreening: boolean;
+  isScreening?: boolean;
+  readOnly?: boolean;
   accordionTab: AccordionTab;
   onToggleOpen: (id: string) => void;
-  onAction: (handlerKey: string, id: string) => void;
-  onMenuAction: (action: MenuAction, id: string) => void;
+  onAction?: (handlerKey: string, id: string) => void;
+  onMenuAction?: (action: MenuAction, id: string) => void;
   onTabChange: (tab: AccordionTab) => void;
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
