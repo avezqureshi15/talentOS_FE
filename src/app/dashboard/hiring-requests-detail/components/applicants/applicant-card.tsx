@@ -28,12 +28,12 @@ const ApplicantCard = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
+  const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect; className?: string } | null>(null);
   const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const showTooltip = useCallback((e: React.MouseEvent<HTMLSpanElement>, lines: string[]) => {
+  const showTooltip = useCallback((e: React.MouseEvent<HTMLSpanElement>, lines: string[], className?: string) => {
     if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
-    setTooltip({ lines, rect: e.currentTarget.getBoundingClientRect() });
+    setTooltip({ lines, rect: e.currentTarget.getBoundingClientRect(), className });
   }, []);
 
   const hideTooltip = useCallback(() => {
@@ -120,7 +120,7 @@ const ApplicantCard = ({
           {stateConfig.showInfoChips && a.score != null && (
             <div
               className={`ats-score ${a.score >= 70 ? "score-high" : a.score >= 40 ? "score-mid" : "score-low"}`}
-              onMouseEnter={(e) => showTooltip(e, ["ATS score is calculated based on how the resume matches job description"])}
+              onMouseEnter={(e) => showTooltip(e, ["ATS score is calculated based on how the resume matches job description"], "info-chip-tooltip--wide")}
               onMouseLeave={hideTooltip}
             >
               {a.score}
@@ -194,7 +194,7 @@ const ApplicantCard = ({
           isRemote={isRemote}
         />
       )}
-      {tooltip && <InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} />}
+      {tooltip && <InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} className={tooltip.className} />}
     </div>
   );
 };
