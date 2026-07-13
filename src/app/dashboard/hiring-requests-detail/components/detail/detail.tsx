@@ -179,6 +179,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 applicantParam={applicantParam}
                 onRefresh={refresh}
                 jdId={hiringRequest.id}
+                isRemote={hiringRequest.location?.toLowerCase() === "remote" || hiringRequest.type?.toLowerCase() === "remote"}
               />
             )
           )}

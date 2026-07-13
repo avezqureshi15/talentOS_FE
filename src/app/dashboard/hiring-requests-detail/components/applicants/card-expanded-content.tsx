@@ -15,6 +15,7 @@ const CardExpandedContent = ({
   onCoverLetterReadMore,
   onAiSummaryReadMore,
   onViewRound,
+  isRemote,
 }: CardExpandedContentProps) => (
   <div className="accordion-body">
     <div className="action-links">
@@ -42,7 +43,7 @@ const CardExpandedContent = ({
       </button>
     </div>
 
-    {accordionTab === "details" && <CardDetailsTab applicant={a} onDetailsReadMore={onDetailsReadMore} />}
+    {accordionTab === "details" && <CardDetailsTab applicant={a} onDetailsReadMore={onDetailsReadMore} isRemote={isRemote} />}
     {accordionTab === "cover-letter" && <CardCoverLetterTab coverLetter={a.coverLetter ?? ""} applicantId={a.id} onReadMore={onCoverLetterReadMore} />}
     {accordionTab === "rounds" && <CardRoundsTab candidateId={a.candidateId} onViewRound={onViewRound} />}
     {accordionTab === "ai-summary" && <CardAiSummaryTab aiSummary={a.aiSummary ?? ""} applicantId={a.id} onReadMore={onAiSummaryReadMore} reviews={a.reviews} />}

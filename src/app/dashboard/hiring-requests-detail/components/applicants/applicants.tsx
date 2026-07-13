@@ -19,7 +19,7 @@ type LocalOverride = {
   finalVerdict?: string;
 };
 
-function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam, onRefresh, jdId }: ApplicantsProps) {
+function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam, onRefresh, jdId, isRemote }: ApplicantsProps) {
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<number | null>(null);
@@ -225,6 +225,7 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
               onDetailsReadMore={setDetailsId}
               onTimeline={setTimelineId}
               onViewRound={setSelectedRound}
+              isRemote={isRemote}
             />
           </div>
         );
@@ -272,6 +273,7 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
           applicantName={a.name}
           details={{ currentCtc: a.currentCtc, expectedCtc: a.expectedCtc, location: a.location, yearsOfExperience: a.yearsOfExperience, noticePeriod: a.noticePeriod, howDidYouHear: a.howDidYouHear, willingToRelocate: a.willingToRelocate === true ? "Yes" : a.willingToRelocate === false ? "No" : undefined }}
           onClose={() => setDetailsId(null)}
+          isRemote={isRemote}
         />))}
     </div>
     </>

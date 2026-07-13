@@ -22,6 +22,7 @@ const ApplicantCard = ({
   onDetailsReadMore,
   onTimeline,
   onViewRound,
+  isRemote,
 }: ApplicantCardProps) => {
   const stateConfig = useApplicantState(a, isScreening);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -190,6 +191,7 @@ const ApplicantCard = ({
           onCoverLetterReadMore={onCoverLetterReadMore}
           onAiSummaryReadMore={onAiSummaryReadMore}
           onViewRound={onViewRound}
+          isRemote={isRemote}
         />
       )}
       {tooltip && <InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} />}

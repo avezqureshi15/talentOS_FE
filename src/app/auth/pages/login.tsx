@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { useAuth } from "@/app/auth/hooks/use-auth";
@@ -10,6 +10,8 @@ import "./login.css";
 const Login = () => {
   const { login, user } = useAuth();
   const navigate = useNavigate();
+  // Explanation: tracks Google credential exchange so we can show a spinner instead of blank screen
+  const [loading, setLoading] = useState(false);
 
   // Explanation: redirect already-authenticated users away from login page
   useEffect(() => {
@@ -20,8 +22,13 @@ const Login = () => {
 
   const onSuccess = useCallback(async (response: CredentialResponse) => {
     if (!response.credential) return;
-    await login(response.credential);
-    navigate(ROUTES.CHAT, { replace: true });
+    setLoading(true);
+    try {
+      await login(response.credential);
+      navigate(ROUTES.CHAT, { replace: true });
+    } finally {
+      setLoading(false);
+    }
   }, [login, navigate]);
 
   return (
@@ -32,19 +39,28 @@ const Login = () => {
           <p className="login-subtitle">{LOGIN.SUBTITLE}</p>
         </div>
 
-        <div className="login-divider"><span>{LOGIN.SIGN_IN_LABEL}</span></div>
+        {loading ? (
+          <div className="login-loader">
+            <span className="login-spinner" />
+            <p>{LOGIN.SIGNING_IN_LABEL}</p>
+          </div>
+        ) : (
+          <>
+            <div className="login-divider"><span>{LOGIN.SIGN_IN_LABEL}</span></div>
 
-        <div className="login-google-btn-wrapper">
-          <GoogleLogin
-            onSuccess={onSuccess}
-            onError={() => console.error("Google login failed")}
-            theme="outline"
-            size="large"
-            text="signin_with"
-            shape="pill"
-            width={300}
-          />
-        </div>
+            <div className="login-google-btn-wrapper">
+              <GoogleLogin
+                onSuccess={onSuccess}
+                onError={() => console.error("Google login failed")}
+                theme="outline"
+                size="large"
+                text="signin_with"
+                shape="pill"
+                width={300}
+              />
+            </div>
+          </>
+        )}
 
         <p className="login-footer">{LOGIN.FOOTER}</p>
       </div>

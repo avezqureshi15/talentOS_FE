@@ -385,6 +385,11 @@
   color: var(--text-secondary);
 }
 
+.details-value--remote {
+  color: var(--success);
+  font-weight: 600;
+}
+
 .action-links a {
   color: var(--text-muted);
   text-decoration: none;

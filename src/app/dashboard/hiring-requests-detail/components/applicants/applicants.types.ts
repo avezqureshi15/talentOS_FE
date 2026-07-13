@@ -55,6 +55,7 @@ export type ApplicantCardProps = {
   onDetailsReadMore: (id: string) => void;
   onTimeline: (id: number) => void;
   onViewRound?: (roundId: string) => void;
+  isRemote: boolean;
 };
 
 export type AiDecision = "shortlisted" | "rejected" | "pending";
@@ -103,6 +104,7 @@ export type ApplicantsProps = {
   applicantParam?: string | null;
   onRefresh?: () => void;
   jdId: string;
+  isRemote: boolean;
 };
 
 export type AccordionTab = "details" | "cover-letter" | "ai-summary" | "rounds";
@@ -145,9 +147,9 @@ export type CardExpandedContentProps = {
   stateConfig: StateConfig;
   accordionTab: AccordionTab;
   onTabChange: (tab: AccordionTab) => void;
-  onTimeline: (id: string) => void;
+  onTimeline: (id: number) => void;
   onDetailsReadMore: (id: string) => void;
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
-  onViewRound?: (roundId: string) => void;
+  isRemote: boolean;
 };

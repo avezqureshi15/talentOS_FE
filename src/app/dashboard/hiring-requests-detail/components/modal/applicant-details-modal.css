@@ -51,3 +51,8 @@
   color: var(--text-secondary);
   font-weight: 400;
 }
+
+.ad-value--remote {
+  color: var(--success);
+  font-weight: 600;
+}
