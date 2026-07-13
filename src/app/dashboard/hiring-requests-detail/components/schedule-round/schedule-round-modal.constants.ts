@@ -35,4 +35,5 @@ export const SR_LABELS = {
   NEXT: "Next",
   SEND_INVITE: "Send Invite",
   RESCHEDULE_CONFIRM: "Reschedule Interview",
+  RESCHEDULING_LABEL: "Rescheduling...",
 };
