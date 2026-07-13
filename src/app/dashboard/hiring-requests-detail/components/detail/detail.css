@@ -528,6 +528,11 @@
   color: var(--neutral-light, #6b7280);
 }
 
+.state-chip--yellow {
+  background: var(--yellow-bg, rgba(234, 179, 8, 0.12));
+  color: var(--yellow, #eab308);
+}
+
 
 
 /* header layout split */

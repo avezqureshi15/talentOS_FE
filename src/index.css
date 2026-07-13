@@ -75,6 +75,10 @@
   --warning-light: #f97316;
   --warning-bg: rgba(245, 158, 11, 0.1);
 
+  --yellow: #eab308;
+  --yellow-light: #facc15;
+  --yellow-bg: rgba(234, 179, 8, 0.12);
+
   /* scrollbar */
   --scrollbar-thumb: #2a2a2a;
 

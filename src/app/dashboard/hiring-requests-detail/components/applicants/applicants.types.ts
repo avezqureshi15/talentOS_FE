@@ -1,4 +1,4 @@
-export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "move_to_next_round" | "rejected" | "scheduled" | "interview_rescheduled" | "interview_cancelled";
+export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_rescheduled" | "interview_cancelled";
 
 export type HiringState =
   | "waiting_for_review"
@@ -22,7 +22,7 @@ export type ActionConfig = {
 
 export type ChipConfig = {
   label: string;
-  variant: "success" | "danger" | "warning" | "info" | "neutral";
+  variant: "success" | "danger" | "warning" | "info" | "neutral" | "yellow";
 };
 
 export type MenuAction = "select" | "reject";

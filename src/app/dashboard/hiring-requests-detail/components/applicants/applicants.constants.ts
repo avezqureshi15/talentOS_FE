@@ -26,7 +26,7 @@ export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "m
 
 export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   state: "waiting_for_review",
-  chip: { label: "Waiting for reviewer feedback", variant: "warning" },
+  chip: { label: "Awaiting review", variant: "yellow" },
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],

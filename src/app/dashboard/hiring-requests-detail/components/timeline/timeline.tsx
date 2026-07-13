@@ -61,7 +61,8 @@ export default function ApplicantTimelineSheet({
 
           {/* TIMELINE */}
           <div className="timeline-container">
-            <div className="timeline-line" />
+            <div className="timeline-track">
+              <div className="timeline-line" />
 
             {/* LOADING */}
             {loading && (
@@ -97,10 +98,14 @@ export default function ApplicantTimelineSheet({
             {/* STEPS */}
             {!loading &&
               !error &&
-              steps.map((step: TimelineStep) => {
+              steps.map((step: TimelineStep, idx: number) => {
                 const isOpen = expanded === step.id;
                 return (
-                  <div key={step.id} className="timeline-node">
+                  <div
+                    key={step.id}
+                    className={`timeline-node${isOpen ? " timeline-node--open" : ""}`}
+                    style={{ "--idx": idx } as React.CSSProperties}
+                  >
                     <div className={`dot ${step.status}`} />
                     <div className="node-content">
                       <div
@@ -115,18 +120,12 @@ export default function ApplicantTimelineSheet({
                             {step.description}
                           </div>
                         </div>
-                        <div className="chev">
-                          <i
-                            className={`bx ${
-                              isOpen
-                                ? "bx-chevron-up"
-                                : "bx-chevron-down"
-                            }`}
-                          />
+                        <div className={`chev ${isOpen ? "open" : ""}`}>
+                          <i className="bx bx-chevron-down" />
                         </div>
                       </div>
 
-                      {isOpen && (
+                      <div className={`node-body-wrap ${isOpen ? "open" : ""}`}>
                         <div className="node-body">
                           <div className="meta-row">
                             <span className="meta-label">
@@ -158,13 +157,14 @@ export default function ApplicantTimelineSheet({
                             </div>
                           )}
                         </div>
-                      )}
+                      </div>
                     </div>
                   </div>
                 );
               })}
           </div>
         </div>
+      </div>
       </div>
     </>
   );
