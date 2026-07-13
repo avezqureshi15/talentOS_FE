@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
 import "./timeline.css";
-import AddRemarkModal from "@/app/dashboard/hiring-requests-detail/components/modal/add-remark-modal";
 import { TIMELINE_LABELS } from "@/constants/constants";
 import { TIMELINE_LABELS as LOCAL_LABELS } from "./timeline.constants";
 import { useCandidateEvents } from "./hooks/use-candidate-events";
@@ -18,8 +17,6 @@ export default function ApplicantTimelineSheet({
   );
   // UI state: tracks which step's body is expanded
   const [expanded, setExpanded] = useState<string | null>(null);
-  // UI state: remark modal visibility
-  const [remarkOpen, setRemarkOpen] = useState(false);
 
   const { steps, loading, error } = useCandidateEvents(openId);
 
@@ -132,37 +129,34 @@ export default function ApplicantTimelineSheet({
                       {isOpen && (
                         <div className="node-body">
                           <div className="meta-row">
-                            <i className="bx bx-calendar"></i>
-                            <span>{step.date}</span>
+                            <span className="meta-label">
+                              <i className="bx bx-calendar"></i> Date
+                            </span>
+                            <span className="meta-value">{step.date}</span>
                           </div>
 
                           {step.actor && (
                             <div className="meta-row">
-                              <i className="bx bx-user"></i>
-                              <span>{step.actor}</span>
+                              <span className="meta-label">
+                                <i className="bx bx-user"></i> Action taken by
+                              </span>
+                              <span className="meta-value">{step.actor}</span>
                             </div>
                           )}
 
-                          <div className="meta-row">
-                            <i className="bx bx-info-circle"></i>
-                            <span>Status:</span>
-                            <b>{step.status}</b>
-                          </div>
-
-                          <button className="ghost-btn">
-                            <i className="bx bx-download"></i>
-                            {TIMELINE_LABELS.DOWNLOAD_RESUME}
-                          </button>
-
-                          <button
-                            className="ghost-btn"
-                            onClick={() => {
-                              setRemarkOpen(true);
-                            }}
-                          >
-                            <i className="bx bx-note"></i>
-                            {TIMELINE_LABELS.ADD_REMARK}
-                          </button>
+                          {step.actionUrl && (
+                            <div className="node-actions">
+                              <a
+                                className="action-btn"
+                                href={step.actionUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <i className="bx bx-link-external"></i>
+                                {step.actionLabel ?? "View"}
+                              </a>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -172,12 +166,6 @@ export default function ApplicantTimelineSheet({
           </div>
         </div>
       </div>
-
-      <AddRemarkModal
-        open={remarkOpen}
-        onClose={() => setRemarkOpen(false)}
-        onSave={() => {}}
-      />
     </>
   );
 }

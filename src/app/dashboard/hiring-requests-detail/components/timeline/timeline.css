@@ -97,8 +97,9 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  margin-top: 14px;
+  margin-top: 10px;
   z-index: 2;
+  flex-shrink: 0;
 }
 
 .dot.done { background: var(--success); }
@@ -142,24 +143,93 @@
 
 /* BODY */
 .node-body {
-  margin-top: 8px;
-  padding: 10px;
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-5) var(--space-5);
 
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--surface-elevated);
   border: 1px solid var(--border-subtle);
 
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-3);
 }
 
-/* META */
+/* META ROWS */
 .meta-row {
   font-size: 11px;
-  color: var(--text-muted);
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.meta-label {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meta-value {
+  color: var(--text-primary);
+  text-align: right;
+}
+
+/* STATUS BADGE */
+.meta-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.meta-badge.success {
+  color: var(--success-light);
+  background: var(--success-bg);
+}
+
+.meta-badge.queued {
+  color: var(--accent-blue);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.meta-badge.waiting {
+  color: var(--warning-light);
+  background: var(--warning-bg);
+}
+
+/* ACTION BUTTONS CONTAINER */
+.node-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  font-size: 12px;
+
+  background: var(--surface-card);
+  border: 1px solid var(--input-icon-bg);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.action-btn:hover {
+  background: var(--surface-card-hover);
+  border-color: var(--border-strong);
 }
 
 /* BUTTONS */
@@ -180,16 +250,6 @@
   background: var(--input-icon-bg);
 }
 
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-top: 6px;
-  z-index: 2;
-  flex-shrink: 0;
-}
-
-/* SUCCESS = green */
 .chev {
   color: var(--text-muted);
   font-size: 14px;

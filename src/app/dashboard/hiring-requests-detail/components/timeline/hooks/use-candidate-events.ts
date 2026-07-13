@@ -24,11 +24,8 @@ const mapEventToStep = (event: EventResponse): TimelineStep => ({
     minute: "2-digit",
   }),
   actor: event.actor_type ?? undefined,
-  remarks: event.event_metadata
-    ? Object.entries(event.event_metadata).map(
-        ([key, val]) => `${key}: ${String(val)}`,
-      )
-    : undefined,
+  actionUrl: event.action_url ?? undefined,
+  actionLabel: event.action_label ?? undefined,
 });
 
 export const useCandidateEvents = (
@@ -38,6 +35,9 @@ export const useCandidateEvents = (
     queryKey: EVENTS_BY_CANDIDATE_QUERY_KEY(candidateId ?? 0),
     queryFn: () => fetchEventsByCandidateId(candidateId!),
     enabled: !!candidateId,
+    staleTime: 30_000,
+    retry: 2,
+    refetchOnWindowFocus: false,
   });
 
   const steps = useMemo(

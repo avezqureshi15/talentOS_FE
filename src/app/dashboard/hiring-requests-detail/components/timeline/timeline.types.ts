@@ -7,7 +7,8 @@ export type TimelineStep = {
   status: TimelineStatus;
   date?: string;
   actor?: string;
-  remarks?: string[];
+  actionUrl?: string;
+  actionLabel?: string;
 };
 
 export type TimelineSheetProps = {
