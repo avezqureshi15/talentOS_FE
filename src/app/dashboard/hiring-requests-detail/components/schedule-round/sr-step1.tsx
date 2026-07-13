@@ -22,6 +22,7 @@ type SrStep1Props = {
   onSlotSelect: (slotId: string) => void;
   isLoading: boolean;
   isSearching: boolean;
+  hideSearch?: boolean;
 };
 
 const slotsLabel = (count: number): string => {
@@ -40,7 +41,7 @@ const groupSlots = (items: CommandItem[]) => {
   return [...map.entries()].sort(([a], [b]) => sortKey(a) - sortKey(b)).map(([group, items]) => ({ group, items }));
 };
 
-const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching }: SrStep1Props) => {
+const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch }: SrStep1Props) => {
   const isSelected = (iv: Interviewer) => selectedInterviewers.some((s) => s.id === iv.id);
   // justification: stores tooltip state for avatar hover (name + designation)
   const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
@@ -113,7 +114,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
 
   return (
     <div className="sr-two-col">
-      <div className="sr-left-col">
+      {!hideSearch && <div className="sr-left-col">
         <div className="sr-interviewer-search">
           <i className="bx bx-search sr-search-icon" />
           <input className="sr-search-input" placeholder={SR_LABELS.INTERVIEWER_PLACEHOLDER} value={search} onChange={(e) => onSearchChange(e.target.value)} />
@@ -139,7 +140,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
             ))
           )}
         </div>
-      </div>
+      </div>}
       <div className="sr-right-col">
         {selectedInterviewers.length > 0 ? (
           <div className="sr-slot-section">

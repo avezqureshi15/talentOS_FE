@@ -18,7 +18,7 @@ const InterviewCard = ({ interview, isOpen, onToggleOpen, onReschedule, onCancel
         <div className="interview-header-center">
           <span className="slot-pill">
             <i className="bx bx-clock-five" />
-            {interview.slotDate === "Today" || interview.slotDate === "Tomorrow" ? interview.slotDate + ", " : ""}{interview.slotTime}
+            {interview.slotDate}, {interview.slotTime}
           </span>
           <a href={interview.roomLink} target="_blank" rel="noreferrer" className="room-btn" onClick={(e) => e.stopPropagation()}>
             <i className="bx bx-video" /> {INTERVIEW_ROOM_LABEL} <i className="bx bx-chevron-right" />
@@ -28,7 +28,7 @@ const InterviewCard = ({ interview, isOpen, onToggleOpen, onReschedule, onCancel
         <div className="interview-header-right">
           <button
             className="reschedule-btn"
-            onClick={(e) => { e.stopPropagation(); onReschedule(interview.candidateName, interview.candidateId); }}
+            onClick={(e) => { e.stopPropagation(); onReschedule(interview.candidateName, interview.candidateId, interview.id, interview.interviewerEmpId, interview.interviewerName, interview.roundName); }}
             type="button"
           >
             <i className="bx bx-calendar" /> {RESCHEDULE_LABEL}

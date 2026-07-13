@@ -55,26 +55,29 @@ export function useInterviewsData(
 function mapInterviewItem(item: InterviewApiItem): InterviewEntity {
   const start = new Date(item.schedule.start_time);
   const end = new Date(item.schedule.end_time);
-  const now = new Date();
-  const isToday =
-    start.toDateString() === now.toDateString();
-  const isTomorrow =
-    start.toDateString() ===
-    new Date(now.getTime() + 86400000).toDateString();
 
   const fmtTime = (d: Date) =>
     d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+  const fmtDate = (d: Date) => {
+    const day = d.getDate();
+    const suffix = day % 10 === 1 && day !== 11 ? "st" : day % 10 === 2 && day !== 12 ? "nd" : day % 10 === 3 && day !== 13 ? "rd" : "th";
+    const month = d.toLocaleDateString("en-US", { month: "long" });
+    return `${day}${suffix} ${month}`;
+  };
 
   return {
     id: item.id,
     roundName: item.round_name,
     interviewerName: item.interviewer.name,
+    interviewerEmpId: item.interviewer.id,
     candidateName: item.candidate.name ?? item.candidate.email ?? "Unknown",
     candidateId: item.candidate.id,
     hiringRequestId: item.position.id,
     position: item.position.title,
     slotTime: `${fmtTime(start)} - ${fmtTime(end)}`,
-    slotDate: isToday ? "Today" : isTomorrow ? "Tomorrow" : start.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    slotDate: fmtDate(start),
     roomLink: item.meeting.url ?? "",
+    interviewStatus: item.interview_status,
   };
 }

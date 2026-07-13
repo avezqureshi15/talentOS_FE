@@ -22,6 +22,11 @@ export type ScheduleRoundModalProps = {
   candidateId: string;
   candidateNumberId?: number;
   jdId?: string;
+  interviewId?: string;
+  interviewerEmpId?: string;
+  interviewerName?: string;
+  roundName?: string;
+  rescheduleMode?: boolean;
   onClose: () => void;
   onScheduled: (candidateId: string) => void;
 };

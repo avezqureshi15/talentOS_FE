@@ -29,6 +29,7 @@ export type MeetingBrief = {
 export type InterviewApiItem = {
   id: string;
   status: string;
+  interview_status: string;
   round_name: string;
   position: PositionBrief;
   interviewer: InterviewerBrief;

@@ -1,15 +1,16 @@
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
 import { useInterviewerSlots } from "@/hooks/use-interviewer-slots";
 import { useInterviewerSearch } from "@/hooks/use-interviewer-search";
 import { useBookInterview } from "@/hooks/use-book-interview";
+import { useRescheduleInterview } from "@/hooks/use-reschedule-interview";
 import SrStep1 from "./sr-step1";
 import SrStep2 from "./sr-step2";
 import { SR_LABELS } from "./schedule-round-modal.constants";
 import type { ScheduleRoundModalProps, Interviewer, ScheduleStep } from "./schedule-round-modal.types";
 import "./schedule-round-modal.css";
 
-export default function ScheduleRoundModal({ open, candidateName, candidateId, candidateNumberId, jdId, onClose, onScheduled }: ScheduleRoundModalProps) {
+export default function ScheduleRoundModal({ open, candidateName, candidateId, candidateNumberId, jdId, interviewId, interviewerEmpId, interviewerName, roundName, rescheduleMode, onClose, onScheduled }: ScheduleRoundModalProps) {
   const [step, setStep] = useState<ScheduleStep>(1);
   const [search, setSearch] = useState("");
   // justification: stores multiple selected interviewers for a round
@@ -26,7 +27,22 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
   const [showNameConfirm, setShowNameConfirm] = useState(false);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
 
-  const { data: searchData, isLoading: isSearching } = useInterviewerSearch(search);
+  // justification: pre-populate the interviewer for reschedule mode — we use the emp_id from the existing interview
+  useEffect(() => {
+    if (!rescheduleMode || !interviewerEmpId) return;
+    setSelectedInterviewers([{
+      id: interviewerEmpId,
+      emp_id: interviewerEmpId,
+      name: "Existing Interviewer",
+      designation: "",
+      department: "",
+      email: "",
+      slots_count: 0,
+      has_slots: true,
+    }]);
+  }, [rescheduleMode, interviewerEmpId]);
+
+  const { data: searchData, isLoading: isSearching } = useInterviewerSearch(!rescheduleMode ? search : "");
 
   const interviewers = useMemo(() => (searchData?.data ?? []).map((u) => ({
     id: String(u.id),
@@ -112,10 +128,23 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
   };
 
   const { mutateAsync: bookInterview, isPending: isBooking } = useBookInterview();
+  const { mutateAsync: rescheduleInterviewMut, isPending: isRescheduling } = useRescheduleInterview();
+
+  const isPending = isBooking || isRescheduling;
 
   const handleClose = () => { resetState(); onClose(); };
   const handleDone = () => { onScheduled(candidateId); handleClose(); };
   const nextStep = () => setStep((s) => (s + 1) as ScheduleStep);
+
+  const doReschedule = async () => {
+    if (!selectedSlotId || !interviewId) return;
+    try {
+      await rescheduleInterviewMut({ interviewId, slot_id: selectedSlotId });
+    } catch {
+      return;
+    }
+    setStep(3);
+  };
 
   const doBook = async () => {
     if (!selectedSlotId || selectedInterviewers.length === 0) return;
@@ -139,6 +168,10 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
 
   const handleSendInvite = async () => {
     if (!selectedSlotId || selectedInterviewers.length === 0) return;
+    if (rescheduleMode) {
+      await doReschedule();
+      return;
+    }
     if (roundTitle === SR_LABELS.ROUND_TITLE_DEFAULT) {
       setShowNameConfirm(true);
       return;
@@ -146,36 +179,42 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
     await doBook();
   };
 
+  const successTitle = rescheduleMode ? SR_LABELS.STEP_3_RESCHEDULE_SUCCESS : SR_LABELS.STEP_3_SUCCESS;
   const successSubtext = SR_LABELS.STEP_3_SUBTEXT.replace("{candidate}", candidateName).replace("{interviewer}", interviewerNames);
 
   return (
     <BaseModal open={open} onClose={handleClose} className="sr-modal">
       <div className="sr-body">
-        <div className="sr-title-row">
-          {editingTitle ? (
-            <input
-              ref={titleInputRef}
-              className="sr-round-title-input"
-              value={roundTitle}
-              onChange={(e) => setRoundTitle(e.target.value)}
-              onBlur={finishEditTitle}
-              onKeyDown={handleTitleKeyDown}
-              autoFocus
-            />
-          ) : (
-            <span className="sr-round-title" onClick={startEditTitle} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") startEditTitle(); }}>
-              {roundTitle} <i className="bx bx-pencil" />
-            </span>
-          )}
-        </div>
-
-        {!showNameConfirm && step < 3 && (
-          <div className="sr-step-indicator">
-            {([1, 2] as ScheduleStep[]).map((s) => (<div key={s} className={`sr-dot ${step === s ? "sr-dot--active" : ""}`} />))}
+        {!rescheduleMode && (
+          <div className="sr-title-row">
+            {editingTitle ? (
+              <input
+                ref={titleInputRef}
+                className="sr-round-title-input"
+                value={roundTitle}
+                onChange={(e) => setRoundTitle(e.target.value)}
+                onBlur={finishEditTitle}
+                onKeyDown={handleTitleKeyDown}
+                autoFocus
+              />
+            ) : (
+              <span className="sr-round-title" onClick={startEditTitle} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") startEditTitle(); }}>
+                {roundTitle} <i className="bx bx-pencil" />
+              </span>
+            )}
           </div>
         )}
 
-        {!showNameConfirm && step < 3 && <div className="sr-step-header"><span className="sr-step-desc">{stepDesc}</span></div>}
+        {!rescheduleMode && (
+          <>
+            {!showNameConfirm && step < 3 && (
+              <div className="sr-step-indicator">
+                {([1, 2] as ScheduleStep[]).map((s) => (<div key={s} className={`sr-dot ${step === s ? "sr-dot--active" : ""}`} />))}
+              </div>
+            )}
+            {!showNameConfirm && step < 3 && <div className="sr-step-header"><span className="sr-step-desc">{stepDesc}</span></div>}
+          </>
+        )}
 
         <div className="sr-content">
           {showNameConfirm ? (
@@ -189,19 +228,41 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
                 </div>
                 <div className="sr-name-confirm-actions">
                   <button className="sr-btn sr-btn--back" onClick={() => setShowNameConfirm(false)} type="button">Edit Name</button>
-                  <button className="sr-btn sr-btn--primary" onClick={doBook} type="button" disabled={isBooking}>
-                    {isBooking ? "Sending..." : "Keep & Send"}
+                  <button className="sr-btn sr-btn--primary" onClick={doBook} type="button" disabled={isPending}>
+                    {isPending ? "Sending..." : "Keep & Send"}
                   </button>
                 </div>
               </div>
             </div>
           ) : (<>
-            {step === 1 && <SrStep1 search={search} onSearchChange={setSearch} interviewers={interviewers}
+            {step === 1 && rescheduleMode && (
+              <div className="sr-reschedule-layout">
+                <div className="sr-reschedule-left">
+                  <div className="sr-reschedule-title"><i className="bx bx-calendar" /> {roundName || "Interview"}</div>
+                  <div className="sr-participant-row">
+                    <span className="sr-participant-label">Interviewer</span>
+                    <span className="sr-participant-value"><i className="bx bx-user" /> {interviewerName || "Interviewer"}</span>
+                  </div>
+                  <div className="sr-participant-row">
+                    <span className="sr-participant-label">Candidate</span>
+                    <span className="sr-participant-value"><i className="bx bx-user" /> {candidateName}</span>
+                  </div>
+                </div>
+                <div className="sr-reschedule-right">
+                  <SrStep1 search={search} onSearchChange={setSearch} interviewers={interviewers}
+                    selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
+                    tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
+                    activeSlots={activeSlots ?? []} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
+                    isLoading={isLoading} isSearching={false} hideSearch={true} />
+                </div>
+              </div>
+            )}
+            {step === 1 && !rescheduleMode && <SrStep1 search={search} onSearchChange={setSearch} interviewers={interviewers}
               selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
               tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
               activeSlots={activeSlots ?? []} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
-              isLoading={isLoading} isSearching={isSearching} />}
-            {step === 2 && <div className="sr-scroll-content"><SrStep2 candidateName={candidateName}
+              isLoading={isLoading} isSearching={isSearching} hideSearch={false} />}
+            {step === 2 && !rescheduleMode && <div className="sr-scroll-content"><SrStep2 candidateName={candidateName}
               interviewerNames={interviewerNames} slotDate={slotDate} slotTime={slotTime}
               gmeetEnabled={gmeetEnabled} onToggleGmeet={() => setGmeetEnabled((v) => !v)}
               invitePreview={invitePreview} /></div>}
@@ -209,7 +270,7 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
               <div className="sr-scroll-content">
                 <div className="sr-success">
                   <div className="sr-success-icon"><i className="bx bx-check" /></div>
-                  <div className="sr-success-title">{SR_LABELS.STEP_3_SUCCESS}</div>
+                  <div className="sr-success-title">{successTitle}</div>
                   <div className="sr-success-sub">{successSubtext}</div>
                 </div>
               </div>
@@ -218,9 +279,9 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
         </div>
 
         <div className="sr-actions">
-          {!showNameConfirm && step === 2 && <button className="sr-btn sr-btn--back" onClick={() => setStep(1)} type="button">{SR_LABELS.BACK}</button>}
-          {!showNameConfirm && step === 1 && <button className="sr-btn sr-btn--primary" disabled={!canProceedTo2} onClick={nextStep} type="button">{SR_LABELS.NEXT}</button>}
-          {!showNameConfirm && step === 2 && <button className="sr-btn sr-btn--primary" disabled={!canProceedTo3 || isBooking} onClick={handleSendInvite} type="button">{isBooking ? "Sending..." : SR_LABELS.SEND_INVITE}</button>}
+          {!showNameConfirm && step === 2 && !rescheduleMode && <button className="sr-btn sr-btn--back" onClick={() => setStep(1)} type="button">{SR_LABELS.BACK}</button>}
+          {!showNameConfirm && step === 1 && <button className="sr-btn sr-btn--primary" disabled={!canProceedTo2 || (rescheduleMode && isPending)} onClick={rescheduleMode ? handleSendInvite : nextStep} type="button">{rescheduleMode ? (isPending ? "Rescheduling..." : SR_LABELS.RESCHEDULE_CONFIRM) : SR_LABELS.NEXT}</button>}
+          {!showNameConfirm && step === 2 && !rescheduleMode && <button className="sr-btn sr-btn--primary" disabled={!canProceedTo3 || isPending} onClick={handleSendInvite} type="button">{isPending ? "Sending..." : SR_LABELS.SEND_INVITE}</button>}
           {!showNameConfirm && step === 3 && <button className="sr-btn sr-btn--done" onClick={handleDone} type="button"><i className="bx bx-check" /> {SR_LABELS.DONE}</button>}
         </div>
       </div>

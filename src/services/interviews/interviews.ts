@@ -45,3 +45,27 @@ export const bookInterview = async (
   );
   return data;
 };
+
+export type RescheduleInterviewPayload = {
+  slot_id: string;
+};
+
+export type RescheduleInterviewResponse = {
+  id: string;
+  round_id: string;
+  slot_id: string | null;
+  event_id: string | null;
+  meet_link: string | null;
+  status: string;
+};
+
+export const rescheduleInterview = async (
+  interviewId: string,
+  payload: RescheduleInterviewPayload,
+): Promise<RescheduleInterviewResponse> => {
+  const { data } = await httpClient.patch<RescheduleInterviewResponse>(
+    `${API_ENDPOINTS.INTERVIEWS_SCHEDULING}/${interviewId}/reschedule`,
+    payload,
+  );
+  return data;
+};

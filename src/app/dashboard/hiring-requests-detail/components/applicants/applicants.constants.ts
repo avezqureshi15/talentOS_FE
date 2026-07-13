@@ -22,7 +22,7 @@ export const ROUND_VERDICT_LABELS: Record<string, string> = {
 
 export const INFO_CHIP_SKIP_KEYS = new Set(["fitscore", "summary", "summary_md", "rejected_status", "rejected_reason", "strong_matches", "gaps_and_concerns"]);
 
-export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round", "interview_scheduled"]);
+export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round", "interview_scheduled", "interview_rescheduled"]);
 
 export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   state: "waiting_for_review",
@@ -73,6 +73,15 @@ export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
   menuActions: ["select", "reject"],
 };
 
+export const INTERVIEW_RESCHEDULED_CONFIG: StateConfig = {
+  state: "interview_rescheduled",
+  chip: { label: "Interview rescheduled", variant: "warning" },
+  showInfoChips: true,
+  showExpandedContent: true,
+  actions: [],
+  menuActions: ["select", "reject"],
+};
+
 export const REJECTED_CONFIG: StateConfig = {
   state: "rejected",
   chip: { label: "Moved out of pipeline", variant: "danger" },
@@ -99,6 +108,7 @@ export const STATE_CONFIGS: Record<string, StateConfig> = {
   shortlisted: SHORTLISTED_CONFIG,
   move_to_next_round: MOVE_TO_NEXT_ROUND_CONFIG,
   interview_scheduled: INTERVIEW_SCHEDULED_CONFIG,
+  interview_rescheduled: INTERVIEW_RESCHEDULED_CONFIG,
   rejected: REJECTED_CONFIG,
   selected: SELECTED_CONFIG,
 };

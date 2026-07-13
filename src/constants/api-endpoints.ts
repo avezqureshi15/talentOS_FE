@@ -22,6 +22,7 @@ export const API_ENDPOINTS = {
   FINAL_VERDICTS: "/applications/final-verdicts",
   INTERVIEWS: "/interviews",
   INTERVIEWS_BOOKING: "/interviews/booking",
+  INTERVIEWS_SCHEDULING: "/interviews/scheduling",
   ALERTS: "/alerts",
 } as const;
 

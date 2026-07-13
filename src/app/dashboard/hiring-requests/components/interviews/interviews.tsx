@@ -12,13 +12,13 @@ const Interviews = () => {
   const navigate = useNavigate();
   const [sub, setSub] = useState<InterviewSubTab>("incoming");
   const [openId, setOpenId] = useState<string | null>(null);
-  const [rescheduleFor, setRescheduleFor] = useState<{ candidateName: string; candidateId: string } | null>(null);
+  const [rescheduleFor, setRescheduleFor] = useState<{ candidateName: string; candidateId: string; interviewId: string; interviewerEmpId: string; interviewerName: string; roundName: string } | null>(null);
   const [cancelCandidate, setCancelCandidate] = useState<string | null>(null);
 
   const { interviews, hasMore, isLoading, page, setPage } = useInterviewsData(sub);
 
-  const handleReschedule = useCallback((candidateName: string, candidateId: string) => {
-    setRescheduleFor({ candidateName, candidateId });
+  const handleReschedule = useCallback((candidateName: string, candidateId: string, interviewId: string, interviewerEmpId: string, interviewerName: string, roundName: string) => {
+    setRescheduleFor({ candidateName, candidateId, interviewId, interviewerEmpId, interviewerName, roundName });
   }, []);
 
   const handleScheduled = useCallback((_candidateId: string) => {
@@ -97,6 +97,11 @@ const Interviews = () => {
       {rescheduleFor && (
         <ScheduleRoundModal
           open
+          rescheduleMode={true}
+          interviewId={rescheduleFor.interviewId}
+          interviewerEmpId={rescheduleFor.interviewerEmpId}
+          interviewerName={rescheduleFor.interviewerName}
+          roundName={rescheduleFor.roundName}
           candidateName={rescheduleFor.candidateName}
           candidateId={rescheduleFor.candidateId}
           onClose={() => setRescheduleFor(null)}
