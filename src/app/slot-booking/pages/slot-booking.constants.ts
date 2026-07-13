@@ -1,4 +1,5 @@
 import { SLOT_DURATION_MINUTES } from "@/constants/constants";
+import { getSlotBounds } from "@/app/slot-booking/utils/slot-env-utils";
 
 export const BOOKING_LABELS = {
   CONFIRM: "Confirm Booking",
@@ -17,11 +18,13 @@ export const FORM_ERRORS = {
   UNKNOWN: "Something went wrong. Please try again or contact HR.",
 } as const;
 
+const _bounds = getSlotBounds();
+
 export const SLOT_VALIDATION = {
-  MIN_HOUR: 9,
-  MAX_HOUR: 19,
+  MIN_HOUR: _bounds.MIN_HOUR,
+  MAX_HOUR: _bounds.MAX_HOUR,
   PAST_TIME_MSG: "Cannot add slots in the past. Please select a future time.",
-  OUT_OF_RANGE_MSG: "Slots must be between 9:00 AM and 7:00 PM.",
+  OUT_OF_RANGE_MSG: _bounds.OUT_OF_RANGE_MSG,
 } as const;
 
 export type ContextSection =
@@ -83,9 +86,10 @@ const toValue = (h: number, m: number, endH: number, endM: number) =>
 
 const genSlots = () => {
   const duration = SLOT_DURATION_MINUTES;
+  const bounds = getSlotBounds();
   const slots: MockSlot[] = [];
   const unavailable = new Set(["10:00-10:30", "11:30-12:00", "13:00-13:30", "14:30-15:00", "16:30-17:00"]);
-  for (let h = 9; h < 18; h++) {
+  for (let h = bounds.MIN_HOUR; h < bounds.GEN_END_HOUR; h++) {
     for (let m = 0; m < 60; m += duration) {
       const totalStart = h * 60 + m;
       const totalEnd = totalStart + duration;

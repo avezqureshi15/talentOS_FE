@@ -4,6 +4,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { validateForm, createSlots } from "@/app/slot-booking/services/slot-booking";
 import { SLOT_VALIDATION, BOOKING_LABELS, FORM_ERRORS } from "@/app/slot-booking/pages/slot-booking.constants";
 import { QUERY_KEYS, SLOT_DURATION_MINUTES } from "@/constants/constants";
+import { getSlotBounds } from "@/app/slot-booking/utils/slot-env-utils";
 import { useToast } from "@/hooks/use-toast";
 import type { SlotsCreateRequest } from "@/app/slot-booking/services/slot-booking.types";
 
@@ -36,8 +37,9 @@ const toValue = (h: number, m: number, endH: number, endM: number) =>
 
 const genSlots = () => {
   const duration = SLOT_DURATION_MINUTES;
+  const bounds = getSlotBounds();
   const slots: { label: string; value: string; available: boolean }[] = [];
-  for (let h = 9; h < 18; h++) {
+  for (let h = bounds.MIN_HOUR; h < bounds.GEN_END_HOUR; h++) {
     for (let m = 0; m < 60; m += duration) {
       const totalStart = h * 60 + m;
       const totalEnd = totalStart + duration;
