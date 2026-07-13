@@ -160,6 +160,12 @@
   --score-mid-border: rgba(250, 204, 21, 0.3);
 
   /* accent background variants */
+  /* cancelled / brownish-red semantic */
+  --cancelled: #a03a3a;
+  --cancelled-bg: rgba(160, 58, 58, 0.12);
+  --cancelled-border: rgba(160, 58, 58, 0.25);
+  --cancelled-text: #f0c0c0;
+
   --accent-bg: rgba(79, 142, 247, 0.15);
   --accent-border: rgba(79, 142, 247, 0.3);
   --accent-indigo-bg: rgba(99, 102, 241, 0.15);

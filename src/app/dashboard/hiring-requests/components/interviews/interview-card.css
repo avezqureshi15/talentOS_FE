@@ -80,13 +80,15 @@
 }
 
 .slot-pill--cancelled {
-  color: #fff;
-  background: var(--danger, #e53e3e);
-  border-color: var(--danger, #e53e3e);
+  color: var(--cancelled-text);
+  background: var(--cancelled-bg);
+  border-color: var(--cancelled-border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .slot-pill--cancelled i {
-  color: #fff;
+  color: var(--cancelled-text);
 }
 
 .room-btn {
