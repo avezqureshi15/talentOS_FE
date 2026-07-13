@@ -50,8 +50,8 @@ export const CONTEXT_SECTIONS: ContextSection[] = [
      },
      average_rating: 3.0,
      skills: ["react", "typescript", "state_mgmt"],
-     verdict: "advance",
-     review_notes: "Strong technical skills...",
+      verdict: "selected",
+      review_notes: "Strong technical skills...",
    }
    Backend stores:
    {
@@ -62,7 +62,7 @@ export const CONTEXT_SECTIONS: ContextSection[] = [
      ratings: jsonb,
      average_rating: float,
      verified_skills: text[],
-     verdict: "reject" | "hold" | "advance",
+      verdict: "selected" | "rejected",
      review_notes: text,
      ai_status: "pending" | "matched" | "conflict",
      hr_status: "pending" | "reviewed",

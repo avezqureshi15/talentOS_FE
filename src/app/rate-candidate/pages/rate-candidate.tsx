@@ -83,7 +83,7 @@ const RateCandidate = () => {
   if (isSubmitted) {
     const values = Object.values(ratings).filter(Boolean);
     const avg = values.length > 0 ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1) : "—";
-    const labelMap: Record<VerdictValue, string> = { reject: "Rejected", hold: "On Hold", advance: "Advanced" };
+    const labelMap: Record<VerdictValue, string> = { selected: "Selected", rejected: "Rejected" };
     return (
       <div className="rate-page">
         <div className="rate-submitted">

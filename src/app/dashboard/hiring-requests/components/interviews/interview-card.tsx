@@ -1,5 +1,5 @@
 import { INTERVIEW_ROOM_LABEL, RESCHEDULE_LABEL, CANCEL_INTERVIEW_LABEL } from "./interviews.constants";
-import type { InterviewCardProps } from "./interviews.types";
+import type { InterviewCardProps, InterviewEntity } from "./interviews.types";
 import "./interview-card.css";
 
 const fmtCancelledDate = (iso: string | null): string => {

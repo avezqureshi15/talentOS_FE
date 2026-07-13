@@ -1,4 +1,4 @@
-export type VerdictValue = "reject" | "hold" | "advance";
+export type VerdictValue = "selected" | "rejected";
 
 export type VerdictButtonsProps = {
   value: VerdictValue | null;

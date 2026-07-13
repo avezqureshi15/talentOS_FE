@@ -45,31 +45,21 @@
   color: var(--text-white);
 }
 
-/* Reject */
-.verdict--reject {
+/* Rejected */
+.verdict--rejected {
   color: var(--text-muted);
 }
-.verdict-btn--active.verdict--reject {
+.verdict-btn--active.verdict--rejected {
   background: var(--danger);
   border-color: var(--danger);
   color: var(--text-white);
 }
 
-/* Hold */
-.verdict--hold {
+/* Selected */
+.verdict--selected {
   color: var(--text-muted);
 }
-.verdict-btn--active.verdict--hold {
-  background: var(--warning);
-  border-color: var(--warning);
-  color: var(--text-white);
-}
-
-/* Advance */
-.verdict--advance {
-  color: var(--text-muted);
-}
-.verdict-btn--active.verdict--advance {
+.verdict-btn--active.verdict--selected {
   background: var(--success);
   border-color: var(--success);
   color: var(--text-white);

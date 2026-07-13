@@ -1,7 +1,6 @@
 export const VERDICT_OPTIONS = [
-  { value: "reject" as const, icon: "bx bx-x-circle", label: "Reject", cssClass: "verdict--reject" },
-  { value: "hold" as const, icon: "bx bx-clock", label: "Hold", cssClass: "verdict--hold" },
-  { value: "advance" as const, icon: "bx bx-check-double", label: "Advance to Next Round", cssClass: "verdict--advance" },
+  { value: "selected" as const, icon: "bx bx-check-circle", label: "Selected", cssClass: "verdict--selected" },
+  { value: "rejected" as const, icon: "bx bx-x-circle", label: "Rejected", cssClass: "verdict--rejected" },
 ] as const;
 
 export const VERDICT_LABELS = {
