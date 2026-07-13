@@ -6,7 +6,7 @@ import { useRoundDetail } from "./use-round-detail";
 import type { RoundsSidePanelProps, PanelContentProps, RowProps, ReviewEntity } from "./rounds-side-panel.types";
 import {
   ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK,
-  VERDICT_LABELS, VERDICT_ICONS, ENTITY_TITLE_LABELS,
+  VERDICT_LABELS, VERDICT_ICONS, ENTITY_TITLE_LABELS, RATING_LABELS,
 } from "./rounds-side-panel.constants";
 import "./rounds-side-panel.css";
 
@@ -38,12 +38,16 @@ function EntityRatings({ entity }: { entity: ReviewEntity }) {
       <div className="rp-ratings">
         {entity.ratings.map((r, i) => (
           <div key={i} className="rp-rating-row">
-            <span className="rp-rating-label">{r.label === "fitscore" ? "ATS Score" : r.label}</span>
-            <span className="rp-rating-score">{r.score}/{r.maxScore}</span>
+            <span className="rp-rating-label">{RATING_LABELS[r.label] ?? (r.label === "fitscore" ? "ATS Score" : r.label)}</span>
+            <span className="rp-rating-score">
+              <span className="rp-score-earned">{r.score}</span>
+              <span className="rp-score-sep">/</span>
+              <span className="rp-score-total">{r.maxScore}</span>
+            </span>
           </div>
         ))}
       </div>
-      <span className="rp-avg">Average: {avg}/{maxScore}</span>
+      <span className="rp-avg">Average: <span className="rp-avg-earned">{avg}</span>/{maxScore}</span>
     </div>
   );
 }
@@ -105,14 +109,16 @@ function ReviewEntityBlock({ entity }: { entity: ReviewEntity }) {
   if (!hasContent) return null;
 
   return (
-    <div className="rp-decision-card" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
-      <div className="rp-decision-label">{title}</div>
-      {entity.verdict && (
-        <span className={`rp-pill rp-pill--${entity.verdict}`}>
-          <i className={VERDICT_ICONS[entity.verdict] ?? "bx bx-help-circle"} />
-          {VERDICT_LABELS[entity.verdict] ?? entity.verdict}
-        </span>
-      )}
+    <div className="rp-decision-card">
+      <div className="rp-decision-header">
+        <span className="rp-decision-label">{title}</span>
+        {entity.verdict && (
+          <span className={`rp-pill rp-pill--${entity.verdict}`}>
+            <i className={VERDICT_ICONS[entity.verdict] ?? "bx bx-help-circle"} />
+            {VERDICT_LABELS[entity.verdict] ?? entity.verdict}
+          </span>
+        )}
+      </div>
       <EntityRatings entity={entity} />
       <EntitySkills skills={entity.skills} />
       {entity.notes && <p className="rp-notes">{entity.notes}</p>}

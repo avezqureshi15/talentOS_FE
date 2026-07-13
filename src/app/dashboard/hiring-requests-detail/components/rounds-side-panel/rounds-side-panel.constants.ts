@@ -27,6 +27,13 @@ export const ENTITY_TITLE_LABELS: Record<string, string> = {
   hr: "HR Decision",
 };
 
+export const RATING_LABELS: Record<string, string> = {
+  communication: "Communication",
+  technical_skills: "Technical Skills",
+  problem_solving: "Problem Solving",
+  cultural_fit: "Cultural Fit",
+};
+
 export const READ_MORE_LENGTH = 120;
 export const AI_SUMMARY_MAX_LENGTH = 300;
 
