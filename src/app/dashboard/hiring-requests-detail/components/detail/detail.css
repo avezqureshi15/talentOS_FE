@@ -103,9 +103,13 @@
   border-color: var(--border-default);
 }
 
-@keyframes card-pulse {
-  0% { background: var(--accent-bg); border-color: var(--accent-border); }
-  100% { background: var(--surface-elevated); border-color: var(--border-subtle); }
+@keyframes border-highlight {
+  0% { border-color: var(--accent-border); box-shadow: 0 0 0 2px var(--accent-glow); }
+  100% { border-color: var(--border-subtle); box-shadow: none; }
+}
+
+[data-highlight="true"] .accordion-card {
+  animation: border-highlight 2s ease-out forwards;
 }
 
 /* header */
