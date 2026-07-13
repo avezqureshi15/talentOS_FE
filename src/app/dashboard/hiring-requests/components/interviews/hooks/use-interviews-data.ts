@@ -23,7 +23,7 @@ export function useInterviewsData(
 ): UseInterviewsResult {
   const [page, setPage] = useState(1);
 
-  const statusFilter = subTab === "completed" ? "completed" : "incoming";
+  const statusFilter = subTab === "cancelled" ? "cancelled" : subTab === "completed" ? "completed" : "incoming";
 
   const query = useQuery({
     queryKey: [QUERY_KEYS.INTERVIEWS, statusFilter, page],
@@ -79,5 +79,6 @@ function mapInterviewItem(item: InterviewApiItem): InterviewEntity {
     slotDate: fmtDate(start),
     roomLink: item.meeting.url ?? "",
     interviewStatus: item.interview_status,
+    cancelledAt: item.cancelled_at ?? null,
   };
 }

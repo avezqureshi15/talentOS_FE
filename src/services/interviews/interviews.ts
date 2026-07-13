@@ -69,3 +69,17 @@ export const rescheduleInterview = async (
   );
   return data;
 };
+
+export type CancelInterviewResponse = {
+  id: string;
+  status: string;
+};
+
+export const cancelInterview = async (
+  interviewId: string,
+): Promise<CancelInterviewResponse> => {
+  const { data } = await httpClient.patch<CancelInterviewResponse>(
+    `${API_ENDPOINTS.INTERVIEWS_SCHEDULING}/${interviewId}/cancel`,
+  );
+  return data;
+};

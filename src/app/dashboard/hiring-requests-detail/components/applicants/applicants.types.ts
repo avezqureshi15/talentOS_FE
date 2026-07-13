@@ -1,4 +1,4 @@
-export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "move_to_next_round" | "rejected" | "scheduled" | "interview_rescheduled";
+export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "move_to_next_round" | "rejected" | "scheduled" | "interview_rescheduled" | "interview_cancelled";
 
 export type HiringState =
   | "waiting_for_review"
@@ -7,6 +7,7 @@ export type HiringState =
   | "move_to_next_round"
   | "interview_scheduled"
   | "interview_rescheduled"
+  | "interview_cancelled"
   | "rejected"
   | "selected";
 

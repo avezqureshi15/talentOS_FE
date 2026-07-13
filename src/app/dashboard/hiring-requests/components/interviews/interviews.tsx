@@ -13,7 +13,7 @@ const Interviews = () => {
   const [sub, setSub] = useState<InterviewSubTab>("incoming");
   const [openId, setOpenId] = useState<string | null>(null);
   const [rescheduleFor, setRescheduleFor] = useState<{ candidateName: string; candidateId: string; interviewId: string; interviewerEmpId: string; interviewerName: string; roundName: string } | null>(null);
-  const [cancelCandidate, setCancelCandidate] = useState<string | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<{ candidateName: string; interviewId: string } | null>(null);
 
   const { interviews, hasMore, isLoading, page, setPage } = useInterviewsData(sub);
 
@@ -25,12 +25,12 @@ const Interviews = () => {
     setRescheduleFor(null);
   }, []);
 
-  const handleCancelStart = useCallback((candidateName: string) => {
-    setCancelCandidate(candidateName);
+  const handleCancelStart = useCallback((candidateName: string, interviewId: string) => {
+    setCancelTarget({ candidateName, interviewId });
   }, []);
 
   const handleCancelConfirm = useCallback(() => {
-    setCancelCandidate(null);
+    setCancelTarget(null);
   }, []);
 
   const handleNavigateToApplicant = useCallback((hiringRequestId: string, candidateId: string) => {
@@ -109,11 +109,12 @@ const Interviews = () => {
         />
       )}
 
-      {cancelCandidate && (
+      {cancelTarget && (
         <CancelInterviewModal
           open
-          candidateName={cancelCandidate}
-          onClose={() => setCancelCandidate(null)}
+          interviewId={cancelTarget.interviewId}
+          candidateName={cancelTarget.candidateName}
+          onClose={() => setCancelTarget(null)}
           onConfirm={handleCancelConfirm}
         />
       )}

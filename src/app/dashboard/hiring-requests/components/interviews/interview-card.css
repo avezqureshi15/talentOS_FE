@@ -11,6 +11,14 @@
   border-color: var(--border-default);
 }
 
+.interview-card--cancelled {
+  opacity: 0.7;
+}
+
+.interview-card--cancelled:hover {
+  opacity: 1;
+}
+
 .interview-header {
   display: flex;
   align-items: center;
@@ -69,6 +77,16 @@
 .slot-pill i {
   font-size: 12px;
   color: var(--accent);
+}
+
+.slot-pill--cancelled {
+  color: #fff;
+  background: var(--danger, #e53e3e);
+  border-color: var(--danger, #e53e3e);
+}
+
+.slot-pill--cancelled i {
+  color: #fff;
 }
 
 .room-btn {

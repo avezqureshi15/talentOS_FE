@@ -31,6 +31,7 @@ export type InterviewApiItem = {
   status: string;
   interview_status: string;
   round_name: string;
+  cancelled_at: string | null;
   position: PositionBrief;
   interviewer: InterviewerBrief;
   candidate: CandidateBrief;
