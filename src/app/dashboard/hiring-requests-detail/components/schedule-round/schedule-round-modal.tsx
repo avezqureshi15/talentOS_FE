@@ -227,7 +227,7 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
                   Do you want to keep this name?
                 </div>
                 <div className="sr-name-confirm-actions">
-                  <button className="sr-btn sr-btn--back" onClick={() => setShowNameConfirm(false)} type="button">Edit Name</button>
+                  <button className="sr-btn sr-btn--back" onClick={() => { setShowNameConfirm(false); startEditTitle(); }} type="button">Edit Name</button>
                   <button className="sr-btn sr-btn--primary" onClick={doBook} type="button" disabled={isPending}>
                     {isPending ? "Sending..." : "Keep & Send"}
                   </button>
