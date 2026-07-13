@@ -158,7 +158,24 @@
   background: var(--warning-bg);
 }
 
-/* HR decisions */
+/* Verdict pills (entity-agnostic) */
+.rp-pill--selected,
+.rp-pill--shortlisted {
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.rp-pill--rejected {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.rp-pill--pending {
+  color: var(--text-muted);
+  background: var(--surface-glass);
+}
+
+/* Legacy HR / AI decision pills (kept for backward compat) */
 .rp-pill--hr-pending {
   color: var(--text-muted);
   background: var(--surface-glass);
@@ -207,6 +224,10 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.rp-entity-ratings {
+  width: 100%;
 }
 
 /* ── Skills ── */

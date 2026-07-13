@@ -1,20 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchRoundDetail } from "@/services/applications/applications";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
-import type { RoundDetailApiResponse } from "@/services/applications/applications.types";
-import type { RoundDetail } from "./rounds-side-panel.types";
+import type { RoundDetailApiResponse, ReviewEntity as ApiReviewEntity } from "@/services/applications/applications.types";
+import type { RoundDetail, ReviewEntity } from "./rounds-side-panel.types";
+
+function mapReview(api: ApiReviewEntity): ReviewEntity {
+  return {
+    entityType: api.entity_type,
+    verdict: api.verdict,
+    ratings: (api.ratings ?? []).map((rt) => ({
+      label: rt.label,
+      score: rt.score,
+      maxScore: rt.max_score,
+    })),
+    skills: (api.skills as string[]) ?? [],
+    notes: (api.notes as string) ?? "",
+    summary: (api.summary as string) ?? (api.summary_md as string) ?? undefined,
+    strongMatches: Array.isArray(api.strong_matches) ? (api.strong_matches as string[]) : [],
+    gapsAndConcerns: Array.isArray(api.gaps_and_concerns) ? (api.gaps_and_concerns as string[]) : [],
+    remarks: (api.remarks as string) ?? undefined,
+    rejectedStatus: Array.isArray(api.rejected_status) ? (api.rejected_status as string[]) : [],
+    rejectedReason: (api.rejected_reason as string) ?? undefined,
+    averageRating: (api.average_rating as number) ?? undefined,
+  };
+}
 
 function mapRoundDetail(api: RoundDetailApiResponse): RoundDetail {
-  const ratings = (api.ratings ?? []).map((r) => ({
-    label: r.label,
-    score: r.score,
-    maxScore: r.max_score,
-    entityType: r.entity_type,
-  }));
-
-  const decisions = api.decisions ?? {};
-
-  const result: RoundDetail = {
+  return {
     id: api.id,
     round: api.round ?? "",
     interviewer: api.interviewer ?? "",
@@ -26,28 +38,8 @@ function mapRoundDetail(api: RoundDetailApiResponse): RoundDetail {
     duration: api.duration ?? "",
     interviewType: api.interview_type ?? "",
     status: api.status ?? "",
-    ratings,
-    skills: api.skills,
-    notes: api.notes ?? "",
-    remarksHr: api.remarks_hr ?? undefined,
-    aiSummary: api.ai_summary ?? "",
-    strongMatches: Array.isArray(api.strong_matches) ? api.strong_matches : [],
-    gapsAndConcerns: Array.isArray(api.gaps_and_concerns) ? api.gaps_and_concerns : [],
-    rejectedStatus: Array.isArray(api.rejected_status) ? api.rejected_status : [],
-    rejectedReason: api.rejected_reason ?? undefined,
+    reviews: (api.reviews ?? []).map(mapReview),
   };
-
-  if ("interviewer_decision" in decisions) {
-    result.verdict = decisions.interviewer_decision as RoundDetail["verdict"];
-  }
-  if ("ai_decision" in decisions) {
-    result.aiDecision = decisions.ai_decision as RoundDetail["aiDecision"];
-  }
-  if ("hr_decision" in decisions) {
-    result.hrDecision = decisions.hr_decision as RoundDetail["hrDecision"];
-  }
-
-  return result;
 }
 
 export function useRoundDetail(roundId: string | null) {

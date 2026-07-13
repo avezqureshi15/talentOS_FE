@@ -38,6 +38,20 @@ export type RoundFromApi = {
 
 export type RoundsApiResponse = RoundFromApi[];
 
+export type RatingItem = {
+  label: string;
+  score: number;
+  max_score: number;
+  entity_type?: string;
+};
+
+export type ReviewEntity = {
+  entity_type: string;
+  verdict?: string;
+  ratings: RatingItem[];
+  [key: string]: unknown;
+};
+
 export type RoundDetailApiResponse = {
   id: string;
   round: string | null;
@@ -50,17 +64,7 @@ export type RoundDetailApiResponse = {
   role: string | null;
   jd_label: string | null;
   interviewer: string | null;
-  decisions: Record<string, string>;
-  ai_summary: string | null;
-  strong_matches: string[];
-  gaps_and_concerns: string[];
-  ratings: { label: string; score: number; max_score: number; entity_type?: string }[];
-  skills: string[];
-  notes: string | null;
-  remarks_hr: string | null;
-  remarks_interviewer: string | null;
-  rejected_status: string[];
-  rejected_reason: string | null;
+  reviews: ReviewEntity[];
 };
 
 export type EvaluatedCandidatesResponse = {

@@ -3,20 +3,18 @@ import PanelSkeleton from "./panel-skeleton";
 import ReadMoreText from "./read-more-text";
 import ExpandableAiSummary from "./expandable-ai-summary";
 import { useRoundDetail } from "./use-round-detail";
-import type { RoundsSidePanelProps, PanelContentProps, RowProps } from "./rounds-side-panel.types";
-import { ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK, VERDICT_LABELS, AI_LABELS, HR_LABELS, VERDICT_ICONS, AI_ICONS, HR_ICONS, HR_REMARKS_LABEL } from "./rounds-side-panel.constants";
+import type { RoundsSidePanelProps, PanelContentProps, RowProps, ReviewEntity } from "./rounds-side-panel.types";
+import {
+  ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK,
+  VERDICT_LABELS, VERDICT_ICONS, ENTITY_TITLE_LABELS,
+} from "./rounds-side-panel.constants";
 import "./rounds-side-panel.css";
 
 const RoundsSidePanel = ({ open, roundId, onClose }: RoundsSidePanelProps) => {
   const { data: round, isLoading, isError, refetch } = useRoundDetail(roundId);
 
   return (
-    <BaseModal
-      open={open}
-      onClose={onClose}
-      title={ROUNDS_PANEL_LABELS.TITLE}
-      variant="slide-right"
-    >
+    <BaseModal open={open} onClose={onClose} title={ROUNDS_PANEL_LABELS.TITLE} variant="slide-right">
       {isLoading && <PanelSkeleton />}
       {isError && (
         <div className="rp-status rp-status--error">
@@ -31,20 +29,106 @@ const RoundsSidePanel = ({ open, roundId, onClose }: RoundsSidePanelProps) => {
   );
 };
 
+function EntityRatings({ entity }: { entity: ReviewEntity }) {
+  if (entity.ratings.length === 0) return null;
+  const avg = (entity.ratings.reduce((s, r) => s + r.score, 0) / entity.ratings.length).toFixed(1);
+  const maxScore = entity.ratings[0].maxScore;
+  return (
+    <div className="rp-entity-ratings">
+      <div className="rp-ratings">
+        {entity.ratings.map((r, i) => (
+          <div key={i} className="rp-rating-row">
+            <span className="rp-rating-label">{r.label === "fitscore" ? "ATS Score" : r.label}</span>
+            <span className="rp-rating-score">{r.score}/{r.maxScore}</span>
+          </div>
+        ))}
+      </div>
+      <span className="rp-avg">Average: {avg}/{maxScore}</span>
+    </div>
+  );
+}
+
+function EntityAiContent({ entity }: { entity: ReviewEntity }) {
+  const hasBullets = entity.strongMatches.length > 0 || entity.gapsAndConcerns.length > 0;
+  const hasAiContent = entity.summary || hasBullets || entity.rejectedStatus.length > 0 || entity.rejectedReason;
+  if (!hasAiContent) return null;
+
+  return (
+    <div className="rp-ai-summary md-content">
+      {entity.summary ? (
+        <ExpandableAiSummary text={entity.summary} />
+      ) : hasBullets ? null : entity.rejectedStatus.length === 0 && !entity.rejectedReason ? (
+        <p className="rp-ai-empty">{ROUNDS_FALLBACK.NO_AI_SUMMARY}</p>
+      ) : null}
+      {entity.rejectedStatus.length > 0 && (
+        <>
+          <span className="rp-ai-subheading">Rejection Reasons</span>
+          <div className="rp-rejection-chip-group">
+            {entity.rejectedStatus.map((s, i) => (
+              <span key={i} className="rp-rejection-chip">{s}</span>
+            ))}
+          </div>
+        </>
+      )}
+      {entity.rejectedReason && <p className="rp-rejection-text">{entity.rejectedReason}</p>}
+      {entity.strongMatches.length > 0 && (
+        <>
+          <span className="rp-ai-subheading">Strong Matches</span>
+          <ul>{entity.strongMatches.map((m, i) => <li key={i}>{m}</li>)}</ul>
+        </>
+      )}
+      {entity.gapsAndConcerns.length > 0 && (
+        <>
+          <span className="rp-ai-subheading">Gaps & Concerns</span>
+          <ul>{entity.gapsAndConcerns.map((g, i) => <li key={i}>{g}</li>)}</ul>
+        </>
+      )}
+    </div>
+  );
+}
+
+function EntitySkills({ skills }: { skills: string[] }) {
+  if (skills.length === 0) return null;
+  return (
+    <div className="rp-skills">
+      {skills.map((s, i) => <span key={i} className="rp-skill-chip">{s}</span>)}
+    </div>
+  );
+}
+
+function ReviewEntityBlock({ entity }: { entity: ReviewEntity }) {
+  const title = ENTITY_TITLE_LABELS[entity.entityType] ?? entity.entityType;
+  const hasRatings = entity.ratings.length > 0;
+  const hasContent = hasRatings || entity.skills.length > 0 || entity.notes ||
+    entity.remarks || entity.entityType === "ai";
+
+  if (!hasContent) return null;
+
+  return (
+    <div className="rp-decision-card" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+      <div className="rp-decision-label">{title}</div>
+      {entity.verdict && (
+        <span className={`rp-pill rp-pill--${entity.verdict}`}>
+          <i className={VERDICT_ICONS[entity.verdict] ?? "bx bx-help-circle"} />
+          {VERDICT_LABELS[entity.verdict] ?? entity.verdict}
+        </span>
+      )}
+      <EntityRatings entity={entity} />
+      <EntitySkills skills={entity.skills} />
+      {entity.notes && <p className="rp-notes">{entity.notes}</p>}
+      {entity.entityType === "ai" && <EntityAiContent entity={entity} />}
+      {entity.remarks && (
+        <span className="rp-row-value"><ReadMoreText text={entity.remarks} /></span>
+      )}
+    </div>
+  );
+}
+
 const PanelContent = ({ round }: PanelContentProps) => {
   if (!round) return null;
 
-  const interviewerRatings = round.ratings.filter((r) => r.entityType === "interviewer");
-  const avg = interviewerRatings.length > 0
-    ? (interviewerRatings.reduce((s, r) => s + r.score, 0) / interviewerRatings.length).toFixed(1)
-    : null;
-  const avgMax = interviewerRatings.length > 0 ? interviewerRatings[0].maxScore : 5;
-
-  const hasBullets = round.strongMatches.length > 0 || round.gapsAndConcerns.length > 0;
-
   return (
     <div className="rp-content">
-      {/* ── HEADER: Interview Info + Decisions ── */}
       <span className="rp-badge">{round.round}</span>
 
       <div className="rp-divider" />
@@ -69,131 +153,19 @@ const PanelContent = ({ round }: PanelContentProps) => {
         </div>
       </div>
 
-      {round.verdict || round.aiDecision || round.hrDecision || round.aiSummary || hasBullets ? (
+      {round.reviews.length > 0 && (
         <>
           <div className="rp-divider" />
           <div className="rp-group">
-            <span className="rp-group-title">Decisions</span>
+            <span className="rp-group-title">Decisions & Reviews</span>
             <div className="rp-decision-cards">
-              {round.verdict && (
-                <div className="rp-decision-card">
-                  <span className="rp-decision-label">Interviewer</span>
-                  <span className={`rp-pill rp-pill--${round.verdict}`}>
-                    <i className={VERDICT_ICONS[round.verdict] ?? "bx bx-help-circle"} />
-                    {VERDICT_LABELS[round.verdict] ?? round.verdict}
-                  </span>
-                </div>
-              )}
-              {round.aiDecision && (
-                <div className="rp-decision-card">
-                  <span className="rp-decision-label">AI Decision</span>
-                  <span className={`rp-pill rp-pill--ai-${round.aiDecision}`}>
-                    <i className={AI_ICONS[round.aiDecision] ?? "bx bx-help-circle"} />
-                    {AI_LABELS[round.aiDecision] ?? round.aiDecision}
-                  </span>
-                </div>
-              )}
-              {(round.aiSummary || hasBullets || round.rejectedStatus.length > 0 || round.rejectedReason) && (
-                <div className="rp-decision-card" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
-                  <span className="rp-decision-label">AI Remarks</span>
-                  <div className="rp-ai-summary md-content" style={{ padding: 0, border: "none", background: "transparent", width: "100%" }}>
-                    {round.aiSummary ? (
-                      <ExpandableAiSummary text={round.aiSummary} />
-                    ) : hasBullets ? null : round.rejectedStatus.length === 0 && !round.rejectedReason ? (
-                      <p className="rp-ai-empty">{ROUNDS_FALLBACK.NO_AI_SUMMARY}</p>
-                    ) : null}
-                    {round.rejectedStatus.length > 0 && (
-                      <>
-                        <span className="rp-ai-subheading">Rejection Reasons</span>
-                        <div className="rp-rejection-chip-group">
-                          {round.rejectedStatus.map((s, i) => (
-                            <span key={i} className="rp-rejection-chip">{s}</span>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                    {round.rejectedReason && (
-                      <p className="rp-rejection-text">{round.rejectedReason}</p>
-                    )}
-                    {round.strongMatches.length > 0 && (
-                      <>
-                        <span className="rp-ai-subheading">Strong Matches</span>
-                        <ul>
-                          {round.strongMatches.map((m, i) => (
-                            <li key={i}>{m}</li>
-                          ))}
-                        </ul>
-                      </>
-                    )}
-                    {round.gapsAndConcerns.length > 0 && (
-                      <>
-                        <span className="rp-ai-subheading">Gaps & Concerns</span>
-                        <ul>
-                          {round.gapsAndConcerns.map((g, i) => (
-                            <li key={i}>{g}</li>
-                          ))}
-                        </ul>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-              {round.hrDecision && (
-                <div className="rp-decision-card">
-                  <span className="rp-decision-label">HR Decision</span>
-                  <span className={`rp-pill rp-pill--hr-${round.hrDecision}`}>
-                    <i className={HR_ICONS[round.hrDecision] ?? "bx bx-help-circle"} />
-                    {HR_LABELS[round.hrDecision] ?? round.hrDecision}
-                  </span>
-                </div>
-              )}
-              {round.remarksHr && (
-                <div className="rp-decision-card" style={{ flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
-                  <span className="rp-decision-label">{HR_REMARKS_LABEL}</span>
-                  <span className="rp-row-value"><ReadMoreText text={round.remarksHr} /></span>
-                </div>
-              )}
-            </div>
-          </div>
-        </>
-      ) : null}
-
-      {/* ── FOOTER: Ratings + Skills + Notes ── */}
-      <div className="rp-divider" />
-
-      <div className="rp-group">
-        <span className="rp-group-title">Ratings</span>
-        <div className="rp-ratings">
-          {round.ratings.map((r, i) => (
-            <div key={i} className="rp-rating-row">
-              <span className="rp-rating-label">{r.label === "fitscore" ? "ATS Score" : r.label}</span>
-              <span className="rp-rating-score">{r.score}/{r.maxScore}</span>
-            </div>
-          ))}
-        </div>
-        {avg && <span className="rp-avg">Average: {avg}/{avgMax}</span>}
-      </div>
-
-      {round.skills.length > 0 && (
-        <>
-          <div className="rp-divider" />
-          <div className="rp-group">
-            <span className="rp-group-title">Skills Verified</span>
-            <div className="rp-skills">
-              {round.skills.map((s, i) => (
-                <span key={i} className="rp-skill-chip">{s}</span>
+              {round.reviews.map((entity, i) => (
+                <ReviewEntityBlock key={i} entity={entity} />
               ))}
             </div>
           </div>
         </>
       )}
-
-      <div className="rp-divider" />
-
-      <div className="rp-group">
-        <span className="rp-group-title">Review Notes</span>
-        <p className="rp-notes">{round.notes || ROUNDS_FALLBACK.NO_NOTES}</p>
-      </div>
     </div>
   );
 };

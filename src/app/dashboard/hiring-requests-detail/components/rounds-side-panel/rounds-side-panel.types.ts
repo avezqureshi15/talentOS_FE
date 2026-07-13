@@ -1,3 +1,19 @@
+export type ReviewEntity = {
+  entityType: string;
+  verdict?: string;
+  ratings: { label: string; score: number; maxScore: number }[];
+  skills: string[];
+  notes: string;
+  summary?: string;
+  strongMatches: string[];
+  gapsAndConcerns: string[];
+  remarks?: string;
+  rejectedStatus: string[];
+  rejectedReason?: string;
+  averageRating?: number;
+  [key: string]: unknown;
+};
+
 export type RoundDetail = {
   id: string;
   round: string;
@@ -10,18 +26,7 @@ export type RoundDetail = {
   duration: string;
   interviewType: string;
   status: string;
-  ratings: { label: string; score: number; maxScore: number; entityType?: string }[];
-  skills: string[];
-  notes: string;
-  aiSummary: string;
-  strongMatches: string[];
-  gapsAndConcerns: string[];
-  verdict?: "reject" | "hold" | "advance";
-  aiDecision?: "pending" | "selected" | "rejected" | "conflict";
-  hrDecision?: "pending" | "shortlisted" | "rejected";
-  remarksHr?: string;
-  rejectedStatus: string[];
-  rejectedReason?: string;
+  reviews: ReviewEntity[];
 };
 
 export type RoundsSidePanelProps = {

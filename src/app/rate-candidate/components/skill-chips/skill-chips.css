@@ -48,6 +48,73 @@
   background: var(--text-primary);
 }
 
+.skill-chip--custom {
+  padding-right: 8px;
+}
+
+.skill-chip-remove {
+  font-size: 14px;
+  margin-left: 2px;
+  opacity: 0.7;
+}
+
+.skill-chip-remove:hover {
+  opacity: 1;
+}
+
 .skill-chip-check {
   font-size: 14px;
+}
+
+.skill-chip-add-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.skill-chip-input {
+  width: 120px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+
+.skill-chip-input::placeholder {
+  color: var(--text-faint);
+}
+
+.skill-chip-input:focus {
+  border-color: var(--text-muted);
+}
+
+.skill-chip-add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.skill-chip-add-btn:hover:not(:disabled) {
+  color: var(--bg-primary);
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.skill-chip-add-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
