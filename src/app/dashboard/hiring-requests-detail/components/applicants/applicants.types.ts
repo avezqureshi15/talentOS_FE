@@ -53,7 +53,7 @@ export type ApplicantCardProps = {
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
   onDetailsReadMore: (id: string) => void;
-  onTimeline: (id: string) => void;
+  onTimeline: (id: number) => void;
   onViewRound?: (roundId: string) => void;
 };
 

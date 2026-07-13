@@ -22,7 +22,7 @@ type LocalOverride = {
 function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam, onRefresh, jdId }: ApplicantsProps) {
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
-  const [timelineId, setTimelineId] = useState<string | null>(null);
+  const [timelineId, setTimelineId] = useState<number | null>(null);
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
   const [aiSummaryId, setAiSummaryId] = useState<string | null>(null);
   const [detailsId, setDetailsId] = useState<string | null>(null);

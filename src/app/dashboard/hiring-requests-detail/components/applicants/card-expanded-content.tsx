@@ -21,7 +21,7 @@ const CardExpandedContent = ({
       {a.phone && <a href={`tel:${a.phone}`} className="action-link"><i className="bx bx-phone"></i> {a.phone}</a>}
       <a href={a.linkedinUrl} target="_blank" rel="noreferrer" className="action-link"><i className="bx bx-link-alt"></i> {APPLICANT_LABELS.LINKEDIN}</a>
       <a href={a.cvUrl} target="_blank" rel="noreferrer" className="action-link"><i className="bx bx-file"></i> {APPLICANT_LABELS.CV}</a>
-      <button className="action-link action-link-btn" onClick={(e) => { e.stopPropagation(); onTimeline(a.id); }}>
+      <button className="action-link action-link-btn" onClick={(e) => { e.stopPropagation(); onTimeline(a.candidateId); }}>
         <i className="bx bx-clock"></i> {APPLICANT_LABELS.TIMELINE}
       </button>
     </div>

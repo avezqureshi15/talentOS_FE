@@ -24,6 +24,7 @@ export const API_ENDPOINTS = {
   INTERVIEWS_BOOKING: "/interviews/booking",
   INTERVIEWS_SCHEDULING: "/interviews/scheduling",
   ALERTS: "/alerts",
+  EVENTS_BY_CANDIDATE: "/events/by-candidate/",
 } as const;
 
 export const PAGINATION = {

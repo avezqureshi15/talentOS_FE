@@ -11,6 +11,6 @@ export type TimelineStep = {
 };
 
 export type TimelineSheetProps = {
-  openId: string | null;
+  openId: number | null;
   onClose: () => void;
 };

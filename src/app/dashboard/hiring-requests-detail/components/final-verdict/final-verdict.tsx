@@ -16,7 +16,7 @@ const FinalVerdict = ({ jobId: _jobId }: FinalVerdictProps) => {
   const [subTab, setSubTab] = useState<FinalVerdictSubTab>("selected");
   const [openId, setOpenId] = useState<string | null>(null);
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
-  const [timelineId, setTimelineId] = useState<string | null>(null);
+  const [timelineId, setTimelineId] = useState<number | null>(null);
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
   const [aiSummaryId, setAiSummaryId] = useState<string | null>(null);
   const [detailsId, setDetailsId] = useState<string | null>(null);

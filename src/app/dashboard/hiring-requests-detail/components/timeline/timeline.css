@@ -97,7 +97,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  margin-top: 6px;
+  margin-top: 14px;
   z-index: 2;
 }
 
@@ -190,6 +190,17 @@
 }
 
 /* SUCCESS = green */
+.chev {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.timeline-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
 .dot.success {
   background: var(--success);
 }
@@ -222,4 +233,32 @@
 .timeline-container {
   scroll-behavior: smooth;
   padding-bottom: 40px;
+}
+
+/* SKELETON */
+.dot.skeleton {
+  background: var(--border-default);
+  animation: pulse 1.5s infinite;
+}
+
+.node-header.skeleton {
+  height: 40px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* EMPTY / ERROR */
+.timeline-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.timeline-empty .ghost-btn {
+  margin-top: 12px;
 }
