@@ -1,0 +1,224 @@
+.ai-bubble-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-bubble {
+  position: relative;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+
+/* ── sizes ── */
+.ai-bubble--sm {
+  width: 48px;
+  height: 48px;
+}
+.ai-bubble--md {
+  width: 72px;
+  height: 72px;
+}
+.ai-bubble--lg {
+  width: 120px;
+  height: 120px;
+}
+
+/* ── base neumorphic surface ── */
+.ai-bubble-surface {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+
+  background: var(--ai-bubble-bg, #1a1a1e);
+
+  /* neumorphic outer shadows */
+  box-shadow:
+    -6px -6px 14px rgba(255, 255, 255, 0.05),
+    6px 6px 14px rgba(0, 0, 0, 0.5),
+    inset -2px -2px 6px rgba(0, 0, 0, 0.4),
+    inset 2px 2px 6px rgba(255, 255, 255, 0.04);
+
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+
+.ai-bubble--sm .ai-bubble-surface {
+  box-shadow:
+    -4px -4px 10px rgba(255, 255, 255, 0.05),
+    4px 4px 10px rgba(0, 0, 0, 0.5),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.04);
+}
+
+.ai-bubble--lg .ai-bubble-surface {
+  box-shadow:
+    -10px -10px 24px rgba(255, 255, 255, 0.05),
+    10px 10px 24px rgba(0, 0, 0, 0.5),
+    inset -4px -4px 10px rgba(0, 0, 0, 0.4),
+    inset 4px 4px 10px rgba(255, 255, 255, 0.04);
+}
+
+/* ── inner 3D gradient overlay ── */
+.ai-bubble-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ── inner glow ring (active/thinking state) ── */
+.ai-bubble-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    var(--accent-glow, rgba(79, 142, 247, 0.6)),
+    transparent 30%,
+    transparent 60%,
+    var(--accent-glow, rgba(79, 142, 247, 0.6)),
+    transparent
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px), #000 100%);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px), #000 100%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.ai-bubble--active .ai-bubble-surface::after {
+  opacity: 1;
+  animation: bubble-ring-rotate 3s linear infinite;
+}
+
+@keyframes bubble-ring-rotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ── highlight spot (light reflection) ── */
+.ai-bubble-highlight {
+  position: absolute;
+  top: 12%;
+  left: 18%;
+  width: 30%;
+  height: 18%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.15) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.ai-bubble--sm .ai-bubble-highlight {
+  top: 10%;
+  left: 16%;
+  width: 28%;
+  height: 16%;
+}
+
+.ai-bubble--lg .ai-bubble-highlight {
+  top: 14%;
+  left: 20%;
+  width: 32%;
+  height: 20%;
+}
+
+/* ── icon / content inside ── */
+.ai-bubble-content {
+  position: relative;
+  z-index: 1;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── active glow aura ── */
+.ai-bubble--active .ai-bubble-surface {
+  box-shadow:
+    -6px -6px 14px rgba(255, 255, 255, 0.05),
+    6px 6px 14px rgba(0, 0, 0, 0.5),
+    0 0 30px var(--accent-glow, rgba(79, 142, 247, 0.3)),
+    inset -2px -2px 6px rgba(0, 0, 0, 0.4),
+    inset 2px 2px 6px rgba(255, 255, 255, 0.04);
+}
+
+.ai-bubble--active.ai-bubble--sm .ai-bubble-surface {
+  box-shadow:
+    -4px -4px 10px rgba(255, 255, 255, 0.05),
+    4px 4px 10px rgba(0, 0, 0, 0.5),
+    0 0 20px var(--accent-glow, rgba(79, 142, 247, 0.3)),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.04);
+}
+
+.ai-bubble--active.ai-bubble--lg .ai-bubble-surface {
+  box-shadow:
+    -10px -10px 24px rgba(255, 255, 255, 0.05),
+    10px 10px 24px rgba(0, 0, 0, 0.5),
+    0 0 40px var(--accent-glow, rgba(79, 142, 247, 0.3)),
+    inset -4px -4px 10px rgba(0, 0, 0, 0.4),
+    inset 4px 4px 10px rgba(255, 255, 255, 0.04);
+}
+
+/* ── pulse animation ── */
+.ai-bubble--pulse {
+  animation: bubble-float 4s ease-in-out infinite;
+}
+
+@keyframes bubble-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.ai-bubble--pulse.ai-bubble--active {
+  animation: bubble-float-active 3s ease-in-out infinite;
+}
+
+@keyframes bubble-float-active {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(-6px) scale(1.02);
+  }
+  50% {
+    transform: translateY(0) scale(1);
+  }
+  75% {
+    transform: translateY(-6px) scale(1.02);
+  }
+}
+
+/* ── label ── */
+.ai-bubble-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted, rgba(255, 255, 255, 0.45));
+  font-family: Sora, sans-serif;
+  letter-spacing: 0.03em;
+  user-select: none;
+}
