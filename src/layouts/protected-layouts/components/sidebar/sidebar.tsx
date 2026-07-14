@@ -146,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           <button className="sidebar-item" onClick={onSearch}>
             <Icon.Search />
             <span className="sidebar-item-label">{SIDEBAR_LABELS.SEARCH}</span>
-            <span className="sidebar-shortcut">Ctrl+K</span>
+            <span className="sidebar-shortcut">Ctrl+Shift+K</span>
           </button>
               <Link to="/chat">
           <button className="sidebar-item">

@@ -142,6 +142,7 @@ export const API_BASE_URL = "http://localhost:8001";
 /* ── APP ── */
 export const APP_URL = import.meta.env.VITE_APP_URL ?? "http://localhost:5173";
 export const SLOT_DURATION_MINUTES = Number(import.meta.env.VITE_SLOT_DURATION_MINUTES ?? 30);
+export const AI_SCAN_ANIMATION = import.meta.env.VITE_AI_SCAN_ANIMATION === "true";
 
 /* ── AUTH ── */
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "";
@@ -240,10 +241,11 @@ export const KEYBOARD_SHORTCUTS_MODAL = {
 
 export const KEYBOARD_SHORTCUTS_LIST = [
   { label: "New Chat", keys: "Ctrl+Shift+C" },
+  { label: "Ask AI", keys: "Ctrl+K" },
   { label: "Hiring Requests", keys: "Ctrl+Shift+H" },
   { label: "Interviews", keys: "Ctrl+Shift+I" },
   { label: "Alerts", keys: "Ctrl+Shift+A" },
-  { label: "Search", keys: "Ctrl+K" },
+  { label: "Search", keys: "Ctrl+Shift+K" },
   { label: "Toggle Sidebar", keys: "Ctrl+Shift+S" },
   { label: "Shortcuts Menu", keys: "Alt+K" },
 ] as const;

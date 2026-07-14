@@ -18,6 +18,8 @@ import { useUiStore } from "@/store/ui.store";
 import { STORAGE_KEYS } from "@/constants/constants";
 import { getUx, patchUx } from "@/utils/storage";
 import { useAurora } from "@/hooks/use-aurora";
+import AIChatPanel from "@/layouts/protected-layouts/components/ai-chat-panel/ai-chat-panel";
+import { useAIChatPanelStore } from "@/store/ai-chat-panel.store";
 
 function getInitialSidebarState(): boolean {
   const ux = getUx(STORAGE_KEYS.UX);
@@ -31,6 +33,15 @@ function getInitialSidebarState(): boolean {
 export default function ProtectedLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(getInitialSidebarState);
   const { show: showAurora } = useAurora();
+  const aiPanelOpen = useAIChatPanelStore((s) => s.isPanelOpen);
+
+  useEffect(() => {
+    if (aiPanelOpen) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(getInitialSidebarState());
+    }
+  }, [aiPanelOpen]);
   const ux = useMemo(() => getUx(STORAGE_KEYS.UX), []);
   const showHint = !ux.sbh && !sidebarOpen && !showAurora;
   const handleHintDismiss = useCallback(() => {
@@ -146,6 +157,17 @@ export default function ProtectedLayout() {
     isLoadingMore: cmdIsLoadingMore,
   } = useCommandPalette(handleSelectHiringRequest, handleNewChat);
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === KEYBOARD_SHORTCUTS.SEARCH.code) {
+        e.preventDefault();
+        cmdOpenPalette();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [cmdOpenPalette]);
+
   return (
     <div className="chat-root">
       <Sidebar
@@ -163,7 +185,7 @@ export default function ProtectedLayout() {
         Icon={Icon}
       />
 
-      <main className="chat-main">
+      <main className={`chat-main${aiPanelOpen ? " chat-main--panel-open" : ""}`}>
         <Header
           mounted={false}
           sidebarOpen={sidebarOpen}
@@ -178,6 +200,8 @@ export default function ProtectedLayout() {
           </Suspense>
         </ErrorBoundary>
       </main>
+
+      <AIChatPanel />
 
       <CommandPalette
         open={cmdOpen}

@@ -50,14 +50,6 @@ export const useCommandPalette = (
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-        e.preventDefault();
-        if (isOpen) {
-          close();
-        } else {
-          open();
-        }
-      }
       if (e.key === "Escape" && isOpen) {
         close();
       }
@@ -65,7 +57,7 @@ export const useCommandPalette = (
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, open, close]);
+  }, [isOpen, close]);
 
   const sections = useMemo((): CommandPaletteSection[] => {
     const result: CommandPaletteSection[] = [];
