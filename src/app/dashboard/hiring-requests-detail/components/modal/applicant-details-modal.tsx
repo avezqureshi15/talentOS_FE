@@ -4,7 +4,7 @@ import { APPLICANT_DETAILS_MODAL, LABEL_MAP, VALUE_SUFFIX } from "./applicant-de
 import { APPLICANT_LABELS } from "@/constants/constants";
 import "./applicant-details-modal.css"
 
-const ApplicantDetailsModal = ({ open, applicantName, details, onClose, isRemote }: ApplicantDetailsModalProps) => {
+const ApplicantDetailsModal = ({ open, applicantName, details, onClose, isRemote = false }: ApplicantDetailsModalProps) => {
   const remoteValue = isRemote ? APPLICANT_LABELS.JOB_IS_REMOTE : details.willingToRelocate;
 
   return (

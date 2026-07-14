@@ -59,7 +59,7 @@ export type ApplicantCardProps = {
   onDetailsReadMore: (id: string) => void;
   onTimeline: (id: number) => void;
   onViewRound?: (roundId: string) => void;
-  isRemote: boolean;
+  isRemote?: boolean;
 };
 
 export type AiDecision = "shortlisted" | "rejected" | "pending";
@@ -159,5 +159,6 @@ export type CardExpandedContentProps = {
   onDetailsReadMore: (id: string) => void;
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
-  isRemote: boolean;
+  onViewRound?: (roundId: string) => void;
+  isRemote?: boolean;
 };

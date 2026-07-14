@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { formatDate } from "./applicants.utils";
+import Chip from "@/components/ui/chip/chip";
+import type { ChipVariant } from "@/components/ui/chip/chip.types";
 import { APPLICANT_LABELS } from "@/constants/constants";
 import { INFO_CHIP_SKIP_KEYS } from "./applicants.constants";
 import { useApplicantState } from "./hooks/use-applicant-state";
@@ -22,7 +24,7 @@ const ApplicantCard = ({
   onDetailsReadMore,
   onTimeline,
   onViewRound,
-  isRemote,
+  isRemote = false,
 }: ApplicantCardProps) => {
   const stateConfig = useApplicantState(a, isScreening);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -81,9 +83,9 @@ const ApplicantCard = ({
           <div className="meta">
             {a.email && <span><i className="bx bx-envelope"></i> {a.email}</span>}
             {stateConfig.chip && (
-              <span className={`state-chip state-chip--${stateConfig.chip.variant}`}>
+              <Chip variant={stateConfig.chip.variant as ChipVariant} size="sm">
                 {stateConfig.chip.label}
-              </span>
+              </Chip>
             )}
             {a.appliedAt && (
               <span className="applied-date">

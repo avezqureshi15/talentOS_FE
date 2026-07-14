@@ -11,5 +11,5 @@ export type ApplicantDetailsModalProps = {
     willingToRelocate?: string;
   };
   onClose: () => void;
-  isRemote: boolean;
+  isRemote?: boolean;
 };

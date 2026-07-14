@@ -423,5 +423,17 @@ If ANY rule is violated:
 - ❌ Never use raw `<select>` elements
 - ❌ Never implement custom dropdowns — extend `<Select>` instead
 
+## 29. ALL Chip / Tag / Badge Patterns MUST Use `<Chip>` Component
+
+- ✅ ALL inline chip/tag/badge patterns (state chips, rejection chips, skill chips, status badges, filter chips, info chips, etc.) MUST use `<Chip>` from `@/components/ui/chip/chip`
+- ✅ Use `variant` prop to match purpose: `success`/`danger`/`warning`/`info`/`neutral`/`yellow`/`primary`/`secondary`
+- ✅ Use `size` prop for sizing (`sm`/`md`/`lg`)
+- ✅ Use `icon` prop for bx-icon classes
+- ✅ Use `onRemove` prop for removable chips (renders an X button)
+- ✅ Use `onClick` prop for clickable chips (renders as a `<button>` element)
+- ✅ Use `active` prop to visually highlight a chip (renders an outline)
+- ✅ Use `disabled` prop to disable interaction
+- ✅ Pass `className` for additional layout/positioning overrides
+- ❌ Never use raw `<span>` or `<button>` elements styled as chips/badges/tags
 
 ```

@@ -15,7 +15,7 @@ const CardExpandedContent = ({
   onCoverLetterReadMore,
   onAiSummaryReadMore,
   onViewRound,
-  isRemote,
+  isRemote = false,
 }: CardExpandedContentProps) => (
   <div className="accordion-body">
     <div className="action-links">

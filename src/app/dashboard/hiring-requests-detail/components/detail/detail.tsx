@@ -7,6 +7,7 @@ import Applicants from "@/app/dashboard/hiring-requests-detail/components/applic
 import FinalVerdict from "@/app/dashboard/hiring-requests-detail/components/final-verdict/final-verdict";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import Button from "@/components/ui/button/button";
+import Chip from "@/components/ui/chip/chip";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import BaseModal from "@/components/ui/modal/base-modal";
 import { useToggleStatus } from "@/app/dashboard/hiring-requests/hooks/use-toggle-status";
@@ -100,7 +101,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
 
         <div className="header-text">
           {hiringRequest.title}
-          {!hiringRequest.is_active && <span className="closed-chip">Application Closed</span>}
+          {!hiringRequest.is_active && <Chip variant="danger" size="sm">Application Closed</Chip>}
         </div>
 
         <div className="header-actions">

@@ -1,5 +1,6 @@
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
+import Chip from "@/components/ui/chip/chip";
 import PanelSkeleton from "./panel-skeleton";
 import ReadMoreText from "./read-more-text";
 import ExpandableAiSummary from "./expandable-ai-summary";
@@ -96,7 +97,7 @@ function EntitySkills({ skills }: { skills: string[] }) {
   if (skills.length === 0) return null;
   return (
     <div className="rp-skills">
-      {skills.map((s, i) => <span key={i} className="rp-skill-chip">{s}</span>)}
+      {skills.map((s, i) => <Chip key={i} variant="secondary" size="sm">{s}</Chip>)}
     </div>
   );
 }

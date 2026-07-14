@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
+import Chip from "@/components/ui/chip/chip";
 import Select from "@/components/ui/select/select";
 import { useDepartments } from "@/app/dashboard/hiring-requests/hooks/use-departments";
 import { useLocations } from "@/app/dashboard/hiring-requests/hooks/use-locations";
@@ -143,11 +144,9 @@ const HiringRequestsTable = ({
               <div className="location-cell">{item.location}</div>
 
               <div>
-                <span
-                  className={`status-badge ${item.is_active ? "status-active" : "status-closed"}`}
-                >
+                <Chip variant={item.is_active ? "success" : "neutral"} size="md">
                   {item.is_active ? STATUS_ACTIVE : STATUS_CLOSED}
-                </span>
+                </Chip>
               </div>
 
               <div className="type-cell">{item.type}</div>

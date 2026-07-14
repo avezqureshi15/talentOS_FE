@@ -1,0 +1,133 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  border-radius: 999px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  cursor: default;
+  user-select: none;
+  line-height: 1;
+}
+
+.chip--sm {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  height: 20px;
+}
+
+.chip--md {
+  font-size: 11.5px;
+  padding: 4px 10px;
+  height: 24px;
+}
+
+.chip--lg {
+  font-size: 12.5px;
+  padding: 6px 14px;
+  height: 30px;
+}
+
+.chip--clickable {
+  cursor: pointer;
+}
+
+.chip--clickable:hover {
+  filter: brightness(1.15);
+}
+
+.chip--clickable:active {
+  filter: brightness(0.95);
+}
+
+.chip--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.chip--active {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+/* Icon */
+.chip-icon {
+  font-size: 1em;
+  display: inline-flex;
+}
+
+/* Remove button */
+.chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1.1em;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+  color: inherit;
+}
+
+.chip-remove:hover {
+  opacity: 1;
+}
+
+/* Variants */
+.chip--success {
+  background: var(--success-bg, rgba(34, 197, 94, 0.12));
+  color: var(--success-light, #22c55e);
+  border-color: transparent;
+}
+
+.chip--danger {
+  background: var(--danger-bg-strong, rgba(239, 68, 68, 0.15));
+  color: var(--danger, #ef4444);
+  border-color: transparent;
+}
+
+.chip--warning {
+  background: var(--warning-bg, rgba(245, 158, 11, 0.12));
+  color: var(--warning-light, #f59e0b);
+  border-color: transparent;
+}
+
+.chip--info {
+  background: var(--info-bg, rgba(59, 130, 246, 0.12));
+  color: var(--info-light, #3b82f6);
+  border-color: transparent;
+}
+
+.chip--neutral {
+  background: var(--neutral-bg, rgba(107, 114, 128, 0.12));
+  color: var(--neutral-light, #6b7280);
+  border-color: transparent;
+}
+
+.chip--yellow {
+  background: var(--yellow-bg, rgba(234, 179, 8, 0.12));
+  color: var(--yellow, #eab308);
+  border-color: transparent;
+}
+
+.chip--primary {
+  background: var(--primary-bg, rgba(99, 102, 241, 0.12));
+  color: var(--primary-light, #6366f1);
+  border-color: transparent;
+}
+
+.chip--secondary {
+  background: var(--surface-glass);
+  color: var(--text-secondary);
+  border-color: var(--input-icon-bg);
+}
+
+.chip--secondary:hover {
+  background: var(--bg-active);
+  border-color: var(--border-strong);
+}
