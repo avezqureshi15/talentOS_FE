@@ -39,6 +39,11 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
   const [shortlistRemarks, setShortlistRemarks] = useState("");
   const [finalConfirmId, setFinalConfirmId] = useState<string | null>(null);
   const [mockData, setMockData] = useState<Applicant[] | null>(null);
+  // UI state for async action loading indicators
+  const [isConfirmingFinalDecision, setIsConfirmingFinalDecision] = useState(false);
+  const [isConfirmingReject, setIsConfirmingReject] = useState(false);
+  const [isShortlisting, setIsShortlisting] = useState(false);
+  const [isConfirmingHire, setIsConfirmingHire] = useState(false);
 
   // justification: fallback to mock API when no prop data is provided
   useEffect(() => {
@@ -77,39 +82,49 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
 
   const confirmFinalDecision = async () => {
     if (!finalCandidateId || !finalDecision) return;
-    const applicant = data.find((a) => a.id === finalCandidateId);
-    if (applicant) {
-      try {
-        const verdict = finalDecision === "selected" ? "SELECTED" as const : "REJECTED" as const;
-        await updateFinalVerdict(applicant.candidateId, verdict);
-        overrideFinalVerdict(finalCandidateId, finalDecision);
-      } catch {
+    setIsConfirmingFinalDecision(true);
+    try {
+      const applicant = data.find((a) => a.id === finalCandidateId);
+      if (applicant) {
+        try {
+          const verdict = finalDecision === "selected" ? "SELECTED" as const : "REJECTED" as const;
+          await updateFinalVerdict(applicant.candidateId, verdict);
+          overrideFinalVerdict(finalCandidateId, finalDecision);
+        } catch {
+          overrideFinalVerdict(finalCandidateId, finalDecision);
+        }
+      } else {
         overrideFinalVerdict(finalCandidateId, finalDecision);
       }
-    } else {
-      overrideFinalVerdict(finalCandidateId, finalDecision);
+      setFinalCandidateId(null);
+      setFinalDecision(null);
+      onRefresh?.();
+    } finally {
+      setIsConfirmingFinalDecision(false);
     }
-    setFinalCandidateId(null);
-    setFinalDecision(null);
-    onRefresh?.();
   };
 
   const handleShortlistOk = async () => {
-    const applicant = data.find((a) => a.id === shortlistCandidateId);
-    if (!applicant?.currentRoundId) { setShortlistStep(2); return; }
+    setIsShortlisting(true);
     try {
-      await updateReviewByRound(applicant.currentRoundId, {
-        entity_type: "hr",
-        reviews: { remarks: shortlistRemarks },
-        verdict: "shortlisted",
-      });
-    } catch {
-      // API failure shouldn't block the UI flow
+      const applicant = data.find((a) => a.id === shortlistCandidateId);
+      if (!applicant?.currentRoundId) { setShortlistStep(2); setIsShortlisting(false); return; }
+      try {
+        await updateReviewByRound(applicant.currentRoundId, {
+          entity_type: "hr",
+          reviews: { remarks: shortlistRemarks },
+          verdict: "shortlisted",
+        });
+      } catch {
+        // API failure shouldn't block the UI flow
+      }
+      if (shortlistCandidateId) {
+        overrideStatus(shortlistCandidateId, "shortlisted");
+      }
+      setShortlistStep(2);
+    } finally {
+      setIsShortlisting(false);
     }
-    if (shortlistCandidateId) {
-      overrideStatus(shortlistCandidateId, "shortlisted");
-    }
-    setShortlistStep(2);
   };
 
   const handleMoveToNextRound = () => {
@@ -126,22 +141,27 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
   };
 
   const handleConfirmFinalHire = async () => {
-    if (finalConfirmId) {
-      const applicant = data.find((a) => a.id === finalConfirmId);
-      if (applicant) {
-        try {
-          await updateFinalVerdict(applicant.candidateId, "SELECTED");
-          overrideFinalVerdict(finalConfirmId, "selected");
-        } catch {
+    setIsConfirmingHire(true);
+    try {
+      if (finalConfirmId) {
+        const applicant = data.find((a) => a.id === finalConfirmId);
+        if (applicant) {
+          try {
+            await updateFinalVerdict(applicant.candidateId, "SELECTED");
+            overrideFinalVerdict(finalConfirmId, "selected");
+          } catch {
+            overrideFinalVerdict(finalConfirmId, "selected");
+          }
+        } else {
           overrideFinalVerdict(finalConfirmId, "selected");
         }
-      } else {
-        overrideFinalVerdict(finalConfirmId, "selected");
+        setScreeningId(null);
       }
-      setScreeningId(null);
+      setFinalConfirmId(null);
+      onRefresh?.();
+    } finally {
+      setIsConfirmingHire(false);
     }
-    setFinalConfirmId(null);
-    onRefresh?.();
   };
 
   const confirmRejectFromEvaluation = async (id: string) => {
@@ -151,27 +171,32 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
   };
 
   const confirmReject = async () => {
-    const applicant = data.find((a) => a.id === rejectConfirmId);
-    if (applicant?.currentRoundId) {
-      try {
-        await updateReviewByRound(applicant.currentRoundId, {
-          entity_type: "hr",
-          reviews: { remarks: rejectRemarks },
-          verdict: "rejected",
-        });
-      } catch {
-        // API failure shouldn't block the UI flow
+    setIsConfirmingReject(true);
+    try {
+      const applicant = data.find((a) => a.id === rejectConfirmId);
+      if (applicant?.currentRoundId) {
+        try {
+          await updateReviewByRound(applicant.currentRoundId, {
+            entity_type: "hr",
+            reviews: { remarks: rejectRemarks },
+            verdict: "rejected",
+          });
+        } catch {
+          // API failure shouldn't block the UI flow
+        }
       }
+      if (rejectConfirmId) {
+        overrideStatus(rejectConfirmId, "rejected");
+        overrideFinalVerdict(rejectConfirmId, "rejected");
+        setScreeningId(null);
+      }
+      setRejectConfirmId(null);
+      setRejectRemarks("");
+      setRejectStep(1);
+      onRefresh?.();
+    } finally {
+      setIsConfirmingReject(false);
     }
-    if (rejectConfirmId) {
-      overrideStatus(rejectConfirmId, "rejected");
-      overrideFinalVerdict(rejectConfirmId, "rejected");
-      setScreeningId(null);
-    }
-    setRejectConfirmId(null);
-    setRejectRemarks("");
-    setRejectStep(1);
-    onRefresh?.();
   };
 
   const closeFinalDecision = () => {
@@ -256,6 +281,10 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
         finalConfirmId={finalConfirmId}
         onConfirmHire={handleConfirmFinalHire}
         onCloseFinalConfirm={() => setFinalConfirmId(null)}
+        isConfirmingFinalDecision={isConfirmingFinalDecision}
+        isConfirmingReject={isConfirmingReject}
+        isShortlisting={isShortlisting}
+        isConfirmingHire={isConfirmingHire}
       />
 
       <ScheduleRoundModal open={!!scheduleCandidateId} candidateName={data.find((a) => a.id === scheduleCandidateId)?.name ?? ""} candidateId={scheduleCandidateId ?? ""} candidateNumberId={data.find((a) => a.id === scheduleCandidateId)?.candidateId ?? 0} jdId={jdId} onClose={() => setScheduleCandidateId(null)} onScheduled={(id) => { overrideStatus(id, "scheduled"); setScreeningId(null); onRefresh?.(); }} />

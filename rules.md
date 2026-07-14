@@ -399,4 +399,17 @@ If ANY rule is violated:
 ## 25. Strictly always use index.css , css variables , never hardcode css color values
 
 ## 26. Use hooks useLocalStorage , useDebounce , useThemeStore which are globally created  
+
+## 27. ALL Buttons That Trigger API Calls MUST Use `<Button>` component
+
+- ✅ ALL buttons that trigger any API/mutation/query call MUST use `<Button>` from `@/components/ui/button/button`
+- ✅ The `loading` prop MUST be wired to the mutation's `isPending` or query's `isFetching` state
+- ✅ Use `loadingText` prop when the button text should change during loading (e.g., "Submitting...", "Resolving...")
+- ✅ Use `icon` prop for bx-icon classes instead of manual `<i>` elements (icons are hidden during loading)
+- ✅ Pass the existing `className` prop to preserve custom styling — the Button component adds no default styling
+- ✅ For complex success/error states beyond simple loading, manage locally with `loading` + `disabled` props
+- ❌ Never use raw `<button>` elements for API-triggering buttons
+- ❌ Never hand-roll loading spinner + disabled logic — the `loading` prop handles it
+
+
 ```

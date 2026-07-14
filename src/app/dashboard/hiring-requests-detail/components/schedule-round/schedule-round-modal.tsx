@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
 import { useInterviewerSlots } from "@/hooks/use-interviewer-slots";
 import { useInterviewerSearch } from "@/hooks/use-interviewer-search";
 import { useBookInterview } from "@/hooks/use-book-interview";
@@ -228,9 +229,9 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
                 </div>
                 <div className="sr-name-confirm-actions">
                   <button className="sr-btn sr-btn--back" onClick={() => { setShowNameConfirm(false); startEditTitle(); }} type="button">Edit Name</button>
-                  <button className="sr-btn sr-btn--primary" onClick={doBook} type="button" disabled={isPending}>
-                    {isPending ? "Sending..." : "Keep & Send"}
-                  </button>
+                  <Button className="sr-btn sr-btn--primary" onClick={doBook} loading={isPending} loadingText="Sending...">
+                    Keep & Send
+                  </Button>
                 </div>
               </div>
             </div>
@@ -280,8 +281,18 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
 
         <div className="sr-actions">
           {!showNameConfirm && step === 2 && !rescheduleMode && <button className="sr-btn sr-btn--back" onClick={() => setStep(1)} type="button">{SR_LABELS.BACK}</button>}
-          {!showNameConfirm && step === 1 && <button className="sr-btn sr-btn--primary" disabled={!canProceedTo2 || (rescheduleMode && isPending)} onClick={rescheduleMode ? handleSendInvite : nextStep} type="button">{rescheduleMode ? (isPending ? SR_LABELS.RESCHEDULING_LABEL : SR_LABELS.RESCHEDULE_CONFIRM) : SR_LABELS.NEXT}</button>}
-          {!showNameConfirm && step === 2 && !rescheduleMode && <button className="sr-btn sr-btn--primary" disabled={!canProceedTo3 || isPending} onClick={handleSendInvite} type="button">{isPending ? "Sending..." : SR_LABELS.SEND_INVITE}</button>}
+          {!showNameConfirm && step === 1 && (rescheduleMode ? (
+            <Button className="sr-btn sr-btn--primary" disabled={!canProceedTo2} onClick={handleSendInvite} loading={isPending} loadingText={SR_LABELS.RESCHEDULING_LABEL}>
+              {SR_LABELS.RESCHEDULE_CONFIRM}
+            </Button>
+          ) : (
+            <button className="sr-btn sr-btn--primary" disabled={!canProceedTo2} onClick={nextStep} type="button">{SR_LABELS.NEXT}</button>
+          ))}
+          {!showNameConfirm && step === 2 && !rescheduleMode && (
+            <Button className="sr-btn sr-btn--primary" disabled={!canProceedTo3} onClick={handleSendInvite} loading={isPending} loadingText="Sending...">
+              {SR_LABELS.SEND_INVITE}
+            </Button>
+          )}
           {!showNameConfirm && step === 3 && <button className="sr-btn sr-btn--done" onClick={handleDone} type="button"><i className="bx bx-check" /> {SR_LABELS.DONE}</button>}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Icon } from "@/components/ui/icons";
+import Button from "@/components/ui/button/button";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import RatingPanel from "@/app/rate-candidate/components/rating-panel/rating-panel";
@@ -214,15 +215,9 @@ const RateCandidate = () => {
                   <i className="bx bx-refresh" />
                   {RATE_LABELS.CLEAR}
                 </button>
-                <button
-                  className="rate-submit-btn"
-                  onClick={handleSubmit}
-                  disabled={!canSubmit}
-                  type="button"
-                >
-                  {isSubmitting ? <LoadingSpinner /> : <i className="bx bx-send" />}
-                  {isSubmitting ? "Submitting..." : RATE_LABELS.SUBMIT}
-                </button>
+                <Button className="rate-submit-btn" onClick={handleSubmit} disabled={!canSubmit} loading={isSubmitting} loadingText="Submitting..." icon="bx-send">
+                  {RATE_LABELS.SUBMIT}
+                </Button>
               </div>
             </>
           )}

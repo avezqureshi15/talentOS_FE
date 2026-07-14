@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import AccordionCard from "@/components/shared/accordion-card/accordion-card";
 import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import { useAlertsData } from "./hooks/use-alerts-data";
 import { sendNotification } from "@/services/alerts/alerts";
@@ -15,7 +16,7 @@ const Alerts = ({ sub }: { sub: AlertsSubTab }) => {
   const [selectedRoundId, setSelectedRoundId] = useState<string | null>(null);
   const [resolveAlertId, setResolveAlertId] = useState<string | null>(null);
 
-  const { alerts, hasMore, isLoading, page, setPage, resolveAlert } = useAlertsData(sub);
+  const { alerts, hasMore, isLoading, isFetching, page, setPage, resolveAlert, isResolving } = useAlertsData(sub);
   const addToast = useToastStore((s) => s.addToast);
 
   const isSlots = sub === "slots";
@@ -76,13 +77,13 @@ const Alerts = ({ sub }: { sub: AlertsSubTab }) => {
           />
         ))}
         <div className="pagination-row">
-          <button className="pagination-btn" disabled={page <= 1} onClick={() => setPage(page - 1)} type="button">
-            <i className="bx bx-chevron-left" /> Previous
-          </button>
+          <Button className="pagination-btn" disabled={page <= 1} onClick={() => setPage(page - 1)} loading={isFetching} icon="bx-chevron-left">
+            Previous
+          </Button>
           <span className="pagination-info">Page {page}</span>
-          <button className="pagination-btn" disabled={!hasMore} onClick={() => setPage(page + 1)} type="button">
-            Next <i className="bx bx-chevron-right" />
-          </button>
+          <Button className="pagination-btn" disabled={!hasMore} onClick={() => setPage(page + 1)} loading={isFetching} icon="bx-chevron-right" iconPosition="right">
+            Next
+          </Button>
         </div>
       </div>
 
@@ -103,12 +104,12 @@ const Alerts = ({ sub }: { sub: AlertsSubTab }) => {
             Are you sure you want to mark this alert as resolved? This action cannot be undone.
           </p>
           <div className="resolve-modal-actions">
-            <button className="resolve-modal-btn resolve-modal-btn--cancel" onClick={() => setResolveAlertId(null)} type="button">
+            <Button className="resolve-modal-btn resolve-modal-btn--cancel" onClick={() => setResolveAlertId(null)}>
               Cancel
-            </button>
-            <button className="resolve-modal-btn resolve-modal-btn--confirm" onClick={handleResolveConfirm} type="button">
+            </Button>
+            <Button className="resolve-modal-btn resolve-modal-btn--confirm" onClick={handleResolveConfirm} loading={isResolving} loadingText="Resolving...">
               Resolve
-            </button>
+            </Button>
           </div>
         </div>
       </BaseModal>

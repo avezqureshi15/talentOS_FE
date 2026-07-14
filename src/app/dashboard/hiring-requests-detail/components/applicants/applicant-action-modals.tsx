@@ -1,4 +1,5 @@
 import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
 import { APPLICANT_LABELS } from "@/constants/constants";
 import type { ApplicantActionModalsProps } from "./applicants.types";
 
@@ -26,6 +27,10 @@ const ApplicantActionModals = ({
   finalConfirmId,
   onConfirmHire,
   onCloseFinalConfirm,
+  isConfirmingFinalDecision,
+  isConfirmingReject,
+  isShortlisting,
+  isConfirmingHire,
 }: ApplicantActionModalsProps) => {
   const actionLabel = finalDecision === "selected"
     ? APPLICANT_LABELS.SELECT_CANDIDATE
@@ -46,13 +51,14 @@ const ApplicantActionModals = ({
             <button className="confirm-btn confirm-cancel" onClick={onCloseFinalDecision} type="button">
               Cancel
             </button>
-            <button
+            <Button
               className={`confirm-btn ${finalDecision === "selected" ? "confirm-proceed" : "confirm-danger"}`}
               onClick={confirmFinalDecision}
-              type="button"
+              loading={isConfirmingFinalDecision}
+              loadingText={finalDecision === "selected" ? "Selecting..." : "Rejecting..."}
             >
               {finalDecision === "selected" ? "Select" : "Reject"}
-            </button>
+            </Button>
           </div>
         </div>
       </BaseModal>
@@ -97,9 +103,9 @@ const ApplicantActionModals = ({
           <p>{APPLICANT_LABELS.REJECT_WARNING}</p>
           <div className="confirm-actions">
             <button className="confirm-btn confirm-cancel" onClick={onCloseReject} type="button">Cancel</button>
-            <button className="confirm-btn confirm-danger" onClick={onConfirmReject} type="button">
+            <Button className="confirm-btn confirm-danger" onClick={onConfirmReject} loading={isConfirmingReject} loadingText="Rejecting...">
               Reject
-            </button>
+            </Button>
           </div>
         </div>
       </BaseModal>
@@ -122,14 +128,15 @@ const ApplicantActionModals = ({
             <button className="confirm-btn confirm-cancel" onClick={onCloseShortlist} type="button">
               Cancel
             </button>
-            <button
+            <Button
               className="confirm-btn confirm-proceed"
               disabled={shortlistRemarks.trim() === ""}
               onClick={onShortlistOk}
-              type="button"
+              loading={isShortlisting}
+              loadingText="Shortlisting..."
             >
               OK
-            </button>
+            </Button>
           </div>
         </div>
       </BaseModal>
@@ -169,9 +176,9 @@ const ApplicantActionModals = ({
             <button className="confirm-btn confirm-cancel" onClick={onCloseFinalConfirm} type="button">
               Cancel
             </button>
-            <button className="confirm-btn confirm-danger" onClick={onConfirmHire} type="button">
+            <Button className="confirm-btn confirm-danger" onClick={onConfirmHire} loading={isConfirmingHire} loadingText="Confirming...">
               Confirm
-            </button>
+            </Button>
           </div>
         </div>
       </BaseModal>

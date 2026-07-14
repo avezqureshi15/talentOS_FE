@@ -1,5 +1,6 @@
 import BookingCalendar from "@/app/slot-booking/components/booking-calendar/booking-calendar";
 import SlotPicker from "@/app/slot-booking/components/slot-picker/slot-picker";
+import Button from "@/components/ui/button/button";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import { Icon } from "@/components/ui/icons";
@@ -141,13 +142,9 @@ const SlotBooking = () => {
 
           <div className="action-bottom">
             {totalSlotsCount > 0 && (
-              <button className="booking-confirm-btn" onClick={handleConfirm} type="button" disabled={isSubmitting}>
-                <i className={`bx ${isSubmitting ? "bx-loader-alt bx-spin" : "bx-calendar-check"}`} />
-                {isSubmitting
-                  ? "Submitting..."
-                  : `${BOOKING_LABELS.CONFIRM} (${totalSlotsCount})`
-                }
-              </button>
+              <Button className="booking-confirm-btn" onClick={handleConfirm} loading={isSubmitting} loadingText="Submitting..." icon="bx-calendar-check">
+                {BOOKING_LABELS.CONFIRM} ({totalSlotsCount})
+              </Button>
             )}
 
             {totalSlotsCount === 0 && (

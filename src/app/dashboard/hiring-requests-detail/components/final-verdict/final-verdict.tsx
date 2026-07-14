@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ApplicantCard from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-card";
+import Button from "@/components/ui/button/button";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
@@ -22,7 +23,7 @@ const FinalVerdict = ({ jobId: _jobId }: FinalVerdictProps) => {
   const [detailsId, setDetailsId] = useState<string | null>(null);
   const [selectedRound, setSelectedRound] = useState<string | null>(null);
 
-  const { candidates, isLoading, hasMore, fetchNext } = useFinalVerdictsData(subTab);
+  const { candidates, isLoading, isLoadingMore, hasMore, fetchNext } = useFinalVerdictsData(subTab);
 
   return (
     <div className="final-verdict">
@@ -66,9 +67,9 @@ const FinalVerdict = ({ jobId: _jobId }: FinalVerdictProps) => {
               />
             ))}
             {hasMore && (
-              <button className="screen-btn" onClick={fetchNext} type="button">
+              <Button className="screen-btn" onClick={fetchNext} loading={isLoadingMore}>
                 Load More
-              </button>
+              </Button>
             )}
           </div>
 

@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import Button from "@/components/ui/button/button";
 import { INTERVIEW_SUB_TABS, NO_INTERVIEWS_LABEL } from "./interviews.constants";
 import type { InterviewSubTab } from "./interviews.types";
 import { useInterviewsData } from "./hooks/use-interviews-data";
@@ -15,7 +16,7 @@ const Interviews = () => {
   const [rescheduleFor, setRescheduleFor] = useState<{ candidateName: string; candidateId: string; interviewId: string; interviewerEmpId: string; interviewerName: string; roundName: string } | null>(null);
   const [cancelTarget, setCancelTarget] = useState<{ candidateName: string; interviewId: string } | null>(null);
 
-  const { interviews, hasMore, isLoading, page, setPage } = useInterviewsData(sub);
+  const { interviews, hasMore, isLoading, isFetching, page, setPage } = useInterviewsData(sub);
 
   const handleReschedule = useCallback((candidateName: string, candidateId: string, interviewId: string, interviewerEmpId: string, interviewerName: string, roundName: string) => {
     setRescheduleFor({ candidateName, candidateId, interviewId, interviewerEmpId, interviewerName, roundName });
@@ -72,23 +73,26 @@ const Interviews = () => {
               />
             ))}
             <div className="pagination-row">
-              <button
+              <Button
                 className="pagination-btn"
                 disabled={page <= 1}
                 onClick={() => setPage(page - 1)}
-                type="button"
+                loading={isFetching}
+                icon="bx-chevron-left"
               >
-                <i className="bx bx-chevron-left" /> Previous
-              </button>
+                Previous
+              </Button>
               <span className="pagination-info">Page {page}</span>
-              <button
+              <Button
                 className="pagination-btn"
                 disabled={!hasMore}
                 onClick={() => setPage(page + 1)}
-                type="button"
+                loading={isFetching}
+                icon="bx-chevron-right"
+                iconPosition="right"
               >
-                Next <i className="bx bx-chevron-right" />
-              </button>
+                Next
+              </Button>
             </div>
           </>
         )}

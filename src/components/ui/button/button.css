@@ -1,0 +1,8 @@
+.btn--loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.btn--full {
+  width: 100%;
+}

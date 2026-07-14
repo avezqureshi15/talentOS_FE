@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PROFILE_MENU_ITEMS, PROFILE_DANGER_ITEM, LOGOUT_MODAL } from "@/constants/constants";
 import { useSidebarUserPopover } from "@/components/ui/sidebar/sidebar-user-popover/use-sidebar-user-popover";
@@ -6,6 +6,7 @@ import { useAuth } from "@/app/auth/hooks/use-auth";
 import { ROUTES } from "@/constants/routes";
 import { getInitials } from "@/utils/user";
 import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
 import ProfileModal from "@/components/ui/sidebar/sidebar-user-popover/profile-modal";
 import SettingsModal from "@/components/ui/sidebar/sidebar-user-popover/settings-modal";
 import KeyboardShortcutsModal from "@/components/ui/sidebar/sidebar-user-popover/keyboard-shortcuts-modal";
@@ -15,13 +16,20 @@ import "./sidebar-user-popover.css";
 const SidebarUserPopover = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  // UI state for logout button loading indicator
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const showShortcutsModal = useUiStore((s) => s.showShortcutsModal);
   const closeShortcutsModal = useUiStore((s) => s.closeShortcutsModal);
 
   const handleLogout = useCallback(async () => {
-    await logout();
-    navigate(ROUTES.LOGIN, { replace: true });
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      navigate(ROUTES.LOGIN, { replace: true });
+    } finally {
+      setIsLoggingOut(false);
+    }
   }, [logout, navigate]);
 
   const {
@@ -86,12 +94,12 @@ const SidebarUserPopover = () => {
         <div className="sidebar-delete-body">
           <p className="sidebar-delete-text">{LOGOUT_MODAL.BODY}</p>
           <div className="sidebar-delete-actions">
-            <button className="sidebar-delete-btn sidebar-delete-btn--cancel" onClick={closeModal}>
+            <Button className="sidebar-delete-btn sidebar-delete-btn--cancel" onClick={closeModal}>
               {LOGOUT_MODAL.CANCEL}
-            </button>
-            <button className="sidebar-delete-btn sidebar-delete-btn--confirm" onClick={handleLogout}>
+            </Button>
+            <Button className="sidebar-delete-btn sidebar-delete-btn--confirm" onClick={handleLogout} loading={isLoggingOut} loadingText="Logging out...">
               {LOGOUT_MODAL.CONFIRM}
-            </button>
+            </Button>
           </div>
         </div>
       </BaseModal>

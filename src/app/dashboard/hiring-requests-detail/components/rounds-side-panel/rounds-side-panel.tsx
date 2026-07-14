@@ -1,4 +1,5 @@
 import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
 import PanelSkeleton from "./panel-skeleton";
 import ReadMoreText from "./read-more-text";
 import ExpandableAiSummary from "./expandable-ai-summary";
@@ -11,7 +12,7 @@ import {
 import "./rounds-side-panel.css";
 
 const RoundsSidePanel = ({ open, roundId, onClose, hideReviews }: RoundsSidePanelProps) => {
-  const { data: round, isLoading, isError, refetch } = useRoundDetail(roundId);
+  const { data: round, isLoading, isFetching, isError, refetch } = useRoundDetail(roundId);
 
   return (
     <BaseModal open={open} onClose={onClose} title={ROUNDS_PANEL_LABELS.TITLE} variant="slide-right">
@@ -19,9 +20,9 @@ const RoundsSidePanel = ({ open, roundId, onClose, hideReviews }: RoundsSidePane
       {isError && (
         <div className="rp-status rp-status--error">
           <p>{ROUNDS_PANEL_STATUS.ERROR}</p>
-          <button className="action-link action-link-btn" onClick={() => refetch()} type="button">
+          <Button className="action-link action-link-btn" onClick={() => refetch()} loading={isFetching}>
             {ROUNDS_PANEL_STATUS.RETRY}
-          </button>
+          </Button>
         </div>
       )}
       {round && <PanelContent round={round} hideReviews={hideReviews} />}

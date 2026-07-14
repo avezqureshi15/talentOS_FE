@@ -37,7 +37,11 @@ export type StateConfig = {
   footerBadge?: {
     text: string;
     className: string;
-  };
+  isConfirmingFinalDecision?: boolean;
+  isConfirmingReject?: boolean;
+  isShortlisting?: boolean;
+  isConfirmingHire?: boolean;
+};
 };
 
 export type ApplicantCardProps = {
@@ -140,6 +144,10 @@ export type ApplicantActionModalsProps = {
   finalConfirmId: string | null;
   onConfirmHire: () => void;
   onCloseFinalConfirm: () => void;
+  isConfirmingFinalDecision?: boolean;
+  isConfirmingReject?: boolean;
+  isShortlisting?: boolean;
+  isConfirmingHire?: boolean;
 };
 
 export type CardExpandedContentProps = {

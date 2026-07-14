@@ -6,6 +6,7 @@ import JobDescription from "@/app/dashboard/hiring-requests-detail/components/jo
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
 import FinalVerdict from "@/app/dashboard/hiring-requests-detail/components/final-verdict/final-verdict";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import Button from "@/components/ui/button/button";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import BaseModal from "@/components/ui/modal/base-modal";
 import { useToggleStatus } from "@/app/dashboard/hiring-requests/hooks/use-toggle-status";
@@ -103,9 +104,9 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
         </div>
 
         <div className="header-actions">
-          <button className="export-btn" onClick={handleExport} disabled={isExporting}>
-            {isExporting ? "Downloading..." : JOB_DETAIL.EXPORT_AS_EXCEL}
-          </button>
+          <Button className="export-btn" onClick={handleExport} loading={isExporting} loadingText="Downloading..." icon="bx-download">
+            {JOB_DETAIL.EXPORT_AS_EXCEL}
+          </Button>
           {exportError && <span className="export-error">{exportError}</span>}
           <button
             className={`status-btn ${hiringRequest.is_active ? "status-btn-close" : "status-btn-open"}`}
@@ -121,10 +122,12 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           <div className="confirm-body">
             <p>Are you sure you want to {hiringRequest.is_active ? "close" : "reopen"} this application?</p>
             <div className="confirm-actions">
-              <button className="confirm-btn confirm-cancel" onClick={() => setShowConfirm(false)}>Cancel</button>
-              <button className="confirm-btn confirm-proceed" onClick={() => { toggleStatus(hiringRequest.id); setShowConfirm(false); }} disabled={isToggling}>
-                {isToggling ? "..." : hiringRequest.is_active ? "Close" : "Reopen"}
-              </button>
+              <Button className="confirm-btn confirm-cancel" onClick={() => setShowConfirm(false)}>
+                Cancel
+              </Button>
+              <Button className="confirm-btn confirm-proceed" onClick={() => { toggleStatus(hiringRequest.id); setShowConfirm(false); }} loading={isToggling} loadingText="Processing...">
+                {hiringRequest.is_active ? "Close" : "Reopen"}
+              </Button>
             </div>
           </div>
         </BaseModal>

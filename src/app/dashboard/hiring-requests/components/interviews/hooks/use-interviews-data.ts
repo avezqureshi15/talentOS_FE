@@ -11,6 +11,7 @@ type UseInterviewsResult = {
   total: number;
   hasMore: boolean;
   isLoading: boolean;
+  isFetching: boolean;
   page: number;
   setPage: (page: number) => void;
   refresh: () => void;
@@ -46,6 +47,7 @@ export function useInterviewsData(
     total,
     hasMore,
     isLoading: query.isLoading,
+    isFetching: query.isFetching,
     page,
     setPage: useCallback((p: number) => setPage(p), []),
     refresh: query.refetch,

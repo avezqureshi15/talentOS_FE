@@ -1,5 +1,6 @@
 import { useState } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
 import { CANCEL_INTERVIEW_LABEL, CANCEL_CONFIRM_LABEL } from "./interviews.constants";
 import { useCancelInterview } from "@/hooks/use-cancel-interview";
 import "./cancel-interview-modal.css";
@@ -11,8 +12,6 @@ type CancelInterviewModalProps = {
   onClose: () => void;
   onConfirm: () => void;
 };
-
-const CANCELING_LABEL = "Cancelling...";
 
 const CancelInterviewModal = ({ open, interviewId, candidateName, onClose, onConfirm }: CancelInterviewModalProps) => {
   const [error, setError] = useState<string | null>(null);
@@ -36,12 +35,12 @@ const CancelInterviewModal = ({ open, interviewId, candidateName, onClose, onCon
         </p>
         {error && <p className="cancel-modal-error">{error}</p>}
         <div className="cancel-modal-actions">
-          <button className="cancel-modal-btn cancel-modal-btn--cancel" onClick={onClose} disabled={isPending} type="button">
+          <Button className="cancel-modal-btn cancel-modal-btn--cancel" onClick={onClose} disabled={isPending}>
             Go Back
-          </button>
-          <button className="cancel-modal-btn cancel-modal-btn--confirm" onClick={handleConfirm} disabled={isPending} type="button">
-            {isPending ? CANCELING_LABEL : CANCEL_CONFIRM_LABEL}
-          </button>
+          </Button>
+          <Button className="cancel-modal-btn cancel-modal-btn--confirm" onClick={handleConfirm} loading={isPending} loadingText="Cancelling...">
+            {CANCEL_CONFIRM_LABEL}
+          </Button>
         </div>
       </div>
     </BaseModal>

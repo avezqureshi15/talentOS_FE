@@ -12,6 +12,7 @@ type UseAlertsResult = {
   total: number;
   hasMore: boolean;
   isLoading: boolean;
+  isFetching: boolean;
   page: number;
   setPage: (page: number) => void;
   refresh: () => void;
@@ -78,6 +79,7 @@ export function useAlertsData(sub: AlertsSubTab): UseAlertsResult {
     total,
     hasMore,
     isLoading: query.isLoading,
+    isFetching: query.isFetching,
     page,
     setPage: useCallback((p: number) => setPage(p), []),
     refresh: query.refetch,
