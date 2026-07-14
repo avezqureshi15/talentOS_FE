@@ -2,13 +2,13 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import "./sidebar.css";
-import type { SidebarProps, ChatHistoryItem } from "@/components/ui/sidebar/sidebar.types";
+import type { SidebarProps, ChatHistoryItem } from "@/layouts/protected-layouts/components/sidebar/sidebar.types";
 import { Link } from "react-router-dom";
 import { SIDEBAR_LABELS } from "@/constants/constants";
 import SidebarGroup from "./sidebar-group";
 import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
-import SidebarUserPopover from "@/components/ui/sidebar/sidebar-user-popover/sidebar-user-popover";
+import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,

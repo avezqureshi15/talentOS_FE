@@ -1,5 +1,5 @@
 import { SIDEBAR_LABELS } from "@/constants/constants";
-import type { ChatHistoryItem } from "@/components/ui/sidebar/sidebar.types";
+import type { ChatHistoryItem } from "@/layouts/protected-layouts/components/sidebar/sidebar.types";
 import { resolveCommandTitle } from "@/app/chat/components/chat-area/chat-area.utils";
 
 type ChatItemProps = {

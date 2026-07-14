@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import "./chat.css";
 
 import ChatArea from "@/app/chat/components/chat-area/chat-area";
-import ChatInput from "@/components/ui/chat-input/chat-input";
+import ChatInput from "@/app/chat/components/chat-input/chat-input";
 import EmptyState from "@/app/chat/components/empty-state/empty-state";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";

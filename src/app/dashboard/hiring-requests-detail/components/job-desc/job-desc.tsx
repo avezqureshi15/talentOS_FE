@@ -22,9 +22,9 @@ const JobDescription = ({ hiringRequest }: JobDescriptionProps) => {
       {hiringRequest.benefits.length > 0 && (
         <div className="bento-card">
           <h3>Benefits</h3>
-          <div className="chip-list">
+          <div className="jd-chip-list">
             {hiringRequest.benefits.map((ben, i) => (
-              <span key={i} className="chip">{ben}</span>
+              <span key={i} className="jd-chip">{ben}</span>
             ))}
           </div>
         </div>
@@ -33,9 +33,9 @@ const JobDescription = ({ hiringRequest }: JobDescriptionProps) => {
       {hiringRequest.requirements.length > 0 && (
         <div className="bento-card">
           <h3>Requirements</h3>
-          <div className="chip-list">
+          <div className="jd-chip-list">
             {hiringRequest.requirements.map((req, i) => (
-              <span key={i} className="chip">{req}</span>
+              <span key={i} className="jd-chip">{req}</span>
             ))}
           </div>
         </div>

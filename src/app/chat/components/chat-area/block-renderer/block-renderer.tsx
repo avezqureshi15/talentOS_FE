@@ -1,6 +1,6 @@
 // block-renderer.tsx
 
-import AIMessage from "@/components/ui/ai-message/ai-message";
+import AIMessage from "@/app/chat/components/ai-message/ai-message";
 import ThinkingChip from "./blocks/thinking/thinking";
 import ComposeEmail from "./blocks/compose-email/compose-email";
 import TextArea from "./blocks/text-area/text-area";

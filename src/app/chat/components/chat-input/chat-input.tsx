@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react";
-import SendButton from "@/components/ui/send-button/send-button";
+import SendButton from "@/app/chat/components/send-button/send-button";
 import ChatTokens from "./chat-tokens";
 import "./chat-input.css";
 import type { ChatInputProps } from "./chat-input.types";

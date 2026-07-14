@@ -12,8 +12,25 @@ export const SCORE_FILTERS = [
 export const ROUND_VERDICT_FILTERS = [
   { value: "all", label: "All Candidates" },
   { value: "selected", label: "Shortlisted" },
-  { value: "rejected", label: "Rejected" },
 ] as const;
+
+export const REJECT_FILTER_OPTIONS = [
+  { value: "all", label: "All Rejected" },
+  { value: "yoe", label: "YOE" },
+  { value: "location", label: "Location" },
+  { value: "budget", label: "Budget" },
+  { value: "experience", label: "Experience" },
+  { value: "ats_score", label: "ATS Score" },
+] as const;
+
+export const REJECT_FILTER_LABELS: Record<string, string> = {
+  all: "All Rejected",
+  yoe: "YOE",
+  location: "Location",
+  budget: "Budget",
+  experience: "Experience",
+  ats_score: "ATS Score",
+};
 
 export const ROUND_VERDICT_LABELS: Record<string, string> = {
   selected: "Shortlisted",
@@ -26,7 +43,7 @@ export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "m
 
 export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   state: "waiting_for_review",
-  chip: { label: "Awaiting review", variant: "yellow" },
+  chip: { label: "Awaiting Review", variant: "yellow" },
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],
@@ -66,7 +83,7 @@ export const MOVE_TO_NEXT_ROUND_CONFIG: StateConfig = {
 
 export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
   state: "interview_scheduled",
-  chip: { label: "Interview scheduled", variant: "info" },
+  chip: { label: "Interview Scheduled", variant: "info" },
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],
@@ -75,7 +92,7 @@ export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
 
 export const INTERVIEW_RESCHEDULED_CONFIG: StateConfig = {
   state: "interview_rescheduled",
-  chip: { label: "Interview rescheduled", variant: "warning" },
+  chip: { label: "Interview Rescheduled", variant: "warning" },
   showInfoChips: true,
   showExpandedContent: true,
   actions: [],
@@ -84,7 +101,7 @@ export const INTERVIEW_RESCHEDULED_CONFIG: StateConfig = {
 
 export const INTERVIEW_CANCELLED_CONFIG: StateConfig = {
   state: "interview_cancelled",
-  chip: { label: "Interview cancelled", variant: "danger" },
+  chip: { label: "Interview Cancelled", variant: "danger" },
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],
@@ -93,7 +110,7 @@ export const INTERVIEW_CANCELLED_CONFIG: StateConfig = {
 
 export const REJECTED_CONFIG: StateConfig = {
   state: "rejected",
-  chip: { label: "Moved out of pipeline", variant: "danger" },
+  chip: { label: "Moved Out Of Pipeline", variant: "danger" },
   showInfoChips: false,
   showExpandedContent: false,
   actions: [],
@@ -103,7 +120,7 @@ export const REJECTED_CONFIG: StateConfig = {
 
 export const SELECTED_CONFIG: StateConfig = {
   state: "selected",
-  chip: { label: "Selected and closed", variant: "success" },
+  chip: { label: "Selected And Closed", variant: "success" },
   showInfoChips: false,
   showExpandedContent: false,
   actions: [],

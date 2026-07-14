@@ -1,5 +1,5 @@
 import type { CommandItem } from "../../types";
-import { MAX_SELECTION } from "@/components/ui/chat-input/hooks/use-multi-select";
+import { MAX_SELECTION } from "@/app/chat/components/chat-input/hooks/use-multi-select";
 import AskSlotsButton from "./ask-slots-button";
 
 type MultiSelectListProps = {

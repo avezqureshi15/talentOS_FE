@@ -4,7 +4,7 @@ import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP } from "./schedule-rou
 import { askSlotsForEmployee } from "@/components/shared/mentions/services/ask-slots.service";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
-import InfoChipTooltip from "@/components/ui/info-chip-tooltip/info-chip-tooltip";
+import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
 import type { Interviewer, SlotTab } from "./schedule-round-modal.types";
 import type { CommandItem } from "@/components/shared/mentions/types";
 

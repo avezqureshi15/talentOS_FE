@@ -1,6 +1,6 @@
 import type { Message, AIMessage, Suggestion, ContentBlock } from "@/app/chat/pages/chat.types";
 import { MOCK_INTERVIEW_LIST } from "@/components/shared/mentions/mock";
-import { INTENT_LABELS } from "@/components/ui/command-card/command-card.constants";
+import { INTENT_LABELS } from "@/app/chat/components/command-card/command-card.constants";
 
 export function hasSuggestions(
   msg: Message

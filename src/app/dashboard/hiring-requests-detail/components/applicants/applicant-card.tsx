@@ -6,7 +6,7 @@ import { APPLICANT_LABELS } from "@/constants/constants";
 import { INFO_CHIP_SKIP_KEYS } from "./applicants.constants";
 import { useApplicantState } from "./hooks/use-applicant-state";
 import CardExpandedContent from "./card-expanded-content";
-import InfoChipTooltip from "@/components/ui/info-chip-tooltip/info-chip-tooltip";
+import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
 import type { ApplicantCardProps } from "./applicants.types";
 
 const ApplicantCard = ({

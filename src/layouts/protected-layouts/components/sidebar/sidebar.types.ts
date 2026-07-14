@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 import type { ChatHistoryItem } from "@/services/chat/chat-history";
-import type { GroupedChats } from "@/components/ui/sidebar/hooks/use-chat-history";
+import type { GroupedChats } from "@/layouts/protected-layouts/components/sidebar/hooks/use-chat-history";
 
 type IconComponent = ComponentType<{ className?: string }>;
 

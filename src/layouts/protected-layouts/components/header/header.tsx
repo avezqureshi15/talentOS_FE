@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import IconButton from "@/components/ui/icon-button/icon-button";
-import ShareButton from "@/components/ui/share-button/share-button";
+import ShareButton from "@/layouts/protected-layouts/components/share-button/share-button";
 
 import "./header.css";
 import type { HeaderLeftProps, HeaderRightProps, HeaderProps } from "./header.types";

@@ -1,6 +1,6 @@
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
-import UserMessage from "@/components/ui/user-message/user-message";
-import CommandCard from "@/components/ui/command-card/command-card";
+import UserMessage from "@/app/chat/components/user-message/user-message";
+import CommandCard from "@/app/chat/components/command-card/command-card";
 import SuggestionChips from "./block-renderer/blocks/suggestion-chips/suggestion-chips";
 import TextArea from "./block-renderer/blocks/text-area/text-area";
 import { renderBlock } from "./block-renderer/block-factory";

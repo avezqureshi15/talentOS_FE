@@ -5,7 +5,7 @@ import { getDefaultIcon } from "../../utils";
 import SlotTabs from "../slot-tabs/slot-tabs";
 import SearchableList from "./searchable-list";
 import MultiSelectList from "./multi-select-list";
-import InfoChipTooltip from "@/components/ui/info-chip-tooltip/info-chip-tooltip";
+import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
 import Skeleton from "@/components/ui/skeleton/skeleton";
 
 type PopupListProps = {

@@ -1,15 +1,15 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PROFILE_MENU_ITEMS, PROFILE_DANGER_ITEM, LOGOUT_MODAL } from "@/constants/constants";
-import { useSidebarUserPopover } from "@/components/ui/sidebar/sidebar-user-popover/use-sidebar-user-popover";
+import { useSidebarUserPopover } from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/use-sidebar-user-popover";
 import { useAuth } from "@/app/auth/hooks/use-auth";
 import { ROUTES } from "@/constants/routes";
 import { getInitials } from "@/utils/user";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
-import ProfileModal from "@/components/ui/sidebar/sidebar-user-popover/profile-modal";
-import SettingsModal from "@/components/ui/sidebar/sidebar-user-popover/settings-modal";
-import KeyboardShortcutsModal from "@/components/ui/sidebar/sidebar-user-popover/keyboard-shortcuts-modal";
+import ProfileModal from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/profile-modal";
+import SettingsModal from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/settings-modal";
+import KeyboardShortcutsModal from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/keyboard-shortcuts-modal";
 import { useUiStore } from "@/store/ui.store";
 import "./sidebar-user-popover.css";
 

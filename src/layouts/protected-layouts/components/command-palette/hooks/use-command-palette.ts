@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import type { SearchResultItem, CommandPaletteSection } from "@/components/ui/command-palette/command-palette.types";
-import { COMMAND_PALETTE_LABELS, SEARCH_DEBOUNCE_MS } from "@/components/ui/command-palette/command-palette.constants";
+import type { SearchResultItem, CommandPaletteSection } from "@/layouts/protected-layouts/components/command-palette/command-palette.types";
+import { COMMAND_PALETTE_LABELS, SEARCH_DEBOUNCE_MS } from "@/layouts/protected-layouts/components/command-palette/command-palette.constants";
 import { useHiringSearch } from "./use-hiring-search";
 import { useDebounce } from "@/hooks/use-debounce";
 

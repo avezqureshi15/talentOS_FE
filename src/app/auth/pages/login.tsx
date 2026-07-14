@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { useAuth } from "@/app/auth/hooks/use-auth";
 import { ROUTES } from "@/constants/routes";
-import Logo from "@/components/ui/logo/logo";
+import Logo from "@/components/shared/logo/logo";
 import { LOGIN } from "./login.constants";
 import "./login.css";
 

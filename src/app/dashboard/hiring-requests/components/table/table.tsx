@@ -62,6 +62,7 @@ const HiringRequestsTable = ({
           value={filters.department ?? ""}
           onChange={(e) => handleFilterSelect("department", e.target.value)}
           options={departments.map((d) => ({ value: d, label: d }))}
+          size="md"
         />
 
         <Select
@@ -69,6 +70,7 @@ const HiringRequestsTable = ({
           value={filters.location ?? ""}
           onChange={(e) => handleFilterSelect("location", e.target.value)}
           options={locations.map((l) => ({ value: l, label: l }))}
+          size="md"
         />
 
         <Select
@@ -76,6 +78,7 @@ const HiringRequestsTable = ({
           value={filters.type ?? ""}
           onChange={(e) => handleFilterSelect("type", e.target.value)}
           options={types.map((t) => ({ value: t, label: t }))}
+          size="md"
         />
 
         <Select
@@ -86,6 +89,7 @@ const HiringRequestsTable = ({
             { value: "true", label: STATUS_ACTIVE },
             { value: "false", label: STATUS_CLOSED },
           ]}
+          size="md"
         />
 
         <DatePickerInput
@@ -197,6 +201,7 @@ const HiringRequestsTable = ({
             value={String(perPage)}
             onChange={(e) => onPerPageChange(Number(e.target.value))}
             options={PER_PAGE_OPTIONS.map((n) => ({ value: String(n), label: `${n} / page` }))}
+            size="md"
           />
         </div>
       </div>
