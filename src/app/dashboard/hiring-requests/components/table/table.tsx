@@ -148,7 +148,7 @@ const HiringRequestsTable = ({
               <div className="location-cell">{item.location}</div>
 
               <div>
-                <Chip variant={item.is_active ? "success" : "neutral"} size="md">
+                <Chip variant={item.is_active ? "success" : "danger"} size="md">
                   {item.is_active ? STATUS_ACTIVE : STATUS_CLOSED}
                 </Chip>
               </div>
