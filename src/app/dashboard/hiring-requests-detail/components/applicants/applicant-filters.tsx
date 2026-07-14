@@ -1,3 +1,4 @@
+import Select from "@/components/ui/select/select";
 import { SCORE_FILTERS, ROUND_VERDICT_FILTERS } from "./applicants.constants";
 import type { ApplicantFiltersProps } from "./applicants.types";
 
@@ -17,16 +18,14 @@ const ApplicantFilters = ({ filter, onFilterChange, scoreFilter, onScoreFilterCh
           ))}
         </div>
         <span className="filter-separator" />
-        <select
-          className="score-filter-select"
+        <Select
+          options={SCORE_FILTERS.filter((o) => o.value !== "all").map((o) => ({ value: o.value, label: o.label }))}
           value={scoreFilter === "all" ? "" : scoreFilter}
           onChange={(e) => onScoreFilterChange?.(e.target.value || "all")}
-        >
-          <option value="">All Scores</option>
-          {SCORE_FILTERS.filter((o) => o.value !== "all").map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
+          placeholder="All Scores"
+          size="sm"
+          variant="ghost"
+        />
       </div>
       <div className="filter-chips">
         {scoreFilter !== "all" && (

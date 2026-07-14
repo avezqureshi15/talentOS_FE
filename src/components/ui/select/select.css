@@ -1,3 +1,4 @@
+/* ---- WRAPPER ---- */
 .select-wrapper {
   position: relative;
   display: inline-flex;
@@ -13,8 +14,15 @@
   font-size: 10px;
   color: var(--text-muted);
   pointer-events: none;
+  transition: color 0.15s ease;
 }
 
+.select-wrapper--loading::after,
+.select-wrapper--clearable.select-wrapper--clearable::after {
+  display: none;
+}
+
+/* ---- BASE SELECT ---- */
 .select {
   width: 100%;
   padding: 6px 28px 6px 10px;
@@ -44,4 +52,146 @@
 .select option {
   background: var(--bg-primary);
   color: var(--text-primary);
+}
+
+/* ---- SIZE VARIANTS ---- */
+.select-wrapper--sm .select {
+  padding: 4px 24px 4px 8px;
+  font-size: 11px;
+}
+
+.select-wrapper--md .select {
+  padding: 6px 28px 6px 10px;
+  font-size: 12px;
+}
+
+.select-wrapper--lg .select {
+  padding: 8px 32px 8px 12px;
+  font-size: 14px;
+}
+
+/* ---- VARIANT STYLES ---- */
+.select-wrapper--primary .select {
+  background: var(--bg-primary);
+  border-color: var(--border-subtle);
+}
+
+.select-wrapper--primary .select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-glow);
+}
+
+.select-wrapper--secondary .select {
+  background: var(--bg-hover);
+  border-color: var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.select-wrapper--secondary .select:hover {
+  color: var(--text-primary);
+}
+
+.select-wrapper--secondary .select:focus {
+  border-color: var(--accent);
+}
+
+.select-wrapper--danger .select {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.select-wrapper--danger .select:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger-glow, rgba(255, 77, 79, 0.3));
+}
+
+.select-wrapper--ghost .select {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+}
+
+.select-wrapper--ghost .select:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.select-wrapper--ghost .select:focus {
+  border-color: var(--accent);
+  background: var(--bg-primary);
+}
+
+.select-wrapper--text .select {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  padding-left: 0;
+}
+
+.select-wrapper--text .select:hover {
+  color: var(--text-primary);
+}
+
+/* ---- LOADING STATE ---- */
+.select-wrapper--loading .select {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---- ERROR STATE ---- */
+.select-wrapper--error .select {
+  border-color: var(--danger);
+}
+
+.select-wrapper--error .select:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger-glow, rgba(255, 77, 79, 0.3));
+}
+
+/* ---- DISABLED STATE ---- */
+.select-wrapper--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.select-wrapper--disabled .select {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ---- INDICATOR (spinner / clear) ---- */
+.select-indicator {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.select-clear {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 1;
+  transition: color 0.15s ease;
+}
+
+.select-clear:hover {
+  color: var(--text-primary);
+}
+
+/* ---- ERROR MESSAGE ---- */
+.select-error {
+  position: absolute;
+  left: 0;
+  bottom: -16px;
+  font-size: 11px;
+  color: var(--danger);
+  white-space: nowrap;
 }

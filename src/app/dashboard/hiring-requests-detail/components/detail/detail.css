@@ -985,24 +985,6 @@
   color: var(--accent-indigo-light);
 }
 
-.score-filter-select {
-  padding: 6px 10px;
-  font-size: 12px;
-  font-weight: 500;
-  background: var(--surface-card);
-  border: 1px solid var(--input-icon-bg);
-  border-radius: var(--radius-sm);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-
-.score-filter-select:focus {
-  border-color: var(--accent);
-}
-
 /* =========================
    SCORE FILTER CHIPS
 ========================= */

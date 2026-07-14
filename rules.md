@@ -411,5 +411,17 @@ If ANY rule is violated:
 - ❌ Never use raw `<button>` elements for API-triggering buttons
 - ❌ Never hand-roll loading spinner + disabled logic — the `loading` prop handles it
 
+## 28. ALL Dropdown / Select Elements MUST Use `<Select>` Component
+
+- ✅ ALL `<select>` elements MUST use `<Select>` from `@/components/ui/select/select`
+- ✅ Use `loading` prop when options are being fetched asynchronously
+- ✅ Use `error` prop to surface option-loading failures
+- ✅ Use `size` and `variant` props to match context (mirrors `<Button>` conventions: `sm`/`md`/`lg`, `primary`/`secondary`/`danger`/`ghost`/`text`)
+- ✅ Use `clearable` prop when the user should be able to reset the selection
+- ✅ Pass `className` for additional layout/positioning overrides
+- ✅ For searchable or multi-select requirements in the future, set `searchable` or `multiSelect` prop (implementation pending — types are ready)
+- ❌ Never use raw `<select>` elements
+- ❌ Never implement custom dropdowns — extend `<Select>` instead
+
 
 ```
