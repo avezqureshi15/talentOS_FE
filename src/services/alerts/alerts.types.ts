@@ -15,6 +15,8 @@ export type AlertApiItem = {
   id: string;
   type: string;
   employee: EmployeeBrief;
+  employee_id: number;
+  round_id: string | null;
   slot_link: string | null;
   review_link: string | null;
   interview: InterviewBrief | null;

@@ -1,18 +1,46 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import AccordionCard from "@/components/shared/accordion-card/accordion-card";
 import BaseModal from "@/components/ui/modal/base-modal";
+import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import { useAlertsData } from "./hooks/use-alerts-data";
-import type { AlertsSubTab } from "../../hiring-requests.types";
+import { sendNotification } from "@/services/alerts/alerts";
+import { useToastStore } from "@/store/toast.store";
+import { ToastType } from "@/components/ui/toast/toast.types";
+import type { AlertsSubTab } from "../../pages/hiring-requests.types";
 import { ALERTS_LABELS } from "./alerts.constants";
 import "./alerts.css";
 
 const Alerts = ({ sub }: { sub: AlertsSubTab }) => {
   const [openId, setOpenId] = useState<string | null>(null);
-  const [panelCandidate, setPanelCandidate] = useState<string | null>(null);
-  const [panelPosition, setPanelPosition] = useState<string | null>(null);
+  const [selectedRoundId, setSelectedRoundId] = useState<string | null>(null);
   const [resolveAlertId, setResolveAlertId] = useState<string | null>(null);
 
   const { alerts, hasMore, isLoading, page, setPage, resolveAlert } = useAlertsData(sub);
+  const addToast = useToastStore((s) => s.addToast);
+
+  const isSlots = sub === "slots";
+
+  const handleNotify = useCallback(
+    (user_id: number, type: string) => async () => {
+      const res = await sendNotification(user_id, type.toUpperCase(), true);
+      return res;
+    },
+    [],
+  );
+
+  const handleNotifyError = useCallback(
+    (err: Error) => {
+      addToast(err.message, ToastType.ERROR);
+    },
+    [addToast],
+  );
+
+  const handleResolveConfirm = () => {
+    if (resolveAlertId) {
+      resolveAlert(resolveAlertId);
+      setResolveAlertId(null);
+    }
+  };
 
   if (isLoading) {
     return <div className="hr-tab-placeholder">Loading...</div>;
@@ -21,15 +49,6 @@ const Alerts = ({ sub }: { sub: AlertsSubTab }) => {
   if (alerts.length === 0) {
     return <div className="hr-tab-placeholder">{ALERTS_LABELS.NO_ALERTS}</div>;
   }
-
-  const isSlots = sub === "slots";
-
-  const handleResolveConfirm = () => {
-    if (resolveAlertId) {
-      resolveAlert(resolveAlertId);
-      setResolveAlertId(null);
-    }
-  };
 
   return (
     <>
@@ -47,10 +66,13 @@ const Alerts = ({ sub }: { sub: AlertsSubTab }) => {
             onToggleOpen={(id) => setOpenId(openId === id ? null : id)}
             interviewLabel={isSlots ? undefined : ALERTS_LABELS.INTERVIEW}
             onViewInterview={isSlots ? undefined : () => {
-              setPanelCandidate(a.interview?.candidate_name ?? "");
-              setPanelPosition(a.interview?.position ?? "");
+              if (a.round_id) {
+                setSelectedRoundId(a.round_id);
+              }
             }}
             onResolve={setResolveAlertId}
+            onNotify={handleNotify(a.employee_id, a.type)}
+            onNotifyError={handleNotifyError}
           />
         ))}
         <div className="pagination-row">
@@ -64,27 +86,12 @@ const Alerts = ({ sub }: { sub: AlertsSubTab }) => {
         </div>
       </div>
 
-      <BaseModal
-        open={!!panelCandidate}
-        onClose={() => { setPanelCandidate(null); setPanelPosition(null); }}
-        title="Interview Details"
-        variant="slide-right"
-      >
-        <div className="sp-content">
-          <span className="sp-badge">Review</span>
-          <div className="sp-divider" />
-          <div className="sp-details">
-            <div className="sp-detail-item">
-              <span className="sp-detail-label">Candidate</span>
-              <span className="sp-detail-value">{panelCandidate}</span>
-            </div>
-            <div className="sp-detail-item">
-              <span className="sp-detail-label">Position</span>
-              <span className="sp-detail-value">{panelPosition}</span>
-            </div>
-          </div>
-        </div>
-      </BaseModal>
+      <RoundsSidePanel
+        open={!!selectedRoundId}
+        roundId={selectedRoundId}
+        onClose={() => setSelectedRoundId(null)}
+        hideReviews
+      />
 
       <BaseModal
         open={!!resolveAlertId}

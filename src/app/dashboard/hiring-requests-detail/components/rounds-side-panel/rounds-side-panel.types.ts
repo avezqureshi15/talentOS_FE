@@ -33,10 +33,12 @@ export type RoundsSidePanelProps = {
   open: boolean;
   roundId: string | null;
   onClose: () => void;
+  hideReviews?: boolean;
 };
 
 export type PanelContentProps = {
   round: RoundDetail;
+  hideReviews?: boolean;
 };
 
 export type RowProps = {

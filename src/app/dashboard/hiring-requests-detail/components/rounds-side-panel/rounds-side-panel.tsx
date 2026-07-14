@@ -10,7 +10,7 @@ import {
 } from "./rounds-side-panel.constants";
 import "./rounds-side-panel.css";
 
-const RoundsSidePanel = ({ open, roundId, onClose }: RoundsSidePanelProps) => {
+const RoundsSidePanel = ({ open, roundId, onClose, hideReviews }: RoundsSidePanelProps) => {
   const { data: round, isLoading, isError, refetch } = useRoundDetail(roundId);
 
   return (
@@ -24,7 +24,7 @@ const RoundsSidePanel = ({ open, roundId, onClose }: RoundsSidePanelProps) => {
           </button>
         </div>
       )}
-      {round && <PanelContent round={round} />}
+      {round && <PanelContent round={round} hideReviews={hideReviews} />}
     </BaseModal>
   );
 };
@@ -130,7 +130,7 @@ function ReviewEntityBlock({ entity }: { entity: ReviewEntity }) {
   );
 }
 
-const PanelContent = ({ round }: PanelContentProps) => {
+const PanelContent = ({ round, hideReviews }: PanelContentProps) => {
   if (!round) return null;
 
   return (
@@ -159,7 +159,7 @@ const PanelContent = ({ round }: PanelContentProps) => {
         </div>
       </div>
 
-      {round.reviews.length > 0 && (
+      {!hideReviews && round.reviews.length > 0 && (
         <>
           <div className="rp-divider" />
           <div className="rp-group">

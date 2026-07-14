@@ -19,3 +19,32 @@ export const fetchAlerts = async (
   );
   return data;
 };
+
+export type NotifyFormResponse = {
+  message: string;
+  detail: string;
+  form_id: string;
+};
+
+export const sendNotification = async (
+  user_id: number,
+  type: string,
+  reminder?: boolean,
+): Promise<NotifyFormResponse> => {
+  try {
+    const { data } = await httpClient.post<NotifyFormResponse>(
+      API_ENDPOINTS.FORMS_NOTIFY,
+      { user_id, type, reminder },
+      { toastOnError: false },
+    );
+    return data;
+  } catch (err: unknown) {
+    const axiosErr = err as { response?: { data?: { detail?: string; error?: string; message?: string } } };
+    const msg =
+      axiosErr.response?.data?.detail ||
+      axiosErr.response?.data?.error ||
+      axiosErr.response?.data?.message ||
+      "Notification failed";
+    throw new Error(msg);
+  }
+};

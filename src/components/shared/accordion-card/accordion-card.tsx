@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { ACCORDION_LABELS } from "./accordion-card.constants";
 import type { AccordionCardProps } from "./accordion-card.types";
 import "./accordion-card.css";
@@ -9,15 +9,30 @@ const AccordionCard = ({
   isOpen, onToggleOpen,
   jdHref, jdLabel,
   interviewLabel, onViewInterview,
-  onResolve,
+  onResolve, onNotify, onNotifyError,
 }: AccordionCardProps) => {
   const [notified, setNotified] = useState(false);
+  const [notifying, setNotifying] = useState(false);
+  const [notifyError, setNotifyError] = useState<string | null>(null);
   const [resolved, setResolved] = useState(false);
 
-  const handleNotify = () => {
-    setNotified(true);
-    setTimeout(() => setNotified(false), 2000);
-  };
+  const handleNotify = useCallback(async () => {
+    if (!onNotify || notifying || notified) return;
+    setNotifying(true);
+    setNotifyError(null);
+    try {
+      await onNotify();
+      setNotified(true);
+      setTimeout(() => setNotified(false), 2000);
+    } catch (err: unknown) {
+      const e = err instanceof Error ? err : new Error("Notification failed");
+      setNotifyError(e.message);
+      onNotifyError?.(e);
+      setTimeout(() => setNotifyError(null), 3000);
+    } finally {
+      setNotifying(false);
+    }
+  }, [onNotify, notifying, notified]);
 
   const handleResolve = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -39,14 +54,18 @@ const AccordionCard = ({
         </div>
 
         <div className="accordion-header-right">
-          <button
-            className={`notify-btn${notified ? " notify-btn--sent" : ""}`}
-            onClick={(e) => { e.stopPropagation(); handleNotify(); }}
-            type="button"
-          >
-            <i className={`bx ${notified ? "bx-check" : "bx-bell"}`} />
-            {notified ? ACCORDION_LABELS.NOTIFICATION_SENT : ACCORDION_LABELS.SEND_NOTIFICATION}
-          </button>
+          <div className="notify-wrapper">
+            <button
+              className={`notify-btn${notified ? " notify-btn--sent" : ""}${notifying ? " notify-btn--loading" : ""}${notifyError ? " notify-btn--error" : ""}`}
+              onClick={(e) => { e.stopPropagation(); handleNotify(); }}
+              disabled={notifying}
+              type="button"
+            >
+              <i className={`bx ${notified ? "bx-check" : notifying ? "bx-loader-alt bx-spin" : "bx-bell"}`} />
+              {notified ? ACCORDION_LABELS.NOTIFICATION_SENT : ACCORDION_LABELS.SEND_NOTIFICATION}
+            </button>
+            {notifyError && <span className="notify-error-tooltip">{notifyError}</span>}
+          </div>
           <button
             className={`resolve-btn${resolved ? " resolve-btn--done" : ""}`}
             onClick={handleResolve}

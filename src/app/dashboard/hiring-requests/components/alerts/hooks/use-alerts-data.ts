@@ -5,7 +5,7 @@ import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import { PAGINATION } from "@/constants/api-endpoints";
 import httpClient from "@/services/http-client";
 import type { AlertsApiResponse, AlertApiItem } from "@/services/alerts/alerts.types";
-import type { AlertsSubTab } from "../../hiring-requests.types";
+import type { AlertsSubTab } from "../../../pages/hiring-requests.types";
 
 type UseAlertsResult = {
   alerts: AlertApiItem[];

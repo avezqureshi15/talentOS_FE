@@ -12,4 +12,6 @@ export type AccordionCardProps = {
   interviewLabel?: string;
   onViewInterview?: () => void;
   onResolve?: (id: string) => void;
+  onNotify?: () => Promise<unknown>;
+  onNotifyError?: (err: Error) => void;
 };
