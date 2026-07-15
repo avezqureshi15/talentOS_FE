@@ -130,11 +130,9 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
                   <span className="sr-interviewer-name">{iv.name}</span>
                   <span className="sr-interviewer-slots">{slotsLabel(iv.slots_count)}</span>
                 </div>
-                {!iv.has_slots && (
-                  <button className="sr-interviewer-ask-slots" onMouseEnter={(e) => handleAskSlotsHover(e, iv)} onMouseLeave={clearAskTooltip} onClick={(e) => handleAskSlotsClick(e, iv)} type="button">
-                    <i className="bx bx-calendar-plus" />
-                  </button>
-                )}
+                <button className="sr-interviewer-ask-slots" onMouseEnter={(e) => handleAskSlotsHover(e, iv)} onMouseLeave={clearAskTooltip} onClick={(e) => handleAskSlotsClick(e, iv)} type="button">
+                  <i className="bx bx-calendar-plus" />
+                </button>
                 {isSelected(iv) && <i className="bx bx-check sr-interviewer-check" />}
               </button>
             ))
