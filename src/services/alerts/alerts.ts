@@ -7,10 +7,12 @@ export const fetchAlerts = async (
   page: number,
   perPage: number,
   isRead?: boolean,
+  search?: string,
 ): Promise<AlertsApiResponse> => {
   const params: Record<string, string> = {};
   if (type) params.type = type;
   if (isRead !== undefined) params.is_read = String(isRead);
+  if (search) params.search = search;
   params.page = String(page);
   params.per_page = String(perPage);
   const { data } = await httpClient.get<AlertsApiResponse>(

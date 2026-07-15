@@ -40,88 +40,25 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
   const headerIcon = INTENT_HEADER_ICONS[data.intent] ?? "bx bx-terminal";
   const headerLabel = INTENT_LABELS[data.intent] ?? data.intent;
 
-  if (data.intent === "ASK_SLOTS") {
-    const empLabels = empEntities.map((e) => empResolved[e.key]).filter(Boolean);
-
-    return (
-      <div className="command-card">
-        <div className="command-card__header">
-          <i className="bx bx-clock" />
-          <span>{COMMAND_CARD_LABELS.SLOT_BOOKING}</span>
-        </div>
-        <div className="command-card__body">
-          <div className="command-card__row">
-            <span className="command-card__label">{COMMAND_CARD_LABELS.EMPLOYEES} ({empLabels.length})</span>
-            {empLoading ? <Skeleton width="120px" height="16px" /> : <span className="command-card__value">{empLabels.join(", ")}</span>}
-          </div>
-          {data.payload.raw_text_context && (
-            <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
-          )}
-        </div>
+  const renderInquireCard = () => (
+    <div className="command-card">
+      <div className="command-card__header">
+        <i className={INTENT_HEADER_ICONS[data.intent] ?? HYBRID_INTENT_FALLBACK_ICON} />
+        <span>{headerLabel}</span>
       </div>
-    );
-  }
-
-  if (data.intent === "SEND_MAIL") {
-    return (
-      <div className="command-card">
-        <div className="command-card__header">
-          <i className="bx bx-envelope" />
-          <span>{COMMAND_CARD_LABELS.SEND_MAIL}</span>
-        </div>
-        <div className="command-card__body">
-          <div className="command-card__row">
-            <span className="command-card__label">{COMMAND_CARD_LABELS.EMPLOYEE}</span>
-            <EntityLabel label={resolved.applicant} loading={loading} />
-          </div>
-          {data.payload.raw_text_context && (
-            <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  if (data.intent === "interviews") {
-    const interviewLabel = resolved.applicant ?? data.payload.interview_id;
-    const status = resolveInterviewStatus(data.payload.interview_id ?? "");
-    return (
-      <div className="command-card">
-        <div className="command-card__header">
-          <i className="bx bx-calendar-check" />
-          <span>{interviewLabel}</span>
-          {status && <span className={`command-card__status command-card__status--${status}`}>{status}</span>}
-        </div>
-        <div className="command-card__body">
-          {data.payload.raw_text_context && (
-            <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  if (data.intent.startsWith("INQUIRE_")) {
-    return (
-      <div className="command-card">
-        <div className="command-card__header">
+      <div className="command-card__body">
+        <div className="command-card__entity-chip">
           <i className={INTENT_HEADER_ICONS[data.intent] ?? HYBRID_INTENT_FALLBACK_ICON} />
-          <span>{headerLabel}</span>
+          <span>{data.payload.name_field}</span>
         </div>
-        <div className="command-card__body">
-          <div className="command-card__entity-chip">
-            <i className={INTENT_HEADER_ICONS[data.intent] ?? HYBRID_INTENT_FALLBACK_ICON} />
-            <span>{data.payload.name_field}</span>
-          </div>
-          {data.payload.raw_text_context && (
-            <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
-          )}
-        </div>
+        {data.payload.raw_text_context && (
+          <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
 
-  return (
+  const renderDefaultCard = () => (
     <div className="command-card">
       <div className="command-card__header">
         <i className={headerIcon} />
@@ -149,7 +86,6 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
         {data.payload.slot_id && (
           <div className="command-card__row">
             <span className="command-card__label">{COMMAND_CARD_LABELS.TIME_SLOT}</span>
-            {/* <span className="command-card__value">{data.payload.slot_id}</span> */}
             <span className="command-card__value">10:00 AM - 11:00 AM</span>
           </div>
         )}
@@ -159,6 +95,81 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
       </div>
     </div>
   );
+
+  switch (data.intent) {
+    case "ASK_SLOTS": {
+      const empLabels = empEntities.map((e) => empResolved[e.key]).filter(Boolean);
+      return (
+        <div className="command-card">
+          <div className="command-card__header">
+            <i className="bx bx-clock" />
+            <span>{COMMAND_CARD_LABELS.SLOT_BOOKING}</span>
+          </div>
+          <div className="command-card__body">
+            <div className="command-card__row">
+              <span className="command-card__label">{COMMAND_CARD_LABELS.EMPLOYEES} ({empLabels.length})</span>
+              {empLoading ? <Skeleton width="120px" height="16px" /> : <span className="command-card__value">{empLabels.join(", ")}</span>}
+            </div>
+            {data.payload.raw_text_context && (
+              <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+            )}
+          </div>
+        </div>
+      );
+    }
+    case "SEND_MAIL":
+      return (
+        <div className="command-card">
+          <div className="command-card__header">
+            <i className="bx bx-envelope" />
+            <span>{COMMAND_CARD_LABELS.SEND_MAIL}</span>
+          </div>
+          <div className="command-card__body">
+            <div className="command-card__row">
+              <span className="command-card__label">{COMMAND_CARD_LABELS.EMPLOYEE}</span>
+              <EntityLabel label={resolved.applicant} loading={loading} />
+            </div>
+            {data.payload.raw_text_context && (
+              <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+            )}
+          </div>
+        </div>
+      );
+    case "interviews": {
+      const interviewLabel = resolved.applicant ?? data.payload.interview_id;
+      const status = resolveInterviewStatus(data.payload.interview_id ?? "");
+      return (
+        <div className="command-card">
+          <div className="command-card__header">
+            <i className="bx bx-calendar-check" />
+            <span>{interviewLabel}</span>
+            {status && <span className={`command-card__status command-card__status--${status}`}>{status}</span>}
+          </div>
+          <div className="command-card__body">
+            {data.payload.raw_text_context && (
+              <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+            )}
+          </div>
+        </div>
+      );
+    }
+    case "alerts":
+      return (
+        <div className="command-card">
+          <div className="command-card__header">
+            <i className="bx bx-bell" />
+            <span>{data.payload.alert_id}</span>
+          </div>
+          <div className="command-card__body">
+            {data.payload.raw_text_context && (
+              <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+            )}
+          </div>
+        </div>
+      );
+    default:
+      return data.intent.startsWith("INQUIRE_") ? renderInquireCard() : renderDefaultCard();
+  }
 };
 
 export default CommandCard;
