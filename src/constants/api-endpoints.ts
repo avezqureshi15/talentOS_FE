@@ -1,4 +1,8 @@
 export const API_ENDPOINTS = {
+  AUTH_ME: "/auth/me",
+  AUTH_REFRESH: "/auth/refresh",
+  AUTH_GOOGLE: "/auth/google",
+  AUTH_LOGOUT: "/auth/logout",
   CHAT_CHATS: "/chat/chats",
   CHAT_MESSAGES: "/chat/messages",
   CHAT_CHAT_DELETE: "/chat/chats",

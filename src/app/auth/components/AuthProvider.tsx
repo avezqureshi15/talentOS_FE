@@ -6,6 +6,7 @@ import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
 } from "@/app/auth/hooks/auth.constants";
+import { API_ENDPOINTS } from "@/constants/api-endpoints";
 
 const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
 
@@ -34,7 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       try {
-        const { data } = await httpClient.get<{ user: User }>("/auth/me", {
+        const { data } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME, {
           headers: { Authorization: `Bearer ${storedAccess}` },
         });
         setUser(data.user);
@@ -47,11 +48,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         try {
           const { data: refreshData } = await httpClient.post<{ access_token: string }>(
-            "/auth/refresh",
+            API_ENDPOINTS.AUTH_REFRESH,
             { refresh_token: storedRefresh },
           );
           localStorage.setItem(ACCESS_TOKEN_KEY, refreshData.access_token);
-          const { data: meData } = await httpClient.get<{ user: User }>("/auth/me", {
+          const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME, {
             headers: { Authorization: `Bearer ${refreshData.access_token}` },
           });
           setUser(meData.user);
@@ -70,9 +71,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       access_token: string;
       refresh_token: string;
       expires_in: number;
-    }>("/auth/google", { credential });
+    }>(API_ENDPOINTS.AUTH_GOOGLE, { credential });
 
-    const { data: meData } = await httpClient.get<{ user: User }>("/auth/me", {
+    const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME, {
       headers: { Authorization: `Bearer ${data.access_token}` },
     });
 
@@ -85,7 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = useCallback(async () => {
     const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);
     try {
-      if (refresh) await httpClient.post("/auth/logout", { refresh_token: refresh });
+      if (refresh) await httpClient.post(API_ENDPOINTS.AUTH_LOGOUT, { refresh_token: refresh });
     } catch { /* ignore */ }
     clearSession();
     setUser(null);

@@ -134,10 +134,10 @@ export const TIMELINE_LABELS = {
 } as const;
 
 /* ── API ── */
-// TODO: Move these base URLs to environment variables (e.g. VITE_API_BASE_URL)
-export const CHAT_STREAM_ENDPOINT = "/api/v1/chat/stream";
-export const BE_API_BASE_URL = "http://localhost:8001/api/v1";
-export const API_BASE_URL = "http://localhost:8001";
+export const API_V1_PREFIX = "/api/v1";
+export const CHAT_STREAM_ENDPOINT = `${API_V1_PREFIX}/chat/stream`;
+export const BE_API_BASE_URL = import.meta.env.VITE_BE_API_BASE_URL ?? "http://localhost:8001/api/v1";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8001";
 
 /* ── APP ── */
 export const APP_URL = import.meta.env.VITE_APP_URL ?? "http://localhost:5173";
