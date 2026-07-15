@@ -7,7 +7,7 @@ import { useBookInterview } from "@/hooks/use-book-interview";
 import { useRescheduleInterview } from "@/hooks/use-reschedule-interview";
 import SrStep1 from "./sr-step1";
 import SrStep2 from "./sr-step2";
-import { SR_LABELS, AI_ID, AI_AUTO_SLOT_ID } from "./schedule-round-modal.constants";
+import { SR_LABELS, AI_ID, AI_AUTO_SLOT_ID, AI_TEMPLATES } from "./schedule-round-modal.constants";
 import type { ScheduleRoundModalProps, Interviewer, ScheduleStep } from "./schedule-round-modal.types";
 import type { CommandItem } from "@/components/shared/mentions/types";
 import "./schedule-round-modal.css";
@@ -75,22 +75,16 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
 
   const { data: activeSlots, isLoading } = useInterviewerSlots(slotFetchId);
 
-  // virtual slot for AI interviewer — shown when AI is the active interviewer
-  const aiSlots = useMemo<CommandItem[]>(() => {
-    if (activeInterviewerId === AI_ID) {
-      return [{
-        id: AI_AUTO_SLOT_ID,
-        label: SR_LABELS.AI_SLOTS_LABEL,
-        description: "AI Round",
-      }];
-    }
-    return [];
-  }, [activeInterviewerId]);
+  // check if the selected slot is a template slot
+  const isTemplateSlot = selectedSlotId?.startsWith("ai-");
+
+  // when AI is the only selected interviewer, show templates instead of virtual slot
+  const aiActive = selectedInterviewers.some((s) => s.id === AI_ID) && activeInterviewerId === AI_ID;
 
   const allSlots = useMemo(() => {
-    if (aiSlots.length > 0) return aiSlots;
+    if (isTemplateSlot) return [];
     return activeSlots ?? [];
-  }, [aiSlots, activeSlots]);
+  }, [isTemplateSlot, activeSlots]);
 
   const selectedSlotData = selectedSlotId && allSlots ? allSlots.find((s) => s.id === selectedSlotId) : null;
   const slotTime = selectedSlotData?.label ?? "";
@@ -114,7 +108,13 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
   const handleSelectInterviewer = (iv: Interviewer) => {
     if (iv.id === AI_ID) {
       const isNowSelected = !selectedInterviewers.some((s) => s.id === AI_ID);
-      setSelectedSlotId(isNowSelected ? AI_AUTO_SLOT_ID : null);
+      if (!isNowSelected) {
+        setSelectedSlotId(null);
+      }
+    } else {
+      if (selectedInterviewers.some((s) => s.id === iv.id)) {
+        setSelectedSlotId((prev) => (prev === iv.id ? null : prev));
+      }
     }
     setSelectedInterviewers((prev) => {
       const exists = prev.find((s) => s.id === iv.id);
@@ -279,7 +279,8 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
                     selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
                     tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
                     activeSlots={allSlots} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
-                    isLoading={isLoading} isSearching={false} hideSearch={true} />
+                    isLoading={isLoading} isSearching={false} hideSearch={true}
+                    aiTemplates={aiActive ? AI_TEMPLATES : undefined} />
                 </div>
               </div>
             )}
@@ -287,7 +288,8 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
               selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
               tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
               activeSlots={allSlots} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
-              isLoading={isLoading} isSearching={isSearching} hideSearch={false} />}
+              isLoading={isLoading} isSearching={isSearching} hideSearch={false}
+              aiTemplates={aiActive ? AI_TEMPLATES : undefined} />}
             {step === 2 && !rescheduleMode && <div className="sr-scroll-content"><SrStep2 candidateName={candidateName}
               interviewerNames={interviewerNames} slotDate={slotDate} slotTime={slotTime}
               gmeetEnabled={gmeetEnabled} onToggleGmeet={() => setGmeetEnabled((v) => !v)}
