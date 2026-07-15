@@ -7,8 +7,9 @@ import { useBookInterview } from "@/hooks/use-book-interview";
 import { useRescheduleInterview } from "@/hooks/use-reschedule-interview";
 import SrStep1 from "./sr-step1";
 import SrStep2 from "./sr-step2";
-import { SR_LABELS } from "./schedule-round-modal.constants";
+import { SR_LABELS, AI_ID, AI_AUTO_SLOT_ID } from "./schedule-round-modal.constants";
 import type { ScheduleRoundModalProps, Interviewer, ScheduleStep } from "./schedule-round-modal.types";
+import type { CommandItem } from "@/components/shared/mentions/types";
 import "./schedule-round-modal.css";
 
 export default function ScheduleRoundModal({ open, candidateName, candidateId, candidateNumberId, jdId, interviewId, interviewerEmpId, interviewerName, roundName, rescheduleMode, onClose, onScheduled }: ScheduleRoundModalProps) {
@@ -69,9 +70,29 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
     return null;
   }, [selectedInterviewers, activeTab]);
 
-  const { data: activeSlots, isLoading } = useInterviewerSlots(activeInterviewerId);
+  // skip slot API call when AI interviewer is the active interviewer
+  const slotFetchId = activeInterviewerId === AI_ID ? null : activeInterviewerId;
 
-  const selectedSlotData = selectedSlotId && activeSlots ? activeSlots.find((s) => s.id === selectedSlotId) : null;
+  const { data: activeSlots, isLoading } = useInterviewerSlots(slotFetchId);
+
+  // virtual slot for AI interviewer — shown when AI is the active interviewer
+  const aiSlots = useMemo<CommandItem[]>(() => {
+    if (activeInterviewerId === AI_ID) {
+      return [{
+        id: AI_AUTO_SLOT_ID,
+        label: SR_LABELS.AI_SLOTS_LABEL,
+        description: "AI Round",
+      }];
+    }
+    return [];
+  }, [activeInterviewerId]);
+
+  const allSlots = useMemo(() => {
+    if (aiSlots.length > 0) return aiSlots;
+    return activeSlots ?? [];
+  }, [aiSlots, activeSlots]);
+
+  const selectedSlotData = selectedSlotId && allSlots ? allSlots.find((s) => s.id === selectedSlotId) : null;
   const slotTime = selectedSlotData?.label ?? "";
   const slotDate = selectedSlotData?.description ?? "";
   const interviewerNames = selectedInterviewers.map((iv) => iv.name).join(", ");
@@ -91,6 +112,10 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
   };
 
   const handleSelectInterviewer = (iv: Interviewer) => {
+    if (iv.id === AI_ID) {
+      const isNowSelected = !selectedInterviewers.some((s) => s.id === AI_ID);
+      setSelectedSlotId(isNowSelected ? AI_AUTO_SLOT_ID : null);
+    }
     setSelectedInterviewers((prev) => {
       const exists = prev.find((s) => s.id === iv.id);
       return exists ? prev.filter((s) => s.id !== iv.id) : [...prev, iv];
@@ -156,7 +181,7 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
           slot_id: selectedSlotId,
           jd_id: jdId,
           candidate_id: candidateNumberId,
-          interviewer_ids: selectedInterviewers.map((iv) => Number(iv.id)),
+          interviewer_ids: selectedInterviewers.filter((iv) => iv.id !== AI_ID).map((iv) => Number(iv.id)),
           create_google_meet: gmeetEnabled,
         });
       } catch {
@@ -253,7 +278,7 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
                   <SrStep1 search={search} onSearchChange={setSearch} interviewers={interviewers}
                     selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
                     tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
-                    activeSlots={activeSlots ?? []} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
+                    activeSlots={allSlots} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
                     isLoading={isLoading} isSearching={false} hideSearch={true} />
                 </div>
               </div>
@@ -261,7 +286,7 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
             {step === 1 && !rescheduleMode && <SrStep1 search={search} onSearchChange={setSearch} interviewers={interviewers}
               selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
               tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
-              activeSlots={activeSlots ?? []} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
+              activeSlots={allSlots} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
               isLoading={isLoading} isSearching={isSearching} hideSearch={false} />}
             {step === 2 && !rescheduleMode && <div className="sr-scroll-content"><SrStep2 candidateName={candidateName}
               interviewerNames={interviewerNames} slotDate={slotDate} slotTime={slotTime}

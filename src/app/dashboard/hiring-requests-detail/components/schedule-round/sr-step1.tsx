@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP } from "./schedule-round-modal.constants";
+import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP, AI_ID } from "./schedule-round-modal.constants";
 import { askSlotsForEmployee } from "@/components/shared/mentions/services/ask-slots.service";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
@@ -120,6 +120,24 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
           <input className="sr-search-input" placeholder={SR_LABELS.INTERVIEWER_PLACEHOLDER} value={search} onChange={(e) => onSearchChange(e.target.value)} />
         </div>
         <div className="sr-interviewer-list">
+          <button
+            key={AI_ID}
+            className={`sr-interviewer-item sr-interviewer-item--ai ${selectedInterviewers.some((s) => s.id === AI_ID) ? "sr-interviewer-item--selected" : ""}`}
+            onClick={() => onSelectInterviewer({
+              id: AI_ID, emp_id: AI_ID, name: SR_LABELS.AI_NAME,
+              designation: "AI", department: "", email: "", slots_count: -1, has_slots: true,
+            })}
+            type="button"
+          >
+            <div className="sr-interviewer-avatar sr-interviewer-avatar--ai">
+              <i className="bx bx-sparkles" />
+            </div>
+            <div className="sr-interviewer-info">
+              <span className="sr-interviewer-name">{SR_LABELS.AI_NAME}</span>
+              <span className="sr-interviewer-slots sr-interviewer-slots--ai">{SR_LABELS.AI_SLOTS_LABEL}</span>
+            </div>
+            {selectedInterviewers.some((s) => s.id === AI_ID) && <i className="bx bx-check sr-interviewer-check" />}
+          </button>
           {isSearching ? (
             <div className="sr-empty-slots">{SR_LABELS.SEARCH_LOADING}</div>
           ) : (

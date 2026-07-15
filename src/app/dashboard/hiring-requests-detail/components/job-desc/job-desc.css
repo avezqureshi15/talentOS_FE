@@ -2,6 +2,21 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 10px;
+  align-items: start;
+}
+
+.bento-grid-left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bento-grid-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 24px;
 }
 
 .bento-card {
@@ -22,10 +37,6 @@
 .bento-card:hover {
   background: var(--surface-glass);
   border-color: var(--border-default);
-}
-
-.bento-card.large {
-  grid-row: span 2;
 }
 
 .bento-card h3 {
@@ -49,16 +60,87 @@
   line-height: 1.6;
 }
 
+.jd-details-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.jd-details-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 12px 0;
+  margin-bottom: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.jd-details-heading i {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.jd-detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.jd-detail-row:last-child {
+  border-bottom: none;
+}
+
+.jd-detail-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.jd-detail-icon i {
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+.jd-detail-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jd-detail-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.jd-detail-value {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
 .jd-chip-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
+  margin-top: 2px;
 }
 
 .jd-chip {
   display: inline-block;
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 3px 8px;
+  font-size: 10.5px;
   color: var(--text-secondary);
   background: var(--surface-glass);
   border: 1px solid var(--input-icon-bg);

@@ -1,6 +1,9 @@
 export const SLOT_GROUP_ORDER = ["Today", "Tomorrow"];
 export const SLOT_FALLBACK_GROUP = "Other";
 
+export const AI_ID = "ai";
+export const AI_AUTO_SLOT_ID = "ai-auto-slot";
+
 export const SR_LABELS = {
   ROUND_TITLE_DEFAULT: "Untitled Round",
   STEP_1_TITLE: "Select Interviewer & Time Slot",
@@ -36,4 +39,7 @@ export const SR_LABELS = {
   SEND_INVITE: "Send Invite",
   RESCHEDULE_CONFIRM: "Reschedule Interview",
   RESCHEDULING_LABEL: "Rescheduling...",
+
+  AI_NAME: "AI Interviewer",
+  AI_SLOTS_LABEL: "Always available",
 };
