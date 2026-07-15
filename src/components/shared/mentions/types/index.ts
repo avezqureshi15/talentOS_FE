@@ -78,7 +78,7 @@ export type MenuController = {
 export type WizardExecutionPayload = {
   message_type: "COMMAND_EXECUTION";
   intent: string;
-  payload: Record<string, string>;
+  payload: Record<string, unknown>;
 };
 
 export type WizardExecutionSummary = {

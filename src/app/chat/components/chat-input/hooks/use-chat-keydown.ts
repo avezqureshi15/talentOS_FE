@@ -24,7 +24,7 @@ type Deps = {
   reset: () => void;
   insert: (text: string, value: string, setValue: (v: string) => void) => void;
   handleChange: (value: string, cursorPos: number) => void;
-  handleWizardSelect: (stage: WizardStage, item: { id: string; label: string }) => void;
+  handleWizardSelect: (stage: WizardStage, item: CommandItem) => void;
   handleMultiSelectConfirm: () => void;
   handleResetTokens: () => void;
 };
@@ -51,7 +51,7 @@ export const useChatKeydown = ({
             if (current) {
               const result = resolveMenuSelection(current, isListView, activeEntry);
               switch (result.action) {
-                case "wizard": handleWizardSelect(result.stage, { id: current.id, label: current.label }); break;
+                case "wizard": handleWizardSelect(result.stage, current as CommandItem); break;
                 case "navigate": navigateTo(result.entry); break;
                 default: insert(result.text, input, setInput); break;
               }
@@ -80,7 +80,7 @@ export const useChatKeydown = ({
             if (!e.shiftKey) {
               e.preventDefault();
               const item = selectCurrentItem();
-              if (item) handleWizardSelect(wizardStage, { id: item.id, label: item.label });
+              if (item) handleWizardSelect(wizardStage, item as CommandItem);
             }
             return;
           case "Escape": e.preventDefault(); reset(); resetToRoot(); return;

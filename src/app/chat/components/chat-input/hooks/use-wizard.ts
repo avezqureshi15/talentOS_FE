@@ -112,7 +112,7 @@ export const useWizard = (
     setInput(inputRef.current.replace(MENTION_REGEX, ""));
   }, [startWizard, setInput]);
 
-  const handleAdvanceWizard = useCallback((item: { id: string; label: string }) => {
+  const handleAdvanceWizard = useCallback((item: CommandItem) => {
     const nf = advanceWizard(item);
     if (!nf) { menu.resetToRoot(); return; }
     const nextStageIdx = engine.wizardStage;
@@ -121,7 +121,7 @@ export const useWizard = (
     nf().then((items) => menu.loadWizardItems(items));
   }, [advanceWizard, menu, engine.wizardStage, engine.wizardActionId]);
 
-  const handleWizardSelect = useCallback((stage: WizardStage, item: { id: string; label: string }) => {
+  const handleWizardSelect = useCallback((stage: WizardStage, item: CommandItem) => {
     switch (stage) {
       case 0: handleStartWizard(item.id); break;
       case 1: case 2: case 3: case 4: handleAdvanceWizard(item); break;

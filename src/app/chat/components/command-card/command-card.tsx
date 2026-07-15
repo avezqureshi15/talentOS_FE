@@ -167,6 +167,52 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
           </div>
         </div>
       );
+    case "book-interview": {
+      const p = data.payload;
+      return (
+        <div className="command-card">
+          <div className="command-card__header">
+            <i className="bx bx-calendar-check" />
+            <span>{COMMAND_CARD_LABELS.INTERVIEW_BOOKING}</span>
+          </div>
+          <div className="command-card__body">
+            {p.jd_title && (
+              <div className="command-card__row">
+                <span className="command-card__label">Job</span>
+                <span className="command-card__value">{p.jd_title as string}</span>
+              </div>
+            )}
+            {p.candidate_name && (
+              <div className="command-card__row">
+                <span className="command-card__label">{COMMAND_CARD_LABELS.CANDIDATE}</span>
+                <span className="command-card__value">{p.candidate_name as string}</span>
+              </div>
+            )}
+            {p.interviewer_names && (
+              <div className="command-card__row">
+                <span className="command-card__label">{COMMAND_CARD_LABELS.INTERVIEWER}</span>
+                <span className="command-card__value">{p.interviewer_names as string}</span>
+              </div>
+            )}
+            {p.round_name && (
+              <div className="command-card__row">
+                <span className="command-card__label">Round</span>
+                <span className="command-card__value">{p.round_name as string}</span>
+              </div>
+            )}
+            {p.slot_label && (
+              <div className="command-card__row">
+                <span className="command-card__label">{COMMAND_CARD_LABELS.TIME_SLOT}</span>
+                <span className="command-card__value">{p.slot_label as string}</span>
+              </div>
+            )}
+            {p.raw_text_context && (
+              <blockquote className="command-card__context">{p.raw_text_context as string}</blockquote>
+            )}
+          </div>
+        </div>
+      );
+    }
     default:
       return data.intent.startsWith("INQUIRE_") ? renderInquireCard() : renderDefaultCard();
   }

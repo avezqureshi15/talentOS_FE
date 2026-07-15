@@ -32,6 +32,7 @@ export const useWizardExecution = ({
       : alertToken ? "alerts"
       : wizardActionId === "employees-ask-slots" ? "ask-slots"
       : wizardActionId === "send-mail" ? "send-mail"
+      : wizardActionId === "book-interview" ? "book-interview"
       : "default";
 
     switch (mode) {
@@ -72,6 +73,30 @@ export const useWizardExecution = ({
         onWizardComplete?.(
           { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", raw_text_context: rawText } },
           { applicantName: mailToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 1 },
+        );
+        break;
+      }
+      case "book-interview": {
+        const interviewerTokens = tokens.filter(t => t.type === "interviewer");
+        onWizardComplete?.(
+          {
+            message_type: "COMMAND_EXECUTION" as const,
+            intent: "book-interview",
+            payload: {
+              jd_id: hiringRequestToken?.id ?? hiringRequestToken?.relationalId ?? "",
+              jd_title: hiringRequestToken?.label ?? "",
+              candidate_id: Number(applicantToken?.relationalId) || Number(applicantToken?.id) || 0,
+              candidate_name: applicantToken?.label ?? "",
+              interviewer_ids: interviewerTokens.map(t => Number(t.id)).filter(n => n > 0),
+              interviewer_names: interviewerTokens.map(t => t.label).join(", "),
+              slot_id: slotToken?.id ?? slotToken?.relationalId ?? "",
+              slot_label: slotToken?.label ?? "",
+              round_name: rawText || "Untitled Round",
+              create_google_meet: true,
+              raw_text_context: rawText,
+            },
+          },
+          { hiringRequestName: hiringRequestToken?.label ?? "", applicantName: applicantToken?.label ?? "", interviewerName: interviewerTokens.map(t => t.label).join(", "), slotLabel: slotToken?.label ?? "", rawText, selectedEmployeeCount: interviewerTokens.length },
         );
         break;
       }

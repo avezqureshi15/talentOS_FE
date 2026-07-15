@@ -48,7 +48,7 @@ export function extractAllText(blocks: ContentBlock[]): string {
 export type CommandExecutionData = {
   message_type: "COMMAND_EXECUTION";
   intent: string;
-  payload: Record<string, string>;
+  payload: Record<string, unknown>;
 };
 
 export type HybridQuestionData = {

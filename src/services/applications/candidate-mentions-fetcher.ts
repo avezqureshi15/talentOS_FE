@@ -26,7 +26,7 @@ export const fetchCandidatesForMentions = async (
     id: candidate.id,
     label: candidate.name ?? candidate.email ?? "Unknown",
     description: [candidate.location, candidate.years_of_experience ? `${candidate.years_of_experience} exp` : ""].filter(Boolean).join(" · "),
-    relationalId: candidate.id,
+    relationalId: String(candidate.candidate_id),
   }));
 
   const hasMore = offset + limit < res.total;

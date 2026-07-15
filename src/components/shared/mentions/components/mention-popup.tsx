@@ -90,8 +90,7 @@ const ANIM_DURATION = 200;
     const result = resolveMenuSelection(current, isListView, activeEntry);
     switch (result.action) {
       case "wizard": {
-        const item = { id: current.id, label: current.label };
-        onWizardSelect?.(result.stage, item);
+        onWizardSelect?.(result.stage, current as CommandItem);
         break;
       }
       case "navigate":
@@ -99,8 +98,7 @@ const ANIM_DURATION = 200;
         break;
       default:
         if (isWizardActive && onWizardSelect && activeEntry) {
-          const item: CommandItem = { id: current.id, label: current.label };
-          onWizardSelect(wizardStage, item);
+          onWizardSelect(wizardStage, current as CommandItem);
         } else {
           onInsert(result.text);
         }
