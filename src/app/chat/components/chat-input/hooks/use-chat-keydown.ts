@@ -26,6 +26,7 @@ type Deps = {
   handleChange: (value: string, cursorPos: number) => void;
   handleWizardSelect: (stage: WizardStage, item: { id: string; label: string }) => void;
   handleMultiSelectConfirm: () => void;
+  handleResetTokens: () => void;
 };
 
 export const useChatKeydown = ({
@@ -34,7 +35,7 @@ export const useChatKeydown = ({
   isListView, listItems, filteredEntries, activeEntry,
   moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
   reset, insert, handleChange,
-  handleWizardSelect, handleMultiSelectConfirm,
+  handleWizardSelect, handleMultiSelectConfirm, handleResetTokens,
 }: Deps) => {
   return useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (show && !isWizardActive) {
@@ -88,10 +89,17 @@ export const useChatKeydown = ({
       return;
     }
 
-    if (isFullyTokenized && e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      executeWizard();
-      return;
+    if (isFullyTokenized) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        executeWizard();
+        return;
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleResetTokens();
+        return;
+      }
     }
 
     if (e.key === "Enter" && !e.shiftKey) {
@@ -102,6 +110,6 @@ export const useChatKeydown = ({
   }, [
     show, isWizardActive, isMultiSelectStage, isFullyTokenized, input, setInput, onSend, executeWizard, wizardStage,
     isListView, listItems, filteredEntries, activeEntry, moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
-    reset, insert, handleChange, handleWizardSelect, handleMultiSelectConfirm,
+    reset, insert, handleChange, handleWizardSelect, handleMultiSelectConfirm, handleResetTokens,
   ]);
 };

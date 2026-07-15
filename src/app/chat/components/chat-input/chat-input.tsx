@@ -74,7 +74,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
     input, setInput, onSend, executeWizard, wizardStage,
     isListView, listItems, filteredEntries, activeEntry,
     moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
-    reset, insert, handleChange,
+    reset, insert, handleChange, handleResetTokens,
     handleWizardSelect, handleMultiSelectConfirm,
   });
 

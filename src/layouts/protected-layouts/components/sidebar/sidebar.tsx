@@ -3,12 +3,12 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import "./sidebar.css";
 import type { SidebarProps, ChatHistoryItem } from "@/layouts/protected-layouts/components/sidebar/sidebar.types";
-import { Link } from "react-router-dom";
 import { SIDEBAR_LABELS } from "@/constants/constants";
 import SidebarGroup from "./sidebar-group";
 import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
+import { Sidebar as SidebarShell, SidebarItem, SidebarSection } from "@/components/ui/sidebar";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -24,19 +24,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   isLoadingMore,
   Icon,
 }) => {
-  // justification: historyOpen controls the collapse/expand state of the chat history section
   const [historyOpen, setHistoryOpen] = useState(true);
-  // justification: menuOpen tracks which chat's 3-dots menu is currently open
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // justification: renamingChatId tracks which chat title is being edited inline
   const [renamingChatId, setRenamingChatId] = useState<string | null>(null);
-  // justification: renameValue holds the current input value during rename
   const [renameValue, setRenameValue] = useState("");
   const renameInputRef = useRef<HTMLInputElement | null>(null);
 
-  // justification: deleteTargetId is the chat waiting for delete confirmation via modal
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const sentinelRef = useIntersectionObserver(
@@ -48,7 +43,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     !!hasMore && !isLoadingMore,
   );
 
-  // Explanation: close the context menu when clicking outside
   useEffect(() => {
     if (!menuOpen) return;
     const handler = (e: MouseEvent) => {
@@ -60,7 +54,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     return () => document.removeEventListener("mousedown", handler);
   }, [menuOpen]);
 
-  // Explanation: auto-focus the rename input when it appears
   useEffect(() => {
     if (renamingChatId) {
       renameInputRef.current?.focus();
@@ -105,67 +98,62 @@ const Sidebar: React.FC<SidebarProps> = ({
   );
 
   return (
-    <aside className={`sidebar ${!sidebarOpen ? "sidebar--collapsed" : ""}`}>
-      <div className="sidebar__inner">
+    <SidebarShell open={sidebarOpen}>
+      {/* TOP */}
+      <div className="sidebar__top">
+        <Icon.Logo />
 
-        {/* TOP */}
-        <div className="sidebar__top">
-          <Icon.Logo />
+        <button
+          className="sidebar-item flex justify-end"
+          onClick={() => setSidebarOpen(false)}
+        >
+          <Icon.DblChevron />
+        </button>
+      </div>
 
-          <button
-            className="sidebar-item flex justify-end"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <Icon.DblChevron />
-          </button>
-        </div>
+      {/* NAV */}
+      <div className="sidebar__nav">
+        <SidebarItem
+          icon={<span className="bx bx-home text-lg" />}
+          label={SIDEBAR_LABELS.HIRING_REQUESTS}
+          shortcut="Ctrl+Shift+H"
+          href="/hiring-requests"
+        />
+        <SidebarItem
+          icon={<span className="bx bx-calendar-check text-lg" />}
+          label="Interviews"
+          shortcut="Ctrl+Shift+I"
+          href="/hiring-requests?tab=interviews"
+        />
+        <SidebarItem
+          icon={<span className="bx bx-bell text-lg" />}
+          label="Alerts"
+          shortcut="Ctrl+Shift+A"
+          href="/hiring-requests?tab=alerts"
+        />
+        <SidebarItem
+          icon={<Icon.Search />}
+          label={SIDEBAR_LABELS.SEARCH}
+          shortcut="Ctrl+K"
+          onClick={onSearch}
+        />
+        <SidebarItem
+          icon={<Icon.Edit />}
+          label={SIDEBAR_LABELS.NEW_CHAT}
+          shortcut="Ctrl+Shift+C"
+          href="/chat"
+        />
+      </div>
 
-        {/* NAV */}
-        <div className="sidebar__nav">
-          <Link to="/hiring-requests">
-          <button className="sidebar-item">
-             <span className="bx bx-home text-lg" ></span>
-             <span className="sidebar-item-label">{SIDEBAR_LABELS.HIRING_REQUESTS}</span>
-             <span className="sidebar-shortcut">Ctrl+Shift+H</span>
-          </button>
-          </Link>
-          <Link to="/hiring-requests?tab=interviews">
-          <button className="sidebar-item">
-            <span className="bx bx-calendar-check text-lg" ></span>
-            <span className="sidebar-item-label">Interviews</span>
-            <span className="sidebar-shortcut">Ctrl+Shift+I</span>
-          </button>
-          </Link>
-          <Link to="/hiring-requests?tab=alerts">
-          <button className="sidebar-item">
-            <span className="bx bx-bell text-lg" ></span>
-            <span className="sidebar-item-label">Alerts</span>
-            <span className="sidebar-shortcut">Ctrl+Shift+A</span>
-          </button>
-          </Link>
-          <button className="sidebar-item" onClick={onSearch}>
-            <Icon.Search />
-            <span className="sidebar-item-label">{SIDEBAR_LABELS.SEARCH}</span>
-            <span className="sidebar-shortcut">Ctrl+Shift+K</span>
-          </button>
-              <Link to="/chat">
-          <button className="sidebar-item">
-            <Icon.Edit />
-            <span className="sidebar-item-label">{SIDEBAR_LABELS.NEW_CHAT}</span>
-            <span className="sidebar-shortcut">Ctrl+Shift+C</span>
-          </button>
-              </Link>
-        </div>
-
-        {/* HISTORY */}
-        <div className="sidebar__history">
-          <div className="sidebar-section-header" onClick={() => setHistoryOpen(!historyOpen)}>
-            {SIDEBAR_LABELS.HISTORY} <span className={`sidebar-chevron ${historyOpen ? "" : "sidebar-chevron--collapsed"}`}><Icon.Chevron /></span>
-          </div>
-
-          {historyOpen && (
+      {/* HISTORY */}
+      <div className="sidebar__history">
+        <SidebarSection
+          title={SIDEBAR_LABELS.HISTORY}
+          collapsible
+          defaultOpen={historyOpen}
+          onToggle={(o) => setHistoryOpen(o)}
+        >
           <div className="sidebar__scroll">
-
             {chats.today.length > 0 && (
               <SidebarGroup title={SIDEBAR_LABELS.TODAY}>
                 {chats.today.map((chat) => renderChatItem(chat))}
@@ -185,22 +173,19 @@ const Sidebar: React.FC<SidebarProps> = ({
             )}
 
             <div ref={sentinelRef} className="sidebar-scroll-sentinel" />
-
           </div>
-          )}
-        </div>
-
-        {/* USER */}
-        <SidebarUserPopover />
-
+        </SidebarSection>
       </div>
+
+      {/* USER */}
+      <SidebarUserPopover />
 
       <DeleteChatModal
         open={!!deleteTargetId}
         onClose={() => setDeleteTargetId(null)}
         onConfirm={() => { if (deleteTargetId) { onDeleteChat?.(deleteTargetId); } setDeleteTargetId(null); }}
       />
-    </aside>
+    </SidebarShell>
   );
 };
 
