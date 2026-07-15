@@ -39,7 +39,7 @@ export const useWizardExecution = ({
       case "entity": {
         const intent = ({ "hr-request": "INQUIRE_HR_REQUEST", "applicants-view": "INQUIRE_APPLICANT" } as const)[wizardActionId ?? ""] ?? "INQUIRE_EMPLOYEE";
         onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent, payload: { id_field: entityToken?.relationalId ?? entityToken?.id ?? "", name_field: entityToken?.label ?? "", raw_text_context: rawText } },
+          { message_type: "COMMAND_EXECUTION" as const, intent, payload: { id_field: entityToken?.id ?? "", name_field: entityToken?.label ?? "", raw_text_context: rawText } },
           { applicantName: entityToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, hiringRequestName: "" },
         );
         break;
