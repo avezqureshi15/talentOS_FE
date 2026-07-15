@@ -12,6 +12,7 @@ type AskSlotsButtonProps = {
 
 const AskSlotsButton = ({ item, onAskSlotsHover, onAskSlotsLeave }: AskSlotsButtonProps) => {
   if (item.meta?.type !== "interviewer") return null;
+  if (item.meta?.has_slots === "true") return null;
 
   const handleClick = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

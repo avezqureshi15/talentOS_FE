@@ -23,7 +23,6 @@ export const TOKEN_ICONS: Record<string, string> = {
   "send-mail": "bx bx-envelope",
   "hiring-request": "bx bx-briefcase",
   "interview": "bx bx-calendar-check",
-  "alert": "bx bx-bell",
 };
 
 export const ICON_RULES: { match: (id: string) => boolean; icon: string }[] = [

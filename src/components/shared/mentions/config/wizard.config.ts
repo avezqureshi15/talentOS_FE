@@ -40,6 +40,22 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
       },
     ],
   },
+  "employees-send-mail": {
+    id: "employees-send-mail",
+    label: "Send Mail",
+    icon: "bx bx-envelope",
+    totalTokens: 2,
+    executionCue: "Press Enter to send mail via AI Assistant",
+    stages: [
+      {
+        stage: 1,
+        header: "Select Employee...",
+        fetcher: fetchMockUsers,
+        tokenType: "applicant",
+        isFinal: true,
+      },
+    ],
+  },
   "hr-request": {
     id: "hr-request",
     label: "Hiring Requests",
@@ -89,8 +105,8 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
       },
     ],
   },
-  "send-mail": {
-    id: "send-mail",
+  "applicants-send-mail": {
+    id: "applicants-send-mail",
     label: "Send Mail",
     icon: "bx bx-envelope",
     totalTokens: 2,
@@ -98,7 +114,7 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
     stages: [
       {
         stage: 1,
-        header: "Select User...",
+        header: "Select Applicant...",
         fetcher: fetchMockUsers,
         tokenType: "applicant",
         isFinal: true,
@@ -133,22 +149,6 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
         header: "Select Interview...",
         fetcher: fetchMockInterviews,
         tokenType: "interview",
-        isFinal: true,
-      },
-    ],
-  },
-  "alerts": {
-    id: "alerts",
-    label: "Alerts",
-    icon: "bx bx-bell",
-    totalTokens: 2,
-    executionCue: "Press Enter to ask about this alert",
-    stages: [
-      {
-        stage: 1,
-        header: "Select Alert...",
-        fetcher: async () => [],
-        tokenType: "alert",
         isFinal: true,
       },
     ],

@@ -1,9 +1,6 @@
 export const SLOT_GROUP_ORDER = ["Today", "Tomorrow"];
 export const SLOT_FALLBACK_GROUP = "Other";
 
-export const AI_ID = "ai";
-export const AI_AUTO_SLOT_ID = "ai-auto-slot";
-
 export const SR_LABELS = {
   ROUND_TITLE_DEFAULT: "Untitled Round",
   STEP_1_TITLE: "Select Interviewer & Time Slot",
@@ -13,7 +10,6 @@ export const SR_LABELS = {
   NO_SLOTS: "No available slots.",
   SEARCH_LOADING: "Loading...",
   SELECT_SLOT: "Select a time slot",
-  SELECT_TEMPLATE: "Select an interview template",
   SELECT_DATE: "Select a date",
   SLOTS_AVAILABLE: "{count} slot{plural} available",
   NO_SLOTS_AVAILABLE: "No slots",
@@ -40,59 +36,4 @@ export const SR_LABELS = {
   SEND_INVITE: "Send Invite",
   RESCHEDULE_CONFIRM: "Reschedule Interview",
   RESCHEDULING_LABEL: "Rescheduling...",
-
-  AI_NAME: "AI Interviewer",
-  AI_SLOTS_LABEL: "Always available",
-  PROCTORING_LABEL: "Proctoring",
-  INSIGHTS_LABEL: "Insights",
-  TEAM_MEMBERS_LABEL: "Team",
 };
-
-import type { AiTemplate } from "./schedule-round-modal.types";
-
-export const AI_TEMPLATES: AiTemplate[] = [
-  {
-    id: "frontend",
-    name: "Frontend Interview Template",
-    description: "AI-powered interview for frontend engineering roles",
-    proctoring: [
-      { label: "Proctoring", enabled: true },
-      { label: "Lockdown Browser", enabled: true },
-      { label: "Candidate Force Visibility", enabled: true },
-      { label: "Require Screen Share", enabled: true },
-      { label: "Block Multiple Monitors", enabled: false },
-      { label: "Restrict Mobile Browsers", enabled: true },
-    ],
-    insights: [
-      "Live coding analysis",
-      "Problem-solving assessment",
-      "Communication score",
-    ],
-    teamMembers: [
-      { name: "Alice", initials: "AL" },
-      { name: "Bob", initials: "BO" },
-    ],
-  },
-  {
-    id: "backend",
-    name: "Backend Engineer Interview Template",
-    description: "AI-powered interview for backend engineering roles",
-    proctoring: [
-      { label: "Proctoring", enabled: true },
-      { label: "Lockdown Browser", enabled: false },
-      { label: "Candidate Force Visibility", enabled: true },
-      { label: "Require Screen Share", enabled: true },
-      { label: "Block Multiple Monitors", enabled: true },
-      { label: "Restrict Mobile Browsers", enabled: false },
-    ],
-    insights: [
-      "System design evaluation",
-      "API design assessment",
-      "Scalability analysis",
-    ],
-    teamMembers: [
-      { name: "Charlie", initials: "CH" },
-      { name: "Diana", initials: "DI" },
-    ],
-  },
-];

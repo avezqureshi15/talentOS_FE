@@ -2,13 +2,11 @@ import type { CommandEntry, CommandItem } from "../types";
 import { fetchHiringRequestsForMentions } from "@/services/hiring-requests/hiring-request-mentions-fetcher";
 import { fetchCandidatesForMentions } from "@/services/applications/candidate-mentions-fetcher";
 import { fetchUsersForMentions } from "@/services/users/user-mentions-fetcher";
-import { fetchInterviewsForMentions } from "@/services/interviews/interview-mentions-fetcher";
-import { fetchAlertsForMentions } from "@/services/alerts/alert-mentions-fetcher";
 
 type FetcherFn = (query: string, page: number) => Promise<{ items: CommandItem[]; hasMore: boolean }>;
 
 export type DataSourceEntry = {
-  createEntry: (context?: Record<string, string>) => CommandEntry;
+  createEntry: () => CommandEntry;
 };
 
 function createPaginatableEntry(id: string, label: string, placeholder: string, fetch: FetcherFn): CommandEntry {
@@ -49,14 +47,8 @@ function createInterviewerEntry(): CommandEntry {
   );
 }
 
-function createCandidateEntry(context?: Record<string, string>): CommandEntry {
-  const jobId = context?.jobId;
-  return createPaginatableEntry(
-    "candidate-search",
-    "Candidates",
-    "Search candidates...",
-    (query, page) => fetchCandidatesForMentions(query, page, jobId),
-  );
+function createCandidateEntry(): CommandEntry {
+  return createPaginatableEntry("candidate-search", "Candidates", "Search candidates...", fetchCandidatesForMentions);
 }
 
 function createEmployeeEntry(): CommandEntry {
@@ -72,14 +64,6 @@ function createEmployeeWithSlotsEntry(): CommandEntry {
   );
 }
 
-function createInterviewEntry(): CommandEntry {
-  return createPaginatableEntry("interview-search", "Interviews", "Search interviews...", fetchInterviewsForMentions);
-}
-
-function createAlertEntry(): CommandEntry {
-  return createPaginatableEntry("alert-search", "Alerts", "Search alerts...", fetchAlertsForMentions);
-}
-
 export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceEntry>> = {
   "book-interview": {
     0: { createEntry: createHiringRequestEntry },
@@ -89,7 +73,7 @@ export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceE
   "hr-request": {
     0: { createEntry: createHiringRequestEntry },
   },
-  "send-mail": {
+  "employees-send-mail": {
     0: { createEntry: createEmployeeEntry },
   },
   "employees-view": {
@@ -98,13 +82,10 @@ export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceE
   "employees-ask-slots": {
     0: { createEntry: createEmployeeWithSlotsEntry },
   },
-  "applicants-view": {
+  "applicants-send-mail": {
     0: { createEntry: createCandidateEntry },
   },
-  "interviews": {
-    0: { createEntry: createInterviewEntry },
-  },
-  "alerts": {
-    0: { createEntry: createAlertEntry },
+  "applicants-view": {
+    0: { createEntry: createCandidateEntry },
   },
 };

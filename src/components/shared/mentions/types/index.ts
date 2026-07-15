@@ -24,7 +24,7 @@ export type MenuLevel = {
   entries: CommandEntry[];
 };
 
-export type TokenType = "action" | "applicant" | "interviewer" | "slot" | "entity" | "ask-slots" | "send-mail" | "hiring-request" | "interview" | "alert";
+export type TokenType = "action" | "applicant" | "interviewer" | "slot" | "entity" | "ask-slots" | "send-mail" | "hiring-request" | "interview";
 
 export type Token = {
   type: TokenType;

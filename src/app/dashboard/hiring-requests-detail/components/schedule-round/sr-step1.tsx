@@ -1,11 +1,11 @@
 import { useState, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP, AI_ID } from "./schedule-round-modal.constants";
+import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP } from "./schedule-round-modal.constants";
 import { askSlotsForEmployee } from "@/components/shared/mentions/services/ask-slots.service";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
-import type { Interviewer, SlotTab, AiTemplate } from "./schedule-round-modal.types";
+import type { Interviewer, SlotTab } from "./schedule-round-modal.types";
 import type { CommandItem } from "@/components/shared/mentions/types";
 
 type SrStep1Props = {
@@ -23,7 +23,6 @@ type SrStep1Props = {
   isLoading: boolean;
   isSearching: boolean;
   hideSearch?: boolean;
-  aiTemplates?: AiTemplate[];
 };
 
 const slotsLabel = (count: number): string => {
@@ -42,7 +41,7 @@ const groupSlots = (items: CommandItem[]) => {
   return [...map.entries()].sort(([a], [b]) => sortKey(a) - sortKey(b)).map(([group, items]) => ({ group, items }));
 };
 
-const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch, aiTemplates }: SrStep1Props) => {
+const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch }: SrStep1Props) => {
   const isSelected = (iv: Interviewer) => selectedInterviewers.some((s) => s.id === iv.id);
   // justification: stores tooltip state for avatar hover (name + designation)
   const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
@@ -91,8 +90,6 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
     </div>
   );
 
-  const aiActive = selectedInterviewers.some((s) => s.id === AI_ID) && aiTemplates && aiTemplates.length > 0;
-
   const renderSlotList = () => (
     <div className="sr-slot-list">
       {groups.map((group) => (
@@ -115,66 +112,6 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
     </div>
   );
 
-  const renderTemplateCards = () => (
-    <div className="sr-template-list">
-      {aiTemplates!.map((tmpl) => {
-        const isSelected = selectedSlotId === `ai-${tmpl.id}`;
-        return (
-          <div
-            key={tmpl.id}
-            className={`sr-template-card${isSelected ? " sr-template-card--selected" : ""}`}
-            onClick={() => onSlotSelect(`ai-${tmpl.id}`)}
-          >
-            <div className="sr-template-card-header">
-              <i className="bx bx-sparkles sr-template-card-icon" />
-              <div>
-                <div className="sr-template-card-name">{tmpl.name}</div>
-                <div className="sr-template-card-desc">{tmpl.description}</div>
-              </div>
-            </div>
-
-            <div className="sr-template-card-section">
-              <div className="sr-template-card-section-label">{SR_LABELS.PROCTORING_LABEL}</div>
-              <div className="sr-template-card-chips">
-                {tmpl.proctoring.map((p) => (
-                  <span key={p.label} className={`sr-template-chip${p.enabled ? " sr-template-chip--on" : " sr-template-chip--off"}`}>
-                    {p.enabled ? <i className="bx bx-check" /> : <i className="bx bx-x" />}
-                    {p.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="sr-template-card-section">
-              <div className="sr-template-card-section-label">{SR_LABELS.INSIGHTS_LABEL}</div>
-              <div className="sr-template-card-insights">
-                {tmpl.insights.map((insight) => (
-                  <span key={insight} className="sr-template-insight">
-                    <i className="bx bx-line-chart" />
-                    {insight}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="sr-template-card-section">
-              <div className="sr-template-card-section-label">{SR_LABELS.TEAM_MEMBERS_LABEL}</div>
-              <div className="sr-template-card-team">
-                {tmpl.teamMembers.map((m) => (
-                  <div key={m.name} className="sr-template-team-avatar" title={m.name}>
-                    {m.initials}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {isSelected && <i className="bx bx-check sr-template-card-check" />}
-          </div>
-        );
-      })}
-    </div>
-  );
-
   return (
     <div className="sr-two-col">
       {!hideSearch && <div className="sr-left-col">
@@ -183,24 +120,6 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
           <input className="sr-search-input" placeholder={SR_LABELS.INTERVIEWER_PLACEHOLDER} value={search} onChange={(e) => onSearchChange(e.target.value)} />
         </div>
         <div className="sr-interviewer-list">
-          <button
-            key={AI_ID}
-            className={`sr-interviewer-item sr-interviewer-item--ai ${selectedInterviewers.some((s) => s.id === AI_ID) ? "sr-interviewer-item--selected" : ""}`}
-            onClick={() => onSelectInterviewer({
-              id: AI_ID, emp_id: AI_ID, name: SR_LABELS.AI_NAME,
-              designation: "AI", department: "", email: "", slots_count: -1, has_slots: true,
-            })}
-            type="button"
-          >
-            <div className="sr-interviewer-avatar sr-interviewer-avatar--ai">
-              <i className="bx bx-sparkles" />
-            </div>
-            <div className="sr-interviewer-info">
-              <span className="sr-interviewer-name">{SR_LABELS.AI_NAME}</span>
-              <span className="sr-interviewer-slots sr-interviewer-slots--ai">{SR_LABELS.AI_SLOTS_LABEL}</span>
-            </div>
-            {selectedInterviewers.some((s) => s.id === AI_ID) && <i className="bx bx-check sr-interviewer-check" />}
-          </button>
           {isSearching ? (
             <div className="sr-empty-slots">{SR_LABELS.SEARCH_LOADING}</div>
           ) : (
@@ -211,9 +130,11 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
                   <span className="sr-interviewer-name">{iv.name}</span>
                   <span className="sr-interviewer-slots">{slotsLabel(iv.slots_count)}</span>
                 </div>
-                <button className="sr-interviewer-ask-slots" onMouseEnter={(e) => handleAskSlotsHover(e, iv)} onMouseLeave={clearAskTooltip} onClick={(e) => handleAskSlotsClick(e, iv)} type="button">
-                  <i className="bx bx-calendar-plus" />
-                </button>
+                {!iv.has_slots && (
+                  <button className="sr-interviewer-ask-slots" onMouseEnter={(e) => handleAskSlotsHover(e, iv)} onMouseLeave={clearAskTooltip} onClick={(e) => handleAskSlotsClick(e, iv)} type="button">
+                    <i className="bx bx-calendar-plus" />
+                  </button>
+                )}
                 {isSelected(iv) && <i className="bx bx-check sr-interviewer-check" />}
               </button>
             ))
@@ -223,8 +144,8 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
       <div className="sr-right-col">
         {selectedInterviewers.length > 0 ? (
           <div className="sr-slot-section">
-            <span className="sr-section-label">{aiActive ? SR_LABELS.SELECT_TEMPLATE : SR_LABELS.SELECT_SLOT}</span>
-            {!aiActive && tabs.length > 0 && (
+            <span className="sr-section-label">{SR_LABELS.SELECT_SLOT}</span>
+            {tabs.length > 0 && (
               <div className="sr-tabs-row">
                 {tabs.map((tab) => (
                   <button key={tab.id} className={`sr-tab ${activeTab === tab.id ? "sr-tab--active" : ""}`} onClick={() => onTabChange(tab.id)} type="button">
@@ -233,9 +154,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
                 ))}
               </div>
             )}
-            {aiActive ? (
-              renderTemplateCards()
-            ) : isLoading ? (
+            {isLoading ? (
               renderSkeleton()
             ) : activeSlots.length > 0 ? (
               renderSlotList()

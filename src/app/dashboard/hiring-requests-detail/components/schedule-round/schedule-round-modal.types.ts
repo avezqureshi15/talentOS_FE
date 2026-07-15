@@ -16,20 +16,6 @@ export type SlotTab = {
   label: string;
 };
 
-export type AiTemplateProctoring = {
-  label: string;
-  enabled: boolean;
-};
-
-export type AiTemplate = {
-  id: string;
-  name: string;
-  description: string;
-  proctoring: AiTemplateProctoring[];
-  insights: string[];
-  teamMembers: { name: string; initials: string }[];
-};
-
 export type ScheduleRoundModalProps = {
   open: boolean;
   candidateName: string;

@@ -93,9 +93,7 @@ export const useWizard = (
     const dataSource = wizardActionId ? WIZARD_REAL_DATA_SOURCES[wizardActionId]?.[stageIdx] : null;
 
     if (dataSource) {
-      const hiringRequestToken = tokens.find((t) => t.type === "hiring-request");
-      const context = hiringRequestToken ? { jobId: hiringRequestToken.id } : undefined;
-      const entry = dataSource.createEntry(context);
+      const entry = dataSource.createEntry();
       if (!entry.fetcher) return;
       entry.fetcher("").then(() => menu.loadWizardEntry(entry));
     } else {

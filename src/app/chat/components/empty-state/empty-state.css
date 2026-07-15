@@ -11,17 +11,16 @@
 
 .empty-state-aurora-bg {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
+  top: -30%;
+  left: -20%;
+  width: 140%;
+  height: 160%;
   background:
-    radial-gradient(ellipse 600px 500px at center, color-mix(in srgb, var(--accent-indigo), transparent 70%) 0%, transparent 60%),
-    radial-gradient(ellipse 500px 450px at center, color-mix(in srgb, var(--aurora-purple), transparent 75%) 0%, transparent 60%),
-    radial-gradient(ellipse 450px 500px at center, color-mix(in srgb, var(--aurora-pink), transparent 82%) 0%, transparent 60%),
-    radial-gradient(ellipse 400px 350px at center, color-mix(in srgb, var(--aurora-cyan), transparent 82%) 0%, transparent 60%);
-  filter: blur(100px);
+    radial-gradient(ellipse 500px 400px at 30% 40%, color-mix(in srgb, var(--accent-indigo), transparent 75%) 0%, transparent 70%),
+    radial-gradient(ellipse 450px 350px at 70% 30%, color-mix(in srgb, var(--aurora-purple), transparent 80%) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 450px at 50% 60%, color-mix(in srgb, var(--aurora-pink), transparent 85%) 0%, transparent 70%),
+    radial-gradient(ellipse 350px 300px at 20% 70%, color-mix(in srgb, var(--aurora-cyan), transparent 85%) 0%, transparent 70%);
+  filter: blur(80px);
   pointer-events: none;
   z-index: 0;
   opacity: 0;
@@ -35,22 +34,22 @@
 
 @keyframes aurora-float {
   0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.4;
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
   }
   25% {
-    transform: translate(-50%, -50%) scale(1.08);
+    transform: translate(40px, -30px) scale(1.05);
   }
   50% {
-    transform: translate(-50%, -50%) scale(0.95);
-    opacity: 0.55;
+    transform: translate(-20px, 20px) scale(0.95);
+    opacity: 0.8;
   }
   75% {
-    transform: translate(-50%, -50%) scale(1.04);
+    transform: translate(30px, -10px) scale(1.02);
   }
   100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.4;
+    transform: translate(-30px, 30px) scale(1);
+    opacity: 0.6;
   }
 }
 

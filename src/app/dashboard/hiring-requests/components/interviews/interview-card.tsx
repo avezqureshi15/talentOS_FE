@@ -12,13 +12,11 @@ const fmtCancelledDate = (iso: string | null): string => {
 };
 
 const isCancelled = (interview: InterviewEntity) => interview.interviewStatus === "CANCELLED";
-const isCompleted = (interview: InterviewEntity) => interview.interviewStatus === "COMPLETED";
-const showActions = (interview: InterviewEntity) => !isCancelled(interview) && !isCompleted(interview);
 
 const InterviewCard = ({ interview, isOpen, onToggleOpen, onReschedule, onCancel, onNavigateToApplicant }: InterviewCardProps) => {
 
   return (
-    <div className={`interview-card${isCancelled(interview) ? " interview-card--cancelled" : ""}${isCompleted(interview) ? " interview-card--completed" : ""}`}>
+    <div className={`interview-card${isCancelled(interview) ? " interview-card--cancelled" : ""}`}>
       <div className="interview-header">
         <div className="interview-header-left" onClick={() => onToggleOpen(interview.id)}>
           <div className="name">{interview.roundName}</div>
@@ -40,17 +38,15 @@ const InterviewCard = ({ interview, isOpen, onToggleOpen, onReschedule, onCancel
                 <i className="bx bx-clock-five" />
                 {interview.slotDate}, {interview.slotTime}
               </span>
-              {showActions(interview) && (
-                <a href={interview.roomLink} target="_blank" rel="noreferrer" className="room-btn" onClick={(e) => e.stopPropagation()}>
-                  <i className="bx bx-video" /> {INTERVIEW_ROOM_LABEL} <i className="bx bx-chevron-right" />
-                </a>
-              )}
+              <a href={interview.roomLink} target="_blank" rel="noreferrer" className="room-btn" onClick={(e) => e.stopPropagation()}>
+                <i className="bx bx-video" /> {INTERVIEW_ROOM_LABEL} <i className="bx bx-chevron-right" />
+              </a>
             </>
           )}
         </div>
 
         <div className="interview-header-right">
-          {showActions(interview) && (
+          {interview.interviewStatus !== "CANCELLED" && (
             <button
               className="reschedule-btn"
               onClick={(e) => { e.stopPropagation(); onReschedule(interview.candidateName, interview.candidateId, interview.id, interview.interviewerEmpId, interview.interviewerName, interview.roundName); }}
@@ -59,7 +55,7 @@ const InterviewCard = ({ interview, isOpen, onToggleOpen, onReschedule, onCancel
               <i className="bx bx-calendar" /> {RESCHEDULE_LABEL}
             </button>
           )}
-          {showActions(interview) && (
+          {interview.interviewStatus !== "CANCELLED" && (
             <button
               className="cancel-btn"
               onClick={(e) => { e.stopPropagation(); onCancel(interview.candidateName, interview.id); }}
@@ -103,7 +99,7 @@ const InterviewCard = ({ interview, isOpen, onToggleOpen, onReschedule, onCancel
               <span className="interview-table-label"><i className={isCancelled(interview) ? "bx bx-x-circle" : "bx bx-time-five"} /> {isCancelled(interview) ? "Cancelled On" : "Slot Timing"}</span>
               <span className="interview-table-value">{isCancelled(interview) ? fmtCancelledDate(interview.cancelledAt) : `${interview.slotDate}, ${interview.slotTime}`}</span>
             </div>
-            {showActions(interview) && (
+            {!isCancelled(interview) && (
               <div className="interview-table-cell interview-table-cell--full">
                 <span className="interview-table-label"><i className="bx bx-video" /> Interview Room</span>
                 <span className="interview-table-value"><a href={interview.roomLink} target="_blank" rel="noreferrer">{interview.roomLink}</a></span>

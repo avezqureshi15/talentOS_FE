@@ -15,12 +15,11 @@ export type CandidateMentionsFetcherPaginatedResult = {
 export const fetchCandidatesForMentions = async (
   query: string,
   page: number,
-  jobId?: string,
 ): Promise<CandidateMentionsFetcherPaginatedResult> => {
   const limit = 20;
   const offset = (page - 1) * limit;
 
-  const res = await fetchApplicationsPaginated(jobId, undefined, undefined, undefined, undefined, undefined, limit, offset, undefined, query || undefined);
+  const res = await fetchApplicationsPaginated(undefined, undefined, undefined, undefined, undefined, undefined, limit, offset, undefined, query || undefined);
 
   const items: CandidateMentionsFetcherResultItem[] = res.data.map((candidate) => ({
     id: candidate.id,
