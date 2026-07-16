@@ -93,9 +93,12 @@ export const useWizard = (
     const dataSource = wizardActionId ? WIZARD_REAL_DATA_SOURCES[wizardActionId]?.[stageIdx] : null;
 
     if (dataSource) {
+      const context: Record<string, string> = {};
       const hiringRequestToken = tokens.find((t) => t.type === "hiring-request");
-      const context = hiringRequestToken ? { jobId: hiringRequestToken.relationalId ?? hiringRequestToken.id } : undefined;
-      const entry = dataSource.createEntry(context);
+      if (hiringRequestToken) context.jobId = hiringRequestToken.relationalId ?? hiringRequestToken.id;
+      const applicantToken = tokens.find((t) => t.type === "applicant");
+      if (applicantToken) context.candidateId = applicantToken.relationalId ?? applicantToken.id;
+      const entry = dataSource.createEntry(Object.keys(context).length > 0 ? context : undefined);
       if (!entry.fetcher) return;
       entry.fetcher("").then(() => menu.loadWizardEntry(entry));
     } else {

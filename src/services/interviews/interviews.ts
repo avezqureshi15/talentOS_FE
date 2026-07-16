@@ -7,10 +7,12 @@ export const fetchInterviews = async (
   page: number,
   perPage: number,
   search?: string,
+  candidateId?: string,
 ): Promise<InterviewsApiResponse> => {
   const params: Record<string, string> = {};
   if (statusFilter) params.status_filter = statusFilter;
   if (search) params.search = search;
+  if (candidateId) params.candidate_id = candidateId;
   params.page = String(page);
   params.per_page = String(perPage);
   const { data } = await httpClient.get<InterviewsApiResponse>(

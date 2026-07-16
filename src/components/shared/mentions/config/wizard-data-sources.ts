@@ -4,6 +4,7 @@ import { fetchCandidatesForMentions } from "@/services/applications/candidate-me
 import { fetchUsersForMentions } from "@/services/users/user-mentions-fetcher";
 import { fetchInterviewsForMentions } from "@/services/interviews/interview-mentions-fetcher";
 import { fetchAlertsForMentions } from "@/services/alerts/alert-mentions-fetcher";
+import { fetchRoundsForMentions } from "@/services/rounds/round-mentions-fetcher";
 
 type FetcherFn = (query: string, page: number) => Promise<{ items: CommandItem[]; hasMore: boolean }>;
 
@@ -72,8 +73,20 @@ function createEmployeeWithSlotsEntry(): CommandEntry {
   );
 }
 
-function createInterviewEntry(): CommandEntry {
-  return createPaginatableEntry("interview-search", "Interviews", "Search interviews...", fetchInterviewsForMentions);
+function createInterviewsByCandidateEntry(context?: Record<string, string>): CommandEntry {
+  const candidateId = context?.candidateId;
+  return createPaginatableEntry(
+    "interview-by-candidate-search", "Interviews", "Search interviews...",
+    (query, page) => fetchInterviewsForMentions(query, page, candidateId),
+  );
+}
+
+function createRoundsByCandidateEntry(context?: Record<string, string>): CommandEntry {
+  const candidateId = context?.candidateId;
+  return createPaginatableEntry(
+    "round-by-candidate-search", "Rounds", "Search rounds...",
+    (query, page) => fetchRoundsForMentions(query, page, candidateId),
+  );
 }
 
 function createAlertEntry(): CommandEntry {
@@ -102,9 +115,14 @@ export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceE
     0: { createEntry: createCandidateEntry },
   },
   "interviews": {
-    0: { createEntry: createInterviewEntry },
+    0: { createEntry: createCandidateEntry },
+    1: { createEntry: createInterviewsByCandidateEntry },
   },
   "alerts": {
     0: { createEntry: createAlertEntry },
+  },
+  "rounds": {
+    0: { createEntry: createCandidateEntry },
+    1: { createEntry: createRoundsByCandidateEntry },
   },
 };

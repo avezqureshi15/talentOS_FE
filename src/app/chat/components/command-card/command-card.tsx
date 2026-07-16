@@ -167,6 +167,23 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
           </div>
         </div>
       );
+    case "rounds": {
+      const rp = data.payload;
+      const roundLabel = (rp.round_label as string) || (rp.round_id as string);
+      return (
+        <div className="command-card">
+          <div className="command-card__header">
+            <i className="bx bx-calendar-check" />
+            <span>{roundLabel}</span>
+          </div>
+          <div className="command-card__body">
+            {rp.raw_text_context && (
+              <blockquote className="command-card__context">{rp.raw_text_context as string}</blockquote>
+            )}
+          </div>
+        </div>
+      );
+    }
     case "book-interview": {
       const p = data.payload;
       return (

@@ -26,8 +26,10 @@ export const useWizardExecution = ({
     const slotToken = tokens.find(t => t.type === "slot");
     const interviewToken = tokens.find(t => t.type === "interview");
     const alertToken = tokens.find(t => t.type === "alert");
+    const roundToken = tokens.find(t => t.type === "round");
 
     const mode = entityToken ? "entity"
+      : roundToken ? "round"
       : interviewToken ? "interview"
       : alertToken ? "alerts"
       : wizardActionId === "employees-ask-slots" ? "ask-slots"
@@ -55,6 +57,13 @@ export const useWizardExecution = ({
         onWizardComplete?.(
           { message_type: "COMMAND_EXECUTION" as const, intent: "alerts", payload: { alert_id: alertToken?.label ?? "", raw_text_context: rawText } },
           { applicantName: alertToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
+        );
+        break;
+      }
+      case "round": {
+        onWizardComplete?.(
+          { message_type: "COMMAND_EXECUTION" as const, intent: "rounds", payload: { round_id: roundToken?.id ?? "", round_label: roundToken?.label ?? "", candidate_id: roundToken?.relationalId ?? roundToken?.id ?? "", raw_text_context: rawText } },
+          { applicantName: roundToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
         );
         break;
       }

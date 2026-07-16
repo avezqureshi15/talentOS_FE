@@ -27,9 +27,10 @@ function formatSchedule(startTime: string): { label: string; status: string } {
 export const fetchInterviewsForMentions = async (
   query: string,
   page: number,
+  candidateId?: string,
 ): Promise<InterviewMentionsFetcherResult> => {
   const perPage = 20;
-  const res = await fetchInterviews(undefined, page, perPage, query || undefined);
+  const res = await fetchInterviews(undefined, page, perPage, query || undefined, candidateId);
 
   const items: CommandItem[] = res.data.interviews.map((iv) => {
     const candidateName = iv.candidate?.name ?? iv.candidate?.email ?? "Unknown";

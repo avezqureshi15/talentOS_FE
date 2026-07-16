@@ -15,16 +15,29 @@ export const ROOT_MENU: CommandEntry[] = [
     isWizardAction: true,
   },
   {
-    id: "applicants-view",
+    id: "applicants",
     label: "Applicants",
     icon: "bx bx-user",
-    isWizardAction: true,
-  },
-  {
-    id: "interviews",
-    label: "Interviews",
-    icon: "bx bx-calendar-check",
-    isWizardAction: true,
+    children: [
+      {
+        id: "applicants-view",
+        label: "View Applicants",
+        icon: "bx bx-eye",
+        isWizardAction: true,
+      },
+      {
+        id: "rounds",
+        label: "Rounds",
+        icon: "bx bx-calendar-check",
+        isWizardAction: true,
+      },
+      {
+        id: "interviews",
+        label: "Interviews",
+        icon: "bx bx-calendar-check",
+        isWizardAction: true,
+      },
+    ],
   },
   {
     id: "alerts",
