@@ -13,7 +13,7 @@ import type { FinalVerdictProps, FinalVerdictSubTab } from "./final-verdict.type
 import type { AccordionTab } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import "./final-verdict.css";
 
-const FinalVerdict = ({ jobId: _jobId }: FinalVerdictProps) => {
+const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
   const [subTab, setSubTab] = useState<FinalVerdictSubTab>("selected");
   const [openId, setOpenId] = useState<string | null>(null);
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
@@ -23,7 +23,7 @@ const FinalVerdict = ({ jobId: _jobId }: FinalVerdictProps) => {
   const [detailsId, setDetailsId] = useState<string | null>(null);
   const [selectedRound, setSelectedRound] = useState<string | null>(null);
 
-  const { candidates, isLoading, isLoadingMore, hasMore, fetchNext } = useFinalVerdictsData(subTab);
+  const { candidates, isLoading, isLoadingMore, hasMore, fetchNext } = useFinalVerdictsData(subTab, jobId);
 
   return (
     <div className="final-verdict">

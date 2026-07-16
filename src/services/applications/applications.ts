@@ -71,8 +71,10 @@ export const fetchFinalVerdicts = async (
   candidateStatus?: string,
   limit?: number,
   offset?: number,
+  jobId?: string,
 ): Promise<PaginatedEvaluatedCandidatesResponse> => {
   const params: Record<string, string> = {};
+  if (jobId) params.job_id = jobId;
   if (candidateStatus) params.candidate_status = candidateStatus;
   if (limit !== undefined) params.limit = String(limit);
   if (offset !== undefined) params.offset = String(offset);

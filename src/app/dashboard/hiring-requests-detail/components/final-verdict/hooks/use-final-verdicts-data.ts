@@ -19,13 +19,14 @@ const LIMIT = PAGINATION.APPLICATIONS_PER_PAGE;
 
 export function useFinalVerdictsData(
   subTab: FinalVerdictSubTab,
+  jobId: string,
 ): UseFinalVerdictsResult {
   const candidateStatus = subTab === "selected" ? "selected" : "rejected";
 
   const query = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.FINAL_VERDICTS, candidateStatus],
+    queryKey: [QUERY_KEYS.FINAL_VERDICTS, candidateStatus, jobId],
     queryFn: ({ pageParam }) =>
-      fetchFinalVerdicts(candidateStatus, LIMIT, pageParam as number),
+      fetchFinalVerdicts(candidateStatus, LIMIT, pageParam as number, jobId),
     initialPageParam: 0,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {
       const nextOffset = (lastPageParam as number) + LIMIT;
