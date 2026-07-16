@@ -62,10 +62,26 @@ const ApplicantCard = ({
   const showExpanded = isOpen && (stateConfig.showExpandedContent || readOnly);
   const showMenu = stateConfig.menuActions.length > 0 && a.finalVerdict == null && !readOnly;
 
+  const INFO_CHIP_LABELS: Record<string, string> = {
+    CTC: "Budget",
+    NOTICE_PERIOD: "Notice Period",
+  };
+
   const infoChips = useMemo(() => {
     if (!a.reviews) return [];
+
+    const rejectionKeys = new Set<string>();
+    if (Array.isArray(a.reviews.rejection_details)) {
+      const REJECTION_TO_INFO: Record<string, string> = { BUDGET: "CTC" };
+      for (const item of a.reviews.rejection_details) {
+        const k = Object.keys(item as Record<string, unknown>)[0];
+        rejectionKeys.add(REJECTION_TO_INFO[k] ?? k);
+      }
+    }
+
     return Object.entries(a.reviews).flatMap(([key, value]) => {
       if (INFO_CHIP_SKIP_KEYS.has(key)) return [];
+      if (rejectionKeys.has(key)) return [];
       if (typeof value === "object" && value != null && "actual" in value && "expected" in value) {
         return [{ key, value: value as { actual: string | number; expected: string | number } }];
       }
@@ -104,7 +120,8 @@ const ApplicantCard = ({
                 const hasActual = actual != null && actual !== "" && actual !== "?";
                 const hasExpected = expected != null && expected !== "" && expected !== "?";
                 if (!hasActual && !hasExpected) return null;
-                const tipLines: string[] = [chip.key, `Actual : ${hasActual ? actual : "—"}`, `Expected : ${hasExpected ? expected : "—"}`];
+                const label = INFO_CHIP_LABELS[chip.key] ?? chip.key;
+                const tipLines: string[] = [label, `Actual : ${hasActual ? actual : "—"}`, `Expected : ${hasExpected ? expected : "—"}`];
                 return (
                   <span
                     key={chip.key}
@@ -112,9 +129,18 @@ const ApplicantCard = ({
                     onMouseEnter={(e) => showTooltip(e, tipLines)}
                     onMouseLeave={hideTooltip}
                   >
-                    {chip.key}
+                    {label}
                   </span>
                 );
+              })}
+            </div>
+          )}
+
+          {a.reviews && Array.isArray(a.reviews.rejection_details) && (a.reviews.rejection_details as unknown[]).length > 0 && (
+            <div className="info-chip-row--rejection">
+              {(a.reviews.rejection_details as Array<Record<string, { JD: string; Candidate: string }>>).map((item, i) => {
+                const key = Object.keys(item)[0];
+                return <span key={i} className="rejection-chip">{key}</span>;
               })}
             </div>
           )}
@@ -126,15 +152,6 @@ const ApplicantCard = ({
               onMouseLeave={hideTooltip}
             >
               {a.score}
-            </div>
-          )}
-
-          {a.reviews && Array.isArray(a.reviews.rejection_details) && (a.reviews.rejection_details as unknown[]).length > 0 && (
-            <div className="info-chip-row--rejection">
-              {(a.reviews.rejection_details as Array<Record<string, { JD: string; Candidate: string }>>).map((item, i) => {
-                const key = Object.keys(item)[0];
-                return <span key={i} className="rejection-chip">{key}</span>;
-              })}
             </div>
           )}
 
