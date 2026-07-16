@@ -95,7 +95,7 @@ export const useWizard = (
     if (dataSource) {
       const context: Record<string, string> = {};
       const hiringRequestToken = tokens.find((t) => t.type === "hiring-request");
-      if (hiringRequestToken) context.jobId = hiringRequestToken.relationalId ?? hiringRequestToken.id;
+      if (hiringRequestToken) context.jobId = hiringRequestToken.id ?? hiringRequestToken.relationalId;
       const applicantToken = tokens.find((t) => t.type === "applicant");
       if (applicantToken) context.candidateId = applicantToken.relationalId ?? applicantToken.id;
       const entry = dataSource.createEntry(Object.keys(context).length > 0 ? context : undefined);

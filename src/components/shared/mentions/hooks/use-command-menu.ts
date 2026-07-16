@@ -80,8 +80,8 @@ export const useCommandMenu = () => {
       return activeEntry.fetcher(debouncedSearch);
     },
     enabled: isListView && !!activeEntry?.fetcher,
-    staleTime: 30_000,
-    gcTime: 60_000,
+    staleTime: 2_000,
+    gcTime: 10_000,
   });
 
   useEffect(() => {
