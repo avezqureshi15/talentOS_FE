@@ -37,7 +37,7 @@ export const ROUND_VERDICT_LABELS: Record<string, string> = {
   rejected: "Rejected",
 };
 
-export const INFO_CHIP_SKIP_KEYS = new Set(["fitscore", "summary", "summary_md", "rejected_status", "rejected_reason", "strong_matches", "gaps_and_concerns"]);
+export const INFO_CHIP_SKIP_KEYS = new Set(["fitscore", "summary", "summary_md", "rejection_details", "strong_matches", "gaps_and_concerns"]);
 
 export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round", "interview_scheduled", "interview_rescheduled", "interview_cancelled"]);
 

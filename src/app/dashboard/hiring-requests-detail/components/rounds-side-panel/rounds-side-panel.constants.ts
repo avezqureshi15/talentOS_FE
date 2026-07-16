@@ -41,3 +41,17 @@ export const ROUNDS_FALLBACK = {
   NO_NOTES: "No notes provided.",
   NO_AI_SUMMARY: "No AI summary available.",
 } as const;
+
+export const CRITERION_LABELS: Record<string, string> = {
+  YOE: "Years of Experience",
+  BUDGET: "Budget",
+  LOCATION: "Location",
+  NOTICE_PERIOD: "Notice Period",
+};
+
+export const COMPARISON_LABELS: Record<string, string> = {
+  YOE: "Years of Experience",
+  CTC: "Current CTC",
+  LOCATION: "Location",
+  NOTICE_PERIOD: "Notice Period",
+};

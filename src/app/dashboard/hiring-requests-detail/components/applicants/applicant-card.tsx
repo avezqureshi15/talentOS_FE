@@ -129,11 +129,12 @@ const ApplicantCard = ({
             </div>
           )}
 
-          {a.reviews && Array.isArray(a.reviews.rejected_status) && (a.reviews.rejected_status as unknown[]).length > 0 && (
+          {a.reviews && Array.isArray(a.reviews.rejection_details) && (a.reviews.rejection_details as unknown[]).length > 0 && (
             <div className="info-chip-row--rejection">
-              {(a.reviews.rejected_status as unknown as string[]).map((s, i) => (
-                <span key={i} className="rejection-chip">{s}</span>
-              ))}
+              {(a.reviews.rejection_details as Array<Record<string, { JD: string; Candidate: string }>>).map((item, i) => {
+                const key = Object.keys(item)[0];
+                return <span key={i} className="rejection-chip">{key}</span>;
+              })}
             </div>
           )}
 

@@ -9,6 +9,7 @@ import type { RoundsSidePanelProps, PanelContentProps, RowProps, ReviewEntity } 
 import {
   ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK,
   VERDICT_LABELS, VERDICT_ICONS, ENTITY_TITLE_LABELS, RATING_LABELS,
+  CRITERION_LABELS, COMPARISON_LABELS,
 } from "./rounds-side-panel.constants";
 import "./rounds-side-panel.css";
 
@@ -56,27 +57,68 @@ function EntityRatings({ entity }: { entity: ReviewEntity }) {
 
 function EntityAiContent({ entity }: { entity: ReviewEntity }) {
   const hasBullets = entity.strongMatches.length > 0 || entity.gapsAndConcerns.length > 0;
-  const hasAiContent = entity.summary || hasBullets || entity.rejectedStatus.length > 0 || entity.rejectedReason;
+  const hasComparisons = entity.comparisonFields.length > 0;
+  const hasDetails = entity.rejectionDetails.length > 0;
+  const hasAiContent = entity.summary || hasBullets || hasComparisons || hasDetails;
   if (!hasAiContent) return null;
 
   return (
     <div className="rp-ai-summary md-content">
       {entity.summary ? (
         <ExpandableAiSummary text={entity.summary} />
-      ) : hasBullets ? null : entity.rejectedStatus.length === 0 && !entity.rejectedReason ? (
+      ) : hasBullets || hasComparisons ? null : !hasDetails ? (
         <p className="rp-ai-empty">{ROUNDS_FALLBACK.NO_AI_SUMMARY}</p>
       ) : null}
-      {entity.rejectedStatus.length > 0 && (
+      {hasComparisons && (
         <>
-          <span className="rp-ai-subheading">Rejection Reasons</span>
-          <div className="rp-rejection-chip-group">
-            {entity.rejectedStatus.map((s, i) => (
-              <span key={i} className="rp-rejection-chip">{s}</span>
+          <span className="rp-ai-subheading">JD vs Candidate Comparison</span>
+          <div className="rp-comparison-fields">
+            {entity.comparisonFields.map((f, i) => (
+              <div key={i} className="rp-comparison-field">
+                <span className="rp-comparison-label">{COMPARISON_LABELS[f.label] ?? f.label}</span>
+                <div className="rp-comparison-compare">
+                  <div className="rp-comparison-col">
+                    <span className="rp-comparison-col-label">Required</span>
+                    <span className="rp-comparison-value rp-comparison-value--expected">{f.expected}</span>
+                  </div>
+                  <div className="rp-comparison-col">
+                    <span className="rp-comparison-col-label">Actual</span>
+                    <span className="rp-comparison-value rp-comparison-value--actual">{f.actual}</span>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </>
       )}
-      {entity.rejectedReason && <p className="rp-rejection-text">{entity.rejectedReason}</p>}
+      {hasDetails && (
+        <>
+          <span className="rp-ai-subheading">Rejection Reasons</span>
+          <div className="rp-rejection-details">
+            {entity.rejectionDetails.map((item, i) => {
+              const key = Object.keys(item)[0];
+              const detail = item[key];
+              return (
+                <div key={i} className="rp-rejection-detail">
+                  <span className="rp-rejection-detail-criterion">
+                    {CRITERION_LABELS[key] ?? key}
+                  </span>
+                  <div className="rp-rejection-detail-compare">
+                    <div className="rp-rejection-detail-col">
+                      <span className="rp-rejection-detail-label">Required</span>
+                      <span className="rp-rejection-detail-value rp-rejection-detail-value--jd">{detail.JD}</span>
+                    </div>
+                    <div className="rp-rejection-detail-col">
+                      <span className="rp-rejection-detail-label">Candidate</span>
+                      <span className="rp-rejection-detail-value rp-rejection-detail-value--candidate">{detail.Candidate}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
       {entity.strongMatches.length > 0 && (
         <>
           <span className="rp-ai-subheading">Strong Matches</span>

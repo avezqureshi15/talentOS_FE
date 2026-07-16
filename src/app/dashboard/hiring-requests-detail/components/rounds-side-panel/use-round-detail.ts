@@ -4,6 +4,25 @@ import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import type { RoundDetailApiResponse, ReviewEntity as ApiReviewEntity } from "@/services/applications/applications.types";
 import type { RoundDetail, ReviewEntity } from "./rounds-side-panel.types";
 
+const SKIP_COMPARISON_KEYS = new Set([
+  "entity_type", "verdict", "ratings", "skills", "notes",
+  "summary", "summary_md", "strong_matches", "gaps_and_concerns",
+  "remarks", "rejection_details", "rejected_status", "rejected_reason",
+  "average_rating",
+]);
+
+function extractComparisonFields(api: ApiReviewEntity) {
+  const fields: { label: string; actual: string; expected: string }[] = [];
+  for (const key of Object.keys(api)) {
+    if (SKIP_COMPARISON_KEYS.has(key)) continue;
+    const val = api[key];
+    if (val && typeof val === "object" && !Array.isArray(val) && "actual" in val && "expected" in val) {
+      fields.push({ label: key, actual: String(val.actual), expected: String(val.expected) });
+    }
+  }
+  return fields;
+}
+
 function mapReview(api: ApiReviewEntity): ReviewEntity {
   return {
     entityType: api.entity_type,
@@ -19,8 +38,8 @@ function mapReview(api: ApiReviewEntity): ReviewEntity {
     strongMatches: Array.isArray(api.strong_matches) ? (api.strong_matches as string[]) : [],
     gapsAndConcerns: Array.isArray(api.gaps_and_concerns) ? (api.gaps_and_concerns as string[]) : [],
     remarks: (api.remarks as string) ?? undefined,
-    rejectedStatus: Array.isArray(api.rejected_status) ? (api.rejected_status as string[]) : [],
-    rejectedReason: (api.rejected_reason as string) ?? undefined,
+    rejectionDetails: Array.isArray(api.rejection_details) ? (api.rejection_details as Array<Record<string, { JD: string; Candidate: string }>>) : [],
+    comparisonFields: extractComparisonFields(api),
     averageRating: (api.average_rating as number) ?? undefined,
   };
 }

@@ -23,6 +23,7 @@ export type EvaluatedCandidate = {
   final_verdict?: string;
   rejected_status: string[];
   rejected_reason: string | null;
+  rejection_details?: Array<Record<string, { JD: string; Candidate: string }>>;
 };
 
 export type RoundFromApi = {
@@ -49,6 +50,7 @@ export type ReviewEntity = {
   entity_type: string;
   verdict?: string;
   ratings: RatingItem[];
+  rejection_details?: Array<Record<string, { JD: string; Candidate: string }>>;
   [key: string]: unknown;
 };
 

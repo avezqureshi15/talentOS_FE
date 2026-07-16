@@ -1,6 +1,8 @@
 import { truncateText } from "./applicants.utils";
 import { APPLICANT_LABELS } from "@/constants/constants";
 
+type RejectionDetailItem = Record<string, { JD: string; Candidate: string }>;
+
 type Props = {
   aiSummary: string;
   applicantId: string;
@@ -8,11 +10,17 @@ type Props = {
   reviews?: Record<string, unknown>;
 };
 
+const CRITERION_LABELS: Record<string, string> = {
+  YOE: "YOE",
+  BUDGET: "Budget",
+  LOCATION: "Location",
+  NOTICE_PERIOD: "Notice Period",
+};
+
 const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, reviews }: Props) => {
   const aiSum = aiSummary ? truncateText(aiSummary, 50) : null;
-  const rejectedStatus = reviews?.rejected_status as string[] | undefined;
-  const rejectedReason = reviews?.rejected_reason as string | undefined;
-  const hasRejection = (rejectedStatus && rejectedStatus.length > 0) || !!rejectedReason;
+  const rejectionDetails = reviews?.rejection_details as RejectionDetailItem[] | undefined;
+  const hasRejection = !!rejectionDetails && rejectionDetails.length > 0;
 
   return (
     <div className="cover-letter">
@@ -22,16 +30,10 @@ const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, reviews }: Props
       </div>
       {hasRejection && (
         <div className="rejection-section">
-          {rejectedStatus && rejectedStatus.length > 0 && (
-            <div className="rejection-chip-group">
-              {rejectedStatus.map((s, i) => (
-                <span key={i} className="rejection-chip">{s}</span>
-              ))}
-            </div>
-          )}
-          {rejectedReason && (
-            <p className="rejection-text">{rejectedReason}</p>
-          )}
+          {rejectionDetails!.map((item, i) => {
+            const key = Object.keys(item)[0];
+            return <span key={i} className="rejection-chip">{CRITERION_LABELS[key] ?? key}</span>;
+          })}
         </div>
       )}
       {aiSum ? (

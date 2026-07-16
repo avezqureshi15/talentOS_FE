@@ -1,3 +1,9 @@
+export type ComparisonField = {
+  label: string;
+  actual: string;
+  expected: string;
+};
+
 export type ReviewEntity = {
   entityType: string;
   verdict?: string;
@@ -8,8 +14,8 @@ export type ReviewEntity = {
   strongMatches: string[];
   gapsAndConcerns: string[];
   remarks?: string;
-  rejectedStatus: string[];
-  rejectedReason?: string;
+  rejectionDetails: Array<Record<string, { JD: string; Candidate: string }>>;
+  comparisonFields: ComparisonField[];
   averageRating?: number;
   [key: string]: unknown;
 };

@@ -471,28 +471,124 @@
   border-radius: var(--radius-sm);
 }
 
-/* ── Rejection Status ── */
-.rp-rejection-chip-group {
+/* ── Comparison Fields (JD vs Candidate) ── */
+.rp-comparison-fields {
   display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
 }
 
-.rp-rejection-chip {
-  display: inline-block;
-  padding: 2px 8px;
+.rp-comparison-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  font-size: 11px;
-  font-weight: 600;
-  background: #fee2e2;
-  color: #991b1b;
 }
 
-.rp-rejection-text {
-  color: #991b1b;
-  font-size: 13px;
-  margin-bottom: 8px;
+.rp-comparison-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+}
+
+.rp-comparison-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.rp-comparison-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rp-comparison-col-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-faint);
+}
+
+.rp-comparison-value {
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.rp-comparison-value--expected {
+  color: var(--text-primary);
+}
+
+.rp-comparison-value--actual {
+  color: var(--danger);
+}
+
+/* ── Rejection Details ── */
+.rp-rejection-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.rp-rejection-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.rp-rejection-detail-criterion {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+}
+
+.rp-rejection-detail-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.rp-rejection-detail-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rp-rejection-detail-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-faint);
+}
+
+.rp-rejection-detail-value {
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.rp-rejection-detail-value--jd {
+  color: var(--text-primary);
+}
+
+.rp-rejection-detail-value--candidate {
+  color: var(--danger);
 }
 
 /* ── Notes ── */
