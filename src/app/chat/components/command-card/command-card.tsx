@@ -19,8 +19,8 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
 
   const { resolved, loading } = useEntityResolution(entities);
 
-  const ids = data?.payload?.applicant_ids?.split(", ").filter(Boolean) ?? [];
-  const empEntities = ids.map((id, i) => ({ key: `emp_${i}`, type: "candidate" as const, id }));
+  const ids = data?.payload?.emp_ids?.split(", ").filter(Boolean) ?? [];
+  const empEntities = ids.map((id, i) => ({ key: `emp_${i}`, type: "user" as const, id }));
   const { resolved: empResolved, loading: empLoading } = useEntityResolution(empEntities);
 
   if (hybrid) {
@@ -40,23 +40,34 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
   const headerIcon = INTENT_HEADER_ICONS[data.intent] ?? "bx bx-terminal";
   const headerLabel = INTENT_LABELS[data.intent] ?? data.intent;
 
-  const renderInquireCard = () => (
-    <div className="command-card">
-      <div className="command-card__header">
-        <i className={INTENT_HEADER_ICONS[data.intent] ?? HYBRID_INTENT_FALLBACK_ICON} />
-        <span>{headerLabel}</span>
-      </div>
-      <div className="command-card__body">
-        <div className="command-card__entity-chip">
+  const renderInquireCard = () => {
+    const p = data.payload as Record<string, unknown>;
+    const entityName = (p.applicant_name as string) ?? (p.user_name as string) ?? (p.name_field as string) ?? "";
+    const entityEmail = (p.applicant_email as string) ?? (p.user_email as string) ?? "";
+    return (
+      <div className="command-card">
+        <div className="command-card__header">
           <i className={INTENT_HEADER_ICONS[data.intent] ?? HYBRID_INTENT_FALLBACK_ICON} />
-          <span>{data.payload.name_field}</span>
+          <span>{headerLabel}</span>
         </div>
-        {data.payload.raw_text_context && (
-          <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
-        )}
+        <div className="command-card__body">
+          <div className="command-card__entity-chip">
+            <i className={INTENT_HEADER_ICONS[data.intent] ?? HYBRID_INTENT_FALLBACK_ICON} />
+            <span>{entityName}</span>
+          </div>
+          {entityEmail && (
+            <div className="command-card__row">
+              <span className="command-card__label">Email</span>
+              <span className="command-card__value">{entityEmail}</span>
+            </div>
+          )}
+          {p.raw_text_context && (
+            <blockquote className="command-card__context">{p.raw_text_context as string}</blockquote>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderDefaultCard = () => (
     <div className="command-card">
@@ -97,7 +108,8 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
   );
 
   switch (data.intent) {
-    case "ASK_SLOTS": {
+    case "ASK_SLOTS":
+    case "ask slots availability": {
       const empLabels = empEntities.map((e) => empResolved[e.key]).filter(Boolean);
       return (
         <div className="command-card">

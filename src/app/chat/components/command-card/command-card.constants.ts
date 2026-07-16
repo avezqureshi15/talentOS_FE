@@ -10,6 +10,7 @@ export const HYBRID_INTENT_FALLBACK_ICON = "bx bx-id-card";
 export const INTENT_HEADER_ICONS: Record<string, string> = {
   "book-interview": "bx bx-calendar-check",
   "ASK_SLOTS": "bx bx-clock",
+  "ask slots availability": "bx bx-clock",
   "SEND_MAIL": "bx bx-envelope",
   "interviews": "bx bx-calendar-check",
   "alerts": "bx bx-bell",
@@ -43,6 +44,7 @@ export const COMMAND_CARD_LABELS = {
 export const INTENT_LABELS: Record<string, string> = {
   "book-interview": "Book Interview",
   "ASK_SLOTS": "Slot Booking Request",
+  "ask slots availability": "Slot Booking Request",
   "SEND_MAIL": "Send Mail",
   "interviews": "Interviews",
   "alerts": "Alerts",

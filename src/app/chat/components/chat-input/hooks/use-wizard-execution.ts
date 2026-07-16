@@ -40,8 +40,14 @@ export const useWizardExecution = ({
     switch (mode) {
       case "entity": {
         const intent = ({ "hr-request": "INQUIRE_HR_REQUEST", "applicants-view": "INQUIRE_APPLICANT" } as const)[wizardActionId ?? ""] ?? "INQUIRE_EMPLOYEE";
+        const payload: Record<string, unknown> =
+          intent === "INQUIRE_APPLICANT"
+            ? { applicant_id: entityToken?.id ?? "", candidate_id: entityToken?.relationalId ?? entityToken?.id ?? "", applicant_name: entityToken?.label ?? "", applicant_email: entityToken?.meta?.email ?? "", raw_text_context: rawText }
+            : intent === "INQUIRE_EMPLOYEE"
+              ? { emp_id: entityToken?.relationalId ?? entityToken?.id ?? "", user_id: entityToken?.id ?? "", user_name: entityToken?.label ?? "", user_email: entityToken?.meta?.email ?? "", raw_text_context: rawText }
+              : { id_field: entityToken?.id ?? "", name_field: entityToken?.label ?? "", raw_text_context: rawText };
         onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent, payload: { id_field: entityToken?.id ?? "", name_field: entityToken?.label ?? "", raw_text_context: rawText } },
+          { message_type: "COMMAND_EXECUTION" as const, intent, payload },
           { applicantName: entityToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, hiringRequestName: "" },
         );
         break;
@@ -72,7 +78,7 @@ export const useWizardExecution = ({
         const employeeNames = askTokens.map(t => t.label).join(", ");
         const employeeIds = askTokens.map(t => t.relationalId ?? t.id).join(", ");
         onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent: "ASK_SLOTS", payload: { applicant_ids: employeeIds, raw_text_context: rawText } },
+          { message_type: "COMMAND_EXECUTION" as const, intent: "ask slots availability", payload: { emp_ids: employeeIds, raw_text_context: rawText } },
           { applicantName: employeeNames, interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: askTokens.length },
         );
         break;

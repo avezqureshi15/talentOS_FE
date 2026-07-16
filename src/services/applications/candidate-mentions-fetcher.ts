@@ -5,6 +5,7 @@ export type CandidateMentionsFetcherResultItem = {
   label: string;
   description: string;
   relationalId: string;
+  meta?: Record<string, string>;
 };
 
 export type CandidateMentionsFetcherPaginatedResult = {
@@ -27,6 +28,9 @@ export const fetchCandidatesForMentions = async (
     label: candidate.name ?? candidate.email ?? "Unknown",
     description: [candidate.location, candidate.years_of_experience ? `${candidate.years_of_experience} exp` : ""].filter(Boolean).join(" · "),
     relationalId: String(candidate.candidate_id),
+    meta: {
+      email: candidate.email ?? "",
+    },
   }));
 
   const hasMore = offset + limit < res.total;
