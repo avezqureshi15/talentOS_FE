@@ -105,6 +105,8 @@ export type ApplicantsProps = {
   onLoadMore?: () => void;
   scoreFilter?: string;
   onScoreFilterChange?: (value: string) => void;
+  rejectReason: string;
+  onRejectReasonChange: (value: string) => void;
   applicantParam?: string | null;
   onRefresh?: () => void;
   jdId: string;
@@ -118,6 +120,8 @@ export type ApplicantFiltersProps = {
   onFilterChange: (value: string) => void;
   scoreFilter: string;
   onScoreFilterChange?: (value: string) => void;
+  rejectReason: string;
+  onRejectReasonChange: (value: string) => void;
 };
 
 export type ApplicantActionModalsProps = {

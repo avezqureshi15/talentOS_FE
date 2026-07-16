@@ -1,21 +1,33 @@
-import { useState, useEffect } from "react";
 import Select from "@/components/ui/select/select";
-import { SCORE_FILTERS, ROUND_VERDICT_FILTERS, REJECT_FILTER_OPTIONS, REJECT_FILTER_LABELS } from "./applicants.constants";
+import { SCORE_FILTERS, ROUND_VERDICT_FILTERS } from "./applicants.constants";
 import type { ApplicantFiltersProps } from "./applicants.types";
 import Chip from "@/components/ui/chip/chip";
 
-const ApplicantFilters = ({ filter, onFilterChange, scoreFilter, onScoreFilterChange }: ApplicantFiltersProps) => {
-  const [rejectSubFilter, setRejectSubFilter] = useState("all");
+const REJECT_REASON_OPTIONS = [
+  { value: "yoe", label: "YOE" },
+  { value: "location", label: "Location" },
+  { value: "budget", label: "Budget" },
+  { value: "notice_period", label: "Notice Period" },
+] as const;
 
-  useEffect(() => {
-    if (filter !== "rejected") {
-      setRejectSubFilter("all");
+const ApplicantFilters = ({ filter, onFilterChange, scoreFilter, onScoreFilterChange, rejectReason, onRejectReasonChange }: ApplicantFiltersProps) => {
+  const activeReasons = rejectReason ? rejectReason.split(",").filter(Boolean) : [];
+
+  const toggleReason = (value: string) => {
+    const exists = activeReasons.includes(value);
+    let next: string[];
+    if (exists) {
+      next = activeReasons.filter((r) => r !== value);
+    } else {
+      next = [...activeReasons, value];
     }
-  }, [filter]);
-
-  const handleRejectChange = (value: string) => {
-    setRejectSubFilter(value);
-    onFilterChange("rejected");
+    const nextStr = next.join(",");
+    onRejectReasonChange(nextStr);
+    if (next.length > 0) {
+      onFilterChange("rejected");
+    } else if (filter === "rejected") {
+      onFilterChange("all");
+    }
   };
 
   return (
@@ -31,14 +43,16 @@ const ApplicantFilters = ({ filter, onFilterChange, scoreFilter, onScoreFilterCh
               {opt.label}
             </button>
           ))}
-          <Select
-            options={REJECT_FILTER_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
-            value={filter !== "rejected" || rejectSubFilter === "all" ? "" : rejectSubFilter}
-            onChange={(e) => handleRejectChange(e.target.value)}
-            placeholder="Rejected"
-            size="md"
-            variant="ghost"
-          />
+          <span className="filter-separator-vertical" />
+          {REJECT_REASON_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              className={`round-verdict-chip${activeReasons.includes(opt.value) ? " active" : ""}`}
+              onClick={() => toggleReason(opt.value)}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
         <span className="filter-separator" />
         <Select
@@ -51,11 +65,11 @@ const ApplicantFilters = ({ filter, onFilterChange, scoreFilter, onScoreFilterCh
         />
       </div>
       <div className="filter-chips">
-        {filter === "rejected" && rejectSubFilter !== "all" && (
-          <Chip variant="neutral" size="sm" onRemove={() => handleRejectChange("all")}>
-            {REJECT_FILTER_LABELS[rejectSubFilter] ?? rejectSubFilter}
+        {activeReasons.map((reason) => (
+          <Chip key={reason} variant="neutral" size="sm" onRemove={() => toggleReason(reason)}>
+            {REJECT_REASON_OPTIONS.find((o) => o.value === reason)?.label ?? reason}
           </Chip>
-        )}
+        ))}
         {scoreFilter !== "all" && (
           <Chip variant="neutral" size="sm" onRemove={() => onScoreFilterChange?.("all")}>
             Score: {SCORE_FILTERS.find((o) => o.value === scoreFilter)?.label ?? scoreFilter}

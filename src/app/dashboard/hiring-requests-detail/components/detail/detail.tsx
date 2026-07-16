@@ -40,6 +40,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [filter, setFilter] = useState(DEFAULT_FILTER);
   // justification: score range filter preset
   const [scoreFilter, setScoreFilter] = useState<string>("all");
+  // justification: multi-select rejection reason filter (comma-separated)
+  const [rejectReason, setRejectReason] = useState<string>("");
 
   const { mutate: toggleStatus, isPending: isToggling } = useToggleStatus();
 
@@ -57,6 +59,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     applicantParam ? PAGINATION.APPLICATIONS_SEARCH_SIZE : undefined,
     scoreRange.min,
     scoreRange.max,
+    rejectReason,
   );
 
   const scrolledRef = useRef(false);
@@ -180,6 +183,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 onLoadMore={fetchNext}
                 scoreFilter={scoreFilter}
                 onScoreFilterChange={setScoreFilter}
+                rejectReason={rejectReason}
+                onRejectReasonChange={setRejectReason}
                 applicantParam={applicantParam}
                 onRefresh={refresh}
                 jdId={hiringRequest.id}

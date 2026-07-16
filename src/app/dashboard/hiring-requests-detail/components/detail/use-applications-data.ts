@@ -24,12 +24,13 @@ export const useApplicationsData = (
   pageSize?: number,
   minScore?: number,
   maxScore?: number,
+  rejectReason?: string,
 ): UseApplicationsDataResult => {
   const limit = pageSize ?? LIMIT;
   const roundVerdict = filter === "all" ? undefined : filter;
 
   const query = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, roundVerdict, minScore, maxScore, pageSize],
+    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, roundVerdict, minScore, maxScore, pageSize, rejectReason],
     queryFn: ({ pageParam }) =>
       fetchApplicationsPaginated(
         jobId,
@@ -44,6 +45,7 @@ export const useApplicationsData = (
         undefined,
         "false",
         roundVerdict,
+        rejectReason,
       ),
     initialPageParam: 0,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {

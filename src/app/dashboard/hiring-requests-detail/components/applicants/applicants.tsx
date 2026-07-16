@@ -19,7 +19,7 @@ type LocalOverride = {
   finalVerdict?: string;
 };
 
-function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, applicantParam, onRefresh, jdId, isRemote }: ApplicantsProps) {
+function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, rejectReason, onRejectReasonChange, applicantParam, onRefresh, jdId, isRemote }: ApplicantsProps) {
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<number | null>(null);
@@ -226,7 +226,7 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
 
   return (
     <>
-      <ApplicantFilters filter={filter} onFilterChange={onFilterChange} scoreFilter={scoreFilter ?? "all"} onScoreFilterChange={onScoreFilterChange} />
+      <ApplicantFilters filter={filter} onFilterChange={onFilterChange} scoreFilter={scoreFilter ?? "all"} onScoreFilterChange={onScoreFilterChange} rejectReason={rejectReason} onRejectReasonChange={onRejectReasonChange} />
       <div className="accordion-list">
       {data.map((a) => {
         const isOpen = openId === a.id;

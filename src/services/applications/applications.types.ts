@@ -24,6 +24,9 @@ export type EvaluatedCandidate = {
   rejected_status: string[];
   rejected_reason: string | null;
   rejection_details?: Array<Record<string, { JD: string; Candidate: string }>>;
+  reviews?: Record<string, unknown> | null;
+  review_verdict?: string | null;
+  comparison_fields?: Array<{ label: string; value: { Expected: string; Actual: string } }>;
 };
 
 export type RoundFromApi = {
