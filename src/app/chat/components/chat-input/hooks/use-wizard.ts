@@ -11,9 +11,9 @@ import { useWizardExecution } from "./use-wizard-execution";
 type Engine = {
   wizardStage: number;
   wizardActionId: string | null;
-  tokens: { type: string; label: string; id: string; relationalId?: string }[];
+  tokens: { type: string; label: string; id: string; relationalId?: string; meta?: Record<string, string> }[];
   startWizard: (actionId: string) => ((query: string) => Promise<CommandItem[]>) | null;
-  advanceWizard: (item: { id: string; label: string; relationalId?: string }) => (() => Promise<CommandItem[]>) | null;
+  advanceWizard: (item: CommandItem) => (() => Promise<CommandItem[]>) | null;
   advanceWizardMulti: (items: CommandItem[]) => void;
   advanceWizardMultiToNext: (items: CommandItem[]) => (() => Promise<CommandItem[]>) | null;
   reset: () => void;

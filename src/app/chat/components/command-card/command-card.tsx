@@ -153,20 +153,28 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
         </div>
       );
     }
-    case "alerts":
+    case "alerts": {
+      const ap = data.payload as Record<string, unknown>;
       return (
         <div className="command-card">
           <div className="command-card__header">
             <i className="bx bx-bell" />
-            <span>{data.payload.alert_id}</span>
+            <span>{(ap.alert_label as string) ?? (ap.alert_id as string)}</span>
           </div>
           <div className="command-card__body">
-            {data.payload.raw_text_context && (
-              <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+            {ap.alert_type && (
+              <div className="command-card__row">
+                <span className="command-card__label">Type</span>
+                <span className="command-card__value">{ap.alert_type as string}</span>
+              </div>
+            )}
+            {ap.raw_text_context && (
+              <blockquote className="command-card__context">{ap.raw_text_context as string}</blockquote>
             )}
           </div>
         </div>
       );
+    }
     case "rounds": {
       const rp = data.payload;
       const roundLabel = (rp.round_label as string) || (rp.round_id as string);

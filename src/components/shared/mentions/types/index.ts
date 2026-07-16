@@ -31,6 +31,7 @@ export type Token = {
   label: string;
   id: string;
   relationalId?: string;
+  meta?: Record<string, string>;
 };
 
 export type WizardStage = 0 | 1 | 2 | 3 | 4 | 5;

@@ -43,7 +43,7 @@ export const fetchAlertsForMentions = async (
       label,
       description,
       relationalId: alert.id,
-      meta: { type: alert.type },
+      meta: { type: alert.type, employee_id: String(alert.employee_id) },
     };
   });
 

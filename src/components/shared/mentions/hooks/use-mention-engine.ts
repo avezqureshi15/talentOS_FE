@@ -50,7 +50,7 @@ export const useMentionEngine = () => {
     const stage = action.stages[wizardStage - 1];
     if (!stage) return null;
 
-    const newToken: Token = { type: stage.tokenType, label: item.label, id: item.id, relationalId: item.relationalId };
+    const newToken: Token = { type: stage.tokenType, label: item.label, id: item.id, relationalId: item.relationalId, meta: item.meta };
     setTokens((prev) => [...prev, newToken]);
 
     if (stage.isFinal) {
@@ -80,6 +80,7 @@ export const useMentionEngine = () => {
       label: item.label,
       id: item.id,
       relationalId: item.relationalId,
+      meta: item.meta,
     }));
     setTokens((prev) => [...prev, ...newTokens]);
     setWizardStage(asWizardStage(action.stages.length + 1));
@@ -97,6 +98,7 @@ export const useMentionEngine = () => {
       label: item.label,
       id: item.id,
       relationalId: item.relationalId,
+      meta: item.meta,
     }));
     setTokens((prev) => [...prev, ...newTokens]);
 

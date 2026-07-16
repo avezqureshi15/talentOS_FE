@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { WizardExecutionPayload, HybridQuestionPayload, WizardExecutionSummary } from "@/components/shared/mentions/types";
 
-type Token = { type: string; label: string; id: string; relationalId?: string };
+type Token = { type: string; label: string; id: string; relationalId?: string; meta?: Record<string, string> };
 
 type ExecutionDeps = {
   wizardActionId: string | null;
@@ -55,7 +55,7 @@ export const useWizardExecution = ({
       }
       case "alerts": {
         onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent: "alerts", payload: { alert_id: alertToken?.label ?? "", raw_text_context: rawText } },
+          { message_type: "COMMAND_EXECUTION" as const, intent: "alerts", payload: { alert_id: alertToken?.id ?? "", alert_label: alertToken?.label ?? "", alert_type: alertToken?.meta?.type ?? "", userId: alertToken?.meta?.employee_id ?? "", raw_text_context: rawText } },
           { applicantName: alertToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
         );
         break;
@@ -80,7 +80,7 @@ export const useWizardExecution = ({
       case "send-mail": {
         const mailToken = tokens.find(t => t.type === "applicant");
         onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", raw_text_context: rawText } },
+          { message_type: "COMMAND_EXECUTION" as const, intent: "SEND_MAIL", payload: { employee_name: mailToken?.label ?? "", employee_email: mailToken?.meta?.email ?? "", employee_id: mailToken?.relationalId ?? mailToken?.id ?? "", raw_text_context: rawText } },
           { applicantName: mailToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 1 },
         );
         break;
