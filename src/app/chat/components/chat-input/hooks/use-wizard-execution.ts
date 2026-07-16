@@ -46,7 +46,7 @@ export const useWizardExecution = ({
       }
       case "interview": {
         onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent: "interviews", payload: { interview_id: interviewToken?.label ?? "", hiring_request_id: "", applicant_id: interviewToken?.relationalId ?? interviewToken?.id ?? "", interviewer_id: "", slot_id: "", raw_text_context: rawText } },
+          { message_type: "COMMAND_EXECUTION" as const, intent: "interviews", payload: { interview_id: interviewToken?.id ?? "", interview_label: interviewToken?.label ?? "", hiring_request_id: "", applicant_id: interviewToken?.relationalId ?? interviewToken?.id ?? "", interviewer_id: "", slot_id: "", raw_text_context: rawText } },
           { applicantName: interviewToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
         );
         break;

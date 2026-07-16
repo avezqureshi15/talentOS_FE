@@ -136,8 +136,8 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
         </div>
       );
     case "interviews": {
-      const interviewLabel = resolved.applicant ?? data.payload.interview_id;
-      const status = resolveInterviewStatus(data.payload.interview_id ?? "");
+      const interviewLabel = (data.payload.interview_label as string) || (data.payload.interview_id as string);
+      const status = resolveInterviewStatus(data.payload.interview_id as string ?? "");
       return (
         <div className="command-card">
           <div className="command-card__header">
@@ -147,7 +147,7 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
           </div>
           <div className="command-card__body">
             {data.payload.raw_text_context && (
-              <blockquote className="command-card__context">{data.payload.raw_text_context}</blockquote>
+              <blockquote className="command-card__context">{data.payload.raw_text_context as string}</blockquote>
             )}
           </div>
         </div>

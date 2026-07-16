@@ -94,7 +94,7 @@ export const useWizard = (
 
     if (dataSource) {
       const hiringRequestToken = tokens.find((t) => t.type === "hiring-request");
-      const context = hiringRequestToken ? { jobId: hiringRequestToken.id } : undefined;
+      const context = hiringRequestToken ? { jobId: hiringRequestToken.relationalId ?? hiringRequestToken.id } : undefined;
       const entry = dataSource.createEntry(context);
       if (!entry.fetcher) return;
       entry.fetcher("").then(() => menu.loadWizardEntry(entry));
