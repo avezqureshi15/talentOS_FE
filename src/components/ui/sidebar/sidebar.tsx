@@ -7,7 +7,7 @@ export type SidebarProps = {
   className?: string;
 };
 
-export default function Sidebar({ open, onToggle, children, className }: SidebarProps) {
+export default function Sidebar({ open, onToggle: _onToggle, children, className }: SidebarProps) {
   return (
     <aside className={`sidebar ${!open ? "sidebar--collapsed" : ""} ${className ?? ""}`}>
       <div className="sidebar__inner">

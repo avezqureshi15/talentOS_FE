@@ -7,9 +7,8 @@ import { useBookInterview } from "@/hooks/use-book-interview";
 import { useRescheduleInterview } from "@/hooks/use-reschedule-interview";
 import SrStep1 from "./sr-step1";
 import SrStep2 from "./sr-step2";
-import { SR_LABELS, AI_ID, AI_AUTO_SLOT_ID, AI_TEMPLATES } from "./schedule-round-modal.constants";
+import { SR_LABELS, AI_ID, AI_TEMPLATES } from "./schedule-round-modal.constants";
 import type { ScheduleRoundModalProps, Interviewer, ScheduleStep } from "./schedule-round-modal.types";
-import type { CommandItem } from "@/components/shared/mentions/types";
 import "./schedule-round-modal.css";
 
 export default function ScheduleRoundModal({ open, candidateName, candidateId, candidateNumberId, jdId, interviewId, interviewerEmpId, interviewerName, roundName, rescheduleMode, onClose, onScheduled }: ScheduleRoundModalProps) {

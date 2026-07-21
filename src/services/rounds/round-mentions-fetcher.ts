@@ -1,5 +1,5 @@
 import httpClient from "@/services/http-client";
-import { API_ENDPOINTS, PAGINATION } from "@/constants/api-endpoints";
+import { API_ENDPOINTS } from "@/constants/api-endpoints";
 import type { CommandItem } from "@/components/shared/mentions/types";
 
 type RoundListItem = {
