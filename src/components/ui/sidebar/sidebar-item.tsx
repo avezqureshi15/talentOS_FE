@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { springSnap } from "@/utils/motion";
+import "./sidebar.css";
 
 export type SidebarItemProps = {
   icon?: ReactNode;
@@ -35,15 +38,28 @@ export default function SidebarItem({
 
   if (href) {
     return (
-      <Link to={href} className={classes}>
-        {content}
-      </Link>
+      <motion.div
+        whileHover={{ x: 3 }}
+        whileTap={{ scale: 0.98 }}
+        transition={springSnap}
+      >
+        <Link to={href} className={classes}>
+          {content}
+        </Link>
+      </motion.div>
     );
   }
 
   return (
-    <button className={classes} onClick={onClick} type="button">
+    <motion.button
+      className={classes}
+      onClick={onClick}
+      type="button"
+      whileHover={{ x: 3 }}
+      whileTap={{ scale: 0.98 }}
+      transition={springSnap}
+    >
       {content}
-    </button>
+    </motion.button>
   );
 }

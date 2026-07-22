@@ -1,18 +1,22 @@
+import { motion } from "framer-motion";
 import "./sidebar.css";
 
 export type SidebarProps = {
   open: boolean;
-  onToggle?: () => void;
   children: React.ReactNode;
   className?: string;
 };
 
-export default function Sidebar({ open, onToggle: _onToggle, children, className }: SidebarProps) {
+export default function Sidebar({ open, children, className }: SidebarProps) {
   return (
-    <aside className={`sidebar ${!open ? "sidebar--collapsed" : ""} ${className ?? ""}`}>
+    <motion.aside
+      className={`sidebar ${className ?? ""}`}
+      animate={{ width: open ? 280 : 0, minWidth: open ? 280 : 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+    >
       <div className="sidebar__inner">
         {children}
       </div>
-    </aside>
+    </motion.aside>
   );
 }

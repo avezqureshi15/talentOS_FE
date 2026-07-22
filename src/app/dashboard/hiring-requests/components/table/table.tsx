@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import Chip from "@/components/ui/chip/chip";
 import Select from "@/components/ui/select/select";
@@ -10,6 +11,7 @@ import { TABLE_EMPTY_STATE, PAGINATION_PREVIOUS, PAGINATION_NEXT, DATE_FROM_LABE
 import type { HiringRequestsTableProps } from "./table.types";
 import DatePickerInput from "./date-picker-input";
 import SkeletonRow from "./skeleton-row";
+import { spring, springSnap, staggerContainer } from "@/utils/motion";
 import "./table.css";
 
 const HiringRequestsTable = ({
@@ -132,34 +134,51 @@ const HiringRequestsTable = ({
             <SkeletonRow />
           </>
         ) : data.length === 0 ? (
-          <div className="table-empty">{TABLE_EMPTY_STATE}</div>
+          <motion.div
+            className="table-empty"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={spring}
+          >
+            {TABLE_EMPTY_STATE}
+          </motion.div>
         ) : (
-          data.map((item) => (
-            <Link
-              key={item.id}
-              to={`/hiring-requests/${item.id}`}
-              className="table-row table-row-link"
-            >
-              <div className="role-cell">
-                <div className="role-title">{item.title}</div>
-                <div className="role-meta">{item.department}</div>
-              </div>
+          <motion.div variants={staggerContainer} initial="hidden" animate="visible">
+            {data.map((item) => (
+              <motion.div
+                key={item.id}
+                variants={{
+                  hidden: { opacity: 0, y: 12 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              >
+                <Link
+                  to={`/hiring-requests/${item.id}`}
+                  className="table-row table-row-link"
+                >
+                  <div className="role-cell">
+                    <div className="role-title">{item.title}</div>
+                    <div className="role-meta">{item.department}</div>
+                  </div>
 
-              <div className="location-cell">{item.location}</div>
+                  <div className="location-cell">{item.location}</div>
 
-              <div>
-                <Chip variant={item.is_active ? "success" : "danger"} size="md">
-                  {item.is_active ? STATUS_ACTIVE : STATUS_CLOSED}
-                </Chip>
-              </div>
+                  <div>
+                    <Chip variant={item.is_active ? "success" : "danger"} size="md">
+                      {item.is_active ? STATUS_ACTIVE : STATUS_CLOSED}
+                    </Chip>
+                  </div>
 
-              <div className="type-cell">{item.type}</div>
+                  <div className="type-cell">{item.type}</div>
 
-              <div className="created-cell">
-                {new Date(item.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
-              </div>
-            </Link>
-          ))
+                  <div className="created-cell">
+                    {new Date(item.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
         )}
       </div>
 
@@ -169,31 +188,40 @@ const HiringRequestsTable = ({
         </div>
 
         <div className="pagination-controls">
-          <button
+          <motion.button
             className="pagination-btn"
             disabled={page <= 1}
             onClick={() => onPageChange(page - 1)}
+            whileHover={page > 1 ? { scale: 1.05 } : undefined}
+            whileTap={page > 1 ? { scale: 0.95 } : undefined}
+            transition={springSnap}
           >
             {PAGINATION_PREVIOUS}
-          </button>
+          </motion.button>
 
           {pages.map((p) => (
-            <button
+            <motion.button
               key={p}
               className={`pagination-btn ${p === page ? "pagination-btn-active" : ""}`}
               onClick={() => onPageChange(p)}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              transition={springSnap}
             >
               {p}
-            </button>
+            </motion.button>
           ))}
 
-          <button
+          <motion.button
             className="pagination-btn"
             disabled={page >= totalPages}
             onClick={() => onPageChange(page + 1)}
+            whileHover={page < totalPages ? { scale: 1.05 } : undefined}
+            whileTap={page < totalPages ? { scale: 0.95 } : undefined}
+            transition={springSnap}
           >
             {PAGINATION_NEXT}
-          </button>
+          </motion.button>
         </div>
 
         <div className="pagination-per-page">

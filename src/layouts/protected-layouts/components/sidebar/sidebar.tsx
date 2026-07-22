@@ -7,8 +7,9 @@ import { SIDEBAR_LABELS } from "@/constants/constants";
 import SidebarGroup from "./sidebar-group";
 import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
+import SidebarNav from "./sidebar-nav";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
-import { Sidebar as SidebarShell, SidebarItem, SidebarSection } from "@/components/ui/sidebar";
+import { Sidebar as SidebarShell, SidebarSection } from "@/components/ui/sidebar";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -99,51 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <SidebarShell open={sidebarOpen}>
-      {/* TOP */}
-      <div className="sidebar__top">
-        <Icon.Logo />
-
-        <button
-          className="sidebar-item flex justify-end"
-          onClick={() => setSidebarOpen(false)}
-        >
-          <Icon.DblChevron />
-        </button>
-      </div>
-
-      {/* NAV */}
-      <div className="sidebar__nav">
-        <SidebarItem
-          icon={<span className="bx bx-home text-lg" />}
-          label={SIDEBAR_LABELS.HIRING_REQUESTS}
-          shortcut="Ctrl+Shift+H"
-          href="/hiring-requests"
-        />
-        <SidebarItem
-          icon={<span className="bx bx-calendar-check text-lg" />}
-          label="Interviews"
-          shortcut="Ctrl+Shift+I"
-          href="/hiring-requests?tab=interviews"
-        />
-        <SidebarItem
-          icon={<span className="bx bx-bell text-lg" />}
-          label="Alerts"
-          shortcut="Ctrl+Shift+A"
-          href="/hiring-requests?tab=alerts"
-        />
-        <SidebarItem
-          icon={<Icon.Search />}
-          label={SIDEBAR_LABELS.SEARCH}
-          shortcut="Ctrl+K"
-          onClick={onSearch}
-        />
-        <SidebarItem
-          icon={<Icon.Edit />}
-          label={SIDEBAR_LABELS.NEW_CHAT}
-          shortcut="Ctrl+Shift+C"
-          href="/chat"
-        />
-      </div>
+      <SidebarNav Icon={Icon} onSearch={onSearch} onClose={() => setSidebarOpen(false)} />
 
       {/* HISTORY */}
       <div className="sidebar__history">

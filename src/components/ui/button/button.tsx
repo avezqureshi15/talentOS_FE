@@ -1,5 +1,7 @@
+import { motion } from "framer-motion";
 import type { ButtonProps } from "./button.types";
 import { BUTTON_LOADING_SPINNER_CLASS } from "./button.constants";
+import { springSnap } from "@/utils/motion";
 import "./button.css";
 
 const Button = ({
@@ -28,12 +30,15 @@ const Button = ({
     .join(" ");
 
   return (
-    <button
+    <motion.button
       className={classes}
       onClick={onClick}
       type={type}
       disabled={disabled || loading}
       title={title}
+      whileHover={!disabled && !loading ? { scale: 1.02 } : undefined}
+      whileTap={!disabled && !loading ? { scale: 0.97 } : undefined}
+      transition={springSnap}
     >
       {loading ? (
         <>
@@ -47,7 +52,7 @@ const Button = ({
           {icon && iconPosition === "right" && <i className={icon} />}
         </>
       )}
-    </button>
+    </motion.button>
   );
 };
 

@@ -1,6 +1,8 @@
+import { motion, AnimatePresence } from "framer-motion";
 import { SIDEBAR_LABELS } from "@/constants/constants";
 import type { ChatHistoryItem } from "@/layouts/protected-layouts/components/sidebar/sidebar.types";
 import { resolveCommandTitle } from "@/app/chat/components/chat-area/chat-area.utils";
+import { springSnap } from "@/utils/motion";
 
 type ChatItemProps = {
   chat: ChatHistoryItem;
@@ -38,8 +40,11 @@ const ChatItem = ({
   const isRenaming = renamingChatId === chat.id;
 
   return (
-    <div
+    <motion.div
       className={`sidebar-subitem-wrapper ${activeChatId === chat.id ? "sidebar-subitem-wrapper--active" : ""}`}
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
       {isRenaming ? (
         <div className="sidebar-subitem sidebar-subitem--renaming">
@@ -54,34 +59,62 @@ const ChatItem = ({
         </div>
       ) : (
         <>
-          <button onClick={() => onSelectChat(chat.id)} className="sidebar-subitem">
+          <motion.button
+            onClick={() => onSelectChat(chat.id)}
+            className="sidebar-subitem"
+            whileHover={{ x: 3 }}
+            whileTap={{ scale: 0.98 }}
+            transition={springSnap}
+          >
             <span className="sidebar-subitem-title">{resolveCommandTitle(chat.title)}</span>
-          </button>
+          </motion.button>
           <div className="sidebar-subitem-menu" onClick={(e) => e.stopPropagation()}>
-            <button
+            <motion.button
               className="sidebar-menu-trigger"
               onClick={(e) => { e.stopPropagation(); onToggleMenu(menuOpen === chat.id ? null : chat.id); }}
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              transition={springSnap}
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
                 <circle cx="8" cy="3" r="1.5" />
                 <circle cx="8" cy="8" r="1.5" />
                 <circle cx="8" cy="13" r="1.5" />
               </svg>
-            </button>
-            {menuOpen === chat.id && (
-              <div className="sidebar-menu-dropdown" ref={menuRef}>
-                <button className="sidebar-menu-item" onClick={() => { onStartRename(chat.id, chat.title); onToggleMenu(null); }}>
-                  {SIDEBAR_LABELS.RENAME}
-                </button>
-                <button className="sidebar-menu-item sidebar-menu-item--danger" onClick={() => { onToggleMenu(null); onDeleteTarget(chat.id); }}>
-                  {SIDEBAR_LABELS.DELETE}
-                </button>
-              </div>
-            )}
+            </motion.button>
+            <AnimatePresence>
+              {menuOpen === chat.id && (
+                <motion.div
+                  className="sidebar-menu-dropdown"
+                  ref={menuRef}
+                  initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
+                  <motion.button
+                    className="sidebar-menu-item"
+                    onClick={() => { onStartRename(chat.id, chat.title); onToggleMenu(null); }}
+                    whileHover={{ x: 3 }}
+                    transition={springSnap}
+                  >
+                    {SIDEBAR_LABELS.RENAME}
+                  </motion.button>
+                  <motion.button
+                    className="sidebar-menu-item sidebar-menu-item--danger"
+                    onClick={() => { onToggleMenu(null); onDeleteTarget(chat.id); }}
+                    whileHover={{ x: 3 }}
+                    transition={springSnap}
+                  >
+                    {SIDEBAR_LABELS.DELETE}
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </>
       )}
-    </div>
+    </motion.div>
   );
 };
 

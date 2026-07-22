@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
-import { Outlet, useParams, useNavigate } from "react-router-dom";
+import { Outlet, useParams, useNavigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { pageTransition, springSoft } from "@/utils/motion";
 
 import { Icon } from "@/components/ui/icons";
 import Header from "@/layouts/protected-layouts/components/header/header";
@@ -12,6 +14,7 @@ import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import CommandPalette from "@/layouts/protected-layouts/components/command-palette/command-palette";
 import { useCommandPalette } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import "./protected-layouts.css";
 import { ROUTES } from "@/constants/routes";
 import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
 import { useUiStore } from "@/store/ui.store";
@@ -31,6 +34,7 @@ function getInitialSidebarState(): boolean {
 export default function ProtectedLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(getInitialSidebarState);
   const { show: showAurora } = useAurora();
+  const location = useLocation();
   const ux = useMemo(() => getUx(STORAGE_KEYS.UX), []);
   const showHint = !ux.sbh && !sidebarOpen && !showAurora;
   const handleHintDismiss = useCallback(() => {
@@ -174,7 +178,19 @@ export default function ProtectedLayout() {
         />
         <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
-            <Outlet />
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={location.pathname}
+                variants={pageTransition}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={springSoft}
+                className="protected-layout-content"
+              >
+                <Outlet />
+              </motion.div>
+            </AnimatePresence>
           </Suspense>
         </ErrorBoundary>
       </main>

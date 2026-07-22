@@ -1,5 +1,7 @@
+import { motion } from "framer-motion";
 import type { ChipProps } from "./chip.types";
 import { CHIP_VARIANTS, CHIP_SIZES } from "./chip.constants";
+import { springSnap } from "@/utils/motion";
 import "./chip.css";
 
 const Chip = ({
@@ -48,9 +50,18 @@ const Chip = ({
 
   if (onClick) {
     return (
-      <button className={classNames} onClick={onClick} disabled={disabled} type="button" title={title}>
+      <motion.button
+        className={classNames}
+        onClick={onClick}
+        disabled={disabled}
+        type="button"
+        title={title}
+        whileHover={!disabled ? { scale: 1.04 } : undefined}
+        whileTap={!disabled ? { scale: 0.96 } : undefined}
+        transition={springSnap}
+      >
         {content}
-      </button>
+      </motion.button>
     );
   }
 
