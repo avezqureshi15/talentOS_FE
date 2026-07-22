@@ -5,6 +5,7 @@ import ProtectedLayout from "@/layouts/protected-layouts/protected-layouts";
 import Chat from "@/app/chat/pages/chat";
 import HiringRequests from "@/app/dashboard/hiring-requests/pages/hiring-requests";
 import HiringRequestDetails from "@/app/dashboard/hiring-requests-detail/pages/hiring-requests-detail";
+import RoundDetails from "@/app/dashboard/round-details/pages/round-details";
 import SlotBooking from "@/app/slot-booking/pages/slot-booking";
 import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.CHAT_ID, element: <Chat />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
           { path: ROUTES.HIRING_REQUESTS, element: <HiringRequests />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
           { path: ROUTES.HIRING_REQUESTS_ID, element: <HiringRequestDetails />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+          { path: ROUTES.ROUND_DETAILS, element: <RoundDetails />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
         ],
       },
       { path: ROUTES.BOOK_SLOT, element: <SlotBooking />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },

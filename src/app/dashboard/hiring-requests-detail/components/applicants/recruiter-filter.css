@@ -1,10 +1,15 @@
 .recruiter-filter-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
   padding: 10px 0 10px;
   margin-bottom: 4px;
-  border-bottom: 1px solid var(--border-subtle);
+}
+
+.recruiter-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .recruiter-filter-label {
@@ -13,6 +18,43 @@
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ---- View Toggle (right side) ---- */
+.recruiter-view-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.view-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: var(--surface-glass);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-toggle-icon i {
+  font-size: 16px;
+}
+
+.view-toggle-icon:hover {
+  color: var(--text-primary);
+  background: var(--surface-card);
+}
+
+.view-toggle-icon--active {
+  color: var(--accent);
+  background: var(--accent-bg);
 }
 
 /* ---- Trigger Pill ---- */
@@ -64,6 +106,12 @@
   color: var(--text-secondary);
 }
 
+.recruiter-avatar--active {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
 .recruiter-avatar--empty {
   background: var(--surface-card);
   color: var(--text-muted);
@@ -78,12 +126,6 @@
   background: var(--surface-card);
   color: var(--text-secondary);
   z-index: 0;
-}
-
-.recruiter-avatar--active {
-  background: var(--accent-bg);
-  color: var(--accent);
-  border-color: var(--accent-border);
 }
 
 .recruiter-count-badge {
@@ -115,7 +157,7 @@
 
 .recruiter-popover {
   position: absolute;
-  right: 0;
+  left: 0;
   top: calc(100% + 6px);
   width: 280px;
   background: var(--bg-secondary);
@@ -253,51 +295,6 @@
 
 .recruiter-footer-btn--select-all:hover {
   background: var(--surface-card);
-}
-
-/* ---- View Toggle ---- */
-.view-toggle {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  margin-left: auto;
-  background: var(--surface-glass);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 2px;
-}
-
-.view-toggle-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-sm);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.view-toggle-btn i {
-  font-size: 16px;
-}
-
-.view-toggle-btn:hover {
-  color: var(--text-primary);
-  background: var(--surface-card);
-}
-
-.view-toggle-btn--active {
-  color: var(--accent);
-  background: var(--accent-bg);
-}
-
-.view-toggle-btn--active:hover {
-  color: var(--accent);
-  background: var(--accent-bg);
 }
 
 .recruiter-empty-state {

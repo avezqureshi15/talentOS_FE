@@ -1,14 +1,6 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import "./pipeline-stages.css";
 import type { PipelineStagesProps, SubItem } from "./pipeline-stages.types";
-
-const SUB_ICON: Record<SubItem["color"], string> = {
-  success: "bx bx-check-circle",
-  danger: "bx bx-x-circle",
-  warning: "bx bx-error-circle",
-  info: "bx bx-info-circle",
-};
 
 const SUB_CLASS: Record<SubItem["color"], string> = {
   success: "pipeline-sub-item--success",
@@ -17,18 +9,14 @@ const SUB_CLASS: Record<SubItem["color"], string> = {
   info: "pipeline-sub-item--info",
 };
 
-const PipelineStages = ({ stages: initialStages }: PipelineStagesProps) => {
-  const [activeKey, setActiveKey] = useState(
-    initialStages.find((s) => s.isActive)?.key ?? initialStages[0]?.key,
-  );
-
+const PipelineStages = ({ stages, activeKey, onStageChange }: PipelineStagesProps) => {
   return (
     <div className="pipeline-root">
-      {initialStages.map((stage) => (
+      {stages.map((stage) => (
         <motion.div
           key={stage.key}
           className={`pipeline-stage ${activeKey === stage.key ? "pipeline-stage--active" : ""}`}
-          onClick={() => setActiveKey(stage.key)}
+          onClick={() => onStageChange(stage.key)}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
@@ -43,17 +31,22 @@ const PipelineStages = ({ stages: initialStages }: PipelineStagesProps) => {
           )}
 
           <span className="pipeline-label">{stage.label}</span>
-          <span className="pipeline-count">{stage.count}</span>
 
-          {stage.subItems && stage.subItems.length > 0 && (
-            <div className="pipeline-sub-items">
-              {stage.subItems.map((item) => (
-                <span key={item.label} className={`pipeline-sub-item ${SUB_CLASS[item.color]}`}>
-                  <i className={SUB_ICON[item.color]} />
-                  {item.count}
-                </span>
-              ))}
+          {stage.key === "evaluated" ? (
+            <div className="pipeline-metrics-row">
+              <span className="pipeline-count">{stage.count}</span>
+              {stage.subItems && stage.subItems.length > 0 && (
+                <div className="pipeline-sub-items-right">
+                  {stage.subItems.map((item) => (
+                    <span key={item.label} className={`pipeline-sub-item ${SUB_CLASS[item.color]}`}>
+                      {item.count}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
+          ) : (
+            <span className="pipeline-count">{stage.count}</span>
           )}
         </motion.div>
       ))}

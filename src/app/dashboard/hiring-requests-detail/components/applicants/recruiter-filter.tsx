@@ -3,15 +3,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import "./recruiter-filter.css";
 import { MOCK_RECRUITERS, RECRUITER_COLORS } from "./recruiter-filter.constants";
 import type { RecruiterFilterProps } from "./recruiter-filter.types";
-import { springSnap } from "@/utils/motion";
 import { getInitials } from "@/utils/user";
+import { springSnap } from "@/utils/motion";
 
 const RecruiterFilter = ({ viewMode, onViewModeChange }: RecruiterFilterProps) => {
-  // justification: tracks selected recruiter IDs for multi-select filtering
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  // justification: controls popover open/close state
   const [isOpen, setIsOpen] = useState(false);
-  // justification: search input value for filtering recruiter list
   const [search, setSearch] = useState("");
   const popoverRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -65,119 +62,120 @@ const RecruiterFilter = ({ viewMode, onViewModeChange }: RecruiterFilterProps) =
 
   return (
     <div className="recruiter-filter-row">
-      <span className="recruiter-filter-label">FILTER BY RECRUITER:</span>
-
-      <div className="recruiter-popover-wrapper">
-        <button
-          ref={triggerRef}
-          className={`recruiter-pill ${isOpen ? "recruiter-pill--open" : ""}`}
-          onClick={() => setIsOpen((p) => !p)}
-        >
-          <div className="recruiter-avatar-stack">
-            {displayAvatars.length > 0 ? (
-              displayAvatars.map((r, i) => (
-                <div
-                  key={r.id}
-                  className="recruiter-avatar recruiter-avatar--active"
-                  style={{
-                    borderColor: RECRUITER_COLORS[i % RECRUITER_COLORS.length],
-                    zIndex: displayAvatars.length - i,
-                  }}
-                  title={r.name}
-                >
-                  {getInitials(r.name)}
-                </div>
-              ))
-            ) : (
-              <div className="recruiter-avatar recruiter-avatar--empty">
-                <i className="bx bx-user" />
-              </div>
-            )}
-            {overflowCount > 0 && (
-              <div className="recruiter-avatar recruiter-avatar--overflow">
-                +{overflowCount}
-              </div>
-            )}
-          </div>
-
-          <span className="recruiter-count-badge">{selectedIds.size}</span>
-
-          <svg
-            className={`recruiter-chevron ${isOpen ? "recruiter-chevron--open" : ""}`}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      <div className="recruiter-filter-left">
+        <span className="recruiter-filter-label">FILTER BY RECRUITER:</span>
+        <div className="recruiter-popover-wrapper">
+          <button
+            ref={triggerRef}
+            className={`recruiter-pill ${isOpen ? "recruiter-pill--open" : ""}`}
+            onClick={() => setIsOpen((p) => !p)}
           >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
+            <div className="recruiter-avatar-stack">
+              {displayAvatars.length > 0 ? (
+                displayAvatars.map((r, i) => (
+                  <div
+                    key={r.id}
+                    className="recruiter-avatar recruiter-avatar--active"
+                    style={{
+                      borderColor: RECRUITER_COLORS[i % RECRUITER_COLORS.length],
+                      zIndex: displayAvatars.length - i,
+                    }}
+                    title={r.name}
+                  >
+                    {getInitials(r.name)}
+                  </div>
+                ))
+              ) : (
+                <div className="recruiter-avatar recruiter-avatar--empty">
+                  <i className="bx bx-user" />
+                </div>
+              )}
+              {overflowCount > 0 && (
+                <div className="recruiter-avatar recruiter-avatar--overflow">
+                  +{overflowCount}
+                </div>
+              )}
+            </div>
 
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              ref={popoverRef}
-              className="recruiter-popover"
-              initial={{ opacity: 0, y: -4, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -4, scale: 0.96 }}
-              transition={{ duration: 0.15, ease: "easeOut" }}
+            <span className="recruiter-count-badge">{selectedIds.size}</span>
+
+            <svg
+              className={`recruiter-chevron ${isOpen ? "recruiter-chevron--open" : ""}`}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <div className="recruiter-popover-header">
-                <i className="bx bx-search" />
-                <input
-                  className="recruiter-search-input"
-                  placeholder="Search recruiters..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  autoFocus
-                />
-              </div>
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
 
-              <div className="recruiter-popover-list">
-                {filtered.map((r) => {
-                  const checked = selectedIds.has(r.id);
-                  return (
-                    <div
-                      key={r.id}
-                      className="recruiter-option"
-                      onClick={() => toggle(r.id)}
-                    >
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                ref={popoverRef}
+                className="recruiter-popover"
+                initial={{ opacity: 0, y: -4, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.96 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+              >
+                <div className="recruiter-popover-header">
+                  <i className="bx bx-search" />
+                  <input
+                    className="recruiter-search-input"
+                    placeholder="Search recruiters..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+
+                <div className="recruiter-popover-list">
+                  {filtered.map((r) => {
+                    const checked = selectedIds.has(r.id);
+                    return (
                       <div
-                        className={`recruiter-option-checkbox ${checked ? "recruiter-option-checkbox--checked" : ""}`}
+                        key={r.id}
+                        className="recruiter-option"
+                        onClick={() => toggle(r.id)}
                       >
-                        {checked && <i className="bx bx-check" />}
+                        <div
+                          className={`recruiter-option-checkbox ${checked ? "recruiter-option-checkbox--checked" : ""}`}
+                        >
+                          {checked && <i className="bx bx-check" />}
+                        </div>
+                        <div className="recruiter-option-info">
+                          <span className="recruiter-option-name">{r.name}</span>
+                          <span className="recruiter-option-count">{r.count} candidates</span>
+                        </div>
                       </div>
-                      <div className="recruiter-option-info">
-                        <span className="recruiter-option-name">{r.name}</span>
-                        <span className="recruiter-option-count">{r.count} candidates</span>
-                      </div>
-                    </div>
-                  );
-                })}
-                {filtered.length === 0 && (
-                  <div className="recruiter-empty-state">No recruiters found</div>
-                )}
-              </div>
+                    );
+                  })}
+                  {filtered.length === 0 && (
+                    <div className="recruiter-empty-state">No recruiters found</div>
+                  )}
+                </div>
 
-              <div className="recruiter-popover-footer">
-                <button className="recruiter-footer-btn recruiter-footer-btn--clear" onClick={clearAll}>
-                  Clear Filters
-                </button>
-                <button className="recruiter-footer-btn recruiter-footer-btn--select-all" onClick={selectAll}>
-                  Select All
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <div className="recruiter-popover-footer">
+                  <button className="recruiter-footer-btn recruiter-footer-btn--clear" onClick={clearAll}>
+                    Clear Filters
+                  </button>
+                  <button className="recruiter-footer-btn recruiter-footer-btn--select-all" onClick={selectAll}>
+                    Select All
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
-      <div className="view-toggle">
+      <div className="recruiter-view-toggle">
         <motion.button
-          className={`view-toggle-btn ${viewMode === "table" ? "view-toggle-btn--active" : ""}`}
+          className={`view-toggle-icon ${viewMode === "table" ? "view-toggle-icon--active" : ""}`}
           onClick={() => onViewModeChange?.("table")}
           title="Table view"
           whileHover={{ scale: 1.05 }}
@@ -187,7 +185,7 @@ const RecruiterFilter = ({ viewMode, onViewModeChange }: RecruiterFilterProps) =
           <i className="bx bx-border-all" />
         </motion.button>
         <motion.button
-          className={`view-toggle-btn ${viewMode === "card" ? "view-toggle-btn--active" : ""}`}
+          className={`view-toggle-icon ${viewMode === "card" ? "view-toggle-icon--active" : ""}`}
           onClick={() => onViewModeChange?.("card")}
           title="Card view"
           whileHover={{ scale: 1.05 }}

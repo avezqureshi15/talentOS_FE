@@ -1,3 +1,5 @@
+export type StageKey = "yet-to-start" | "started" | "evaluated" | "no-show" | "archived";
+
 export type SubItem = {
   label: string;
   count: number;
@@ -5,13 +7,14 @@ export type SubItem = {
 };
 
 export type StageData = {
-  key: string;
+  key: StageKey;
   label: string;
   count: number;
-  isActive?: boolean;
   subItems?: SubItem[];
 };
 
 export type PipelineStagesProps = {
   stages: StageData[];
+  activeKey: StageKey;
+  onStageChange: (key: StageKey) => void;
 };

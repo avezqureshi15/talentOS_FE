@@ -1,0 +1,246 @@
+.candidate-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.candidate-table {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+}
+
+.candidate-table-header {
+  display: grid;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-faint);
+}
+
+.candidate-table-row {
+  display: grid;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.12s ease;
+  animation: rowFadeIn 0.3s ease both;
+  cursor: pointer;
+}
+
+.candidate-table-row:last-child {
+  border-bottom: none;
+}
+
+.candidate-table-row:hover {
+  background: var(--bg-hover);
+}
+
+.candidate-table-cell {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  min-width: 0;
+}
+
+.candidate-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.candidate-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 2px solid var(--accent-border);
+}
+
+.candidate-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.candidate-email {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* checkbox */
+.candidate-checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-default);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.12s ease;
+}
+
+.candidate-checkbox--checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.candidate-checkbox--checked i {
+  color: var(--text-white);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* deadline pill */
+.deadline-pill {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.deadline-pill--normal {
+  background: var(--surface-elevated);
+  color: var(--text-secondary);
+}
+
+.deadline-pill--warning {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+  border: 1px solid var(--score-mid-border);
+}
+
+.deadline-pill--danger {
+  background: var(--danger-bg);
+  color: var(--danger-light);
+  border: 1px solid var(--danger-border);
+}
+
+/* score pill */
+.score-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.score-pill--success {
+  background: var(--success-bg-strong);
+  color: var(--success-light);
+  border: 1px solid var(--success-light-border);
+}
+
+.score-pill--warning {
+  background: var(--score-mid-bg);
+  color: var(--score-mid);
+  border: 1px solid var(--score-mid-border);
+}
+
+.score-pill--danger {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+  border: 1px solid var(--danger-light-border);
+}
+
+/* partial progress */
+.partial-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.partial-fraction {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.partial-resume-btn {
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.partial-resume-btn:hover {
+  background: var(--accent-border);
+}
+
+/* ai proctoring */
+.ai-proctoring-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ai-proctoring-badge--cheating {
+  background: var(--danger-bg);
+  color: var(--danger-light);
+  border: 1px solid var(--danger-border);
+}
+
+.ai-proctoring-badge--clean {
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+/* status chip */
+.status-chip {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-chip--info {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.status-chip--warning {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+/* empty state */
+.candidate-table-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+@keyframes rowFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

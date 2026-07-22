@@ -8,4 +8,5 @@ export const ROUTES = {
   BOOK_SLOT_ID: "/book-slot/:formId",
   RATE_CANDIDATE: "/rate-candidate",
   RATE_CANDIDATE_ID: "/rate-candidate/:reviewFormId",
+  ROUND_DETAILS: "/hiring-requests/:id/round-details/:candidateId",
 } as const;
