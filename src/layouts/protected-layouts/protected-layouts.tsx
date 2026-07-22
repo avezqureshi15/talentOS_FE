@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, Suspense } from "react";
+import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
 import { Outlet, useParams, useNavigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { pageTransition, springSnap } from "@/utils/motion";
@@ -15,7 +15,7 @@ import CommandPalette from "@/layouts/protected-layouts/components/command-palet
 import { useCommandPalette } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import "./protected-layouts.css";
-import { ROUTES } from "@/constants/routes";
+import { ROUTES, HIRING_TABS } from "@/constants/routes";
 import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
 import { useUiStore } from "@/store/ui.store";
 import { STORAGE_KEYS } from "@/constants/constants";
@@ -129,6 +129,12 @@ export default function ProtectedLayout() {
     return () => document.removeEventListener("keydown", handler);
   }, [handleNewChat, handleHome, handleToggleSidebar, handleAlerts, handleInterviews]);
 
+  const layoutKey = useMemo(() => {
+    const p = location.pathname;
+    const base = p.replace(new RegExp(`\\/(${HIRING_TABS.join("|")})$`), "");
+    return base !== p ? base : p;
+  }, [location.pathname]);
+
   const {
     isOpen: cmdOpen,
     query: cmdQuery,
@@ -166,7 +172,7 @@ export default function ProtectedLayout() {
           <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
             <AnimatePresence mode="popLayout">
               <motion.div
-                key={location.pathname}
+                key={layoutKey}
                 variants={pageTransition}
                 initial="initial"
                 animate="animate"

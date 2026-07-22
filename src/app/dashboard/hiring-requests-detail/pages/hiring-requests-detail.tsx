@@ -43,7 +43,7 @@ const HiringRequestDetails = () => {
   useEffect(() => {
     if (!id || !data) return;
     setConfig({
-      title: data.title,
+      title: "Applications",
       totalCount,
       search: {
         placeholder: HEADER_SEARCH_PLACEHOLDER,

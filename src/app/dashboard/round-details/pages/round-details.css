@@ -1,27 +1,53 @@
 .rd-page {
   padding: 26px;
   color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+  height: calc(100vh - 56px);
 }
 
-.rd-back-btn {
-  background: var(--surface-glass);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 6px 12px;
-  color: var(--text-primary);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 12px;
-  margin-bottom: 16px;
+.rd-split {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
 }
 
-.rd-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 8px;
+.rd-left {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-bottom: 80px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.rd-left::-webkit-scrollbar {
+  display: none;
 }
 
-.rd-subtitle {
-  font-size: 13px;
-  color: var(--text-muted);
+.rd-right {
+  width: 40%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.rd-video-container {
+  width: 100%;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.rd-transcript-container {
+  overflow-y: auto;
+  padding-top: 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.rd-transcript-container::-webkit-scrollbar {
+  display: none;
 }

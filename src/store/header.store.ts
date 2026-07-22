@@ -31,9 +31,17 @@ export type HeaderActionConfig = {
   error?: string | null;
 };
 
+export type HeaderMetaItem = {
+  label: string;
+  variant?: "success" | "warning" | "danger";
+};
+
 export type HeaderConfig = {
   title?: string;
+  subtitle?: string;
+  avatarLabel?: string;
   totalCount?: number;
+  meta?: HeaderMetaItem[];
   search?: HeaderSearchConfig | null;
   viewSwitcher?: HeaderViewSwitcherConfig | null;
   actions?: HeaderActionConfig[];

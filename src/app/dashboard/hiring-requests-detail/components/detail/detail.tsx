@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./detail.css";
 
@@ -48,10 +48,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [subFilter, setSubFilter] = useState("all");
   // justification: archived search query (table view)
   const [archivedSearch, setArchivedSearch] = useState("");
-  const navigate = useNavigate();
+
 
   const handleRowClick = (candidateId: string) => {
-    navigate(`/hiring-requests/${jobId}/round-details/${candidateId}`);
+    window.open(`/hiring-requests/${jobId}/round-details/${candidateId}`, "_blank");
   };
 
   const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
