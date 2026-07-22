@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
 import { Outlet, useParams, useNavigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { pageTransition, springSoft } from "@/utils/motion";
+import { pageTransition, springSnap } from "@/utils/motion";
 
 import { Icon } from "@/components/ui/icons";
 import Header from "@/layouts/protected-layouts/components/header/header";
@@ -178,14 +178,14 @@ export default function ProtectedLayout() {
         />
         <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="popLayout">
               <motion.div
                 key={location.pathname}
                 variants={pageTransition}
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                transition={springSoft}
+                transition={springSnap}
                 className="protected-layout-content"
               >
                 <Outlet />
