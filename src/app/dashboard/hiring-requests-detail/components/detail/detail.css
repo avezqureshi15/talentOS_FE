@@ -689,70 +689,7 @@
   white-space: nowrap;
 }
 
-.header-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
-.export-btn {
-  border-radius: 10px;
-  background: var(--surface-glass);
-  border: 1px solid var(--input-icon-bg);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 8px 12px;
-  font-size: 13px;
-}
-
-.export-btn:hover {
-  background: var(--bg-active);
-  transform: translateX(-2px);
-}
-
-/* ── Status Toggle Button ── */
-.status-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  border: 1px solid;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 8px 12px;
-}
-
-.status-btn i {
-  font-size: 18px;
-}
-
-.status-btn-close {
-  background: var(--danger-bg-strong);
-  border-color: var(--danger-border);
-  color: var(--danger);
-}
-
-.status-btn-close:hover {
-  background: var(--danger-border);
-}
-
-.status-btn-open {
-  background: var(--success-bg-strong);
-  border-color: var(--success-border);
-  color: var(--success);
-}
-
-.status-btn-open:hover {
-  background: var(--success-border);
-}
-
-.status-btn:disabled {
-  opacity: 0.5;
-  cursor: default;
-  pointer-events: none;
-}
 
 .read-more {
   display: inline;
@@ -772,64 +709,7 @@
   opacity: 0.8;
 }
 
-/* ── Confirm Modal ── */
-.confirm-body {
-  padding: 16px 24px 24px;
-}
 
-.confirm-body p {
-  margin: 0 0 20px;
-  font-size: 14px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.confirm-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.confirm-btn {
-  padding: 8px 16px;
-  font-size: 13px;
-  border-radius: 10px;
-  border: 1px solid var(--border-subtle);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.confirm-cancel {
-  background: transparent;
-  color: var(--text-secondary);
-}
-
-.confirm-cancel:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-.confirm-proceed {
-  background: var(--send-btn-bg, #ffffff);
-  color: var(--send-btn-color, #000);
-  border-color: var(--send-btn-bg, #ffffff);
-}
-
-.confirm-proceed:hover:not(:disabled) {
-  opacity: 0.85;
-}
-
-.confirm-proceed:disabled {
-  opacity: 0.4;
-  cursor: default;
-  pointer-events: none;
-}
-
-.export-error {
-  font-size: 12px;
-  color: var(--danger);
-  margin-left: 8px;
-}
 
 /* =========================
    AI DECISION CHIP

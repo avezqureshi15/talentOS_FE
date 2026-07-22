@@ -1,33 +1,245 @@
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 
-  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
   height: 56px;
+  padding: 0 24px;
   flex-shrink: 0;
 
-  position: relative;
-  top: 0;
-  z-index: 100;
-
   background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.header::after {
-  content: "";
-  position: absolute;
-  bottom: -20px;
-  left: 0;
+/* ── Jobs Toolbar (hiring detail) ── */
+
+.jobs-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  height: 20px;
-  background: linear-gradient(to bottom, var(--bg-primary), transparent);
-  pointer-events: none;
+  gap: 12px;
+  min-width: 0;
 }
 
+.jobs-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
 
+.jobs-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
 
-/* left / right containers */
+/* ── Title + Counter ── */
+
+.jobs-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jobs-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  margin: 0;
+}
+
+.jobs-count-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 9999px;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* ── Search Input ── */
+
+.jobs-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 400px;
+  min-width: 100px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-hover);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.jobs-search:focus-within {
+  background: var(--bg-primary);
+  border-color: var(--border-default);
+}
+
+.jobs-search svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.jobs-search input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: var(--font-family);
+  outline: none;
+  min-width: 0;
+}
+
+.jobs-search input::placeholder {
+  color: var(--text-muted);
+}
+
+.jobs-search-shortcut {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--surface-glass);
+  color: var(--text-faint);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── View Switcher ── */
+
+.jobs-view-switcher {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+}
+
+.jobs-view-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.jobs-view-btn:hover {
+  color: var(--text-secondary);
+}
+
+.jobs-view-btn--active {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.jobs-view-btn i {
+  font-size: 14px;
+}
+
+/* ── Export Button ── */
+
+.jobs-export-btn {
+  display: flex !important;
+  align-items: center;
+  gap: 6px !important;
+  height: 32px;
+  padding: 0 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-subtle) !important;
+  background: var(--bg-hover) !important;
+  color: var(--text-secondary) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  font-family: var(--font-family) !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  white-space: nowrap;
+}
+
+.jobs-export-btn:hover {
+  background: var(--bg-active) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+
+.jobs-export-btn i {
+  font-size: 15px !important;
+}
+
+/* ── Add Candidate Button ── */
+
+.jobs-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: var(--text-white);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-family);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.jobs-add-btn:hover {
+  opacity: 0.9;
+  background: var(--accent);
+}
+
+.jobs-add-btn i {
+  font-size: 16px;
+}
+
+.jobs-export-error {
+  font-size: 11px;
+  color: var(--danger);
+}
+
+/* ── Default header states (chat etc.) ── */
+
 .header-left,
 .header-right {
   display: flex;
@@ -35,7 +247,6 @@
   gap: 8px;
 }
 
-/* when sidebar is hidden placeholder */
 .header-left-empty {
   width: 32px;
   height: 32px;
@@ -58,4 +269,47 @@
 @keyframes hamburger-glow {
   0%, 100% { box-shadow: 0 0 0 0 transparent; }
   50% { box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.08); }
+}
+
+/* ── Responsive: collapse button text to icons ── */
+
+@media (max-width: 1100px) {
+  .jobs-add-btn,
+  .jobs-export-btn {
+    padding: 0 8px !important;
+  }
+
+  .jobs-add-btn .btn-label,
+  .jobs-export-btn .btn-label {
+    display: none;
+  }
+
+  .jobs-view-btn .btn-label {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .jobs-search {
+    max-width: 200px;
+  }
+
+  .jobs-search-shortcut {
+    display: none;
+  }
+
+  .jobs-view-btn .bx {
+    margin: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .jobs-count-pill {
+    display: none;
+  }
+
+  .jobs-search {
+    max-width: 140px;
+    min-width: 80px;
+  }
 }

@@ -6,14 +6,10 @@ import JobDescription from "@/app/dashboard/hiring-requests-detail/components/jo
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
 import FinalVerdict from "@/app/dashboard/hiring-requests-detail/components/final-verdict/final-verdict";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
-import Button from "@/components/ui/button/button";
 import Chip from "@/components/ui/chip/chip";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
-import BaseModal from "@/components/ui/modal/base-modal";
-import { useToggleStatus } from "@/app/dashboard/hiring-requests/hooks/use-toggle-status";
 import { JOB_DETAIL } from "@/constants/constants";
 import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
-import { useExportCsv } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-csv";
 import { DEFAULT_FILTER } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import { PAGINATION } from "@/constants/api-endpoints";
 import type { JobDetailProps, Segment } from "./detail.types";
@@ -34,21 +30,12 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [segment, setSegment] = useState<Segment>(applicantParam ? "applicants" : "jd");
   // justification: tracks which applicant accordion is expanded
   const [openId, setOpenId] = useState<string | null>(applicantParam ?? null);
-  // justification: tracks confirm modal visibility for close/reopen
-  const [showConfirm, setShowConfirm] = useState(false);
   // justification: controls applicant filter value (shortlisted, all, etc.)
   const [filter, setFilter] = useState(DEFAULT_FILTER);
   // justification: score range filter preset
   const [scoreFilter, setScoreFilter] = useState<string>("all");
   // justification: multi-select rejection reason filter (comma-separated)
   const [rejectReason, setRejectReason] = useState<string>("");
-
-  const { mutate: toggleStatus, isPending: isToggling } = useToggleStatus();
-
-  const { handleExport, isExporting, exportError } = useExportCsv(
-    hiringRequest.id,
-    hiringRequest.title,
-  );
 
   const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
   const jobId = hiringRequest.id;
@@ -106,35 +93,6 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           {hiringRequest.title}
           {!hiringRequest.is_active && <Chip variant="danger" size="sm">Application Closed</Chip>}
         </div>
-
-        <div className="header-actions">
-          <Button className="export-btn" onClick={handleExport} loading={isExporting} loadingText="Downloading..." icon="bx-download">
-            {JOB_DETAIL.EXPORT_AS_EXCEL}
-          </Button>
-          {exportError && <span className="export-error">{exportError}</span>}
-          <button
-            className={`status-btn ${hiringRequest.is_active ? "status-btn-close" : "status-btn-open"}`}
-            onClick={() => setShowConfirm(true)}
-            disabled={isToggling}
-            title={hiringRequest.is_active ? "Close Application" : "Reopen Application"}
-          >
-            {isToggling ? <LoadingSpinner size="sm" /> : <i className={`bx ${hiringRequest.is_active ? "bx-x-circle" : "bx-check-circle"}`} />}
-          </button>
-        </div>
-
-        <BaseModal open={showConfirm} onClose={() => setShowConfirm(false)} title={hiringRequest.is_active ? "Close Application" : "Reopen Application"}>
-          <div className="confirm-body">
-            <p>Are you sure you want to {hiringRequest.is_active ? "close" : "reopen"} this application?</p>
-            <div className="confirm-actions">
-              <Button className="confirm-btn confirm-cancel" onClick={() => setShowConfirm(false)}>
-                Cancel
-              </Button>
-              <Button className="confirm-btn confirm-proceed" onClick={() => { toggleStatus(hiringRequest.id); setShowConfirm(false); }} loading={isToggling} loadingText="Processing...">
-                {hiringRequest.is_active ? "Close" : "Reopen"}
-              </Button>
-            </div>
-          </div>
-        </BaseModal>
       </div>
 
       <div className="job-subtitle">
