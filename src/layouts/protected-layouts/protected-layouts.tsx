@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
+import { useState, useCallback, useEffect, Suspense } from "react";
 import { Outlet, useParams, useNavigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { pageTransition, springSnap } from "@/utils/motion";
@@ -20,7 +20,6 @@ import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
 import { useUiStore } from "@/store/ui.store";
 import { STORAGE_KEYS } from "@/constants/constants";
 import { getUx, patchUx } from "@/utils/storage";
-import { useAurora } from "@/hooks/use-aurora";
 
 function getInitialSidebarState(): boolean {
   const ux = getUx(STORAGE_KEYS.UX);
@@ -33,13 +32,7 @@ function getInitialSidebarState(): boolean {
 
 export default function ProtectedLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(getInitialSidebarState);
-  const { show: showAurora } = useAurora();
   const location = useLocation();
-  const ux = useMemo(() => getUx(STORAGE_KEYS.UX), []);
-  const showHint = !ux.sbh && !sidebarOpen && !showAurora;
-  const handleHintDismiss = useCallback(() => {
-    patchUx(STORAGE_KEYS.UX, { sbh: true });
-  }, []);
   const { chatId: paramsChatId } = useParams();
   const storeChatId = useChatStore((s) => s.chatId);
   const activeChatId = paramsChatId ?? storeChatId;
@@ -168,14 +161,7 @@ export default function ProtectedLayout() {
       />
 
       <main className="chat-main">
-        <Header
-          mounted={false}
-          sidebarOpen={sidebarOpen}
-          onToggleSidebar={handleToggleSidebar}
-          Icon={Icon}
-          showHint={showHint}
-          onHintDismiss={handleHintDismiss}
-        />
+        <Header Icon={Icon} />
         <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
             <AnimatePresence mode="popLayout">

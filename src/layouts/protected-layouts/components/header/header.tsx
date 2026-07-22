@@ -5,9 +5,6 @@ import IconButton from "@/components/ui/icon-button/icon-button";
 import Button from "@/components/ui/button/button";
 import { useHeaderStore } from "@/store/header.store";
 import { springSnap } from "@/utils/motion";
-import {
-  HEADER_HAMBURGER_TITLE,
-} from "./header.constants";
 
 import "./header.css";
 import type {
@@ -19,31 +16,13 @@ import type {
 
 /* ───────── LEFT ───────── */
 
-const HeaderLeft: React.FC<HeaderLeftProps> = ({
-  sidebarOpen,
-  onToggleSidebar,
-  Icon,
-  showHint,
-  onHintDismiss,
-}) => {
-  if (sidebarOpen) return <div className="header-left-empty" />;
-
-  return (
-    <div className={`header-hamburger-wrapper${showHint ? " header-hamburger--hint" : ""}`}>
-      <IconButton onClick={() => { onToggleSidebar(); onHintDismiss(); }} title={HEADER_HAMBURGER_TITLE}>
-        <Icon.Hamburger />
-      </IconButton>
-    </div>
-  );
+const HeaderLeft: React.FC<HeaderLeftProps> = () => {
+  return <div className="header-left-empty" />;
 };
 
 /* ───────── CONFIG-DRIVEN TOOLBAR ───────── */
 
 const ConfigToolbar: React.FC<ConfigToolbarProps> = ({
-  sidebarOpen,
-  onToggleSidebar,
-  showHint,
-  onHintDismiss,
   Icon,
 }) => {
   const config = useHeaderStore((s) => s.config);
@@ -52,14 +31,6 @@ const ConfigToolbar: React.FC<ConfigToolbarProps> = ({
   return (
     <div className="jobs-toolbar">
       <div className="jobs-toolbar-left">
-        {!sidebarOpen && (
-          <div className={`header-hamburger-wrapper${showHint ? " header-hamburger--hint" : ""}`}>
-            <IconButton onClick={() => { onToggleSidebar(); onHintDismiss(); }} title={HEADER_HAMBURGER_TITLE}>
-              <Icon.Hamburger />
-            </IconButton>
-          </div>
-        )}
-
         {title && (
           <div className="jobs-title-group">
             <h1 className="jobs-title">{title}</h1>
@@ -159,12 +130,7 @@ const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
 /* ───────── HEADER ───────── */
 
 const Header: React.FC<HeaderProps> = ({
-  mounted: _mounted,
-  sidebarOpen,
-  onToggleSidebar,
   Icon,
-  showHint,
-  onHintDismiss,
 }) => {
   const config = useHeaderStore((s) => s.config);
   const hasConfig = !!config.title;
@@ -172,22 +138,10 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className="header">
       {hasConfig ? (
-        <ConfigToolbar
-          sidebarOpen={sidebarOpen}
-          onToggleSidebar={onToggleSidebar}
-          showHint={showHint}
-          onHintDismiss={onHintDismiss}
-          Icon={Icon}
-        />
+        <ConfigToolbar Icon={Icon} />
       ) : (
         <>
-          <HeaderLeft
-            sidebarOpen={sidebarOpen}
-            onToggleSidebar={onToggleSidebar}
-            Icon={Icon}
-            showHint={showHint}
-            onHintDismiss={onHintDismiss}
-          />
+          <HeaderLeft />
           <HeaderRight Icon={Icon} />
         </>
       )}

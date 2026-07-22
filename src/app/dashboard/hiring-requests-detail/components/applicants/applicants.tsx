@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import ApplicantCard from "./applicant-card";
 import ApplicantFilters from "./applicant-filters";
 import ApplicantActionModals from "./applicant-action-modals";
+import RecruiterFilter from "@/app/dashboard/hiring-requests-detail/components/applicants/recruiter-filter";
+import { STATUS_DISPLAY } from "@/app/dashboard/hiring-requests-detail/components/applicants/recruiter-filter.constants";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
@@ -20,6 +22,8 @@ type LocalOverride = {
 };
 
 function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, rejectReason, onRejectReasonChange, applicantParam, onRefresh, jdId, isRemote }: ApplicantsProps) {
+  // justification: controls table/card view toggle for applicant list
+  const [viewMode, setViewMode] = useState<"table" | "card">("card");
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<number | null>(null);
@@ -224,9 +228,26 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     onMenuReject: (id) => { setFinalCandidateId(id); setFinalDecision("rejected"); },
   });
 
+  const SCORE_CLASSES: { min: number; cls: string }[] = [
+    { min: 80, cls: "score-high" },
+    { min: 50, cls: "score-mid" },
+    { min: 0, cls: "score-low" },
+  ];
+
+  const getScoreClass = (score?: number) => {
+    if (!score) return "";
+    return SCORE_CLASSES.find((s) => score >= s.min)?.cls ?? "";
+  };
+
   return (
     <>
-      <ApplicantFilters filter={filter} onFilterChange={onFilterChange} scoreFilter={scoreFilter ?? "all"} onScoreFilterChange={onScoreFilterChange} rejectReason={rejectReason} onRejectReasonChange={onRejectReasonChange} />
+      <RecruiterFilter viewMode={viewMode} onViewModeChange={setViewMode} />
+
+      {viewMode === "card" && (
+        <ApplicantFilters filter={filter} onFilterChange={onFilterChange} scoreFilter={scoreFilter ?? "all"} onScoreFilterChange={onScoreFilterChange} rejectReason={rejectReason} onRejectReasonChange={onRejectReasonChange} />
+      )}
+
+      {viewMode === "card" ? (
       <div className="accordion-list">
       {data.map((a) => {
         const isOpen = openId === a.id;
@@ -256,6 +277,58 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
         );
       })}
       {hasMore && <div ref={sentinelRef} className="scroll-sentinel" />}
+      </div>
+      ) : (
+      <div className="applicants-table">
+        <div className="applicants-table-header">
+          <div className="applicants-table-cell applicants-table-cell--name">Candidate</div>
+          <div className="applicants-table-cell applicants-table-cell--role">Current Role</div>
+          <div className="applicants-table-cell applicants-table-cell--score">Score</div>
+          <div className="applicants-table-cell applicants-table-cell--status">Status</div>
+          <div className="applicants-table-cell applicants-table-cell--action" />
+        </div>
+        {data.map((a) => {
+          const merged = getLocalApplicant(a);
+          const statusInfo = STATUS_DISPLAY[merged.status] ?? { label: merged.status, cls: "" };
+          return (
+            <div key={a.id} className="applicants-table-row" data-applicant-id={a.id}>
+              <div className="applicants-table-cell applicants-table-cell--name">
+                <div className="applicants-table-avatar">
+                  {a.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)}
+                </div>
+                <div>
+                  <div className="applicants-table-name">{a.name}</div>
+                  <div className="applicants-table-sub">{a.email}</div>
+                </div>
+              </div>
+              <div className="applicants-table-cell applicants-table-cell--role">
+                <div className="applicants-table-role">{a.currentRole ?? "—"}</div>
+                <div className="applicants-table-sub">{a.currentCompany ?? "—"}</div>
+              </div>
+              <div className="applicants-table-cell applicants-table-cell--score">
+                {a.score != null ? (
+                  <span className={`ats-score ${getScoreClass(a.score)}`}>{a.score}</span>
+                ) : (
+                  <span className="applicants-table-score-na">—</span>
+                )}
+              </div>
+              <div className="applicants-table-cell applicants-table-cell--status">
+                <span className={`state-chip ${statusInfo.cls}`}>{statusInfo.label}</span>
+              </div>
+              <div className="applicants-table-cell applicants-table-cell--action">
+                <button
+                  className="applicants-table-view-btn"
+                  onClick={() => { setOpenId(openId === a.id ? null : a.id); setAccordionTab("details"); }}
+                  title="View details"
+                >
+                  <i className="bx bx-right-arrow-alt" />
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      )}
 
       <ApplicantActionModals
         data={data}
@@ -304,7 +377,6 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
           onClose={() => setDetailsId(null)}
           isRemote={isRemote}
         />))}
-    </div>
     </>
   );
 }

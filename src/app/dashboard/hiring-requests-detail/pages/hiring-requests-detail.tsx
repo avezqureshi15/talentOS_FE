@@ -11,7 +11,6 @@ import { fetchApplicationsPaginated } from "@/services/applications/applications
 import { useHeaderStore } from "@/store/header.store";
 import { QUERY_KEYS, EXPORT_LABELS } from "@/constants/constants";
 import {
-  HEADER_TOOLBAR_TITLE,
   HEADER_SEARCH_PLACEHOLDER,
   HEADER_SEARCH_SHORTCUT,
   HEADER_VIEW_OPTIONS,
@@ -42,9 +41,9 @@ const HiringRequestDetails = () => {
 
   // justification: registers the job applications toolbar config in the global header store on mount and clears on unmount
   useEffect(() => {
-    if (!id) return;
+    if (!id || !data) return;
     setConfig({
-      title: HEADER_TOOLBAR_TITLE,
+      title: data.title,
       totalCount,
       search: {
         placeholder: HEADER_SEARCH_PLACEHOLDER,
@@ -77,7 +76,7 @@ const HiringRequestDetails = () => {
       ],
     });
     return () => clearConfig();
-  }, [id, totalCount, handleExport, isExporting, exportError, setConfig, clearConfig]);
+  }, [id, data, totalCount, handleExport, isExporting, exportError, setConfig, clearConfig]);
 
   if (isLoading) {
     return <LoadingSpinner fullPage />;
