@@ -4,9 +4,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchRoundDetail } from "@/services/applications/applications";
 import { validateForm, submitReview, submitForm } from "@/app/rate-candidate/services/rate-candidate";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
-import type { FormValidateResponse } from "@/app/rate-candidate/services/rate-candidate.types";
+import type {
+  AnswerMap,
+  FormValidateResponse,
+  ReviewPhase,
+  ReviewQuestionsPayload,
+} from "@/app/rate-candidate/services/rate-candidate.types";
 import type { RoundDetailApiResponse } from "@/services/applications/applications.types";
 import type { VerdictValue } from "@/app/rate-candidate/components/verdict-buttons/verdict-buttons.types";
+import {
+  STATIC_REVIEW_QUESTIONS,
+  buildInterviewerReviewsPayload,
+} from "@/app/rate-candidate/components/rating-panel/rating-panel.helpers";
 
 type UseRateCandidateResult = {
   formId: string | undefined;
@@ -15,12 +24,19 @@ type UseRateCandidateResult = {
   formValid: boolean;
   empId: string | undefined;
   formValidated: boolean;
+  resolvedQuestions: ReviewQuestionsPayload | null;
   roundDetail: RoundDetailApiResponse | undefined;
   roundLoading: boolean;
   isSubmitting: boolean;
   isSubmitted: boolean;
   submitError: string | null;
-  handleSubmitReview: (ratings: Record<string, number>, selectedSkills: string[], review: string, verdict: VerdictValue) => Promise<void>;
+  handleSubmitReview: (
+    phases: ReviewPhase[],
+    questionsSource: string,
+    answers: AnswerMap,
+    selectedSkills: string[],
+    verdict: VerdictValue,
+  ) => Promise<void>;
 };
 
 const REASON_LABELS: Record<string, string> = {
@@ -28,6 +44,32 @@ const REASON_LABELS: Record<string, string> = {
   EXPIRED: "This review link has expired.",
   ALREADY_SUBMITTED: "You have already submitted your review for this candidate.",
 };
+
+function resolveReviewQuestions(
+  reviewQuestions: ReviewQuestionsPayload | null | undefined,
+): ReviewQuestionsPayload {
+  if (reviewQuestions?.phases?.some((p) => p.questions?.length)) {
+    const phases = reviewQuestions.phases
+      .map((p) => ({
+        phase: (p.phase || "").trim(),
+        questions: (p.questions ?? []).map((q) => q.trim()).filter(Boolean),
+      }))
+      .filter((p) => p.phase && p.questions.length > 0);
+    if (phases.length > 0) {
+      return {
+        questions_source: reviewQuestions.questions_source || "static",
+        phases,
+      };
+    }
+  }
+  return {
+    questions_source: STATIC_REVIEW_QUESTIONS.questions_source,
+    phases: STATIC_REVIEW_QUESTIONS.phases.map((p) => ({
+      phase: p.phase,
+      questions: [...p.questions],
+    })),
+  };
+}
 
 export function useRateCandidate(): UseRateCandidateResult {
   const { reviewFormId: formId } = useParams<{ reviewFormId: string }>();
@@ -53,6 +95,11 @@ export function useRateCandidate(): UseRateCandidateResult {
 
   const roundId = formQuery.data?.round_id;
 
+  const resolvedQuestions = useMemo(() => {
+    if (!formValid) return null;
+    return resolveReviewQuestions(formQuery.data?.review_questions);
+  }, [formValid, formQuery.data?.review_questions]);
+
   const roundQuery = useQuery<RoundDetailApiResponse>({
     queryKey: [QUERY_KEYS.ROUND_DETAIL, roundId],
     queryFn: () => fetchRoundDetail(roundId!),
@@ -66,26 +113,14 @@ export function useRateCandidate(): UseRateCandidateResult {
   const submitMutation = useMutation({
     mutationFn: async (payload: {
       roundId: string;
-      reviewData: {
-        ratings: Record<string, number>;
-        averageRating: number;
-        skills: string[];
-        notes: string;
-      };
-      verdict: string;
       formId: string;
+      entity_type: string;
+      reviews: ReturnType<typeof buildInterviewerReviewsPayload>;
+      verdict: string;
     }) => {
       await submitReview(payload.roundId, {
-        entity_type: "interviewer",
-        reviews: {
-          communication: payload.reviewData.ratings.communication ?? 0,
-          technical_skills: payload.reviewData.ratings.technical_skills ?? 0,
-          problem_solving: payload.reviewData.ratings.problem_solving ?? 0,
-          cultural_fit: payload.reviewData.ratings.cultural_fit ?? 0,
-          average_rating: payload.reviewData.averageRating,
-          skills: payload.reviewData.skills,
-          notes: payload.reviewData.notes,
-        },
+        entity_type: payload.entity_type,
+        reviews: payload.reviews,
         verdict: payload.verdict,
       });
       await submitForm(payload.formId);
@@ -96,15 +131,20 @@ export function useRateCandidate(): UseRateCandidateResult {
   });
 
   const handleSubmitReview = useCallback(
-    async (ratings: Record<string, number>, selectedSkills: string[], review: string, verdict: VerdictValue) => {
+    async (
+      phases: ReviewPhase[],
+      questionsSource: string,
+      answers: AnswerMap,
+      selectedSkills: string[],
+      verdict: VerdictValue,
+    ) => {
       if (!roundId || !formId || !verdict) return;
-      const values = Object.values(ratings).filter(Boolean);
-      const avg = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
       await submitMutation.mutateAsync({
         roundId,
-        reviewData: { ratings, averageRating: avg, skills: selectedSkills, notes: review },
-        verdict,
         formId,
+        entity_type: "interviewer",
+        reviews: buildInterviewerReviewsPayload(questionsSource, phases, answers, selectedSkills),
+        verdict,
       });
     },
     [roundId, formId, submitMutation],
@@ -117,6 +157,7 @@ export function useRateCandidate(): UseRateCandidateResult {
     formValid,
     empId,
     formValidated,
+    resolvedQuestions,
     roundDetail: roundQuery.data,
     roundLoading,
     isSubmitting: submitMutation.isPending,
