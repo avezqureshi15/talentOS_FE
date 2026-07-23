@@ -283,54 +283,233 @@
   margin: 0;
 }
 
-/* ─── Score Ring ─── */
+/* ─── Score Stamp ─── */
 
 .rd-hero-score-col {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
-.rd-score-ring {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
+.rd-stamp {
+  position: relative;
+  width: 112px;
+  height: 112px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  border-radius: 50%;
+  transform: rotate(-3deg);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
 }
 
-.rd-score-ring--reject {
-  border: 2px solid rgba(248, 113, 113, 0.4);
-  background: rgba(127, 29, 29, 0.2);
+.rd-stamp:hover {
+  transform: rotate(-3deg) translateY(-3px);
 }
 
-.rd-score-ring--advance {
-  border: 2px solid rgba(110, 231, 183, 0.4);
-  background: rgba(6, 78, 59, 0.2);
+/* ─── Glow ring via pseudo-element ─── */
+
+.rd-stamp::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
-.rd-score-ring--potential {
-  border: 2px solid rgba(252, 211, 77, 0.4);
-  background: rgba(120, 53, 15, 0.2);
+.rd-stamp:hover::after {
+  opacity: 1;
 }
 
-.rd-score-value {
-  font-size: 28px;
+.rd-stamp--reject::after {
+  box-shadow: 0 0 18px 4px rgba(239, 68, 68, 0.25);
+}
+.rd-stamp--advance::after {
+  box-shadow: 0 0 18px 4px rgba(52, 211, 153, 0.25);
+}
+.rd-stamp--potential::after {
+  box-shadow: 0 0 18px 4px rgba(251, 191, 36, 0.25);
+}
+
+/* ─── SVG rings ─── */
+
+.rd-stamp-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.rd-stamp-ring {
+  fill: none;
+}
+
+.rd-stamp-ring--outer {
+  stroke-width: 1.5;
+}
+
+.rd-stamp-ring--mid {
+  stroke-width: 0.75;
+}
+
+.rd-stamp-ring--inner {
+  stroke-width: 0.5;
+}
+
+/* ─── Color tiers ─── */
+
+.rd-stamp--reject {
+  background: radial-gradient(circle at 40% 35%, rgba(239, 68, 68, 0.12), rgba(127, 29, 29, 0.18) 80%);
+}
+.rd-stamp--reject .rd-stamp-ring--outer {
+  stroke: rgba(239, 68, 68, 0.5);
+}
+.rd-stamp--reject .rd-stamp-ring--mid {
+  stroke: rgba(239, 68, 68, 0.25);
+}
+.rd-stamp--reject .rd-stamp-ring--inner {
+  stroke: rgba(239, 68, 68, 0.15);
+}
+
+.rd-stamp--advance {
+  background: radial-gradient(circle at 40% 35%, rgba(52, 211, 153, 0.12), rgba(6, 78, 59, 0.18) 80%);
+}
+.rd-stamp--advance .rd-stamp-ring--outer {
+  stroke: rgba(52, 211, 153, 0.5);
+}
+.rd-stamp--advance .rd-stamp-ring--mid {
+  stroke: rgba(52, 211, 153, 0.25);
+}
+.rd-stamp--advance .rd-stamp-ring--inner {
+  stroke: rgba(52, 211, 153, 0.15);
+}
+
+.rd-stamp--potential {
+  background: radial-gradient(circle at 40% 35%, rgba(251, 191, 36, 0.12), rgba(120, 53, 15, 0.18) 80%);
+}
+.rd-stamp--potential .rd-stamp-ring--outer {
+  stroke: rgba(251, 191, 36, 0.5);
+}
+.rd-stamp--potential .rd-stamp-ring--mid {
+  stroke: rgba(251, 191, 36, 0.25);
+}
+.rd-stamp--potential .rd-stamp-ring--inner {
+  stroke: rgba(251, 191, 36, 0.15);
+}
+
+/* ─── Arc text ─── */
+
+.rd-stamp-arc {
+  font-size: 8px;
   font-weight: 800;
-  color: var(--text-primary);
-  line-height: 1;
+  letter-spacing: 0.4em;
+  fill: var(--text-faint);
 }
 
-.rd-score-denom {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
+.rd-stamp-arc--bottom {
+  font-size: 6.5px;
+  letter-spacing: 0.35em;
 }
+
+.rd-stamp--reject .rd-stamp-arc {
+  fill: rgba(239, 68, 68, 0.65);
+}
+.rd-stamp--advance .rd-stamp-arc {
+  fill: rgba(52, 211, 153, 0.65);
+}
+.rd-stamp--potential .rd-stamp-arc {
+  fill: rgba(251, 191, 36, 0.65);
+}
+
+/* ─── Score value ─── */
+
+.rd-stamp-value {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  z-index: 1;
+  margin-top: 2px;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: text-shadow 0.25s ease;
+}
+
+.rd-stamp:hover .rd-stamp-value {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.rd-stamp--reject .rd-stamp-value {
+  color: #fca5a5;
+}
+.rd-stamp--advance .rd-stamp-value {
+  color: #6ee7b7;
+}
+.rd-stamp--potential .rd-stamp-value {
+  color: #fcd34d;
+}
+
+/* ─── SCORE label ─── */
+
+.rd-stamp-label {
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  z-index: 1;
+  margin-top: 1px;
+}
+
+.rd-stamp--reject .rd-stamp-label {
+  color: rgba(239, 68, 68, 0.6);
+}
+.rd-stamp--advance .rd-stamp-label {
+  color: rgba(52, 211, 153, 0.6);
+}
+.rd-stamp--potential .rd-stamp-label {
+  color: rgba(251, 191, 36, 0.6);
+}
+
+/* ─── Denominator ─── */
+
+.rd-stamp-denom {
+  font-size: 8px;
+  font-weight: 700;
+  z-index: 1;
+  letter-spacing: 0.02em;
+}
+
+.rd-stamp--reject .rd-stamp-denom {
+  color: rgba(239, 68, 68, 0.45);
+}
+.rd-stamp--advance .rd-stamp-denom {
+  color: rgba(52, 211, 153, 0.45);
+}
+.rd-stamp--potential .rd-stamp-denom {
+  color: rgba(251, 191, 36, 0.45);
+}
+
+/* ─── Shine overlay ─── */
+
+.rd-stamp-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.08), transparent 55%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ─── Info icon ─── */
 
 .rd-score-info {
   width: 14px;
@@ -532,32 +711,6 @@
   display: flex;
   align-items: center;
   gap: 4px;
-}
-
-.rd-sub-status {
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 2px;
-  text-transform: uppercase;
-}
-
-.rd-sub-status--below {
-  background: rgba(127, 29, 29, 0.5);
-  color: #f87171;
-  border: 1px solid rgba(153, 27, 27, 0.4);
-}
-
-.rd-sub-status--meets {
-  background: rgba(6, 78, 59, 0.5);
-  color: #6ee7b7;
-  border: 1px solid rgba(6, 95, 70, 0.4);
-}
-
-.rd-sub-status--above {
-  background: rgba(59, 130, 246, 0.15);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .rd-sub-info {

@@ -672,6 +672,244 @@
   margin: 0;
 }
 
+/* ─── Accordion Card Header ─── */
+
+.id-timeline-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  padding: 0;
+  color: inherit;
+}
+
+.id-section-top-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.id-section-chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.id-section-chevron--open {
+  transform: rotate(180deg);
+}
+
+/* ─── Accordion Expanded Content ─── */
+
+.id-section-expanded {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.id-section-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 4px 0;
+}
+
+.id-questions-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.id-questions-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.id-question {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: 8px 10px 8px 28px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  position: relative;
+  counter-increment: question-counter;
+}
+
+.id-questions-list {
+  counter-reset: question-counter;
+}
+
+.id-question::before {
+  content: counter(question-counter) ".";
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.id-topics-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.id-topics-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  counter-reset: topic-counter;
+}
+
+.id-topic {
+  counter-increment: topic-counter;
+}
+
+.id-topic::before {
+  content: counter(topic-counter) ".";
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 6px;
+}
+
+.id-topic-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.id-topic-subtopics {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.id-topic-subtopic {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  position: relative;
+  padding-left: 12px;
+}
+
+.id-topic-subtopic::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.id-section-depth {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.id-depth-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.id-depth-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+.id-section-criteria-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.id-section-criteria-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.id-section-criterion {
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  background: var(--bg-primary);
+}
+
+.id-section-criterion-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.id-section-criterion-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+  display: inline;
+}
+
+.id-read-more-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: inherit;
+  display: inline;
+}
+
+.id-read-more-btn:hover {
+  text-decoration: underline;
+}
+
 /* ─── Criteria Panel ─── */
 
 .id-criteria-panel {

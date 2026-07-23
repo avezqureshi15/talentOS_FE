@@ -1,16 +1,17 @@
 import "./round-details.css";
 import { MOCK_EVALUATION } from "./round-details.constants";
-import { Sparkles, FileText, Share2, Play, Info, Check, X, AlertTriangle, FileCode, ShieldAlert } from "lucide-react";
+import { Sparkles, Play, Info, Check, X, AlertTriangle, FileCode, ShieldAlert } from "lucide-react";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
+import Chip from "@/components/ui/chip/chip";
 import TranscriptPanel from "../components/transcript-panel/transcript-panel";
 
 const getInitials = (name: string) =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
 const RING_CLASS: Record<string, string> = {
-  REJECT: "rd-score-ring--reject",
-  ADVANCE: "rd-score-ring--advance",
-  POTENTIAL_FIT: "rd-score-ring--potential",
+  REJECT: "rd-stamp--reject",
+  ADVANCE: "rd-stamp--advance",
+  POTENTIAL_FIT: "rd-stamp--potential",
 };
 
 const PILL_CLASS: Record<string, string> = {
@@ -19,10 +20,10 @@ const PILL_CLASS: Record<string, string> = {
   POTENTIAL_FIT: "rd-ai-pill--potential",
 };
 
-const STATUS_CLASS: Record<string, string> = {
-  BELOW_BAR: "rd-status--below",
-  MEETS_BAR: "rd-status--meets",
-  ABOVE_BAR: "rd-status--above",
+const STATUS_VARIANT: Record<string, "danger" | "success" | "info"> = {
+  BELOW_BAR: "danger",
+  MEETS_BAR: "success",
+  ABOVE_BAR: "info",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -46,26 +47,24 @@ const EVIDENCE_COLOR: Record<string, string> = {
 const RoundDetails = () => {
   const data = MOCK_EVALUATION;
 
+  const headerConfig = {
+    title: data.email,
+    avatarLabel: getInitials(data.candidateName),
+    meta: [
+      { label: data.status, variant: "success" as const },
+      { label: data.jobTitle },
+      { label: data.email },
+      { label: "21 Jul, 15:57 IST (1d ago)" },
+    ],
+    actions: [
+      { key: "resume", label: "Resume", icon: "bx-file" },
+      { key: "share", label: "Share", icon: "bx-share-alt" },
+    ],
+  };
+
   return (
     <div className="rd-root">
-      <PageHeader />
-
-      <header className="rd-topbar">
-        <div className="rd-topbar-left">
-          <div className="rd-avatar">{getInitials(data.candidateName)}</div>
-          <div className="rd-topbar-meta">
-            <span className="rd-topbar-email">{data.email}</span>
-            <span className={`rd-topbar-status rd-topbar-status--${data.status.toLowerCase()}`}>{data.status}</span>
-            <span className="rd-topbar-divider" />
-            <span className="rd-topbar-job">{data.jobTitle}</span>
-            <span className="rd-topbar-date">21 Jul, 15:57 IST (1d ago)</span>
-          </div>
-        </div>
-        <div className="rd-topbar-right">
-          <button className="rd-topbar-btn"><FileText className="rd-btn-icon" /><span>Resume</span></button>
-          <button className="rd-topbar-btn"><Share2 className="rd-btn-icon" /><span>Share</span></button>
-        </div>
-      </header>
+      <PageHeader {...headerConfig} />
 
       <div className="rd-split">
         <div className="rd-left">
@@ -82,9 +81,22 @@ const RoundDetails = () => {
               <p className="rd-hero-criteria">Criteria Met: {data.criteriaMet} of {data.totalCriteria}</p>
             </div>
             <div className="rd-hero-score-col">
-              <div className={`rd-score-ring ${RING_CLASS[data.aiRecommendation]}`}>
-                <span className="rd-score-value">{data.overallScore}</span>
-                <span className="rd-score-denom">/ 5.0</span>
+              <div className={`rd-stamp ${RING_CLASS[data.aiRecommendation]}`}>
+                <svg className="rd-stamp-svg" viewBox="0 0 128 128">
+                  <defs>
+                    <path id="stampArc" d="M 18,64 A 46,46 0 0,1 110,64" />
+                    <path id="stampArcBottom" d="M 22,68 A 42,42 0 0,0 106,68" />
+                  </defs>
+                  <circle className="rd-stamp-ring rd-stamp-ring--outer" cx="64" cy="64" r="59" />
+                  <circle className="rd-stamp-ring rd-stamp-ring--mid" cx="64" cy="64" r="54" />
+                  <circle className="rd-stamp-ring rd-stamp-ring--inner" cx="64" cy="64" r="49" />
+                  <text className="rd-stamp-arc"><textPath href="#stampArc" startOffset="50%" textAnchor="middle">CERTIFIED</textPath></text>
+                  <text className="rd-stamp-arc rd-stamp-arc--bottom"><textPath href="#stampArcBottom" startOffset="50%" textAnchor="middle">EVALUATION</textPath></text>
+                </svg>
+                <span className="rd-stamp-value">{data.overallScore}</span>
+                <span className="rd-stamp-label">SCORE</span>
+                <span className="rd-stamp-denom">/ 5.0</span>
+                <div className="rd-stamp-shine" />
               </div>
               <Info className="rd-score-info" />
             </div>
@@ -124,7 +136,7 @@ const RoundDetails = () => {
                       <div className="rd-sub-header">
                         <span className="rd-sub-title">{sc.title}</span>
                         <div className="rd-sub-status-row">
-                          <span className={`rd-sub-status ${STATUS_CLASS[sc.status]}`}>{STATUS_LABEL[sc.status]}</span>
+                          <Chip variant={STATUS_VARIANT[sc.status]} size="sm">{STATUS_LABEL[sc.status]}</Chip>
                           <Info className="rd-sub-info" />
                         </div>
                       </div>
