@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import "./transcript-panel.css";
 import type { TranscriptPanelProps } from "./transcript-panel.types";
 
@@ -25,7 +26,7 @@ const TranscriptPanel = ({ sections }: TranscriptPanelProps) => {
       {sections.map((sec) => (
         <div key={sec.id} className="tp-section">
           <div className="tp-section-header" onClick={() => toggle(sec.id)}>
-            <i className={`bx bx-chevron-down ${openSections[sec.id] ? "tp-section-header--open" : ""}`} />
+            <ChevronDown className={`tp-chevron ${openSections[sec.id] ? "tp-chevron--open" : ""}`} />
             <span>{sec.title}</span>
           </div>
           {openSections[sec.id] && (

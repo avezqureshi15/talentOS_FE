@@ -3,8 +3,6 @@
   border-radius: 4px;
   background: var(--surface-elevated);
   overflow: hidden;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .tp-header {
@@ -52,17 +50,19 @@
   background: var(--bg-primary);
 }
 
-.tp-section-header i {
-  font-size: 18px;
+.tp-chevron {
+  width: 16px;
+  height: 16px;
   color: var(--text-faint);
   transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
 
-.tp-section-header--open {
+.tp-chevron--open {
   transform: rotate(0deg);
 }
 
-.tp-section-header i:not(.tp-section-header--open) {
+.tp-chevron:not(.tp-chevron--open) {
   transform: rotate(-90deg);
 }
 

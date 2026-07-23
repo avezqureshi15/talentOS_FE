@@ -15,7 +15,7 @@ import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
 import { DEFAULT_FILTER } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import { PAGINATION } from "@/constants/api-endpoints";
-import { springSnap } from "@/utils/motion";
+import { springSnap, fadeSlideUp, staggerContainer } from "@/utils/motion";
 import type { JobDetailProps } from "./detail.types";
 
 const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = {
@@ -106,7 +106,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
         onStageChange={setActiveStage}
       />
 
-      <div className="tab-content">
+      <motion.div className="tab-content" variants={staggerContainer} initial="hidden" animate="visible">
         <ErrorBoundary>
           {viewMode === "card" ? (
             <>
@@ -132,9 +132,9 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 </motion.button>
               </div>
               {appsLoading ? (
-                <LoadingSpinner />
+                <motion.div variants={fadeSlideUp}><LoadingSpinner /></motion.div>
               ) : (
-                <Applicants
+                <motion.div variants={fadeSlideUp}><Applicants
                   data={applicants}
                   openId={openId}
                   setOpenId={setOpenId}
@@ -150,13 +150,13 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                   onRefresh={refresh}
                   jdId={hiringRequest.id}
                   isRemote={isRemote}
-                />
+                /></motion.div>
               )}
             </>
           ) : (
             <>
               {activeStage === "archived" && (
-                <div className="archived-search-bar">
+                <motion.div variants={fadeSlideUp} className="archived-search-bar">
                   <i className="bx bx-search" />
                   <input
                     className="archived-search-input"
@@ -164,14 +164,14 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     value={archivedSearch}
                     onChange={(e) => setArchivedSearch(e.target.value)}
                   />
-                </div>
+                </motion.div>
               )}
               {activeStage !== "evaluated" && (
-                <RecruiterFilter viewMode={viewMode} onViewModeChange={setViewMode} />
+                <motion.div variants={fadeSlideUp}><RecruiterFilter viewMode={viewMode} onViewModeChange={setViewMode} /></motion.div>
               )}
 
               {activeStage === "evaluated" && (
-                <div className="evaluated-sub-filters">
+                <motion.div variants={fadeSlideUp} className="evaluated-sub-filters">
                   {EVALUATED_SUB_FILTERS.map((f) => {
                     const count = f.key === "all"
                       ? MOCK_CANDIDATES.evaluated.length
@@ -179,30 +179,35 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                         ? MOCK_CANDIDATES.evaluated.filter((c) => c.results && c.results.length > 0).length
                         : MOCK_CANDIDATES.evaluated.filter((c) => c.partialProgress).length;
                     return (
-                      <button
+                      <motion.button
                         key={f.key}
                         className={`evaluated-sub-filter-btn ${subFilter === f.key ? "evaluated-sub-filter-btn--active" : ""}`}
                         onClick={() => setSubFilter(f.key)}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
+                        transition={springSnap}
                       >
                         {f.label} ({count})
-                      </button>
+                      </motion.button>
                     );
                   })}
-                </div>
+                </motion.div>
               )}
 
-              <CandidateTable
-                stage={activeStage}
-                data={[]}
-                selectedIds={selectedIds}
-                onSelectionChange={setSelectedIds}
-                subFilter={activeStage === "evaluated" ? subFilter : undefined}
-                onRowClick={(candidate) => handleRowClick(candidate.id)}
-              />
+              <motion.div variants={fadeSlideUp}>
+                <CandidateTable
+                  stage={activeStage}
+                  data={[]}
+                  selectedIds={selectedIds}
+                  onSelectionChange={setSelectedIds}
+                  subFilter={activeStage === "evaluated" ? subFilter : undefined}
+                  onRowClick={(candidate) => handleRowClick(candidate.id)}
+                />
+              </motion.div>
             </>
           )}
         </ErrorBoundary>
-      </div>
+      </motion.div>
     </div>
   );
 };
