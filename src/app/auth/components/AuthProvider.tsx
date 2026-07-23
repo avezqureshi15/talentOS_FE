@@ -66,6 +66,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     restore();
   }, []);
 
+  const storeAuth = useCallback((access: string, refresh: string, u: User) => {
+    localStorage.setItem(ACCESS_TOKEN_KEY, access);
+    localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(u));
+    setUser(u);
+  }, []);
+
   const login = useCallback(async (credential: string) => {
     const { data } = await httpClient.post<{
       access_token: string;
@@ -77,11 +84,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       headers: { Authorization: `Bearer ${data.access_token}` },
     });
 
-    localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
-    localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(meData.user));
-    setUser(meData.user);
-  }, []);
+    storeAuth(data.access_token, data.refresh_token, meData.user);
+  }, [storeAuth]);
+
+  const loginWithEmail = useCallback(async (email: string, password: string) => {
+    const { data } = await httpClient.post<{
+      access_token: string;
+      refresh_token: string;
+      expires_in: number;
+    }>(API_ENDPOINTS.AUTH_LOGIN, { email, password });
+
+    const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME, {
+      headers: { Authorization: `Bearer ${data.access_token}` },
+    });
+
+    storeAuth(data.access_token, data.refresh_token, meData.user);
+  }, [storeAuth]);
+
+  const signup = useCallback(async (email: string, password: string, fullName: string, orgName: string) => {
+    const { data } = await httpClient.post<{
+      access_token: string;
+      refresh_token: string;
+      expires_in: number;
+    }>(API_ENDPOINTS.AUTH_SIGNUP, { email, password, full_name: fullName, org_name: orgName });
+
+    const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME, {
+      headers: { Authorization: `Bearer ${data.access_token}` },
+    });
+
+    storeAuth(data.access_token, data.refresh_token, meData.user);
+  }, [storeAuth]);
 
   const logout = useCallback(async () => {
     const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);
@@ -93,7 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, getAccessToken }}>
+    <AuthContext.Provider value={{ user, isLoading, login, loginWithEmail, signup, logout, getAccessToken }}>
       {children}
     </AuthContext.Provider>
   );

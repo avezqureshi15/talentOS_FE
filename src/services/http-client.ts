@@ -47,6 +47,28 @@ httpClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // ── Handle 403 (role denied) ────────────────────────────────────
+    if (error.response?.status === 403) {
+      useToastStore.getState().addToast(
+        "You don't have permission to perform this action",
+        ToastType.ERROR,
+      );
+      return Promise.reject(error);
+    }
+
+    // ── Handle 423 (locked/disabled) ────────────────────────────────
+    if (error.response?.status === 423) {
+      useToastStore.getState().addToast(
+        error.response?.data?.detail || "Your account has been disabled. Please contact support.",
+        ToastType.ERROR,
+      );
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem("auth_user");
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
     if (error.response?.status !== 401 || originalRequest._retry) {
       if (originalRequest?.toastOnError !== false) {
         const message =

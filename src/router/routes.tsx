@@ -7,6 +7,8 @@ import HiringRequests from "@/app/dashboard/hiring-requests/pages/hiring-request
 import HiringRequestDetails from "@/app/dashboard/hiring-requests-detail/pages/hiring-requests-detail";
 import SlotBooking from "@/app/slot-booking/pages/slot-booking";
 import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
+import UsersPage from "@/app/admin/users/pages/users-page";
+import SettingsPage from "@/app/admin/settings/pages/settings-page";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import { ROUTES } from "@/constants/routes";
 import { ERROR_FALLBACK_LABELS } from "@/constants/error-labels";
@@ -40,6 +42,23 @@ export const router = createBrowserRouter([
       { path: ROUTES.BOOK_SLOT_ID, element: <SlotBooking />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
       { path: ROUTES.RATE_CANDIDATE, element: <RateCandidate />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
       { path: ROUTES.RATE_CANDIDATE_ID, element: <RateCandidate />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+    ],
+  },
+
+  // ── Admin routes (gated to admin+) ──────────────────────────────
+  {
+    errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
+    element: <ProtectedRoute requiredRoles={["admin", "superadmin"]} />,
+    children: [
+      {
+        path: "admin",
+        element: <ProtectedLayout />,
+        children: [
+          { index: true, element: <Navigate to={ROUTES.ADMIN_USERS} replace /> },
+          { path: "users", element: <UsersPage /> },
+          { path: "settings", element: <SettingsPage /> },
+        ],
+      },
     ],
   },
 ]);

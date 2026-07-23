@@ -9,6 +9,7 @@ import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
 import { Sidebar as SidebarShell, SidebarItem, SidebarSection } from "@/components/ui/sidebar";
+import { useRole } from "@/app/auth/hooks/use-auth";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -24,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   isLoadingMore,
   Icon,
 }) => {
+  const { isAdmin } = useRole();
   const [historyOpen, setHistoryOpen] = useState(true);
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -143,6 +145,22 @@ const Sidebar: React.FC<SidebarProps> = ({
           shortcut="Ctrl+Shift+C"
           href="/chat"
         />
+
+        {isAdmin && (
+          <>
+            <div className="sidebar-nav-divider" />
+            <SidebarItem
+              icon={<span className="bx bx-group text-lg" />}
+              label="Users"
+              href="/admin/users"
+            />
+            <SidebarItem
+              icon={<span className="bx bx-cog text-lg" />}
+              label="Settings"
+              href="/admin/settings"
+            />
+          </>
+        )}
       </div>
 
       {/* HISTORY */}
