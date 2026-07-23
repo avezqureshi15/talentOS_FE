@@ -20,6 +20,7 @@ import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
 import { useUiStore } from "@/store/ui.store";
 import { STORAGE_KEYS } from "@/constants/constants";
 import { getUx, patchUx } from "@/utils/storage";
+import "@/app/chat/pages/chat.css";
 
 function getInitialSidebarState(): boolean {
   const ux = getUx(STORAGE_KEYS.UX);

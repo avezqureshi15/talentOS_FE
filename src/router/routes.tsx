@@ -8,6 +8,8 @@ import HiringRequestLayout from "@/app/dashboard/hiring-requests-detail/pages/hi
 import ApplicationsPage from "@/app/dashboard/hiring-requests-detail/pages/applications-page";
 import InterviewDesignPage from "@/app/dashboard/hiring-requests-detail/pages/interview-design-page";
 import ProctoringPage from "@/app/dashboard/hiring-requests-detail/pages/proctoring-page";
+import EmailManagerPage from "@/app/dashboard/hiring-requests-detail/pages/email-manager-page";
+import TeamMembersPage from "@/app/dashboard/hiring-requests-detail/pages/team-members-page";
 import RoundDetails from "@/app/dashboard/round-details/pages/round-details";
 import SlotBooking from "@/app/slot-booking/pages/slot-booking";
 import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
@@ -47,6 +49,8 @@ export const router = createBrowserRouter([
               { path: "applications", element: <ApplicationsPage /> },
               { path: "interview-design", element: <InterviewDesignPage /> },
               { path: "proctoring", element: <ProctoringPage /> },
+              { path: "email-manager", element: <EmailManagerPage /> },
+              { path: "team-members", element: <TeamMembersPage /> },
             ],
           },
         ],

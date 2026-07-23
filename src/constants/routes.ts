@@ -7,6 +7,8 @@ export const ROUTES = {
   HIRING_APPLICATIONS: "/hiring-requests/:id/applications",
   HIRING_INTERVIEW_DESIGN: "/hiring-requests/:id/interview-design",
   HIRING_PROCTORING: "/hiring-requests/:id/proctoring",
+  HIRING_EMAIL_MANAGER: "/hiring-requests/:id/email-manager",
+  HIRING_TEAM_MEMBERS: "/hiring-requests/:id/team-members",
   BOOK_SLOT: "/book-slot",
   BOOK_SLOT_ID: "/book-slot/:formId",
   RATE_CANDIDATE: "/rate-candidate",
@@ -14,4 +16,4 @@ export const ROUTES = {
   ROUND_DETAILS: "/hiring-requests/:id/round-details/:candidateId",
 } as const;
 
-export const HIRING_TABS = ["applications", "interview-design", "proctoring"] as const;
+export const HIRING_TABS = ["applications", "interview-design", "proctoring", "email-manager", "team-members"] as const;

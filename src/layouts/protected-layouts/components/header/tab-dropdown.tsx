@@ -7,6 +7,8 @@ const TAB_LABELS: Record<string, string> = {
   applications: "Applications",
   "interview-design": "Interview Design",
   proctoring: "Proctoring",
+  "email-manager": "Email Manager",
+  "team-members": "Team Members",
 };
 
 const TabDropdown = ({ totalCount }: TabDropdownProps) => {

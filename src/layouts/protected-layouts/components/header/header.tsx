@@ -135,16 +135,32 @@ const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
   );
 };
 
+/* ─── HIRING ROUTE CHECK ─── */
+
+function isHiringTabRoute(pathname: string): boolean {
+  return HIRING_TABS.some((t) => pathname.endsWith(`/${t}`));
+}
+
+function isHiringDetailRoute(pathname: string): boolean {
+  return /^\/hiring-requests\/\d+/.test(pathname);
+}
+
 /* ───────── HEADER ───────── */
 
 const Header: React.FC<HeaderProps> = ({ Icon }) => {
   const config = useHeaderStore((s) => s.config);
   const hasConfig = !!config.title;
   const hasMeta = hasConfig && !!config.meta;
+  const location = useLocation();
+
+  const onHiringTab = isHiringTabRoute(location.pathname);
+  const onHiringDetail = isHiringDetailRoute(location.pathname);
 
   return (
     <header className={`header${hasMeta ? " header--has-meta" : ""}`}>
-      {hasConfig ? (
+      {onHiringTab ? (
+        <JobsToolbar Icon={Icon} />
+      ) : onHiringDetail && hasConfig ? (
         <JobsToolbar Icon={Icon} />
       ) : (
         <>
