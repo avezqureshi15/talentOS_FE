@@ -464,12 +464,12 @@
 }
 
 .id-objective {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.4;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.6;
   max-width: 800px;
-  margin: 12px 0 0;
+  margin: 8px 0 0;
 }
 
 .id-tabs {

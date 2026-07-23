@@ -7,8 +7,10 @@ import Alerts from "@/app/dashboard/hiring-requests/components/alerts/alerts";
 import Interviews from "@/app/dashboard/hiring-requests/components/interviews/interviews";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import { useHiringRequests } from "@/app/dashboard/hiring-requests/hooks/use-hiring-requests";
 import type { HiringRequestsFilters } from "@/services/hiring-requests/hiring-requests.types";
+import type { HeaderConfig } from "@/store/header.store";
 import { QUERY_KEYS, HR_TABS, ALERTS_TABS, ALERTS_CHIP_LABEL, ALERTS_DESCRIPTION } from "@/constants/constants";
 import { spring, springSoft, fadeSlideUp, tabSlide, slideInLeft } from "@/utils/motion";
 import "./hiring-requests.css";
@@ -47,6 +49,20 @@ const HiringRequests = () => {
     setFilters((prev) => ({ ...prev, ...patch, page: 1 }));
   }, []);
 
+  const handleSearchChange = useCallback((value: string) => {
+    handleFilterChange({ q: value || undefined });
+  }, [handleFilterChange]);
+
+  const headerConfig: HeaderConfig = {
+    title: "Hiring Requests",
+    search: {
+      placeholder: "Search hiring requests...",
+      shortcut: "Ctrl+K",
+      value: filters.q || "",
+      onChange: handleSearchChange,
+    },
+  };
+
   const handlePageChange = useCallback((page: number) => {
     setFilters((prev) => ({ ...prev, page }));
   }, []);
@@ -56,7 +72,9 @@ const HiringRequests = () => {
   }, []);
 
   return (
-    <ErrorBoundary>
+    <>
+      <PageHeader {...headerConfig} />
+      <ErrorBoundary>
       <motion.div
         className="hiring-requests-page"
         variants={fadeSlideUp}
@@ -157,6 +175,7 @@ const HiringRequests = () => {
 
       </motion.div>
     </ErrorBoundary>
+    </>
   );
 };
 

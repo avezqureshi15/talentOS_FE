@@ -48,6 +48,9 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
           )
         )}
 
+      </div>
+
+      <div className="jobs-toolbar-right">
         {search && (
           <div className="jobs-search">
             <Icon.Search />
@@ -62,9 +65,6 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
             )}
           </div>
         )}
-      </div>
-
-      <div className="jobs-toolbar-right">
         {viewSwitcher && (
           <div className="jobs-view-switcher">
             {viewSwitcher.options.map((opt) => (
@@ -145,6 +145,10 @@ function isHiringDetailRoute(pathname: string): boolean {
   return /^\/hiring-requests\/\d+/.test(pathname);
 }
 
+function isHiringListRoute(pathname: string): boolean {
+  return pathname === "/hiring-requests" || pathname.startsWith("/hiring-requests?") || pathname === "/hiring-requests/";
+}
+
 /* ───────── HEADER ───────── */
 
 const Header: React.FC<HeaderProps> = ({ Icon }) => {
@@ -155,12 +159,11 @@ const Header: React.FC<HeaderProps> = ({ Icon }) => {
 
   const onHiringTab = isHiringTabRoute(location.pathname);
   const onHiringDetail = isHiringDetailRoute(location.pathname);
+  const onHiringList = isHiringListRoute(location.pathname);
 
   return (
     <header className={`header${hasMeta ? " header--has-meta" : ""}`}>
-      {onHiringTab ? (
-        <JobsToolbar Icon={Icon} />
-      ) : onHiringDetail && hasConfig ? (
+      {onHiringTab || onHiringList || (onHiringDetail && hasConfig) ? (
         <JobsToolbar Icon={Icon} />
       ) : (
         <>
