@@ -30,6 +30,7 @@ export const useChatStream = () => {
       let toolArgsAccumulator = "";
       let extractedRequest: string | null = null;
       let responseContent = "";
+      let responseUI: string | undefined;
 
       setProcessing(true);
       setError(null);
@@ -52,7 +53,7 @@ export const useChatStream = () => {
           { type: "thinking", text: extractedRequest || INITIAL_THINKING },
         ];
         if (responseContent) {
-          blocks.push({ type: "markdown", content: responseContent });
+          blocks.push({ type: "markdown", content: responseContent, ui: responseUI });
         }
         return blocks;
       };
@@ -84,6 +85,7 @@ export const useChatStream = () => {
 
           onFinal: (block) => {
             responseContent += block.content;
+            if (block.ui) responseUI = block.ui;
             updateMessage(aiMessageId, (m) => ({
               ...m,
               content: buildContent(),
