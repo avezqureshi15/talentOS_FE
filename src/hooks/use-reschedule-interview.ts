@@ -10,6 +10,7 @@ export const useRescheduleInterview = () => {
       rescheduleInterview(interviewId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INTERVIEWS] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.APPLICATIONS] });
     },
   });
 };

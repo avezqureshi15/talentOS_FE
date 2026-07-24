@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { Icon } from "@/components/ui/icons";
 import Button from "@/components/ui/button/button";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import RatingPanel from "@/app/rate-candidate/components/rating-panel/rating-panel";
 import SkillChips from "@/app/rate-candidate/components/skill-chips/skill-chips";
 import VerdictButtons from "@/app/rate-candidate/components/verdict-buttons/verdict-buttons";
+import RateHeader from "@/app/rate-candidate/components/rate-header/rate-header";
 import type { VerdictValue } from "@/app/rate-candidate/components/verdict-buttons/verdict-buttons.types";
 import { RATE_LABELS } from "./rate-candidate.constants";
 import {
@@ -19,7 +19,6 @@ import {
   phasesKey,
 } from "@/app/rate-candidate/components/rating-panel/rating-panel.helpers";
 import { SKILL_CHIPS } from "@/app/rate-candidate/components/skill-chips/skill-chips.constants";
-import { CONTEXT_SECTIONS } from "./rate-candidate.constants";
 import { useRateCandidate } from "../hooks/use-rate-candidate";
 import type { AnswerMap } from "@/app/rate-candidate/services/rate-candidate.types";
 import "./rate-candidate.css";
@@ -139,75 +138,28 @@ const RateCandidate = () => {
     );
   }
 
-  const dynamicSections = roundDetail
-    ? [
-        { type: "brand" as const },
-        { type: "divider" as const },
-        { type: "badge" as const, text: roundDetail.round ?? "Interview" },
-        { type: "title" as const, text: roundDetail.candidate ?? "Candidate" },
-        {
-          type: "meta" as const,
-          items: [
-            ...(roundDetail.role ? [{ icon: "bx bx-briefcase" as const, text: roundDetail.role }] : []),
-            ...(roundDetail.occurred_on ? [{ icon: "bx bx-calendar" as const, text: `Interviewed: ${roundDetail.occurred_on}` }] : []),
-            ...(roundDetail.interviewer ? [{ icon: "bx bx-user" as const, text: `Interviewer: ${roundDetail.interviewer}` }] : []),
-          ],
-        },
-        { type: "divider" as const },
-        {
-          type: "note" as const,
-          icon: "bx bx-info-circle" as const,
-          heading: "Guidelines",
-          text: "Rate each criterion honestly. Your feedback helps the team make an informed hiring decision. All responses are confidential.",
-        },
-      ]
-    : CONTEXT_SECTIONS;
-
   const canSubmit =
     allQuestionsScored(resolvedQuestions.phases, answers) &&
     verdict !== null &&
     !isSubmitting;
 
+  const headerMeta = {
+    round: roundDetail?.round,
+    candidate: roundDetail?.candidate,
+    role: roundDetail?.role,
+    interviewedOn: roundDetail?.occurred_on,
+    interviewer: roundDetail?.interviewer,
+  };
+
   return (
     <div className="rate-page">
       <div className="rate-layout">
-        <aside className="rate-context">
-          <div className="context-body">
-            {dynamicSections.map((section, i) => {
-              switch (section.type) {
-                case "brand":
-                  return <div key={i} className="context-brand"><Icon.Logo /></div>;
-                case "divider":
-                  return <div key={i} className="context-divider" />;
-                case "badge":
-                  return <span key={i} className="context-badge">{section.text}</span>;
-                case "title":
-                  return <h2 key={i} className="context-role">{section.text}</h2>;
-                case "meta":
-                  return (
-                    <div key={i} className="context-meta">
-                      {section.items.map((item, j) => (
-                        <div key={j} className="context-meta-item">
-                          <i className={item.icon} />
-                          <span>{item.text}</span>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                case "note":
-                  return (
-                    <div key={i} className="context-note">
-                      <div className="context-note-heading">
-                        <i className={section.icon} />
-                        <span>{section.heading}</span>
-                      </div>
-                      <p>{section.text}</p>
-                    </div>
-                  );
-              }
-            })}
-          </div>
-        </aside>
+        <RateHeader
+          meta={headerMeta}
+          title={RATE_LABELS.TITLE}
+          subtitle={RATE_LABELS.SUBTITLE}
+          guidelines={RATE_LABELS.GUIDELINES}
+        />
 
         <main className="rate-action">
           {roundLoading && <LoadingSpinner />}
@@ -215,11 +167,6 @@ const RateCandidate = () => {
           {!roundLoading && (
             <>
               <div className="rate-scroll">
-                <div className="action-header">
-                  <h1 className="action-title">{RATE_LABELS.TITLE}</h1>
-                  <span className="action-subtitle">{RATE_LABELS.SUBTITLE}</span>
-                </div>
-
                 <div className="rate-main">
                   <RatingPanel
                     phases={resolvedQuestions.phases}

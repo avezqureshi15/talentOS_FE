@@ -10,6 +10,7 @@ export const SR_LABELS = {
   STEP_1_DESC: "Select a time slot from the interviewer's availability.",
   INTERVIEWER_PLACEHOLDER: "Search interviewer...",
   NO_INTERVIEWER: "Select interviewers to see their availability.",
+  NO_SEARCH_RESULTS: "No interviewers found.",
   NO_SLOTS: "No available slots.",
   SEARCH_LOADING: "Loading...",
   SELECT_SLOT: "Select a time slot",

@@ -70,12 +70,11 @@
 /* TIMELINE WRAPPER */
 .timeline-container {
   position: relative;
-  padding: 20px;
+  padding: 12px 16px 32px;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
-  padding-bottom: 40px;
 }
 
 /* track wraps just the nodes so the line only spans their height */
@@ -85,22 +84,27 @@
 
 .timeline-line {
   position: absolute;
-  left: 4px;
-  top: 0;
-  bottom: 0;
+  left: 4.5px;
+  top: 10px;
+  bottom: 10px;
   width: 1px;
   background: var(--border-default);
+  z-index: 1;
 }
 
 /* NODE */
 .timeline-node {
   display: flex;
-  gap: 12px;
-  margin-bottom: -1.5rem;
+  gap: 10px;
+  margin-bottom: 2px;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: node-enter 0.35s ease forwards;
+  animation-delay: calc(var(--idx, 0) * 0.04s);
 }
 
 .timeline-node--open {
-  margin-bottom: 10px;
+  margin-bottom: 2px;
 }
 
 /* DOT */
@@ -111,11 +115,21 @@
   margin-top: 10px;
   z-index: 2;
   flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 0 0 2px var(--sheet-bg);
 }
 
-.dot.done { background: var(--success); }
-.dot.active { background: var(--accent-blue); }
-.dot.pending { background: var(--text-faint); }
+.dot.success {
+  background: var(--success);
+}
+
+.dot.queued {
+  background: var(--accent-blue);
+}
+
+.dot.waiting {
+  background: var(--warning);
+}
 
 /* CONTENT */
 .node-content {
@@ -128,13 +142,25 @@
   justify-content: space-between;
   cursor: pointer;
 
-  padding: 10px;
-  border-radius: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
 
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
 
   transition: 0.2s;
+}
+
+.timeline-node--open .node-header {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.timeline-node--open .node-body {
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .node-header:hover {
@@ -152,10 +178,16 @@
   margin-top: 2px;
 }
 
+.node-time {
+  font-size: 10px;
+  color: var(--text-faint, var(--text-muted));
+  margin-top: 4px;
+}
+
 /* BODY */
 .node-body {
-  margin-top: var(--space-3);
-  padding: var(--space-3) var(--space-5) var(--space-5);
+  margin-top: 4px;
+  padding: 8px 12px;
 
   border-radius: var(--radius-md);
   background: var(--surface-elevated);
@@ -163,7 +195,7 @@
 
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 6px;
 }
 
 /* META ROWS */
@@ -184,6 +216,17 @@
 .meta-value {
   color: var(--text-primary);
   text-align: right;
+}
+
+.meta-value--link {
+  color: var(--accent-blue, #60a5fa);
+  text-decoration: none;
+  word-break: break-all;
+  max-width: 58%;
+}
+
+.meta-value--link:hover {
+  text-decoration: underline;
 }
 
 /* STATUS BADGE */
@@ -274,13 +317,6 @@
 }
 
 /* STAGGERED NODE ENTRY */
-.timeline-node {
-  opacity: 0;
-  transform: translateY(12px);
-  animation: node-enter 0.35s ease forwards;
-  animation-delay: calc(var(--idx, 0) * 0.06s);
-}
-
 @keyframes node-enter {
   to {
     opacity: 1;
@@ -310,20 +346,6 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
-
-.dot.success {
-  background: var(--success);
-}
-
-/* QUEUED = blue */
-.dot.queued {
-  background: var(--accent-blue);
-}
-
-/* WAITING = yellow */
-.dot.waiting {
-  background: var(--warning);
 }
 
 .timeline-sheet {

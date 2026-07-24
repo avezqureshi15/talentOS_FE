@@ -12,6 +12,7 @@ const RatingPanel = ({
 }: RatingPanelProps) => {
   const avg = averageScore(answers);
   const avgLabel = avg > 0 ? avg.toFixed(1) : "—";
+  const singlePhase = phases.length <= 1;
 
   return (
     <div className="rating-panel">
@@ -20,7 +21,9 @@ const RatingPanel = ({
         <span className="rating-panel-avg">Avg: {avgLabel}/5</span>
       </div>
 
-      <div className="rating-phases">
+      <div
+        className={`rating-phases${singlePhase ? " rating-phases--single" : " rating-phases--split"}`}
+      >
         {phases.map((phase, pi) => (
           <div key={`${pi}-${phase.phase}`} className="rating-phase">
             <h4 className="rating-phase-title">{phase.phase}</h4>

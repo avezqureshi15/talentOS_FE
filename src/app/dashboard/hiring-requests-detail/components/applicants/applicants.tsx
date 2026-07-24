@@ -3,14 +3,12 @@ import ApplicantCard from "./applicant-card";
 import ApplicantFilters from "./applicant-filters";
 import ApplicantActionModals from "./applicant-action-modals";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
-import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
-import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
-import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
 import { fetchMockApplicants } from "@/services/mock/mock-applicants";
 import { useApplicantActions } from "./hooks/use-applicant-actions";
+import { resolveDisplayStatus } from "./applicant-status.helpers";
 import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps } from "./applicants.types";
 
 type LocalOverride = {
@@ -23,9 +21,6 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<number | null>(null);
-  const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
-  const [aiSummaryId, setAiSummaryId] = useState<string | null>(null);
-  const [detailsId, setDetailsId] = useState<string | null>(null);
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
   const [finalCandidateId, setFinalCandidateId] = useState<string | null>(null);
   const [finalDecision, setFinalDecision] = useState<"selected" | "rejected" | null>(null);
@@ -34,9 +29,10 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
   const [rejectRemarks, setRejectRemarks] = useState("");
   const [rejectStep, setRejectStep] = useState<1 | 2>(1);
   const [scheduleCandidateId, setScheduleCandidateId] = useState<string | null>(null);
+  const [rescheduleTarget, setRescheduleTarget] = useState<Applicant | null>(null);
   const [shortlistCandidateId, setShortlistCandidateId] = useState<string | null>(null);
-  const [shortlistStep, setShortlistStep] = useState<1 | 2>(1);
   const [shortlistRemarks, setShortlistRemarks] = useState("");
+  const [shortlistAction, setShortlistAction] = useState<"move" | "final" | null>(null);
   const [finalConfirmId, setFinalConfirmId] = useState<string | null>(null);
   const [mockData, setMockData] = useState<Applicant[] | null>(null);
   // UI state for async action loading indicators
@@ -104,40 +100,52 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     }
   };
 
-  const handleShortlistOk = async () => {
-    setIsShortlisting(true);
+  const submitHrShortlist = async (applicantId: string): Promise<boolean> => {
+    const applicant = data.find((a) => a.id === applicantId);
+    if (!applicant?.currentRoundId) return false;
     try {
-      const applicant = data.find((a) => a.id === shortlistCandidateId);
-      if (!applicant?.currentRoundId) { setShortlistStep(2); setIsShortlisting(false); return; }
-      try {
-        await updateReviewByRound(applicant.currentRoundId, {
-          entity_type: "hr",
-          reviews: { remarks: shortlistRemarks },
-          verdict: "shortlisted",
-        });
-      } catch {
-        // API failure shouldn't block the UI flow
-      }
-      if (shortlistCandidateId) {
-        overrideStatus(shortlistCandidateId, "shortlisted");
-      }
-      setShortlistStep(2);
+      await updateReviewByRound(applicant.currentRoundId, {
+        entity_type: "hr",
+        reviews: { remarks: shortlistRemarks },
+        verdict: "shortlisted",
+      });
+    } catch {
+      // API failure shouldn't block the UI flow
+    }
+    return true;
+  };
+
+  const handleShortlistMove = async () => {
+    if (!shortlistCandidateId) return;
+    setIsShortlisting(true);
+    setShortlistAction("move");
+    try {
+      await submitHrShortlist(shortlistCandidateId);
+      overrideStatus(shortlistCandidateId, "move_to_next_round");
+      setOpenId(shortlistCandidateId);
+      setShortlistCandidateId(null);
+      setShortlistRemarks("");
+      onRefresh?.();
     } finally {
       setIsShortlisting(false);
+      setShortlistAction(null);
     }
   };
 
-  const handleMoveToNextRound = () => {
-    if (shortlistCandidateId) {
-      setScreeningId(shortlistCandidateId);
-      setOpenId(shortlistCandidateId);
+  const handleShortlistFinal = async () => {
+    if (!shortlistCandidateId) return;
+    setIsShortlisting(true);
+    setShortlistAction("final");
+    try {
+      await submitHrShortlist(shortlistCandidateId);
+      const id = shortlistCandidateId;
+      setFinalConfirmId(id);
+      setShortlistCandidateId(null);
+      setShortlistRemarks("");
+    } finally {
+      setIsShortlisting(false);
+      setShortlistAction(null);
     }
-    setShortlistCandidateId(null);
-  };
-
-  const handleOpenFinalSelectionWarning = () => {
-    setFinalConfirmId(shortlistCandidateId);
-    setShortlistCandidateId(null);
   };
 
   const handleConfirmFinalHire = async () => {
@@ -204,11 +212,16 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     setFinalDecision(null);
   };
 
-  const closeShortlist = () => setShortlistCandidateId(null);
+  const closeShortlist = () => {
+    if (isShortlisting) return;
+    setShortlistCandidateId(null);
+    setShortlistRemarks("");
+    setShortlistAction(null);
+  };
 
   const getLocalApplicant = (a: Applicant): Applicant => ({
     ...a,
-    status: localOverrides[a.id]?.status ?? a.status,
+    status: resolveDisplayStatus(a.status, localOverrides[a.id]?.status) ?? a.status,
     finalVerdict: localOverrides[a.id]?.finalVerdict ?? a.finalVerdict,
   });
 
@@ -216,9 +229,8 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     handleAction,
     handleMenuAction,
   } = useApplicantActions({
-    onShortlist: (id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); },
+    onShortlist: (id) => { setShortlistCandidateId(id); setShortlistRemarks(""); setShortlistAction(null); },
     onRejectFromEvaluation: confirmRejectFromEvaluation,
-    onMoveToNextRound: (id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); },
     onScheduleInterview: (id) => { setScheduleCandidateId(id); },
     onMenuSelect: (id) => { setFinalCandidateId(id); setFinalDecision("selected"); },
     onMenuReject: (id) => { setFinalCandidateId(id); setFinalDecision("rejected"); },
@@ -245,11 +257,9 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
               onAction={handleAction}
               onMenuAction={handleMenuAction}
               onTabChange={setAccordionTab}
-              onCoverLetterReadMore={setCoverLetterId}
-              onAiSummaryReadMore={setAiSummaryId}
-              onDetailsReadMore={setDetailsId}
               onTimeline={setTimelineId}
               onViewRound={setSelectedRound}
+              onReschedule={setRescheduleTarget}
               isRemote={isRemote}
             />
           </div>
@@ -258,7 +268,6 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
       {hasMore && <div ref={sentinelRef} className="scroll-sentinel" />}
 
       <ApplicantActionModals
-        data={data}
         finalCandidateId={finalCandidateId}
         finalDecision={finalDecision}
         onCloseFinalDecision={closeFinalDecision}
@@ -271,12 +280,10 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
         onCloseReject={() => { setRejectConfirmId(null); setRejectRemarks(""); setRejectStep(1); }}
         onConfirmReject={confirmReject}
         shortlistCandidateId={shortlistCandidateId}
-        shortlistStep={shortlistStep}
         shortlistRemarks={shortlistRemarks}
         onShortlistRemarksChange={setShortlistRemarks}
-        onShortlistOk={handleShortlistOk}
-        onMoveToNextRound={handleMoveToNextRound}
-        onOpenFinalSelectionWarning={handleOpenFinalSelectionWarning}
+        onShortlistMove={handleShortlistMove}
+        onShortlistFinal={handleShortlistFinal}
         onCloseShortlist={closeShortlist}
         finalConfirmId={finalConfirmId}
         onConfirmHire={handleConfirmFinalHire}
@@ -284,26 +291,40 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
         isConfirmingFinalDecision={isConfirmingFinalDecision}
         isConfirmingReject={isConfirmingReject}
         isShortlisting={isShortlisting}
+        shortlistAction={shortlistAction}
         isConfirmingHire={isConfirmingHire}
       />
 
       <ScheduleRoundModal open={!!scheduleCandidateId} candidateName={data.find((a) => a.id === scheduleCandidateId)?.name ?? ""} candidateId={scheduleCandidateId ?? ""} candidateNumberId={data.find((a) => a.id === scheduleCandidateId)?.candidateId ?? 0} jdId={jdId} onClose={() => setScheduleCandidateId(null)} onScheduled={(id) => { overrideStatus(id, "scheduled"); setScreeningId(null); onRefresh?.(); }} />
 
+      {rescheduleTarget?.activeInterview && (
+        <ScheduleRoundModal
+          open
+          rescheduleMode
+          interviewId={rescheduleTarget.activeInterview.id}
+          interviewerEmpId={
+            rescheduleTarget.activeInterview.interviewerUserId != null
+              ? String(rescheduleTarget.activeInterview.interviewerUserId)
+              : undefined
+          }
+          interviewerName={rescheduleTarget.activeInterview.interviewerName ?? undefined}
+          roundName={rescheduleTarget.activeInterview.roundName ?? undefined}
+          candidateName={rescheduleTarget.name}
+          candidateId={rescheduleTarget.id}
+          candidateNumberId={rescheduleTarget.candidateId}
+          jdId={jdId}
+          onClose={() => setRescheduleTarget(null)}
+          onScheduled={() => {
+            overrideStatus(rescheduleTarget.id, "interview_rescheduled");
+            setRescheduleTarget(null);
+            onRefresh?.();
+          }}
+        />
+      )}
+
       <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 
-      {data.map((a) => (<CoverLetterModal key={`cl-${a.id}`} open={coverLetterId === a.id} applicantName={a.name} coverLetter={a.coverLetter ?? ""} onClose={() => setCoverLetterId(null)} />))}
-      {data.map((a) => (<AiSummaryModal key={`ai-${a.id}`} open={aiSummaryId === a.id} applicantName={a.name} aiSummary={a.aiSummary ?? ""} onClose={() => setAiSummaryId(null)} />))}
-
       <RoundsSidePanel open={!!selectedRound} roundId={selectedRound} onClose={() => setSelectedRound(null)} />
-
-      {data.map((a) => (<ApplicantDetailsModal
-          key={`det-${a.id}`}
-          open={detailsId === a.id}
-          applicantName={a.name}
-          details={{ currentCtc: a.currentCtc, expectedCtc: a.expectedCtc, location: a.location, yearsOfExperience: a.yearsOfExperience, noticePeriod: a.noticePeriod, howDidYouHear: a.howDidYouHear, willingToRelocate: a.willingToRelocate === true ? "Yes" : a.willingToRelocate === false ? "No" : undefined }}
-          onClose={() => setDetailsId(null)}
-          isRemote={isRemote}
-        />))}
     </div>
     </>
   );

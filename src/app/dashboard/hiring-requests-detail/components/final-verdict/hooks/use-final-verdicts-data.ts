@@ -82,6 +82,8 @@ function mapFinalVerdictCandidate(app: {
   willing_to_relocate?: boolean;
   current_round_id?: string;
   final_verdict?: string;
+  reviews?: Record<string, unknown> | null;
+  review_verdict?: string | null;
 }): Applicant {
   return {
     id: app.id,
@@ -110,5 +112,7 @@ function mapFinalVerdictCandidate(app: {
     willingToRelocate: app.willing_to_relocate ?? undefined,
     currentRoundId: app.current_round_id ?? undefined,
     finalVerdict: app.final_verdict ?? undefined,
+    reviews: app.reviews ?? undefined,
+    reviewVerdict: app.review_verdict ?? undefined,
   };
 }

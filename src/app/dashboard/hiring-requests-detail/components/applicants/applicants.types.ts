@@ -1,6 +1,27 @@
-export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_rescheduled" | "interview_cancelled";
+import type { ActiveInterview } from "./interview-phase.helpers";
+
+export type { ActiveInterview } from "./interview-phase.helpers";
+
+export type ApplicantStatus =
+  | "new"
+  | "queued"
+  | "processing"
+  | "under_evaluation"
+  | "shortlisted"
+  | "move_to_next_round"
+  | "waiting_for_review"
+  | "rejected"
+  | "scheduled"
+  | "interview_scheduled"
+  | "interview_rescheduled"
+  | "interview_cancelled"
+  | "invalid"
+  | "failed"
+  | "moved_out_of_hiring_pipeline";
 
 export type HiringState =
+  | "queued"
+  | "processing"
   | "waiting_for_review"
   | "under_evaluation"
   | "shortlisted"
@@ -9,7 +30,9 @@ export type HiringState =
   | "interview_rescheduled"
   | "interview_cancelled"
   | "rejected"
-  | "selected";
+  | "selected"
+  | "invalid"
+  | "failed";
 
 export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move";
 
@@ -29,19 +52,16 @@ export type MenuAction = "select" | "reject";
 
 export type StateConfig = {
   state: HiringState;
-  chip?: ChipConfig;
+  chip: ChipConfig;
   showInfoChips: boolean;
+  showAtsScore: boolean;
   actions: ActionConfig[];
   menuActions: MenuAction[];
   showExpandedContent: boolean;
   footerBadge?: {
     text: string;
     className: string;
-  isConfirmingFinalDecision?: boolean;
-  isConfirmingReject?: boolean;
-  isShortlisting?: boolean;
-  isConfirmingHire?: boolean;
-};
+  };
 };
 
 export type ApplicantCardProps = {
@@ -54,11 +74,9 @@ export type ApplicantCardProps = {
   onAction?: (handlerKey: string, id: string) => void;
   onMenuAction?: (action: MenuAction, id: string) => void;
   onTabChange: (tab: AccordionTab) => void;
-  onCoverLetterReadMore: (id: string) => void;
-  onAiSummaryReadMore: (id: string) => void;
-  onDetailsReadMore: (id: string) => void;
   onTimeline: (id: number) => void;
   onViewRound?: (roundId: string) => void;
+  onReschedule?: (applicant: Applicant) => void;
   isRemote?: boolean;
 };
 
@@ -93,6 +111,7 @@ export type Applicant = {
   finalVerdict?: string;
   reviews?: Record<string, unknown>;
   reviewVerdict?: string;
+  activeInterview?: ActiveInterview;
 };
 
 export type ApplicantsProps = {
@@ -125,7 +144,6 @@ export type ApplicantFiltersProps = {
 };
 
 export type ApplicantActionModalsProps = {
-  data: Applicant[];
   finalCandidateId: string | null;
   finalDecision: "selected" | "rejected" | null;
   onCloseFinalDecision: () => void;
@@ -138,12 +156,10 @@ export type ApplicantActionModalsProps = {
   onCloseReject: () => void;
   onConfirmReject: () => void;
   shortlistCandidateId: string | null;
-  shortlistStep: 1 | 2;
   shortlistRemarks: string;
   onShortlistRemarksChange: (value: string) => void;
-  onShortlistOk: () => void;
-  onMoveToNextRound: () => void;
-  onOpenFinalSelectionWarning: () => void;
+  onShortlistMove: () => void;
+  onShortlistFinal: () => void;
   onCloseShortlist: () => void;
   finalConfirmId: string | null;
   onConfirmHire: () => void;
@@ -151,6 +167,7 @@ export type ApplicantActionModalsProps = {
   isConfirmingFinalDecision?: boolean;
   isConfirmingReject?: boolean;
   isShortlisting?: boolean;
+  shortlistAction?: "move" | "final" | null;
   isConfirmingHire?: boolean;
 };
 
@@ -160,9 +177,6 @@ export type CardExpandedContentProps = {
   accordionTab: AccordionTab;
   onTabChange: (tab: AccordionTab) => void;
   onTimeline: (id: number) => void;
-  onDetailsReadMore: (id: string) => void;
-  onCoverLetterReadMore: (id: string) => void;
-  onAiSummaryReadMore: (id: string) => void;
   onViewRound?: (roundId: string) => void;
   isRemote?: boolean;
 };
