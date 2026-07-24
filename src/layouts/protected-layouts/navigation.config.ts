@@ -7,6 +7,7 @@ export type NavItemConfig = {
   icon: string;
   shortcut?: string;
   minimumRole: Role;
+  roles?: Role[];
 };
 
 export const MAIN_NAV_ITEMS: NavItemConfig[] = [
@@ -16,6 +17,7 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
     icon: "bx bx-home",
     shortcut: "Ctrl+Shift+H",
     minimumRole: "viewer",
+    roles: ["admin", "hr", "viewer"],
   },
   {
     label: "Interviews",
@@ -23,6 +25,7 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
     icon: "bx bx-calendar-check",
     shortcut: "Ctrl+Shift+I",
     minimumRole: "viewer",
+    roles: ["admin", "hr", "viewer"],
   },
   {
     label: "Alerts",
@@ -30,6 +33,7 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
     icon: "bx bx-bell",
     shortcut: "Ctrl+Shift+A",
     minimumRole: "viewer",
+    roles: ["admin", "hr", "viewer"],
   },
   {
     label: SIDEBAR_LABELS.NEW_CHAT,
@@ -37,6 +41,7 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
     icon: "bx bx-message-square-add",
     shortcut: "Ctrl+Shift+C",
     minimumRole: "viewer",
+    roles: ["admin", "hr", "viewer"],
   },
 ];
 
@@ -46,12 +51,14 @@ export const ADMIN_NAV_ITEMS: NavItemConfig[] = [
     href: "/admin/users",
     icon: "bx bx-group",
     minimumRole: "admin",
+    roles: ["admin"],
   },
   {
     label: "Settings",
     href: "/admin/settings",
     icon: "bx bx-cog",
     minimumRole: "admin",
+    roles: ["admin"],
   },
 ];
 
@@ -61,5 +68,6 @@ export const SUPERADMIN_NAV_ITEMS: NavItemConfig[] = [
     href: "/superadmin/tenants",
     icon: "bx bx-building",
     minimumRole: "superadmin",
+    roles: ["superadmin"],
   },
 ];

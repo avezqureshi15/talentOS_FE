@@ -15,4 +15,5 @@ export type DataTableProps<T> = {
   loading?: boolean;
   emptyMessage?: string;
   gridTemplateColumns: string;
+  onRowClick?: (row: T) => void;
 };

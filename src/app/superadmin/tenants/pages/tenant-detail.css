@@ -1,0 +1,547 @@
+/* ═══════════════════════════════════════════════
+   Tenant Detail — Linear / Vercel Dark Aesthetic
+   All tokens from index.css :root
+   ═══════════════════════════════════════════════ */
+
+/* ── Page Shell ── */
+.td-page {
+  padding: 32px 48px;
+  width: 100%;
+}
+
+/* ── Back Navigation ── */
+.td-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 24px;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.td-back:hover {
+  color: var(--text-white);
+}
+
+/* ── Page Header ── */
+.td-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
+.td-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.td-tenant-name {
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--text-white);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.td-tenant-slug {
+  font-size: 14px;
+  color: var(--text-faint);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ── Status Badges ── */
+.td-badges {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.td-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.td-badge--active {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success-border);
+}
+
+.td-badge--inactive {
+  background: var(--danger-bg);
+  color: var(--danger-light);
+  border: 1px solid var(--danger-border);
+}
+
+.td-badge--pending {
+  background: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.td-badge--approved {
+  background: var(--surface-glass);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}
+
+.td-badge--rejected {
+  background: var(--danger-bg);
+  color: var(--danger-light);
+  border: 1px solid var(--danger-border);
+}
+
+.td-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* ── Stats Row ── */
+.td-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.td-stat-card {
+  padding: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.td-stat-label {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.td-stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-white);
+  letter-spacing: -0.02em;
+}
+
+.td-stat-value--date {
+  font-size: 18px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ── Section Header ── */
+.td-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.td-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-white);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.td-section-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-default);
+  border-radius: 9999px;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-weight: 500;
+}
+
+/* ── User Search ── */
+.td-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+  max-width: 420px;
+  transition: border-color 0.15s ease;
+}
+
+.td-search:focus-within {
+  border-color: var(--border-strong);
+}
+
+.td-search-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.td-search input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-white);
+  font-size: 13px;
+  outline: none;
+}
+
+.td-search input::placeholder {
+  color: var(--text-faint);
+}
+
+/* ── Table Card Wrapper ── */
+.td-table-card {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+/* ── Users Table Empty ── */
+.td-users-empty {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+/* ── User Row Cell ── */
+.td-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.td-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.td-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.td-user-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.td-user-email {
+  font-size: 12px;
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Role Badge ── */
+.td-role {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+}
+
+.td-role--superadmin {
+  background: var(--danger-bg);
+  color: var(--danger-light);
+  border-color: var(--danger-border);
+}
+
+.td-role--admin {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
+.td-role--hr {
+  background: var(--success-bg);
+  color: var(--success);
+  border-color: var(--success-border);
+}
+
+.td-role--viewer {
+  background: var(--surface-glass);
+  color: var(--text-muted);
+  border-color: var(--border-subtle);
+}
+
+/* ── Provider & Date ── */
+.td-provider {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.td-date {
+  font-size: 12px;
+  color: var(--text-faint);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ── Action Button ── */
+.td-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.td-action-btn:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  color: var(--text-white);
+  background: var(--surface-glass-hover);
+}
+
+.td-action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Pagination ── */
+.td-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.td-pagination-btn {
+  padding: 6px 14px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.td-pagination-btn:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  color: var(--text-white);
+}
+
+.td-pagination-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.td-pagination-info {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ── Skeleton ── */
+@keyframes tdPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.15; }
+}
+
+.td-skel {
+  background: var(--surface-glass);
+  border-radius: var(--radius-sm);
+  animation: tdPulse 1.8s ease-in-out infinite;
+}
+
+.td-skel-back {
+  width: 120px;
+  height: 14px;
+  background: var(--surface-glass);
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+  animation: tdPulse 1.8s ease-in-out infinite;
+}
+
+.td-skel--title {
+  width: 200px;
+  height: 30px;
+  margin-bottom: 6px;
+}
+
+.td-skel--slug {
+  width: 120px;
+  height: 14px;
+}
+
+.td-skel--badge {
+  width: 72px;
+  height: 26px;
+  border-radius: 9999px;
+}
+
+.td-skel--label {
+  width: 60px;
+  height: 11px;
+  margin-bottom: 10px;
+}
+
+.td-skel--value {
+  width: 80px;
+  height: 24px;
+}
+
+.td-skel--section-title {
+  width: 140px;
+  height: 16px;
+  margin-bottom: 16px;
+}
+
+.td-skel--search {
+  width: 420px;
+  max-width: 100%;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+
+.td-skel-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.td-skel-row:last-child {
+  border-bottom: none;
+}
+
+.td-skel--avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.td-skel-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.td-skel--name {
+  width: 140px;
+  height: 13px;
+}
+
+.td-skel--email {
+  width: 180px;
+  height: 11px;
+}
+
+.td-skel--role {
+  width: 64px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+}
+
+.td-skel--provider {
+  width: 60px;
+  height: 13px;
+}
+
+.td-skel--date {
+  width: 80px;
+  height: 12px;
+}
+
+.td-error {
+  padding: 16px 20px;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  border-radius: var(--radius-md);
+  color: var(--danger-light);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .td-page {
+    padding: 16px;
+  }
+
+  .td-header {
+    flex-direction: column;
+  }
+
+  .td-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .td-tenant-name {
+    font-size: 24px;
+  }
+
+  .td-stat-value {
+    font-size: 20px;
+  }
+}

@@ -49,11 +49,35 @@ export type ListTenantsParams = {
   status?: string;
 };
 
+export type TenantUser = {
+  id: number;
+  email: string;
+  name: string;
+  role: string;
+  is_active: boolean;
+  auth_provider: string;
+  tenant_id: number | null;
+  created_at: string;
+};
+
+export type PaginatedTenantUsers = {
+  data: TenantUser[];
+  total: number;
+  page: number;
+  per_page: number;
+  has_more: boolean;
+};
+
 export const getTenants = (params: ListTenantsParams = {}) =>
   httpClient.get<PaginatedTenants>(API_ENDPOINTS.SUPERADMIN_TENANTS, { params });
 
 export const getTenant = (id: number) =>
   httpClient.get<Tenant>(`${API_ENDPOINTS.SUPERADMIN_TENANTS}/${id}`);
+
+export const getTenantUsers = (tenantId: number, params: { page?: number; per_page?: number; q?: string } = {}) =>
+  httpClient.get<PaginatedTenantUsers>(API_ENDPOINTS.ADMIN_USERS, {
+    params: { ...params, tenant_id: tenantId },
+  });
 
 export const createTenant = (body: CreateTenantRequest) =>
   httpClient.post<TenantAdminDetails>(API_ENDPOINTS.SUPERADMIN_TENANTS, body);
@@ -63,3 +87,9 @@ export const updateTenant = (id: number, body: UpdateTenantRequest) =>
 
 export const deleteTenant = (id: number) =>
   httpClient.delete<{ message: string }>(`${API_ENDPOINTS.SUPERADMIN_TENANTS}/${id}`);
+
+export const resendInvite = (email: string, tenantId?: number) =>
+  httpClient.post<{ id: number; email: string; token: string; expires_at: string }>(
+    `${API_ENDPOINTS.ADMIN_USERS_INVITES}/resend`,
+    { email, tenant_id: tenantId },
+  );

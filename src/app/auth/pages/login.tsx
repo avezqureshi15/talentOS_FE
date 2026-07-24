@@ -128,7 +128,7 @@ export default function Login() {
           <h1 className="auth-left-title">
             Hire Smarter with
             <br />
-            <span className="auth-left-title-accent">webHyre.ai</span>
+            <span className="auth-left-title-bold">webHyre.ai</span>
           </h1>
 
           <p className="auth-left-subtitle">
@@ -138,11 +138,9 @@ export default function Login() {
 
           <div className="auth-left-features">
             {features.map(({ icon: Icon, label }) => (
-              <div className="auth-feature-card" key={label}>
-                <div className="auth-feature-icon">
-                  <Icon size={16} />
-                </div>
-                <span className="auth-feature-label">{label}</span>
+              <div className="auth-feature-pill" key={label}>
+                <Icon size={12} />
+                <span>{label}</span>
               </div>
             ))}
           </div>
@@ -179,170 +177,172 @@ export default function Login() {
 
       <div className="auth-right">
         <div className="auth-right-content">
-          <div className="auth-right-header">
-            <h2 className="auth-form-title">
-              {isSignUp ? 'Create your account' : 'Welcome back'}
-            </h2>
-            <p className="auth-form-subtitle">
-              {isSignUp
-                ? 'Get started with webHyre.ai in seconds.'
-                : 'Sign in to access your hiring dashboard.'}
-            </p>
-          </div>
-
-          {loading && mode === 'google' ? (
-            <div className="auth-loading">
-              <div className="auth-spinner" />
-              <p>Signing you in...</p>
+          <div className="auth-form-card">
+            <div className="auth-right-header">
+              <h2 className="auth-form-title">
+                {isSignUp ? 'Create your account' : 'Welcome back'}
+              </h2>
+              <p className="auth-form-subtitle">
+                {isSignUp
+                  ? 'Get started with webHyre.ai in seconds.'
+                  : 'Sign in to access your hiring dashboard.'}
+              </p>
             </div>
-          ) : (
-            <>
-              {mode === 'google' ? (
-                <div className="auth-google-section">
-                  <div className="auth-google-btn-wrapper">
-                    <GoogleLogin
-                      onSuccess={onSuccess}
-                      onError={() => setError('Google login failed')}
-                      theme="outline"
-                      size="large"
-                      text="continue_with"
-                      shape="pill"
-                      width={320}
-                    />
-                  </div>
 
-                  <div className="auth-divider">
-                    <span>or</span>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="auth-btn auth-btn--outline"
-                    onClick={() => switchMode('email')}
-                  >
-                    <Mail size={16} />
-                    Sign in with Email
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit(onEmailSubmit)} className="auth-form">
-                  {isSignUp && (
-                    <>
-                      <div className="auth-field">
-                        <div className="auth-input-wrap">
-                          <User size={16} className="auth-input-icon" />
-                          <input
-                            {...register('fullName')}
-                            type="text"
-                            className={`auth-input ${errors.fullName ? 'auth-input--error' : ''}`}
-                            placeholder="Full Name"
-                          />
-                        </div>
-                        {errors.fullName && (
-                          <span className="auth-field-error">{errors.fullName.message}</span>
-                        )}
-                      </div>
-
-                      <div className="auth-field">
-                        <div className="auth-input-wrap">
-                          <Building2 size={16} className="auth-input-icon" />
-                          <input
-                            {...register('orgName')}
-                            type="text"
-                            className={`auth-input ${errors.orgName ? 'auth-input--error' : ''}`}
-                            placeholder="Organization Name"
-                          />
-                        </div>
-                        {errors.orgName && (
-                          <span className="auth-field-error">{errors.orgName.message}</span>
-                        )}
-                      </div>
-                    </>
-                  )}
-
-                  <div className="auth-field">
-                    <div className="auth-input-wrap">
-                      <Mail size={16} className="auth-input-icon" />
-                      <input
-                        {...register('email')}
-                        type="email"
-                        className={`auth-input ${errors.email ? 'auth-input--error' : ''}`}
-                        placeholder="you@company.com"
+            {loading && mode === 'google' ? (
+              <div className="auth-loading">
+                <div className="auth-spinner" />
+                <p>Signing you in...</p>
+              </div>
+            ) : (
+              <>
+                {mode === 'google' ? (
+                  <div className="auth-google-section">
+                    <div className="auth-google-btn-wrapper">
+                      <GoogleLogin
+                        onSuccess={onSuccess}
+                        onError={() => setError('Google login failed')}
+                        theme="outline"
+                        size="large"
+                        text="continue_with"
+                        shape="pill"
+                        width={320}
                       />
                     </div>
-                    {errors.email && (
-                      <span className="auth-field-error">{errors.email.message}</span>
-                    )}
-                  </div>
 
-                  <div className="auth-field">
-                    <div className="auth-input-wrap">
-                      <Lock size={16} className="auth-input-icon" />
-                      <input
-                        {...register('password')}
-                        type={showPassword ? 'text' : 'password'}
-                        className={`auth-input ${errors.password ? 'auth-input--error' : ''}`}
-                        placeholder="Enter your password"
-                      />
-                      <button
-                        type="button"
-                        className="auth-eye-toggle"
-                        onClick={() => setShowPassword(!showPassword)}
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                      </button>
+                    <div className="auth-divider">
+                      <span>or</span>
                     </div>
-                    {errors.password && (
-                      <span className="auth-field-error">{errors.password.message}</span>
-                    )}
+
+                    <button
+                      type="button"
+                      className="auth-btn auth-btn--outline"
+                      onClick={() => switchMode('email')}
+                    >
+                      <Mail size={16} />
+                      Sign in with Email
+                    </button>
                   </div>
-
-                  {error && <div className="auth-error">{error}</div>}
-
-                  <button
-                    type="submit"
-                    className="auth-btn auth-btn--primary"
-                    disabled={isSubmitting || loading}
-                  >
-                    {isSubmitting || loading
-                      ? isSignUp ? 'Creating account...' : 'Signing in...'
-                      : isSignUp ? 'Create Account' : 'Sign In'}
-                  </button>
-
-                  <div className="auth-divider">
-                    <span>or</span>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="auth-btn auth-btn--outline"
-                    onClick={() => switchMode('google')}
-                  >
-                    Continue with Google
-                  </button>
-
-                  <div className="auth-switch">
-                    {isSignUp ? (
+                ) : (
+                  <form onSubmit={handleSubmit(onEmailSubmit)} className="auth-form">
+                    {isSignUp && (
                       <>
-                        <span>Already have an account?</span>
-                        <button type="button" className="auth-link" onClick={() => switchMode('email')}>
-                          Sign in
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <span>Don't have an account?</span>
-                        <button type="button" className="auth-link" onClick={() => switchMode('signup')}>
-                          Create account
-                        </button>
+                        <div className="auth-field">
+                          <div className="auth-input-wrap">
+                            <User size={16} className="auth-input-icon" />
+                            <input
+                              {...register('fullName')}
+                              type="text"
+                              className={`auth-input ${errors.fullName ? 'auth-input--error' : ''}`}
+                              placeholder="Full Name"
+                            />
+                          </div>
+                          {errors.fullName && (
+                            <span className="auth-field-error">{errors.fullName.message}</span>
+                          )}
+                        </div>
+
+                        <div className="auth-field">
+                          <div className="auth-input-wrap">
+                            <Building2 size={16} className="auth-input-icon" />
+                            <input
+                              {...register('orgName')}
+                              type="text"
+                              className={`auth-input ${errors.orgName ? 'auth-input--error' : ''}`}
+                              placeholder="Organization Name"
+                            />
+                          </div>
+                          {errors.orgName && (
+                            <span className="auth-field-error">{errors.orgName.message}</span>
+                          )}
+                        </div>
                       </>
                     )}
-                  </div>
-                </form>
-              )}
-            </>
-          )}
+
+                    <div className="auth-field">
+                      <div className="auth-input-wrap">
+                        <Mail size={16} className="auth-input-icon" />
+                        <input
+                          {...register('email')}
+                          type="email"
+                          className={`auth-input ${errors.email ? 'auth-input--error' : ''}`}
+                          placeholder="you@company.com"
+                        />
+                      </div>
+                      {errors.email && (
+                        <span className="auth-field-error">{errors.email.message}</span>
+                      )}
+                    </div>
+
+                    <div className="auth-field">
+                      <div className="auth-input-wrap">
+                        <Lock size={16} className="auth-input-icon" />
+                        <input
+                          {...register('password')}
+                          type={showPassword ? 'text' : 'password'}
+                          className={`auth-input ${errors.password ? 'auth-input--error' : ''}`}
+                          placeholder="Enter your password"
+                        />
+                        <button
+                          type="button"
+                          className="auth-eye-toggle"
+                          onClick={() => setShowPassword(!showPassword)}
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                      {errors.password && (
+                        <span className="auth-field-error">{errors.password.message}</span>
+                      )}
+                    </div>
+
+                    {error && <div className="auth-error">{error}</div>}
+
+                    <button
+                      type="submit"
+                      className="auth-btn auth-btn--primary"
+                      disabled={isSubmitting || loading}
+                    >
+                      {isSubmitting || loading
+                        ? isSignUp ? 'Creating account...' : 'Signing in...'
+                        : isSignUp ? 'Create Account' : 'Sign In'}
+                    </button>
+
+                    <div className="auth-divider">
+                      <span>or</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="auth-btn auth-btn--outline"
+                      onClick={() => switchMode('google')}
+                    >
+                      Continue with Google
+                    </button>
+
+                    <div className="auth-switch">
+                      {isSignUp ? (
+                        <>
+                          <span>Already have an account?</span>
+                          <button type="button" className="auth-link" onClick={() => switchMode('email')}>
+                            Sign in
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <span>Don't have an account?</span>
+                          <button type="button" className="auth-link" onClick={() => switchMode('signup')}>
+                            Create account
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </form>
+                )}
+              </>
+            )}
+          </div>
 
           <div className="auth-footer">
             <p>{LOGIN.FOOTER}</p>

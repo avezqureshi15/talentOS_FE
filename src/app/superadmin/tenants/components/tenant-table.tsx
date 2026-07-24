@@ -15,6 +15,7 @@ export default function TenantTable({
   onDelete,
   onApprove,
   onReject,
+  onRowClick,
 }: TenantTableProps) {
   return (
     <DataTable
@@ -49,7 +50,7 @@ export default function TenantTable({
 {
   header: "",
   render: (t: Tenant) => (
-    <div className="dt-actions">
+    <div className="dt-actions" onClick={(e) => e.stopPropagation()}>
       {t.verification_status === "pending" && (
         <>
           <button className="dt-btn dt-btn--success" onClick={() => onApprove(t)} title="Approve tenant">
@@ -75,6 +76,7 @@ export default function TenantTable({
       keyExtractor={(t) => t.id}
       emptyMessage="No tenants found"
       gridTemplateColumns="40px 2fr 1fr 60px 1fr 1fr 80px"
+      onRowClick={onRowClick}
     />
   );
 }

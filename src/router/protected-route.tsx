@@ -6,7 +6,7 @@ import { ROUTES } from "@/constants/routes";
 import { useAuth, useRole } from "@/app/auth/hooks/use-auth";
 import type { ProtectedRouteProps } from "./protected-route.types";
 
-export default function ProtectedRoute({ minimumRole }: ProtectedRouteProps) {
+export default function ProtectedRoute({ minimumRole, allowedRoles }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
   const { hasRole } = useRole();
 
@@ -19,7 +19,11 @@ export default function ProtectedRoute({ minimumRole }: ProtectedRouteProps) {
   }
 
   if (minimumRole && !hasRole(minimumRole)) {
-    return <Navigate to={ROUTES.CHAT} replace />;
+    return <Navigate to={ROUTES.SUPERADMIN_TENANTS} replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to={ROUTES.SUPERADMIN_TENANTS} replace />;
   }
 
   return (

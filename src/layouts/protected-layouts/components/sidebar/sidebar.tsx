@@ -9,8 +9,9 @@ import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
 import { Sidebar as SidebarShell, SidebarItem, SidebarSection } from "@/components/ui/sidebar";
-import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS } from "@/layouts/protected-layouts/navigation.config";
-import RequireRole from "@/components/auth/require-role/require-role";
+import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS, type NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
+import { useRole } from "@/app/auth/hooks/use-auth";
+import type { Role } from "@/constants/roles";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -35,6 +36,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   const renameInputRef = useRef<HTMLInputElement | null>(null);
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const { role } = useRole();
+
+  const canSeeItem = (item: NavItemConfig) => {
+    if (item.roles) return item.roles.includes(role as Role);
+    return true;
+  };
+
+  const visibleMain = MAIN_NAV_ITEMS.filter(canSeeItem);
+  const visibleAdmin = ADMIN_NAV_ITEMS.filter(canSeeItem);
+  const visibleSuperadmin = SUPERADMIN_NAV_ITEMS.filter(canSeeItem);
 
   const sentinelRef = useIntersectionObserver(
     useCallback(() => {
@@ -115,15 +126,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* NAV */}
       <div className="sidebar__nav">
-        {MAIN_NAV_ITEMS.map((item) => (
-          <RequireRole key={item.href} minimumRole={item.minimumRole}>
-            <SidebarItem
-              icon={<span className={`${item.icon} text-lg`} />}
-              label={item.label}
-              shortcut={item.shortcut}
-              href={item.href}
-            />
-          </RequireRole>
+        {visibleMain.map((item) => (
+          <SidebarItem
+            key={item.href}
+            icon={<span className={`${item.icon} text-lg`} />}
+            label={item.label}
+            shortcut={item.shortcut}
+            href={item.href}
+          />
         ))}
 
         <SidebarItem
@@ -133,28 +143,26 @@ const Sidebar: React.FC<SidebarProps> = ({
           onClick={onSearch}
         />
 
-        <div className="sidebar-nav-divider" />
+        {visibleAdmin.length > 0 && <div className="sidebar-nav-divider" />}
 
-        {ADMIN_NAV_ITEMS.map((item) => (
-          <RequireRole key={item.href} minimumRole={item.minimumRole}>
-            <SidebarItem
-              icon={<span className={`${item.icon} text-lg`} />}
-              label={item.label}
-              href={item.href}
-            />
-          </RequireRole>
+        {visibleAdmin.map((item) => (
+          <SidebarItem
+            key={item.href}
+            icon={<span className={`${item.icon} text-lg`} />}
+            label={item.label}
+            href={item.href}
+          />
         ))}
 
-        <div className="sidebar-nav-divider" />
+        {visibleSuperadmin.length > 0 && <div className="sidebar-nav-divider" />}
 
-        {SUPERADMIN_NAV_ITEMS.map((item) => (
-          <RequireRole key={item.href} minimumRole={item.minimumRole}>
-            <SidebarItem
-              icon={<span className={`${item.icon} text-lg`} />}
-              label={item.label}
-              href={item.href}
-            />
-          </RequireRole>
+        {visibleSuperadmin.map((item) => (
+          <SidebarItem
+            key={item.href}
+            icon={<span className={`${item.icon} text-lg`} />}
+            label={item.label}
+            href={item.href}
+          />
         ))}
       </div>
 

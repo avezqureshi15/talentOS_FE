@@ -11,5 +11,6 @@ export const ROUTES = {
   ADMIN_USERS: "/admin/users",
   ADMIN_SETTINGS: "/admin/settings",
   SUPERADMIN_TENANTS: "/superadmin/tenants",
+  SUPERADMIN_TENANT_DETAIL: "/superadmin/tenants/:tenantId",
   AUTH_INVITE: "/auth/invite/:token",
 } as const;

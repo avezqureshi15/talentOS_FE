@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { getTenants, updateTenant, type Tenant } from "@/app/superadmin/tenants/services/tenants.service";
 import TenantTable from "@/app/superadmin/tenants/components/tenant-table";
 import CreateTenantModal from "@/app/superadmin/tenants/components/create-tenant-modal";
@@ -6,6 +7,7 @@ import EditTenantModal from "@/app/superadmin/tenants/components/edit-tenant-mod
 import DeleteTenantDialog from "@/app/superadmin/tenants/components/delete-dialog";
 
 export default function TenantsPage() {
+  const navigate = useNavigate();
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -122,6 +124,7 @@ export default function TenantsPage() {
           onDelete={(t) => setDeleteTarget(t)}
           onApprove={handleApprove}
           onReject={handleReject}
+          onRowClick={(t) => navigate(`/superadmin/tenants/${t.id}`)}
         />
 
         {totalPages > 1 && (

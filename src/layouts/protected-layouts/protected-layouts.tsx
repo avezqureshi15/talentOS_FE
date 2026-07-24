@@ -18,6 +18,7 @@ import { useUiStore } from "@/store/ui.store";
 import { STORAGE_KEYS } from "@/constants/constants";
 import { getUx, patchUx } from "@/utils/storage";
 import { useAurora } from "@/hooks/use-aurora";
+import { useRole } from "@/app/auth/hooks/use-auth";
 
 function getInitialSidebarState(): boolean {
   const ux = getUx(STORAGE_KEYS.UX);
@@ -42,6 +43,7 @@ export default function ProtectedLayout() {
   const { data: chats, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatHistory();
   const navigate = useNavigate();
   const resetChat = useChatStore((s) => s.reset);
+  const { role } = useRole();
 
   const handleSelectChat = (id: string) => {
     navigate(`${ROUTES.CHAT}/${id}`);
@@ -101,8 +103,18 @@ export default function ProtectedLayout() {
   }, [navigate]);
 
   useEffect(() => {
+    const isSuperadmin = role === "superadmin";
     const handler = (e: KeyboardEvent) => {
       const k = KEYBOARD_SHORTCUTS;
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.TOGGLE_SIDEBAR.code) {
+        e.preventDefault();
+        handleToggleSidebar();
+      }
+      if (e.altKey && e.code === k.SHORTCUTS.code) {
+        e.preventDefault();
+        useUiStore.getState().toggleShortcutsModal();
+      }
+      if (isSuperadmin) return;
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.HOME.code) {
         e.preventDefault();
         handleHome();
@@ -110,10 +122,6 @@ export default function ProtectedLayout() {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.NEW_CHAT.code) {
         e.preventDefault();
         handleNewChat();
-      }
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.TOGGLE_SIDEBAR.code) {
-        e.preventDefault();
-        handleToggleSidebar();
       }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.INTERVIEWS.code) {
         e.preventDefault();
@@ -123,14 +131,10 @@ export default function ProtectedLayout() {
         e.preventDefault();
         handleAlerts();
       }
-      if (e.altKey && e.code === k.SHORTCUTS.code) {
-        e.preventDefault();
-        useUiStore.getState().toggleShortcutsModal();
-      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [handleNewChat, handleHome, handleToggleSidebar, handleAlerts, handleInterviews]);
+  }, [handleNewChat, handleHome, handleToggleSidebar, handleAlerts, handleInterviews, role]);
 
   const {
     isOpen: cmdOpen,

@@ -93,3 +93,6 @@
 .dt-btn-link { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-subtle); background: transparent; color: var(--danger); font-size: 12px; font-family: var(--font-family); cursor: pointer; }
 .dt-btn-link:hover { background: var(--bg-hover); }
 .dt-btn-link:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.dt-row--clickable { cursor: pointer; }
+.dt-row--clickable:hover { background: var(--bg-hover); }

@@ -7,4 +7,5 @@ export type TenantTableProps = {
   onDelete: (tenant: Tenant) => void;
   onApprove: (tenant: Tenant) => void;
   onReject: (tenant: Tenant) => void;
+  onRowClick?: (tenant: Tenant) => void;
 };

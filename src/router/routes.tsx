@@ -11,7 +11,9 @@ import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
 import UsersPage from "@/app/admin/users/pages/users-page";
 import SettingsPage from "@/app/admin/settings/pages/settings-page";
 import TenantsPage from "@/app/superadmin/tenants/pages/tenants-page";
+import TenantDetail from "@/app/superadmin/tenants/pages/tenant-detail";
 import "@/app/superadmin/tenants/pages/tenants-page.css";
+import "@/app/superadmin/tenants/pages/tenant-detail.css";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import { ROUTES } from "@/constants/routes";
 import { ERROR_FALLBACK_LABELS } from "@/constants/error-labels";
@@ -31,7 +33,7 @@ export const router = createBrowserRouter([
 
   {
     errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
-    element: <ProtectedRoute />,
+    element: <ProtectedRoute allowedRoles={["admin", "hr", "viewer"]} />,
     children: [
       {
         element: <ProtectedLayout />,
@@ -57,7 +59,7 @@ export const router = createBrowserRouter([
   // ── Admin routes (gated to admin+) ──────────────────────────────
   {
     errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
-    element: <ProtectedRoute minimumRole="admin" />,
+    element: <ProtectedRoute minimumRole="admin" allowedRoles={["admin"]} />,
     children: [
       {
         path: "admin",
@@ -82,6 +84,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to={ROUTES.SUPERADMIN_TENANTS} replace /> },
           { path: "tenants", element: <TenantsPage /> },
+          { path: "tenants/:tenantId", element: <TenantDetail /> },
         ],
       },
     ],

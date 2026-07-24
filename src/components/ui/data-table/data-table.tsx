@@ -8,6 +8,7 @@ export default function DataTable<T>({
   loading,
   emptyMessage = "No data found",
   gridTemplateColumns,
+  onRowClick,
 }: DataTableProps<T>) {
   if (loading) {
     return (
@@ -63,8 +64,9 @@ export default function DataTable<T>({
         {data.map((row, i) => (
           <div
             key={keyExtractor(row, i)}
-            className="dt-row dt-row-body"
+            className={`dt-row dt-row-body${onRowClick ? " dt-row--clickable" : ""}`}
             style={{ gridTemplateColumns, "--anim-delay": `${i * 30}ms` } as React.CSSProperties}
+            onClick={onRowClick ? () => onRowClick(row) : undefined}
           >
             {columns.map((col, j) => (
               <div key={j} className={col.className} style={col.style}>
