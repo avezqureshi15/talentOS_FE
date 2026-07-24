@@ -6,9 +6,8 @@ import InviteUserModal from "@/app/admin/users/components/invite-user-modal";
 import CreateUserModal from "@/app/admin/users/components/create-user-modal";
 import EditUserModal from "@/app/admin/users/components/edit-user-modal";
 import DeactivateDialog from "@/app/admin/users/components/deactivate-dialog";
+import type { Tab } from "./users-page.types";
 import "./users-page.css";
-
-type Tab = "active" | "invites";
 
 export default function UsersPage() {
   const [tab, setTab] = useState<Tab>("active");

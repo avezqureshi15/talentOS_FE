@@ -1,19 +1,10 @@
 import { useState } from "react";
+import DataTable from "@/components/ui/data-table/data-table";
 import type { Invite } from "@/app/admin/users/services/users-admin.service";
+import { ROLE_DISPLAY } from "@/constants/role-display";
+import type { InvitesTableProps } from "./invites-table.types";
 
-type Props = {
-  invites: Invite[];
-  loading: boolean;
-  onRevoke: (id: number) => void;
-};
-
-const ROLE_CHIP: Record<string, string> = {
-  admin: "info",
-  hr: "success",
-  viewer: "neutral",
-};
-
-export default function InvitesTable({ invites, loading, onRevoke }: Props) {
+export default function InvitesTable({ invites, loading, onRevoke }: InvitesTableProps) {
   const [revokingId, setRevokingId] = useState<number | null>(null);
 
   const handleRevoke = async (id: number) => {
@@ -25,14 +16,6 @@ export default function InvitesTable({ invites, loading, onRevoke }: Props) {
     }
   };
 
-  if (loading) {
-    return <div className="invites-table-loading">Loading invites...</div>;
-  }
-
-  if (invites.length === 0) {
-    return <div className="invites-table-empty">No pending invites</div>;
-  }
-
   const daysRemaining = (expiresAt: string) => {
     const diff = new Date(expiresAt).getTime() - Date.now();
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
@@ -40,94 +23,50 @@ export default function InvitesTable({ invites, loading, onRevoke }: Props) {
   };
 
   return (
-    <div>
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-        <thead>
-          <tr>
-            <th style={thStyle}>#</th>
-            <th style={thStyle}>Email</th>
-            <th style={thStyle}>Role</th>
-            <th style={thStyle}>Status</th>
-            <th style={thStyle}>Expires</th>
-            <th style={thStyle}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {invites.map((inv, i) => (
-            <tr key={inv.id}>
-              <td style={tdStyle}><span style={{ color: "var(--text-faint)" }}>{i + 1}</span></td>
-              <td style={tdStyle}>{inv.email}</td>
-              <td style={tdStyle}>
-                <span style={chipStyles(ROLE_CHIP[inv.role] || "neutral")}>{inv.role}</span>
-              </td>
-              <td style={tdStyle}>
-                <span style={{ color: inv.accepted_at ? "var(--text-muted)" : "var(--accent)", fontSize: 12 }}>
-                  {inv.accepted_at ? "Accepted" : "Pending"}
-                </span>
-              </td>
-              <td style={{ ...tdStyle, color: "var(--text-muted)", fontSize: 12 }}>
-                {daysRemaining(inv.expires_at)}
-              </td>
-              <td style={tdStyle}>
-                {!inv.accepted_at && (
-                  <button
-                    onClick={() => handleRevoke(inv.id)}
-                    disabled={revokingId === inv.id}
-                    style={{
-                      padding: "4px 10px",
-                      borderRadius: 6,
-                      border: "1px solid var(--border-subtle)",
-                      background: "transparent",
-                      color: "var(--danger)",
-                      fontSize: 12,
-                      fontFamily: "var(--font-family)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {revokingId === inv.id ? "..." : "Revoke"}
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <DataTable
+      columns={[
+        { header: "#", render: (_, i) => <span style={{ color: "var(--text-faint)" }}>{i + 1}</span> },
+        { header: "Email", render: (inv: Invite) => inv.email },
+        {
+          header: "Role",
+          render: (inv: Invite) => {
+            const display = ROLE_DISPLAY[inv.role] ?? { chipVariant: "neutral", label: inv.role };
+            return <span className={`dt-chip dt-chip--${display.chipVariant}`}>{display.label}</span>;
+          },
+        },
+        {
+          header: "Status",
+          render: (inv: Invite) => (
+            <span style={{ color: inv.accepted_at ? "var(--text-muted)" : "var(--accent)", fontSize: 12 }}>
+              {inv.accepted_at ? "Accepted" : "Pending"}
+            </span>
+          ),
+        },
+        {
+          header: "Expires",
+          render: (inv: Invite) => (
+            <span className="dt-cell-muted">{daysRemaining(inv.expires_at)}</span>
+          ),
+        },
+        {
+          header: "",
+          render: (inv: Invite) =>
+            !inv.accepted_at ? (
+              <button
+                onClick={() => handleRevoke(inv.id)}
+                disabled={revokingId === inv.id}
+                className="dt-btn-link"
+              >
+                {revokingId === inv.id ? "..." : "Revoke"}
+              </button>
+            ) : null,
+        },
+      ]}
+      data={invites}
+      loading={loading}
+      keyExtractor={(inv) => inv.id}
+      emptyMessage="No pending invites"
+      gridTemplateColumns="40px 2fr 1fr 1fr 1fr 100px"
+    />
   );
 }
-
-const thStyle: React.CSSProperties = {
-  textAlign: "left",
-  padding: "12px 16px",
-  color: "var(--text-muted)",
-  fontWeight: 500,
-  fontSize: 12,
-  textTransform: "uppercase",
-  letterSpacing: "0.05em",
-  borderBottom: "1px solid var(--border-subtle)",
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: "12px 16px",
-  borderBottom: "1px solid var(--border-subtle)",
-  color: "var(--text-primary)",
-};
-
-const chipStyles = (variant: string): React.CSSProperties => {
-  const colors: Record<string, { bg: string; color: string }> = {
-    info: { bg: "rgba(100, 181, 246, 0.15)", color: "#64b5f6" },
-    success: { bg: "rgba(129, 199, 132, 0.15)", color: "#81c784" },
-    neutral: { bg: "rgba(158, 158, 158, 0.15)", color: "#9e9e9e" },
-  };
-  const c = colors[variant] || colors.neutral;
-  return {
-    display: "inline-block",
-    padding: "2px 8px",
-    borderRadius: 4,
-    fontSize: 11,
-    fontWeight: 600,
-    textTransform: "capitalize",
-    background: c.bg,
-    color: c.color,
-  };
-};

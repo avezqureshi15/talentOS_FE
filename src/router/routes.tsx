@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "@/app/auth/pages/login";
+import AcceptInvite from "@/app/auth/pages/accept-invite";
 import ProtectedRoute from "@/router/protected-route";
 import ProtectedLayout from "@/layouts/protected-layouts/protected-layouts";
 import Chat from "@/app/chat/pages/chat";
@@ -9,6 +10,8 @@ import SlotBooking from "@/app/slot-booking/pages/slot-booking";
 import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
 import UsersPage from "@/app/admin/users/pages/users-page";
 import SettingsPage from "@/app/admin/settings/pages/settings-page";
+import TenantsPage from "@/app/superadmin/tenants/pages/tenants-page";
+import "@/app/superadmin/tenants/pages/tenants-page.css";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import { ROUTES } from "@/constants/routes";
 import { ERROR_FALLBACK_LABELS } from "@/constants/error-labels";
@@ -17,6 +20,12 @@ export const router = createBrowserRouter([
   {
     path: ROUTES.LOGIN,
     element: <Login />,
+    errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} />,
+  },
+
+  {
+    path: ROUTES.AUTH_INVITE,
+    element: <AcceptInvite />,
     errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} />,
   },
 
@@ -48,7 +57,7 @@ export const router = createBrowserRouter([
   // ── Admin routes (gated to admin+) ──────────────────────────────
   {
     errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
-    element: <ProtectedRoute requiredRoles={["admin", "superadmin"]} />,
+    element: <ProtectedRoute minimumRole="admin" />,
     children: [
       {
         path: "admin",
@@ -57,6 +66,22 @@ export const router = createBrowserRouter([
           { index: true, element: <Navigate to={ROUTES.ADMIN_USERS} replace /> },
           { path: "users", element: <UsersPage /> },
           { path: "settings", element: <SettingsPage /> },
+        ],
+      },
+    ],
+  },
+
+  // ── Superadmin routes (gated to superadmin only) ─────────────────
+  {
+    errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
+    element: <ProtectedRoute minimumRole="superadmin" />,
+    children: [
+      {
+        path: "superadmin",
+        element: <ProtectedLayout />,
+        children: [
+          { index: true, element: <Navigate to={ROUTES.SUPERADMIN_TENANTS} replace /> },
+          { path: "tenants", element: <TenantsPage /> },
         ],
       },
     ],

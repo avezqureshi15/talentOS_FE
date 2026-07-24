@@ -7,6 +7,7 @@ import { ToastType } from "@/components/ui/toast/toast.types";
 declare module "axios" {
   interface AxiosRequestConfig {
     toastOnError?: boolean;
+    skip403Toast?: boolean;
   }
 }
 
@@ -18,8 +19,15 @@ const httpClient = axios.create({
   timeout: DEFAULT_TIMEOUT,
 });
 
+export const publicClient = axios.create({
+  baseURL: BE_API_BASE_URL,
+  headers: { "Content-Type": "application/json" },
+  timeout: DEFAULT_TIMEOUT,
+});
+
 // ── Attach Bearer token to every request ──────────────────────────────
 httpClient.interceptors.request.use((config) => {
+  if (config.headers?.Authorization) return config;
   const token = localStorage.getItem(ACCESS_TOKEN_KEY);
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -47,12 +55,14 @@ httpClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // ── Handle 403 (role denied) ────────────────────────────────────
+    // ── Handle 403 (role denied / unverified org) ──────────────────────
     if (error.response?.status === 403) {
-      useToastStore.getState().addToast(
-        "You don't have permission to perform this action",
-        ToastType.ERROR,
-      );
+      if (!originalRequest?.skip403Toast) {
+        const message =
+          error.response?.data?.error ||
+          "You don't have permission to perform this action";
+        useToastStore.getState().addToast(message, ToastType.ERROR);
+      }
       return Promise.reject(error);
     }
 

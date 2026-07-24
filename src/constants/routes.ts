@@ -10,4 +10,6 @@ export const ROUTES = {
   RATE_CANDIDATE_ID: "/rate-candidate/:reviewFormId",
   ADMIN_USERS: "/admin/users",
   ADMIN_SETTINGS: "/admin/settings",
+  SUPERADMIN_TENANTS: "/superadmin/tenants",
+  AUTH_INVITE: "/auth/invite/:token",
 } as const;

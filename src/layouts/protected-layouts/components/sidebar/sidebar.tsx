@@ -9,7 +9,8 @@ import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
 import { Sidebar as SidebarShell, SidebarItem, SidebarSection } from "@/components/ui/sidebar";
-import { useRole } from "@/app/auth/hooks/use-auth";
+import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS } from "@/layouts/protected-layouts/navigation.config";
+import RequireRole from "@/components/auth/require-role/require-role";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -25,7 +26,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   isLoadingMore,
   Icon,
 }) => {
-  const { isAdmin } = useRole();
   const [historyOpen, setHistoryOpen] = useState(true);
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -115,52 +115,47 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* NAV */}
       <div className="sidebar__nav">
-        <SidebarItem
-          icon={<span className="bx bx-home text-lg" />}
-          label={SIDEBAR_LABELS.HIRING_REQUESTS}
-          shortcut="Ctrl+Shift+H"
-          href="/hiring-requests"
-        />
-        <SidebarItem
-          icon={<span className="bx bx-calendar-check text-lg" />}
-          label="Interviews"
-          shortcut="Ctrl+Shift+I"
-          href="/hiring-requests?tab=interviews"
-        />
-        <SidebarItem
-          icon={<span className="bx bx-bell text-lg" />}
-          label="Alerts"
-          shortcut="Ctrl+Shift+A"
-          href="/hiring-requests?tab=alerts"
-        />
+        {MAIN_NAV_ITEMS.map((item) => (
+          <RequireRole key={item.href} minimumRole={item.minimumRole}>
+            <SidebarItem
+              icon={<span className={`${item.icon} text-lg`} />}
+              label={item.label}
+              shortcut={item.shortcut}
+              href={item.href}
+            />
+          </RequireRole>
+        ))}
+
         <SidebarItem
           icon={<Icon.Search />}
           label={SIDEBAR_LABELS.SEARCH}
           shortcut="Ctrl+K"
           onClick={onSearch}
         />
-        <SidebarItem
-          icon={<Icon.Edit />}
-          label={SIDEBAR_LABELS.NEW_CHAT}
-          shortcut="Ctrl+Shift+C"
-          href="/chat"
-        />
 
-        {isAdmin && (
-          <>
-            <div className="sidebar-nav-divider" />
+        <div className="sidebar-nav-divider" />
+
+        {ADMIN_NAV_ITEMS.map((item) => (
+          <RequireRole key={item.href} minimumRole={item.minimumRole}>
             <SidebarItem
-              icon={<span className="bx bx-group text-lg" />}
-              label="Users"
-              href="/admin/users"
+              icon={<span className={`${item.icon} text-lg`} />}
+              label={item.label}
+              href={item.href}
             />
+          </RequireRole>
+        ))}
+
+        <div className="sidebar-nav-divider" />
+
+        {SUPERADMIN_NAV_ITEMS.map((item) => (
+          <RequireRole key={item.href} minimumRole={item.minimumRole}>
             <SidebarItem
-              icon={<span className="bx bx-cog text-lg" />}
-              label="Settings"
-              href="/admin/settings"
+              icon={<span className={`${item.icon} text-lg`} />}
+              label={item.label}
+              href={item.href}
             />
-          </>
-        )}
+          </RequireRole>
+        ))}
       </div>
 
       {/* HISTORY */}

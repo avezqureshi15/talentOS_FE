@@ -1,5 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "@/app/auth/components/auth-context";
+import { hasMinimumRole } from "@/constants/roles";
+import type { Role } from "@/constants/roles";
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
@@ -11,9 +13,6 @@ export const useRole = () => {
   const { user } = useAuth();
   return {
     role: user?.role,
-    isAdmin: user?.role === "admin" || user?.role === "superadmin",
-    isSuperAdmin: user?.role === "superadmin",
-    isHR: user?.role === "hr" || user?.role === "admin" || user?.role === "superadmin",
-    hasRole: (...roles: string[]) => user ? roles.includes(user.role) : false,
+    hasRole: (minimumRole: Role) => hasMinimumRole(user?.role, minimumRole),
   };
 };
