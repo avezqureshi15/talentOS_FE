@@ -1,4 +1,5 @@
-import type { Role } from "@/constants/roles";
+import type { Permission } from "@/constants/permissions";
+import { ROUTES } from "@/constants/routes";
 import { SIDEBAR_LABELS } from "@/constants/constants";
 
 export type NavItemConfig = {
@@ -6,8 +7,7 @@ export type NavItemConfig = {
   href: string;
   icon: string;
   shortcut?: string;
-  minimumRole: Role;
-  roles?: Role[];
+  permissions: Permission[];
 };
 
 export const MAIN_NAV_ITEMS: NavItemConfig[] = [
@@ -16,32 +16,28 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
     href: "/hiring-requests",
     icon: "bx bx-home",
     shortcut: "Ctrl+Shift+H",
-    minimumRole: "viewer",
-    roles: ["admin", "hr", "viewer"],
+    permissions: ["hiring_request.view"],
   },
   {
     label: "Interviews",
     href: "/hiring-requests?tab=interviews",
     icon: "bx bx-calendar-check",
     shortcut: "Ctrl+Shift+I",
-    minimumRole: "viewer",
-    roles: ["admin", "hr", "viewer"],
+    permissions: ["application.view"],
   },
   {
     label: "Alerts",
     href: "/hiring-requests?tab=alerts",
     icon: "bx bx-bell",
     shortcut: "Ctrl+Shift+A",
-    minimumRole: "viewer",
-    roles: ["admin", "hr", "viewer"],
+    permissions: ["application.view"],
   },
   {
     label: SIDEBAR_LABELS.NEW_CHAT,
     href: "/chat",
     icon: "bx bx-message-square-add",
     shortcut: "Ctrl+Shift+C",
-    minimumRole: "viewer",
-    roles: ["admin", "hr", "viewer"],
+    permissions: ["chat"],
   },
 ];
 
@@ -50,24 +46,27 @@ export const ADMIN_NAV_ITEMS: NavItemConfig[] = [
     label: "Users",
     href: "/admin/users",
     icon: "bx bx-group",
-    minimumRole: "admin",
-    roles: ["admin"],
+    permissions: ["user.invite"],
   },
   {
     label: "Settings",
     href: "/admin/settings",
     icon: "bx bx-cog",
-    minimumRole: "admin",
-    roles: ["admin"],
+    permissions: ["settings.view"],
   },
 ];
 
 export const SUPERADMIN_NAV_ITEMS: NavItemConfig[] = [
   {
+    label: "Roles",
+    href: ROUTES.ROLES,
+    icon: "bx bx-lock",
+    permissions: ["user.manage"],
+  },
+  {
     label: "Tenants",
     href: "/superadmin/tenants",
     icon: "bx bx-building",
-    minimumRole: "superadmin",
-    roles: ["superadmin"],
+    permissions: ["tenant.view"],
   },
 ];

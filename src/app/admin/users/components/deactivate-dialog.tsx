@@ -1,14 +1,17 @@
 import { useState } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
 import { deactivateUser, type AdminUser } from "@/app/admin/users/services/users-admin.service";
+import "./admin-modal.css";
 
 type Props = {
   user: AdminUser;
   onClose: () => void;
   onSuccess: () => void;
+  tenantId?: number;
 };
 
-export default function DeactivateDialog({ user, onClose, onSuccess }: Props) {
+export default function DeactivateDialog({ user, onClose, onSuccess, tenantId }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -16,7 +19,7 @@ export default function DeactivateDialog({ user, onClose, onSuccess }: Props) {
     setLoading(true);
     setError("");
     try {
-      await deactivateUser(user.id);
+      await deactivateUser(user.id, tenantId);
       onSuccess();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to deactivate user";
@@ -27,34 +30,19 @@ export default function DeactivateDialog({ user, onClose, onSuccess }: Props) {
 
   return (
     <BaseModal open title="Deactivate User" onClose={onClose}>
-      <div style={{ padding: "0 24px 24px" }}>
-        <p style={{ fontSize: 14, color: "var(--text-muted)", margin: "0 0 20px", lineHeight: 1.5 }}>
+      <div className="admin-modal-form">
+        <p className="admin-confirm-text">
           Are you sure you want to deactivate <strong>{user.name}</strong> ({user.email})?
           They will no longer be able to access the platform.
         </p>
         {error && <p className="admin-error">{error}</p>}
         <div className="admin-modal-actions">
-          <button type="button" className="admin-btn admin-btn--cancel" onClick={onClose}>Cancel</button>
-          <button
-            type="button"
-            className="admin-btn admin-btn--danger"
-            disabled={loading}
-            onClick={handleConfirm}
-          >
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button variant="danger" onClick={handleConfirm} loading={loading}>
             {loading ? "Deactivating..." : "Deactivate"}
-          </button>
+          </Button>
         </div>
       </div>
-
-      <style>{`
-        .admin-btn--danger { background: var(--danger); color: var(--text-white); }
-        .admin-error { font-size: 13px; color: var(--danger); margin: 0 0 16px; padding: 8px 12px; background: var(--danger-bg); border-radius: 8px; }
-        .admin-modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
-        .admin-btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: var(--font-family); font-weight: 500; cursor: pointer; border: none; transition: opacity 0.15s; }
-        .admin-btn--primary { background: var(--accent); color: var(--text-white); }
-        .admin-btn--primary:disabled, .admin-btn--danger:disabled { opacity: 0.6; cursor: not-allowed; }
-        .admin-btn--cancel { background: var(--bg-hover); color: var(--text-primary); }
-      `}</style>
     </BaseModal>
   );
 }

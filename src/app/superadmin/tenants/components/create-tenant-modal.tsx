@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "@/components/ui/button/button";
 import { createTenant } from "@/app/superadmin/tenants/services/tenants.service";
 import type { CreateTenantModalProps } from "./create-tenant-modal.types";
 
@@ -71,12 +72,10 @@ export default function CreateTenantModal({ onClose, onSuccess }: CreateTenantMo
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="modal-btn modal-btn--secondary" onClick={onClose}>
-              Cancel
-            </button>
-            <button type="submit" className="modal-btn modal-btn--primary" disabled={submitting}>
+            <Button variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button variant="primary" type="submit" loading={submitting}>
               {submitting ? "Creating..." : "Create & Send Invite"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

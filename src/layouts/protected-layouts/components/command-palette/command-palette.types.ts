@@ -1,29 +1,27 @@
-import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
-
 export type SearchResultItem = {
   id: string;
   label: string;
   sublabel: string;
-  type: "action" | "hiring-request";
-  hiringRequest?: HiringRequest;
-};
-
-export type CommandPaletteProps = {
-  open: boolean;
-  query: string;
-  onQueryChange: (q: string) => void;
-  sections: CommandPaletteSection[];
-  selectedIndex: number;
-  onClose: () => void;
-  onKeyDown: (e: React.KeyboardEvent) => void;
-  onSelectHiringRequest: (id: string) => void;
-  onNewChat: () => void;
-  onLoadMore?: () => void;
-  hasMore?: boolean;
-  isLoadingMore?: boolean;
+  type: "action" | "hiring-request" | "tenant";
 };
 
 export type CommandPaletteSection = {
   title: string;
   items: SearchResultItem[];
+};
+
+export type CommandPaletteConfig = {
+  placeholder: string;
+  sectionTitle: string;
+  search: (query: string) => Promise<SearchResultItem[]>;
+  onSelect: (item: SearchResultItem) => void;
+};
+
+export type CmdPaletteProviderValue = {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+  registerConfig: (config: CommandPaletteConfig) => void;
+  unregisterConfig: () => void;
+  hasConfig: boolean;
 };

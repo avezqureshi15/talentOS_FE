@@ -25,6 +25,7 @@ export type CreateUserPayload = {
   email: string;
   password: string;
   role: string;
+  tenant_id?: number;
 };
 
 export type UpdateUserPayload = {
@@ -32,6 +33,7 @@ export type UpdateUserPayload = {
   role?: string;
   is_active?: boolean;
   password?: string;
+  tenant_id?: number;
 };
 
 export type Invite = {
@@ -55,9 +57,10 @@ export type PaginatedInvites = {
 export type CreateInvitePayload = {
   email: string;
   role: string;
+  tenant_id?: number;
 };
 
-export const getUsers = (params: { q?: string; page?: number; per_page?: number }) =>
+export const getUsers = (params: { q?: string; page?: number; per_page?: number; tenant_id?: number }) =>
   httpClient.get<PaginatedAdminUsers>(API_ENDPOINTS.ADMIN_USERS, { params });
 
 export const createUser = (payload: CreateUserPayload) =>
@@ -66,14 +69,18 @@ export const createUser = (payload: CreateUserPayload) =>
 export const updateUser = (id: number, payload: UpdateUserPayload) =>
   httpClient.patch<AdminUser>(`${API_ENDPOINTS.ADMIN_USERS}/${id}`, payload);
 
-export const deactivateUser = (id: number) =>
-  httpClient.delete<{ message: string }>(`${API_ENDPOINTS.ADMIN_USERS}/${id}`);
+export const deactivateUser = (id: number, tenantId?: number) =>
+  httpClient.delete<{ message: string }>(`${API_ENDPOINTS.ADMIN_USERS}/${id}`, {
+    params: tenantId ? { tenant_id: tenantId } : undefined,
+  });
 
-export const getInvites = (params: { page?: number; per_page?: number }) =>
+export const getInvites = (params: { page?: number; per_page?: number; tenant_id?: number }) =>
   httpClient.get<PaginatedInvites>(API_ENDPOINTS.ADMIN_USERS_INVITES, { params });
 
 export const createInvite = (payload: CreateInvitePayload) =>
   httpClient.post<Invite>(API_ENDPOINTS.ADMIN_USERS_INVITES, payload);
 
-export const revokeInvite = (id: number) =>
-  httpClient.delete<{ message: string }>(`${API_ENDPOINTS.ADMIN_USERS_INVITES}/${id}`);
+export const revokeInvite = (id: number, tenantId?: number) =>
+  httpClient.delete<{ message: string }>(`${API_ENDPOINTS.ADMIN_USERS_INVITES}/${id}`, {
+    params: tenantId ? { tenant_id: tenantId } : undefined,
+  });

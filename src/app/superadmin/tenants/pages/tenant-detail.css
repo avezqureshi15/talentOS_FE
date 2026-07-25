@@ -524,6 +524,82 @@
 }
 
 /* ── Responsive ── */
+/* ── User Management: Actions ── */
+.td-users-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.td-users-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font-family);
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+}
+
+.td-users-btn--primary {
+  background: var(--accent);
+  color: var(--text-white);
+}
+
+.td-users-btn--secondary {
+  background: var(--surface-glass);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}
+
+.td-users-btn--secondary:hover {
+  border-color: var(--border-strong);
+  color: var(--text-white);
+}
+
+.td-users-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── User Management: Tabs ── */
+.td-users-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  width: fit-content;
+}
+
+.td-users-tab {
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.td-users-tab:hover {
+  color: var(--text-primary);
+}
+
+.td-users-tab--active {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* ── User Management: Content ── */
+.td-users-content {
+  margin-top: 0;
+}
+
 @media (max-width: 768px) {
   .td-page {
     padding: 16px;

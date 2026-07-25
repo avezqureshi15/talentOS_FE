@@ -1,0 +1,60 @@
+.admin-modal-form {
+  padding: 0 24px 24px;
+}
+
+.admin-field {
+  margin-bottom: 16px;
+}
+
+.admin-label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-family);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.admin-input:focus {
+  border-color: var(--accent);
+}
+
+.admin-error {
+  font-size: 13px;
+  color: var(--danger);
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  background: var(--danger-bg);
+  border-radius: 8px;
+}
+
+.admin-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.admin-confirm-text {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.admin-checkbox {
+  margin-right: 8px;
+  accent-color: var(--accent);
+}

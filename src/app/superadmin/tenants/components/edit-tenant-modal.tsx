@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "@/components/ui/button/button";
 import { updateTenant } from "@/app/superadmin/tenants/services/tenants.service";
 import type { EditTenantModalProps } from "./edit-tenant-modal.types";
 
@@ -65,12 +66,10 @@ export default function EditTenantModal({ tenant, onClose, onSuccess }: EditTena
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="modal-btn modal-btn--secondary" onClick={onClose}>
-              Cancel
-            </button>
-            <button type="submit" className="modal-btn modal-btn--primary" disabled={submitting}>
+            <Button variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button variant="primary" type="submit" loading={submitting}>
               {submitting ? "Saving..." : "Save"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

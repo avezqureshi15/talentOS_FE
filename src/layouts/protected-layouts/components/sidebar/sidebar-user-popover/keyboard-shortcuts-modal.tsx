@@ -1,6 +1,6 @@
 import BaseModal from "@/components/ui/modal/base-modal";
 import { KEYBOARD_SHORTCUTS_MODAL, KEYBOARD_SHORTCUTS_LIST } from "@/constants/constants";
-import { useRole } from "@/app/auth/hooks/use-auth";
+import { usePermissions } from "@/hooks/use-permissions";
 import "./keyboard-shortcuts-modal.css";
 
 type KeyboardShortcutsModalProps = {
@@ -16,8 +16,8 @@ const renderKeys = (keys: string) =>
   ));
 
 const KeyboardShortcutsModal = ({ open, onClose }: KeyboardShortcutsModalProps) => {
-  const { role } = useRole();
-  const isSuperadmin = role === "superadmin";
+  const { can } = usePermissions();
+  const isSuperadmin = can("tenant.view");
   const shortcuts = isSuperadmin
     ? KEYBOARD_SHORTCUTS_LIST.filter((s) => SUPERADMIN_SHORTCUTS.has(s.label))
     : KEYBOARD_SHORTCUTS_LIST;

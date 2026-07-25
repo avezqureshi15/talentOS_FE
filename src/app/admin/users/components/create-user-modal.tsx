@@ -1,13 +1,18 @@
 import { useState } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
+import Select from "@/components/ui/select/select";
 import { createUser } from "@/app/admin/users/services/users-admin.service";
+import { ROLE_OPTIONS } from "@/constants/role-options";
+import "./admin-modal.css";
 
 type Props = {
   onClose: () => void;
   onSuccess: () => void;
+  tenantId?: number;
 };
 
-export default function CreateUserModal({ onClose, onSuccess }: Props) {
+export default function CreateUserModal({ onClose, onSuccess, tenantId }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +28,7 @@ export default function CreateUserModal({ onClose, onSuccess }: Props) {
     if (password.length < 8) { setError("Password must be at least 8 characters"); return; }
     setLoading(true);
     try {
-      await createUser({ name: name.trim(), email: email.trim(), password, role });
+      await createUser({ name: name.trim(), email: email.trim(), password, role, tenant_id: tenantId });
       onSuccess();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to create user";
@@ -49,35 +54,16 @@ export default function CreateUserModal({ onClose, onSuccess }: Props) {
         </div>
         <div className="admin-field">
           <label className="admin-label">Role</label>
-          <select className="admin-select" value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="admin">Admin</option>
-            <option value="hr">HR</option>
-            <option value="viewer">Viewer</option>
-          </select>
+          <Select options={ROLE_OPTIONS} value={role} onChange={(e) => setRole(e.target.value)} />
         </div>
         {error && <p className="admin-error">{error}</p>}
         <div className="admin-modal-actions">
-          <button type="button" className="admin-btn admin-btn--cancel" onClick={onClose}>Cancel</button>
-          <button type="submit" className="admin-btn admin-btn--primary" disabled={loading}>
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" type="submit" loading={loading}>
             {loading ? "Creating..." : "Create User"}
-          </button>
+          </Button>
         </div>
       </form>
-
-      <style>{`
-        .admin-modal-form { padding: 0 24px 24px; }
-        .admin-field { margin-bottom: 16px; }
-        .admin-label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
-        .admin-input, .admin-select { width: 100%; padding: 10px 12px; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: var(--font-family); outline: none; box-sizing: border-box; }
-        .admin-input:focus, .admin-select:focus { border-color: var(--accent); }
-        .admin-select { cursor: pointer; }
-        .admin-error { font-size: 13px; color: var(--danger); margin: 0 0 16px; padding: 8px 12px; background: var(--danger-bg); border-radius: 8px; }
-        .admin-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }
-        .admin-btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-family: var(--font-family); font-weight: 500; cursor: pointer; border: none; transition: opacity 0.15s; }
-        .admin-btn--primary { background: var(--accent); color: var(--text-white); }
-        .admin-btn--primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        .admin-btn--cancel { background: var(--bg-hover); color: var(--text-primary); }
-      `}</style>
     </BaseModal>
   );
 }

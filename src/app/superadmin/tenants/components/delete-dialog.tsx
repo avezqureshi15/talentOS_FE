@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "@/components/ui/button/button";
 import { deleteTenant } from "@/app/superadmin/tenants/services/tenants.service";
 import type { DeleteTenantDialogProps } from "./delete-dialog.types";
 
@@ -36,16 +37,10 @@ export default function DeleteTenantDialog({ tenant, onClose, onSuccess }: Delet
           </p>
         </div>
         <div className="modal-footer">
-          <button className="modal-btn modal-btn--secondary" onClick={onClose}>
-            Cancel
-          </button>
-          <button
-            className="modal-btn modal-btn--danger"
-            onClick={handleConfirm}
-            disabled={submitting}
-          >
+          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button variant="danger" onClick={handleConfirm} loading={submitting}>
             {submitting ? "Suspending..." : "Suspend"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import Button from "@/components/ui/button/button";
 import { getTenants, updateTenant, type Tenant } from "@/app/superadmin/tenants/services/tenants.service";
 import TenantTable from "@/app/superadmin/tenants/components/tenant-table";
 import CreateTenantModal from "@/app/superadmin/tenants/components/create-tenant-modal";
 import EditTenantModal from "@/app/superadmin/tenants/components/edit-tenant-modal";
 import DeleteTenantDialog from "@/app/superadmin/tenants/components/delete-dialog";
+import { useCmdPaletteRegistration } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette-registration";
 
 export default function TenantsPage() {
   const navigate = useNavigate();
@@ -79,6 +81,28 @@ export default function TenantsPage() {
 
   const totalPages = Math.ceil(total / 20);
 
+  const cmdPaletteConfig = useMemo(
+    () => ({
+      placeholder: "Search tenants...",
+      sectionTitle: "Tenants",
+      search: async (q: string) => {
+        if (!q.trim()) return [];
+        const { data } = await getTenants({ q, per_page: 10 });
+        return data.data.map((t: Tenant) => ({
+          id: String(t.id),
+          label: t.name,
+          sublabel: t.slug,
+          type: "tenant" as const,
+        }));
+      },
+      onSelect: (item: { id: string }) => {
+        navigate(`/superadmin/tenants/${item.id}`);
+      },
+    }),
+    [navigate],
+  );
+  useCmdPaletteRegistration(cmdPaletteConfig);
+
   return (
     <div className="tenants-page">
       <div className="tenants-header">
@@ -86,9 +110,11 @@ export default function TenantsPage() {
           <h1 className="tenants-title">Tenant Management</h1>
           <p className="tenants-subtitle">Manage organizations, approve signups, and provision new tenants</p>
         </div>
-        <button className="tenants-btn tenants-btn--primary" onClick={() => { setInviteInfo(null); setShowCreateModal(true); }}>
+        <div className="w-10px" >
+        <Button variant="primary"  onClick={() => { setInviteInfo(null); setShowCreateModal(true); }}>
           Create Tenant
-        </button>
+        </Button>
+        </div>
       </div>
 
       <div className="tenants-filters">
@@ -159,20 +185,17 @@ export default function TenantsPage() {
               <div className="tenants-invite-token">
                 <label>Invite Link (send to admin):</label>
                 <code>{window.location.origin}/auth/invite/{inviteInfo.invite_token}</code>
-                <button
-                  className="tenants-btn tenants-btn--sm"
-                  onClick={() => navigator.clipboard.writeText(
+                <Button variant="matte" size="sm" onClick={() => navigator.clipboard.writeText(
                     `${window.location.origin}/auth/invite/${inviteInfo.invite_token}`
-                  )}
-                >
+                  )}>
                   Copy
-                </button>
+                </Button>
               </div>
             </div>
             <div className="modal-footer">
-              <button className="modal-btn modal-btn--primary" onClick={() => { setInviteInfo(null); setShowCreateModal(false); }}>
+              <Button variant="primary" onClick={() => { setInviteInfo(null); setShowCreateModal(false); }}>
                 Done
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -9,11 +9,13 @@ import HiringRequestDetails from "@/app/dashboard/hiring-requests-detail/pages/h
 import SlotBooking from "@/app/slot-booking/pages/slot-booking";
 import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
 import UsersPage from "@/app/admin/users/pages/users-page";
+import RolesPage from "@/app/superadmin/roles/pages/roles-page";
 import SettingsPage from "@/app/admin/settings/pages/settings-page";
 import TenantsPage from "@/app/superadmin/tenants/pages/tenants-page";
 import TenantDetail from "@/app/superadmin/tenants/pages/tenant-detail";
 import "@/app/superadmin/tenants/pages/tenants-page.css";
 import "@/app/superadmin/tenants/pages/tenant-detail.css";
+import RequirePermission from "@/router/require-permission";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import { ROUTES } from "@/constants/routes";
 import { ERROR_FALLBACK_LABELS } from "@/constants/error-labels";
@@ -33,7 +35,7 @@ export const router = createBrowserRouter([
 
   {
     errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
-    element: <ProtectedRoute allowedRoles={["admin", "hr", "viewer"]} />,
+    element: <ProtectedRoute allowedRoles={["superadmin", "admin", "hr", "viewer"]} permissions={["chat"]} />,
     children: [
       {
         element: <ProtectedLayout />,
@@ -56,18 +58,32 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // ── Admin routes (gated to admin+) ──────────────────────────────
+  // ── Admin routes (permission-gated per page) ──────────────────
   {
     errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
-    element: <ProtectedRoute minimumRole="admin" allowedRoles={["admin"]} />,
+    element: <ProtectedLayout />,
     children: [
       {
         path: "admin",
-        element: <ProtectedLayout />,
         children: [
           { index: true, element: <Navigate to={ROUTES.ADMIN_USERS} replace /> },
-          { path: "users", element: <UsersPage /> },
-          { path: "settings", element: <SettingsPage /> },
+          { path: "users", element: <RequirePermission permission="user.invite"><UsersPage /></RequirePermission> },
+          { path: "settings", element: <RequirePermission permission="settings.view"><SettingsPage /></RequirePermission> },
+        ],
+      },
+    ],
+  },
+
+  // ── Role management (gated to superadmin) ──────────────────────
+  {
+    errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
+    element: <ProtectedRoute minimumRole="superadmin" permissions={["user.manage"]} />,
+    children: [
+      {
+        path: "roles",
+        element: <ProtectedLayout />,
+        children: [
+          { index: true, element: <RolesPage /> },
         ],
       },
     ],

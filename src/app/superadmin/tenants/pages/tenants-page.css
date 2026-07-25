@@ -22,38 +22,6 @@
   margin: 4px 0 0;
 }
 
-.tenants-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  font-family: var(--font-family);
-}
-
-.tenants-btn--primary {
-  background: var(--accent);
-  color: #fff;
-}
-
-.tenants-btn--primary:hover {
-  opacity: 0.9;
-}
-
-.tenants-btn--sm {
-  padding: 4px 10px;
-  font-size: 12px;
-  background: var(--bg-hover);
-  color: var(--text-primary);
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-}
-
-.tenants-btn--sm:hover {
-  background: var(--border-subtle);
-}
-
 .tenants-filters {
   display: flex;
   gap: 8px;
@@ -273,52 +241,4 @@
   justify-content: flex-end;
   gap: 8px;
   padding: 0 24px 20px;
-}
-
-.modal-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  font-family: var(--font-family);
-}
-
-.modal-btn--primary {
-  background: var(--accent);
-  color: #fff;
-}
-
-.modal-btn--primary:hover {
-  opacity: 0.9;
-}
-
-.modal-btn--primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.modal-btn--secondary {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-  border: 1px solid var(--border-subtle);
-}
-
-.modal-btn--secondary:hover {
-  background: var(--border-subtle);
-}
-
-.modal-btn--danger {
-  background: #ef5350;
-  color: #fff;
-}
-
-.modal-btn--danger:hover {
-  opacity: 0.9;
-}
-
-.modal-btn--danger:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }

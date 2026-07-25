@@ -9,6 +9,7 @@ export type User = {
   tenant_id: number | null;
   auth_provider: "google" | "email";
   is_active: boolean;
+  permissions?: string[];
 };
 
 export type AuthContextValue = {

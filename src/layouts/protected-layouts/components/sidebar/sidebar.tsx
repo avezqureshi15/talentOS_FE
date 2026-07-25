@@ -10,8 +10,8 @@ import ChatItem from "./chat-item";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
 import { Sidebar as SidebarShell, SidebarItem, SidebarSection } from "@/components/ui/sidebar";
 import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS, type NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
-import { useRole } from "@/app/auth/hooks/use-auth";
-import type { Role } from "@/constants/roles";
+import { usePermissions } from "@/hooks/use-permissions";
+import { useAuth } from "@/app/auth/hooks/use-auth";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -19,7 +19,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   chats,
   activeChatId,
   onSelectChat,
-  onSearch,
   onDeleteChat,
   onRenameChat,
   onLoadMore,
@@ -36,15 +35,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   const renameInputRef = useRef<HTMLInputElement | null>(null);
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-  const { role } = useRole();
+  const { canAll } = usePermissions();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === "superadmin";
 
-  const canSeeItem = (item: NavItemConfig) => {
-    if (item.roles) return item.roles.includes(role as Role);
-    return true;
-  };
+  const canSeeItem = (item: NavItemConfig) => canAll(...item.permissions);
 
-  const visibleMain = MAIN_NAV_ITEMS.filter(canSeeItem);
-  const visibleAdmin = ADMIN_NAV_ITEMS.filter(canSeeItem);
+  const visibleMain = !isSuperAdmin ? MAIN_NAV_ITEMS.filter(canSeeItem) : [];
+  const visibleAdmin = !isSuperAdmin ? ADMIN_NAV_ITEMS.filter(canSeeItem) : [];
   const visibleSuperadmin = SUPERADMIN_NAV_ITEMS.filter(canSeeItem);
 
   const sentinelRef = useIntersectionObserver(
@@ -136,13 +134,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           />
         ))}
 
-        <SidebarItem
-          icon={<Icon.Search />}
-          label={SIDEBAR_LABELS.SEARCH}
-          shortcut="Ctrl+K"
-          onClick={onSearch}
-        />
-
         {visibleAdmin.length > 0 && <div className="sidebar-nav-divider" />}
 
         {visibleAdmin.map((item) => (
@@ -167,7 +158,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* HISTORY */}
-      <div className="sidebar__history">
+      {!isSuperAdmin && (<div className="sidebar__history">
         <SidebarSection
           title={SIDEBAR_LABELS.HISTORY}
           collapsible
@@ -196,10 +187,12 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div ref={sentinelRef} className="sidebar-scroll-sentinel" />
           </div>
         </SidebarSection>
-      </div>
+      </div>)}
 
       {/* USER */}
-      <SidebarUserPopover />
+      <div className="sidebar__user-wrapper">
+        <SidebarUserPopover />
+      </div>
 
       <DeleteChatModal
         open={!!deleteTargetId}
