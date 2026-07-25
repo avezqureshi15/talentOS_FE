@@ -6,7 +6,7 @@ import type { RecruiterFilterProps } from "./recruiter-filter.types";
 import { getInitials } from "@/utils/user";
 import { springSnap } from "@/utils/motion";
 
-const RecruiterFilter = ({ viewMode, onViewModeChange }: RecruiterFilterProps) => {
+const RecruiterFilter = ({}: RecruiterFilterProps) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -173,28 +173,7 @@ const RecruiterFilter = ({ viewMode, onViewModeChange }: RecruiterFilterProps) =
         </div>
       </div>
 
-      <div className="recruiter-view-toggle">
-        <motion.button
-          className={`view-toggle-icon ${viewMode === "table" ? "view-toggle-icon--active" : ""}`}
-          onClick={() => onViewModeChange?.("table")}
-          title="Table view"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={springSnap}
-        >
-          <i className="bx bx-border-all" />
-        </motion.button>
-        <motion.button
-          className={`view-toggle-icon ${viewMode === "card" ? "view-toggle-icon--active" : ""}`}
-          onClick={() => onViewModeChange?.("card")}
-          title="Card view"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          transition={springSnap}
-        >
-          <i className="bx bx-grid" />
-        </motion.button>
-      </div>
+      <div className="recruiter-view-toggle-placeholder" />
     </div>
   );
 };

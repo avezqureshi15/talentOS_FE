@@ -98,6 +98,16 @@ const ApplicantCard = ({
           </div>
           <div className="meta">
             {a.email && <span><i className="bx bx-envelope"></i> {a.email}</span>}
+            {a.currentRoundId && onViewRound && (
+              <button
+                className="current-round-btn"
+                onClick={(e) => { e.stopPropagation(); onViewRound(a.currentRoundId!); }}
+                title="Current Round Details"
+                type="button"
+              >
+                <i className="bx bx-info-circle" /> Current Round
+              </button>
+            )}
             {stateConfig.chip && (
               <Chip variant={stateConfig.chip.variant as ChipVariant} size="sm">
                 {stateConfig.chip.label}

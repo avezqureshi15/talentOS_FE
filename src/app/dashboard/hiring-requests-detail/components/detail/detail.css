@@ -155,6 +155,33 @@
   margin-right: 2px;
 }
 
+.current-round-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.current-round-btn i {
+  font-size: 13px;
+}
+
+.current-round-btn:hover {
+  background: var(--surface-glass-hover);
+  border-color: var(--text-muted);
+}
+
 .applied-date {
   opacity: 0.75;
   font-size: 11px;
@@ -844,17 +871,99 @@
 }
 
 /* =========================
-   ROUND VERDICT FILTER CHIPS
+   FILTER BAR — 3 SECTIONS
 ========================= */
-.round-verdict-chips {
+.filter-bar-sections {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: nowrap;
+}
+
+/* ---------- Section Divider ---------- */
+.section-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-default);
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+/* ---------- Common Section ---------- */
+.filter-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Section 1: Status Tabs ---------- */
+.status-toggle-group {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.status-toggle-btn {
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.status-toggle-btn:last-child {
+  border-right: none;
+}
+
+.status-toggle-btn:hover {
+  background: var(--surface-card-hover);
+  color: var(--text-primary);
+}
+
+.status-toggle-btn.active {
+  background: var(--accent-indigo-bg);
+  color: var(--accent-indigo-light);
+  font-weight: 600;
+}
+
+/* ---------- Section 2: Score Filter ---------- */
+.filter-section-score .score-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.filter-section-score .select-wrapper {
+  min-width: 100px;
+}
+
+/* ---------- Section 3: Disqualified Criteria ---------- */
+.filter-section-disqualified .disqualified-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.disqualified-chips {
   display: flex;
   gap: 4px;
   align-items: center;
 }
 
-.round-verdict-chip {
-  padding: 6px 14px;
-  font-size: 12px;
+.disqualified-chip {
+  padding: 4px 10px;
+  font-size: 11px;
   font-weight: 500;
   background: transparent;
   border: 1px solid var(--border-subtle);
@@ -865,24 +974,16 @@
   font-family: inherit;
 }
 
-.round-verdict-chip:hover {
-  background: var(--surface-card-hover);
-  color: var(--text-primary);
+.disqualified-chip:hover {
+  border-color: var(--danger-light-border);
+  color: var(--danger-light);
 }
 
-.round-verdict-chip.active {
-  background: var(--accent-indigo-bg);
-  border-color: var(--accent-indigo-border);
-  color: var(--accent-indigo-light);
-}
-
-/* =========================
-   FILTER SEPARATOR
-========================= */
-.filter-separator {
-  width: 1px;
-  height: 20px;
-  background: var(--border-default);
+.disqualified-chip.active {
+  background: var(--danger-bg-strong);
+  border-color: var(--danger-light-border);
+  color: var(--danger-light);
+  font-weight: 600;
 }
 
 /* =========================
@@ -1234,14 +1335,41 @@
 }
 
 /* =========================
-   VIEW TOGGLE (card view)
+   APPLICANT SEARCH INDICATOR
 ========================= */
-.card-view-toggle {
+.applicant-search-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-indigo-bg);
+  border: 1px solid var(--accent-indigo-border);
+  color: var(--accent-indigo-light);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.applicant-search-indicator i {
+  font-size: 16px;
+}
+
+.applicant-search-indicator--not-found {
+  background: var(--danger-bg-strong);
+  border-color: var(--danger-light-border);
+  color: var(--danger-light);
+}
+
+/* =========================
+   VIEW TOGGLE (persistent)
+========================= */
+.persistent-view-toggle {
   display: flex;
   align-items: center;
   gap: 4px;
   justify-content: flex-end;
-  padding-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .view-toggle-icon {

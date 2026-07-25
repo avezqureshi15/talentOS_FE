@@ -6,7 +6,4 @@ export type Recruiter = {
 
 export type ViewMode = "table" | "card";
 
-export type RecruiterFilterProps = {
-  viewMode?: ViewMode;
-  onViewModeChange?: (mode: ViewMode) => void;
-};
+export type RecruiterFilterProps = {};

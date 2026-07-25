@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import "./detail.css";
 
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
@@ -33,7 +33,9 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   // justification: tracks active pipeline stage for candidate table
   const [activeStage, setActiveStage] = useState<StageKey>("yet-to-start");
   // justification: toggles between card and table view
-  const [viewMode, setViewMode] = useState<"table" | "card">("table");
+  const [viewMode, setViewMode] = useState<"table" | "card">(
+    (searchParams.get("view") as "table" | "card") ?? "table"
+  );
   // justification: selected candidate ids for batch actions in table view
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   // justification: tracks which applicant accordion is expanded (card view)
@@ -57,7 +59,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
   const jobId = hiringRequest.id;
   const isRemote = hiringRequest.location?.toLowerCase() === "remote" || hiringRequest.type?.toLowerCase() === "remote";
-  const { applicants, isLoading: appsLoading, hasMore, fetchNext, refresh } = useApplicationsData(
+  const { applicants, isLoading: appsLoading, isLoadingMore, hasMore, fetchNext, refresh } = useApplicationsData(
     jobId,
     filter,
     viewMode === "card",
@@ -67,36 +69,55 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     rejectReason,
   );
 
-  const scrolledRef = useRef(false);
+  const [isSearchingForApplicant, setIsSearchingForApplicant] = useState(false);
+  const scrollAttemptedRef = useRef(false);
 
   useEffect(() => {
-    if (!applicantParam || appsLoading || scrolledRef.current) return;
+    if (!applicantParam || scrollAttemptedRef.current) return;
+    if (appsLoading || isLoadingMore) return;
+
     const found = applicants.some((a) => a.id === applicantParam);
-    if (!found) {
-      if (!hasMore) {
+
+    if (found) {
+      scrollAttemptedRef.current = true;
+      setIsSearchingForApplicant(false);
+      setOpenId(applicantParam);
+
+      const scrollTimer = setTimeout(() => {
+        const el = document.querySelector(`[data-applicant-id="${applicantParam}"]`);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 150);
+
+      const clearTimer = setTimeout(() => {
         setSearchParams((prev) => {
           prev.delete("applicant");
+          prev.delete("view");
           return prev;
         });
-      }
-      return;
+      }, 3000);
+
+      return () => {
+        clearTimeout(scrollTimer);
+        clearTimeout(clearTimer);
+      };
     }
-    scrolledRef.current = true;
-    const scrollTimer = setTimeout(() => {
-      const el = document.querySelector(`[data-applicant-id="${applicantParam}"]`);
-      el?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 150);
-    const clearTimer = setTimeout(() => {
-      setSearchParams((prev) => {
-        prev.delete("applicant");
-        return prev;
-      });
-    }, 3000);
-    return () => {
-      clearTimeout(scrollTimer);
-      clearTimeout(clearTimer);
-    };
-  }, [applicantParam, appsLoading, applicants, hasMore, setSearchParams]);
+
+    if (hasMore) {
+      setIsSearchingForApplicant(true);
+      fetchNext();
+    } else {
+      setIsSearchingForApplicant(false);
+      scrollAttemptedRef.current = true;
+      const clearTimer = setTimeout(() => {
+        setSearchParams((prev) => {
+          prev.delete("applicant");
+          prev.delete("view");
+          return prev;
+        });
+      }, 4000);
+      return () => clearTimeout(clearTimer);
+    }
+  }, [applicantParam, appsLoading, isLoadingMore, applicants, hasMore, fetchNext, setSearchParams, setOpenId]);
 
   return (
     <div className="job-page">
@@ -108,29 +129,56 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
 
       <motion.div className="tab-content" variants={staggerContainer} initial="hidden" animate="visible">
         <ErrorBoundary>
+          <div className="persistent-view-toggle">
+            <motion.button
+              className={`view-toggle-icon${viewMode === "table" ? " view-toggle-icon--active" : ""}`}
+              onClick={() => setViewMode("table")}
+              title="Table view"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={springSnap}
+            >
+              <i className="bx bx-border-all" />
+            </motion.button>
+            <motion.button
+              className={`view-toggle-icon${viewMode === "card" ? " view-toggle-icon--active" : ""}`}
+              onClick={() => setViewMode("card")}
+              title="Card view"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={springSnap}
+            >
+              <i className="bx bx-grid" />
+            </motion.button>
+          </div>
           {viewMode === "card" ? (
             <>
-              <div className="card-view-toggle">
-                <motion.button
-                  className="view-toggle-icon"
-                  onClick={() => setViewMode("table")}
-                  title="Table view"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={springSnap}
-                >
-                  <i className="bx bx-border-all" />
-                </motion.button>
-                <motion.button
-                  className="view-toggle-icon view-toggle-icon--active"
-                  title="Card view"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={springSnap}
-                >
-                  <i className="bx bx-grid" />
-                </motion.button>
-              </div>
+              <AnimatePresence>
+                {isSearchingForApplicant && (
+                  <motion.div
+                    className="applicant-search-indicator"
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <i className="bx bx-search" />
+                    <span>Searching for applicant across pages...</span>
+                  </motion.div>
+                )}
+                {!isSearchingForApplicant && scrollAttemptedRef.current && applicantParam && !applicants.some((a) => a.id === applicantParam) && (
+                  <motion.div
+                    className="applicant-search-indicator applicant-search-indicator--not-found"
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <i className="bx bx-x-circle" />
+                    <span>Applicant not found in this hiring request.</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               {appsLoading ? (
                 <motion.div variants={fadeSlideUp}><LoadingSpinner /></motion.div>
               ) : (
@@ -167,7 +215,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 </motion.div>
               )}
               {activeStage !== "evaluated" && (
-                <motion.div variants={fadeSlideUp}><RecruiterFilter viewMode={viewMode} onViewModeChange={setViewMode} /></motion.div>
+                <motion.div variants={fadeSlideUp}><RecruiterFilter /></motion.div>
               )}
 
               {activeStage === "evaluated" && (
