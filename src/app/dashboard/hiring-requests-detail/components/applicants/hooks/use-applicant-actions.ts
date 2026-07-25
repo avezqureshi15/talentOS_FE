@@ -4,7 +4,6 @@ import type { MenuAction } from "../applicants.types";
 export type ActionHandlers = {
   onShortlist: (id: string) => void;
   onRejectFromEvaluation: (id: string) => void;
-  onMoveToNextRound: (id: string) => void;
   onScheduleInterview: (id: string) => void;
   onMenuSelect: (id: string) => void;
   onMenuReject: (id: string) => void;
@@ -16,7 +15,6 @@ export function useApplicantActions(handlers: ActionHandlers) {
       const map: Record<string, (id: string) => void> = {
         onShortlist: handlers.onShortlist,
         onRejectFromEvaluation: handlers.onRejectFromEvaluation,
-        onMoveToNextRound: handlers.onMoveToNextRound,
         onScheduleInterview: handlers.onScheduleInterview,
       };
       map[handlerKey]?.(id);

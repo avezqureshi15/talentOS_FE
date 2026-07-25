@@ -4,6 +4,17 @@ export type ComparisonField = {
   expected: string;
 };
 
+export type ReviewPhaseAnswer = {
+  question: string;
+  score: number;
+  notes?: string | null;
+};
+
+export type ReviewPhase = {
+  phase: string;
+  answers: ReviewPhaseAnswer[];
+};
+
 export type ReviewEntity = {
   entityType: string;
   verdict?: string;
@@ -17,13 +28,15 @@ export type ReviewEntity = {
   rejectionDetails: Array<Record<string, { JD: string; Candidate: string }>>;
   comparisonFields: ComparisonField[];
   averageRating?: number;
-  [key: string]: unknown;
+  phases: ReviewPhase[];
+  questionsSource?: string;
 };
 
 export type RoundDetail = {
   id: string;
   round: string;
   interviewer: string;
+  interviewers: string[];
   role: string;
   jdLabel: string;
   candidate: string;
@@ -32,7 +45,15 @@ export type RoundDetail = {
   duration: string;
   interviewType: string;
   status: string;
+  hasInterview: boolean;
+  reviewFormStatus: string | null;
   reviews: ReviewEntity[];
+};
+
+export type RoundInfoRow = {
+  label: string;
+  icon: string;
+  value: string;
 };
 
 export type RoundsSidePanelProps = {

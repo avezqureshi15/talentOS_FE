@@ -4,11 +4,11 @@ export const EVENTS_BY_CANDIDATE_QUERY_KEY = (candidateId: number) =>
   ["events", "by-candidate", candidateId] as const;
 
 export const TIMELINE_LABELS = {
-  CANDIDATE_JOURNEY: "Candidate Journey",
+  CANDIDATE_JOURNEY: "History",
   DOWNLOAD_RESUME: "Download Resume",
   ADD_REMARK: "Add Remark",
   NO_EVENTS: "No events yet for this candidate",
-  ERROR_LOADING: "Failed to load timeline",
+  ERROR_LOADING: "Failed to load history",
   RETRY: "Retry",
 } as const;
 

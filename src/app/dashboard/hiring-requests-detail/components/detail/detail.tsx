@@ -178,7 +178,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 openId={openId}
                 setOpenId={setOpenId}
                 filter={filter}
-                onFilterChange={setFilter}
+                onFilterChange={(value) => {
+                  setFilter(value);
+                  if (value !== "rejected") setRejectReason("");
+                }}
                 hasMore={hasMore}
                 onLoadMore={fetchNext}
                 scoreFilter={scoreFilter}

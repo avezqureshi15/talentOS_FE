@@ -52,6 +52,7 @@ export const bookInterview = async (
 
 export type RescheduleInterviewPayload = {
   slot_id: string;
+  interviewer_ids?: number[];
 };
 
 export type RescheduleInterviewResponse = {
