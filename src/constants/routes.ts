@@ -13,7 +13,7 @@ export const ROUTES = {
   BOOK_SLOT_ID: "/book-slot/:formId",
   RATE_CANDIDATE: "/rate-candidate",
   RATE_CANDIDATE_ID: "/rate-candidate/:reviewFormId",
-  ROUND_DETAILS: "/hiring-requests/:id/round-details/:candidateId",
+  ROUND_DETAILS: "/hiring-requests/:id/round-details/:roundId",
 } as const;
 
 export const HIRING_TABS = ["applications", "interview-design", "proctoring", "email-manager", "team-members"] as const;

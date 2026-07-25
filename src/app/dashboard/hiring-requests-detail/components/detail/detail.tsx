@@ -1,15 +1,14 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import "./detail.css";
 
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
+import ApplicantFilters from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-filters";
 import PipelineStages from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages";
 import { PIPELINE_STAGES } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.constants";
 import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table";
-import { EVALUATED_SUB_FILTERS, MOCK_CANDIDATES } from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table.constants";
-import RecruiterFilter from "@/app/dashboard/hiring-requests-detail/components/applicants/recruiter-filter";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
@@ -17,6 +16,16 @@ import { DEFAULT_FILTER } from "@/app/dashboard/hiring-requests-detail/component
 import { PAGINATION } from "@/constants/api-endpoints";
 import { springSnap, fadeSlideUp, staggerContainer } from "@/utils/motion";
 import type { JobDetailProps } from "./detail.types";
+import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+
+const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
+  "resume-shortlisting": (a) => a.status === "new" || a.status === "resume_shortlisted",
+  screening: (a) => a.status === "under_evaluation",
+  interview: (a) => a.status === "interview_scheduled" || a.status === "interview_rescheduled" || a.status === "interview_cancelled",
+  "waiting-evaluation": (a) => a.status === "waiting_for_review",
+  evaluated: (a) => a.score != null || !!a.reviewVerdict,
+  outcome: (a) => a.finalVerdict === "SELECTED" || a.finalVerdict === "REJECTED",
+};
 
 const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = {
   all: {},
@@ -30,30 +39,21 @@ const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = {
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const applicantParam = searchParams.get("applicant");
-  // justification: tracks active pipeline stage for candidate table
-  const [activeStage, setActiveStage] = useState<StageKey>("yet-to-start");
-  // justification: toggles between card and table view
   const [viewMode, setViewMode] = useState<"table" | "card">(
     (searchParams.get("view") as "table" | "card") ?? "table"
   );
-  // justification: selected candidate ids for batch actions in table view
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  // justification: tracks which applicant accordion is expanded (card view)
+  const [activeStage, setActiveStage] = useState<StageKey>("resume-shortlisting");
   const [openId, setOpenId] = useState<string | null>(applicantParam ?? null);
-  // justification: controls applicant filter value (card view)
   const [filter, setFilter] = useState(DEFAULT_FILTER);
-  // justification: score range filter preset (card view)
   const [scoreFilter, setScoreFilter] = useState<string>("all");
-  // justification: multi-select rejection reason filter (card view)
   const [rejectReason, setRejectReason] = useState<string>("");
-  // justification: evaluated sub-filter (table view)
-  const [subFilter, setSubFilter] = useState("all");
-  // justification: archived search query (table view)
-  const [archivedSearch, setArchivedSearch] = useState("");
+  const [interviewSubFilter, setInterviewSubFilter] = useState<"yet-to-start" | "no-show">("yet-to-start");
+  const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
+  const [outcomeSubFilter, setOutcomeSubFilter] = useState<"selected" | "rejected">("selected");
 
-
-  const handleRowClick = (candidateId: string) => {
-    window.open(`/hiring-requests/${jobId}/round-details/${candidateId}`, "_blank");
+  const handleRowClick = (candidate: Applicant) => {
+    const roundId = candidate.currentRoundId ?? candidate.id;
+    window.open(`/hiring-requests/${jobId}/round-details/${roundId}?candidateId=${candidate.id}`, "_blank");
   };
 
   const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
@@ -62,12 +62,45 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const { applicants, isLoading: appsLoading, isLoadingMore, hasMore, fetchNext, refresh } = useApplicationsData(
     jobId,
     filter,
-    viewMode === "card",
+    true,
     applicantParam ? PAGINATION.APPLICATIONS_SEARCH_SIZE : undefined,
     scoreRange.min,
     scoreRange.max,
     rejectReason,
   );
+
+  const stagesWithCounts = useMemo(() =>
+    PIPELINE_STAGES.map((s) => ({
+      ...s,
+      count: applicants.filter(STAGE_FILTER_MAP[s.key]).length,
+    })),
+    [applicants],
+  );
+
+  const tableData = useMemo(() => {
+    if (viewMode !== "table") return applicants;
+    let filtered = applicants.filter(STAGE_FILTER_MAP[activeStage]);
+    if (activeStage === "interview") {
+      const interviewFilters: Record<string, (a: Applicant) => boolean> = {
+        "yet-to-start": (a) => a.status === "interview_scheduled" || a.status === "interview_rescheduled",
+        "no-show": (a) => a.status === "interview_cancelled",
+      };
+      filtered = filtered.filter(interviewFilters[interviewSubFilter]);
+    }
+    if (activeStage === "evaluated") {
+      filtered = filtered.filter(
+        evaluatedSubFilter === "ai" ? (a) => a.score != null : (a) => !!a.reviewVerdict,
+      );
+    }
+    if (activeStage === "outcome") {
+      filtered = filtered.filter(
+        outcomeSubFilter === "selected"
+          ? (a) => a.finalVerdict === "SELECTED"
+          : (a) => a.finalVerdict === "REJECTED",
+      );
+    }
+    return filtered;
+  }, [applicants, viewMode, activeStage, interviewSubFilter, evaluatedSubFilter, outcomeSubFilter]);
 
   const [isSearchingForApplicant, setIsSearchingForApplicant] = useState(false);
   const scrollAttemptedRef = useRef(false);
@@ -122,11 +155,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   return (
     <div className="job-page">
       <PipelineStages
-        stages={PIPELINE_STAGES}
+        stages={stagesWithCounts}
         activeKey={activeStage}
         onStageChange={setActiveStage}
       />
-
       <motion.div className="tab-content" variants={staggerContainer} initial="hidden" animate="visible">
         <ErrorBoundary>
           <div className="persistent-view-toggle">
@@ -151,6 +183,83 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
               <i className="bx bx-grid" />
             </motion.button>
           </div>
+
+          {activeStage === "resume-shortlisting" && (
+            <ApplicantFilters
+              filter={filter}
+              onFilterChange={setFilter}
+              scoreFilter={scoreFilter}
+              onScoreFilterChange={setScoreFilter}
+              rejectReason={rejectReason}
+              onRejectReasonChange={setRejectReason}
+            />
+          )}
+          {activeStage === "interview" && (
+            <div className="filter-bar filter-bar-sections">
+              <div className="filter-section filter-section-status">
+                <div className="status-toggle-group">
+                  <button
+                    className={`status-toggle-btn${interviewSubFilter === "yet-to-start" ? " active" : ""}`}
+                    onClick={() => setInterviewSubFilter("yet-to-start")}
+                  >
+                    Yet to Start
+                  </button>
+                  <button
+                    className={`status-toggle-btn${interviewSubFilter === "no-show" ? " active" : ""}`}
+                    onClick={() => setInterviewSubFilter("no-show")}
+                  >
+                    No Show
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {activeStage === "interview" && <div className="filter-chips" />}
+
+          {activeStage === "evaluated" && (
+            <div className="filter-bar filter-bar-sections">
+              <div className="filter-section filter-section-status">
+                <div className="status-toggle-group">
+                  <button
+                    className={`status-toggle-btn${evaluatedSubFilter === "ai" ? " active" : ""}`}
+                    onClick={() => setEvaluatedSubFilter("ai")}
+                  >
+                    AI
+                  </button>
+                  <button
+                    className={`status-toggle-btn${evaluatedSubFilter === "regular" ? " active" : ""}`}
+                    onClick={() => setEvaluatedSubFilter("regular")}
+                  >
+                    Regular
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {activeStage === "evaluated" && <div className="filter-chips" />}
+
+          {activeStage === "outcome" && (
+            <div className="filter-bar filter-bar-sections">
+              <div className="filter-section filter-section-status">
+                <div className="status-toggle-group">
+                  <button
+                    className={`status-toggle-btn${outcomeSubFilter === "selected" ? " active" : ""}`}
+                    onClick={() => setOutcomeSubFilter("selected")}
+                  >
+                    Selected
+                  </button>
+                  <button
+                    className={`status-toggle-btn${outcomeSubFilter === "rejected" ? " active" : ""}`}
+                    onClick={() => setOutcomeSubFilter("rejected")}
+                  >
+                    Rejected
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {activeStage === "outcome" && <div className="filter-chips" />}
+
           {viewMode === "card" ? (
             <>
               <AnimatePresence>
@@ -202,57 +311,12 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
               )}
             </>
           ) : (
-            <>
-              {activeStage === "archived" && (
-                <motion.div variants={fadeSlideUp} className="archived-search-bar">
-                  <i className="bx bx-search" />
-                  <input
-                    className="archived-search-input"
-                    placeholder="Search candidates..."
-                    value={archivedSearch}
-                    onChange={(e) => setArchivedSearch(e.target.value)}
-                  />
-                </motion.div>
-              )}
-              {activeStage !== "evaluated" && (
-                <motion.div variants={fadeSlideUp}><RecruiterFilter /></motion.div>
-              )}
-
-              {activeStage === "evaluated" && (
-                <motion.div variants={fadeSlideUp} className="evaluated-sub-filters">
-                  {EVALUATED_SUB_FILTERS.map((f) => {
-                    const count = f.key === "all"
-                      ? MOCK_CANDIDATES.evaluated.length
-                      : f.key === "completed"
-                        ? MOCK_CANDIDATES.evaluated.filter((c) => c.results && c.results.length > 0).length
-                        : MOCK_CANDIDATES.evaluated.filter((c) => c.partialProgress).length;
-                    return (
-                      <motion.button
-                        key={f.key}
-                        className={`evaluated-sub-filter-btn ${subFilter === f.key ? "evaluated-sub-filter-btn--active" : ""}`}
-                        onClick={() => setSubFilter(f.key)}
-                        whileHover={{ scale: 1.04 }}
-                        whileTap={{ scale: 0.96 }}
-                        transition={springSnap}
-                      >
-                        {f.label} ({count})
-                      </motion.button>
-                    );
-                  })}
-                </motion.div>
-              )}
-
-              <motion.div variants={fadeSlideUp}>
-                <CandidateTable
-                  stage={activeStage}
-                  data={[]}
-                  selectedIds={selectedIds}
-                  onSelectionChange={setSelectedIds}
-                  subFilter={activeStage === "evaluated" ? subFilter : undefined}
-                  onRowClick={(candidate) => handleRowClick(candidate.id)}
-                />
-              </motion.div>
-            </>
+            <motion.div variants={fadeSlideUp}>
+              <CandidateTable
+                data={tableData}
+                onRowClick={(candidate) => handleRowClick(candidate as Applicant)}
+              />
+            </motion.div>
           )}
         </ErrorBoundary>
       </motion.div>

@@ -137,22 +137,16 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
+  white-space: nowrap;
 }
 
-/* meta */
-.meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
+/* header meta items */
+.header-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   font-size: 11.5px;
   color: var(--text-muted);
-  margin-top: 2px;
-}
-
-.meta i {
-  font-size: 11px;
-  vertical-align: middle;
-  margin-right: 2px;
 }
 
 .current-round-btn {
@@ -577,24 +571,15 @@
 
 
 
-/* header layout split */
-.accordion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 12px;
-}
-
 /* left clickable area */
 .header-left {
-  cursor: pointer;
-}
-
-/* right controls */
-.header-right {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 6px 12px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
 }
 
 /* screening button */
@@ -637,18 +622,6 @@
 
 .status-line.error {
   color: var(--danger-light);
-}
-
-.accordion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left {
-  flex: 1;
-  min-width: 0;
-  cursor: pointer;
 }
 
 .header-right {
@@ -911,7 +884,7 @@
   font-weight: 500;
   background: transparent;
   border: none;
-  color: var(--text-muted);
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: inherit;
@@ -937,7 +910,7 @@
 .filter-section-score .score-label {
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
@@ -949,7 +922,7 @@
 .filter-section-disqualified .disqualified-label {
   font-size: 11px;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--text-primary);
   white-space: nowrap;
   text-transform: uppercase;
   letter-spacing: 0.5px;

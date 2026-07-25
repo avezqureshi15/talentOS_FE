@@ -53,6 +53,8 @@ export const useApplicationsData = (
       return nextOffset < lastPage.total ? nextOffset : undefined;
     },
     enabled,
+    staleTime: 30_000,
+    refetchOnWindowFocus: false,
     select: (data) => ({
       pages: data.pages,
       pageParams: data.pageParams,

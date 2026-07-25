@@ -17,6 +17,7 @@ export const MOCK_RECRUITERS: Recruiter[] = [
 
 export const STATUS_DISPLAY: Record<string, { label: string; cls: string }> = {
   new: { label: "New", cls: "state-chip--info" },
+  resume_shortlisted: { label: "Resume Shortlisted", cls: "state-chip--success" },
   under_evaluation: { label: "Evaluating", cls: "state-chip--warning" },
   shortlisted: { label: "Shortlisted", cls: "state-chip--success" },
   move_to_next_round: { label: "Move to Next", cls: "state-chip--success" },

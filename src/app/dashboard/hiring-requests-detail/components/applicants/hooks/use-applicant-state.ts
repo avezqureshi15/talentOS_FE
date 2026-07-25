@@ -25,6 +25,7 @@ function computeHiringState(
   switch (status) {
     case "under_evaluation":
       return "under_evaluation";
+    case "resume_shortlisted":
     case "shortlisted":
       return isScreening ? "move_to_next_round" : "shortlisted";
     case "move_to_next_round":

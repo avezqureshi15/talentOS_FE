@@ -804,3 +804,13 @@
   line-height: 1.5;
   margin: 0;
 }
+
+.rd-loading {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.rd-error {
+  color: var(--danger);
+  font-size: 13px;
+}

@@ -53,5 +53,7 @@ export type CandidateEvaluationData = {
 
 export type RoundDetailsParams = {
   id: string;
-  candidateId: string;
+  roundId: string;
 };
+
+export type RoundDetailsMode = "ai-interview" | "normal-round";

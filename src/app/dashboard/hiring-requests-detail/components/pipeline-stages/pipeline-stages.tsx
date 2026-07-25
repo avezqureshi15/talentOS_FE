@@ -15,7 +15,7 @@ const PipelineStages = ({ stages, activeKey, onStageChange }: PipelineStagesProp
       {stages.map((stage) => (
         <motion.div
           key={stage.key}
-          className={`pipeline-stage ${activeKey === stage.key ? "pipeline-stage--active" : ""}`}
+          className={`pipeline-stage pipeline-stage--${stage.key} ${activeKey === stage.key ? "pipeline-stage--active" : ""}`}
           onClick={() => onStageChange(stage.key)}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
