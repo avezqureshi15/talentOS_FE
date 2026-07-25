@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEventsByCandidateId } from "@/services/events/events";
 import type { EventResponse } from "@/services/events/events.types";
-import { formatDateTimeIST } from "@/utils/format-datetime-ist";
 import { STATE_TO_LABEL, STATE_TO_STATUS, EVENTS_BY_CANDIDATE_QUERY_KEY } from "../timeline.constants";
 import type { TimelineStep } from "../timeline.types";
 
@@ -10,7 +9,6 @@ type UseCandidateEventsResult = {
   steps: TimelineStep[];
   loading: boolean;
   error: string | null;
-  refetch: () => void;
 };
 
 const mapEventToStep = (event: EventResponse): TimelineStep => ({
@@ -18,7 +16,13 @@ const mapEventToStep = (event: EventResponse): TimelineStep => ({
   title: STATE_TO_LABEL[event.state_code] ?? event.event_name,
   description: event.remark ?? "",
   status: STATE_TO_STATUS[event.state_code] ?? "queued",
-  date: formatDateTimeIST(event.created_at),
+  date: new Date(event.created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }),
   actor: event.actor_type ?? undefined,
   actionUrl: event.action_url ?? undefined,
   actionLabel: event.action_label ?? undefined,
@@ -27,7 +31,7 @@ const mapEventToStep = (event: EventResponse): TimelineStep => ({
 export const useCandidateEvents = (
   candidateId: number | null,
 ): UseCandidateEventsResult => {
-  const { data: events, isLoading, error, refetch } = useQuery({
+  const { data: events, isLoading, error } = useQuery({
     queryKey: EVENTS_BY_CANDIDATE_QUERY_KEY(candidateId ?? 0),
     queryFn: () => fetchEventsByCandidateId(candidateId!),
     enabled: !!candidateId,
@@ -45,8 +49,5 @@ export const useCandidateEvents = (
     steps,
     loading: isLoading,
     error: error?.message ?? null,
-    refetch: () => {
-      void refetch();
-    },
   };
 };

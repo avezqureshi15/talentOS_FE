@@ -1,13 +1,3 @@
-export type ReviewPhase = {
-  phase: string;
-  questions: string[];
-};
-
-export type ReviewQuestionsPayload = {
-  questions_source: string;
-  phases: ReviewPhase[];
-};
-
 export type FormValidateResponse = {
   valid: boolean;
   reason: string;
@@ -15,27 +5,18 @@ export type FormValidateResponse = {
   type?: string;
   round_id?: string;
   candidate_id?: number;
-  review_questions?: ReviewQuestionsPayload | null;
-};
-
-export type ReviewAnswerItem = {
-  question: string;
-  score: number;
-  notes?: string | null;
-};
-
-export type ReviewAnswerPhase = {
-  phase: string;
-  answers: ReviewAnswerItem[];
 };
 
 export type ReviewSubmitRequest = {
   entity_type: string;
   reviews: {
-    questions_source: string;
-    phases: ReviewAnswerPhase[];
+    communication: number;
+    technical_skills: number;
+    problem_solving: number;
+    cultural_fit: number;
     average_rating: number;
     skills: string[];
+    notes: string;
   };
   verdict: string;
 };
@@ -53,11 +34,3 @@ export type ReviewSubmitResponse = {
 export type FormSubmitResponse = {
   message: string;
 };
-
-/** score 0 = unanswered */
-export type QuestionAnswer = {
-  score: number;
-  notes: string;
-};
-
-export type AnswerMap = Record<string, QuestionAnswer>;

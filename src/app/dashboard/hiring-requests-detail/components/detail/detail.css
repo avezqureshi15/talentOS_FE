@@ -219,12 +219,12 @@
 }
 
 
-/* action links (single row: phone, linkedin, resume, timeline) */
+/* action links (single row: phone, linkedin, cv, timeline) */
 .action-links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 6px 16px;
   margin-bottom: 2px;
   margin-top: 6px;
 }
@@ -241,7 +241,7 @@
   border: none;
   padding: 4px 0;
   font-family: inherit;
-  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease;
 }
 
 .action-link i {
@@ -249,20 +249,6 @@
 }
 
 .action-link:hover {
-  color: var(--text-primary);
-}
-
-.action-link--chip {
-  padding: 5px 10px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  background: var(--surface-elevated);
-  color: var(--text-secondary);
-}
-
-.action-link--chip:hover {
-  border-color: var(--border-default);
-  background: var(--surface-card-hover);
   color: var(--text-primary);
 }
 
@@ -306,17 +292,6 @@
   margin: 0;
 }
 
-.cover-letter-text--full {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.cover-letter-scroll {
-  max-height: 280px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
 .cover-letter-text .md-p{
   font-size: 11.5px !important;
 }
@@ -329,28 +304,15 @@
   width: 100%;
 }
 
-.rounds-section-title {
-  font-size: 11px !important;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-faint) !important;
-}
-
 .rounds-table-header {
   display: flex;
-  align-items: center;
-  padding: 8px 12px;
+  padding: 6px 12px;
   border-bottom: 1px solid var(--border-subtle);
-  pointer-events: none;
-}
-
-.rounds-table-heading {
-  font-size: 10px !important;
-  font-weight: 600 !important;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.7px;
-  color: var(--text-faint) !important;
+  letter-spacing: 0.3px;
+  color: var(--text-faint);
 }
 
 .rounds-table-row {
@@ -381,25 +343,13 @@
 }
 
 .rounds-table-cell--name {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   color: var(--text-primary);
   font-weight: 500;
-  font-size: 13px;
-}
-
-.rounds-row-icon {
-  font-size: 14px;
-  color: var(--text-muted);
-  flex-shrink: 0;
 }
 
 .rounds-table-cell--verdict {
   color: var(--text-secondary);
   text-align: right;
-  display: flex;
-  justify-content: flex-end;
 }
 
 /* details grid */
@@ -411,8 +361,7 @@
 
 .details-row {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
   padding: 6px 0;
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -422,7 +371,7 @@
 }
 
 .details-label {
-  flex: 0 0 148px;
+  flex: 0 0 120px;
   font-size: 10.5px;
   font-weight: 500;
   color: var(--text-faint);
@@ -432,7 +381,6 @@
 
 .details-value {
   flex: 1;
-  min-width: 0;
   font-size: 12px;
   color: var(--text-secondary);
 }
@@ -610,41 +558,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.header-right__actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Current / Last round — secondary nav button (not a status chip) */
-.round-link-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border: 1px solid var(--input-icon-bg);
-  border-radius: 8px;
-  background: var(--surface-card);
-  color: var(--text-primary);
-  font-size: 12px;
-  font-weight: 500;
-  font-family: inherit;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.round-link-btn:hover {
-  background: var(--surface-card-hover);
-  border-color: var(--border-strong);
-}
-
-.round-link-btn i {
-  font-size: 13px;
 }
 
 /* screening button */
@@ -1015,32 +928,6 @@
 /* =========================
    ATS SCORE BADGE
 ========================= */
-.ats-score-badge {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 6px;
-  min-width: 64px;
-  justify-content: space-between;
-  line-height: 1.5;
-  flex-shrink: 0;
-}
-
-.ats-score-badge__label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  opacity: 0.85;
-}
-
-.ats-score-badge__value {
-  font-variant-numeric: tabular-nums;
-}
-
 .ats-score {
   font-size: 12px;
   font-weight: 700;
@@ -1050,47 +937,20 @@
   text-align: center;
   line-height: 1.5;
 }
-.ats-score.score-high,
-.ats-score-badge.score-high {
+.ats-score.score-high {
   background: var(--success-bg-strong);
   color: var(--success-light);
   border: 1px solid var(--success-light-border);
 }
-.ats-score.score-mid,
-.ats-score-badge.score-mid {
+.ats-score.score-mid {
   background: var(--score-mid-bg);
   color: var(--score-mid);
   border: 1px solid var(--score-mid-border);
 }
-.ats-score.score-low,
-.ats-score-badge.score-low {
+.ats-score.score-low {
   background: var(--danger-bg-strong);
   color: var(--danger-light);
   border: 1px solid var(--danger-light-border);
-}
-.ats-score-badge.score-empty {
-  background: var(--surface-elevated);
-  color: var(--text-muted);
-  border: 1px solid var(--border-subtle);
-}
-
-/* =========================
-   FILTER BAR
-========================= */
-.filter-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-
-.reject-reason-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  align-items: center;
-  margin-bottom: 10px;
 }
 
 /* =========================
@@ -1100,7 +960,6 @@
   display: flex;
   gap: 4px;
   align-items: center;
-  flex-wrap: wrap;
 }
 
 .round-verdict-chip {

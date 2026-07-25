@@ -34,16 +34,16 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
     setSelectedInterviewers([{
       id: interviewerEmpId,
       emp_id: interviewerEmpId,
-      name: interviewerName || "Existing Interviewer",
+      name: "Existing Interviewer",
       designation: "",
       department: "",
       email: "",
       slots_count: 0,
       has_slots: true,
     }]);
-  }, [rescheduleMode, interviewerEmpId, interviewerName]);
+  }, [rescheduleMode, interviewerEmpId]);
 
-  const { data: searchData, isLoading: isSearching } = useInterviewerSearch(search);
+  const { data: searchData, isLoading: isSearching } = useInterviewerSearch(!rescheduleMode ? search : "");
 
   const interviewers = useMemo(() => (searchData?.data ?? []).map((u) => ({
     id: String(u.id),
@@ -110,11 +110,10 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
       if (!isNowSelected) {
         setSelectedSlotId(null);
       }
-    } else if (selectedInterviewers.some((s) => s.id === iv.id)) {
-      setSelectedSlotId((prev) => (prev === iv.id ? null : prev));
     } else {
-      // Selecting a different interviewer invalidates the previously chosen slot.
-      setSelectedSlotId(null);
+      if (selectedInterviewers.some((s) => s.id === iv.id)) {
+        setSelectedSlotId((prev) => (prev === iv.id ? null : prev));
+      }
     }
     setSelectedInterviewers((prev) => {
       const exists = prev.find((s) => s.id === iv.id);
@@ -163,15 +162,9 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
   const nextStep = () => setStep((s) => (s + 1) as ScheduleStep);
 
   const doReschedule = async () => {
-    if (!selectedSlotId || !interviewId || selectedInterviewers.length === 0) return;
+    if (!selectedSlotId || !interviewId) return;
     try {
-      await rescheduleInterviewMut({
-        interviewId,
-        slot_id: selectedSlotId,
-        interviewer_ids: selectedInterviewers
-          .filter((iv) => iv.id !== AI_ID)
-          .map((iv) => Number(iv.id)),
-      });
+      await rescheduleInterviewMut({ interviewId, slot_id: selectedSlotId });
     } catch {
       return;
     }
@@ -279,57 +272,13 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
                     <span className="sr-participant-label">{SR_LABELS.CANDIDATE_LABEL}</span>
                     <span className="sr-participant-value"><i className="bx bx-user" /> {candidateName}</span>
                   </div>
-
-                  <div className="sr-reschedule-search-block">
-                    <div className="sr-interviewer-search">
-                      <i className="bx bx-search sr-search-icon" />
-                      <input
-                        className="sr-search-input"
-                        placeholder={SR_LABELS.INTERVIEWER_PLACEHOLDER}
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                      />
-                    </div>
-                    <div className="sr-reschedule-search-results">
-                      {isSearching ? (
-                        <div className="sr-empty-slots">{SR_LABELS.SEARCH_LOADING}</div>
-                      ) : interviewers.length > 0 ? (
-                        interviewers.map((iv) => {
-                          const selected = selectedInterviewers.some((s) => s.id === iv.id);
-                          return (
-                            <button
-                              key={iv.id}
-                              type="button"
-                              className={`sr-interviewer-item${selected ? " sr-interviewer-item--selected" : ""}`}
-                              onClick={() => handleSelectInterviewer(iv)}
-                            >
-                              <div className="sr-interviewer-avatar">{iv.name.charAt(0)}</div>
-                              <div className="sr-interviewer-info">
-                                <span className="sr-interviewer-name">{iv.name}</span>
-                                <span className="sr-interviewer-slots">
-                                  {iv.slots_count === 0
-                                    ? SR_LABELS.NO_SLOTS_AVAILABLE
-                                    : SR_LABELS.SLOTS_AVAILABLE
-                                        .replace("{count}", String(iv.slots_count))
-                                        .replace("{plural}", iv.slots_count === 1 ? "" : "s")}
-                                </span>
-                              </div>
-                              {selected && <i className="bx bx-check sr-interviewer-check" />}
-                            </button>
-                          );
-                        })
-                      ) : search.trim() ? (
-                        <div className="sr-empty-slots">{SR_LABELS.NO_SEARCH_RESULTS}</div>
-                      ) : null}
-                    </div>
-                  </div>
                 </div>
                 <div className="sr-reschedule-right">
                   <SrStep1 search={search} onSearchChange={setSearch} interviewers={interviewers}
                     selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
                     tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
                     activeSlots={allSlots} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
-                    isLoading={isLoading} isSearching={isSearching} hideSearch
+                    isLoading={isLoading} isSearching={false} hideSearch={true}
                     aiTemplates={aiActive ? AI_TEMPLATES : undefined} />
                 </div>
               </div>

@@ -101,15 +101,6 @@ function mapCandidate(app: {
   status?: string | null;
   reviews?: Record<string, unknown> | null;
   review_verdict?: string | null;
-  active_interview?: {
-    id: string;
-    status: string;
-    start_at: string | null;
-    round_id: string;
-    round_name: string | null;
-    interviewer_user_id: number | null;
-    interviewer_name: string | null;
-  } | null;
 }): Applicant {
   return {
     id: app.id,
@@ -139,16 +130,5 @@ function mapCandidate(app: {
     finalVerdict: app.final_verdict ?? undefined,
     reviews: app.reviews ?? undefined,
     reviewVerdict: app.review_verdict ?? undefined,
-    activeInterview: app.active_interview
-      ? {
-          id: app.active_interview.id,
-          status: app.active_interview.status,
-          startAt: app.active_interview.start_at,
-          roundId: app.active_interview.round_id,
-          roundName: app.active_interview.round_name,
-          interviewerUserId: app.active_interview.interviewer_user_id,
-          interviewerName: app.active_interview.interviewer_name,
-        }
-      : undefined,
   };
 }

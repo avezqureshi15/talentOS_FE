@@ -17,10 +17,12 @@ const ApplicantActionModals = ({
   onCloseReject,
   onConfirmReject,
   shortlistCandidateId,
+  shortlistStep,
   shortlistRemarks,
   onShortlistRemarksChange,
-  onShortlistMove,
-  onShortlistFinal,
+  onShortlistOk,
+  onMoveToNextRound,
+  onOpenFinalSelectionWarning,
   onCloseShortlist,
   finalConfirmId,
   onConfirmHire,
@@ -28,16 +30,11 @@ const ApplicantActionModals = ({
   isConfirmingFinalDecision,
   isConfirmingReject,
   isShortlisting,
-  shortlistAction,
   isConfirmingHire,
 }: ApplicantActionModalsProps) => {
   const actionLabel = finalDecision === "selected"
     ? APPLICANT_LABELS.SELECT_CANDIDATE
     : APPLICANT_LABELS.REJECT_CANDIDATE;
-
-  const remarksEmpty = shortlistRemarks.trim() === "";
-  const moving = Boolean(isShortlisting && shortlistAction === "move");
-  const finalizing = Boolean(isShortlisting && shortlistAction === "final");
 
   return (
     <>
@@ -113,11 +110,11 @@ const ApplicantActionModals = ({
         </div>
       </BaseModal>
 
-      {/* HR shortlist — remarks + Move / Final */}
+      {/* Shortlist — Step 1: HR Remarks */}
       <BaseModal
-        open={!!shortlistCandidateId}
+        open={!!shortlistCandidateId && shortlistStep === 1}
         onClose={onCloseShortlist}
-        title={APPLICANT_LABELS.HR_SHORTLIST}
+        title={APPLICANT_LABELS.HR_REMARKS_TITLE}
       >
         <div className="confirm-body">
           <textarea
@@ -128,27 +125,40 @@ const ApplicantActionModals = ({
             rows={4}
           />
           <div className="confirm-actions">
-            <button className="confirm-btn confirm-cancel" onClick={onCloseShortlist} type="button" disabled={isShortlisting}>
+            <button className="confirm-btn confirm-cancel" onClick={onCloseShortlist} type="button">
               Cancel
             </button>
             <Button
               className="confirm-btn confirm-proceed"
-              disabled={remarksEmpty || isShortlisting}
-              onClick={onShortlistMove}
-              loading={moving}
-              loadingText="Moving..."
+              disabled={shortlistRemarks.trim() === ""}
+              onClick={onShortlistOk}
+              loading={isShortlisting}
+              loadingText="Shortlisting..."
             >
+              OK
+            </Button>
+          </div>
+        </div>
+      </BaseModal>
+
+      {/* Shortlist — Step 2: Choose outcome */}
+      <BaseModal
+        open={!!shortlistCandidateId && shortlistStep === 2}
+        onClose={onCloseShortlist}
+        title={APPLICANT_LABELS.HR_SHORTLIST}
+      >
+        <div className="confirm-body">
+          <p>Proceed with {data.find((a) => a.id === shortlistCandidateId)?.name ?? "candidate"}?</p>
+          <div className="confirm-actions">
+            <button className="confirm-btn confirm-cancel" onClick={onCloseShortlist} type="button">
+              Cancel
+            </button>
+            <button className="confirm-btn confirm-proceed" onClick={onMoveToNextRound} type="button">
               {APPLICANT_LABELS.MOVE_TO_NEXT_ROUND}
-            </Button>
-            <Button
-              className="confirm-btn confirm-danger"
-              disabled={remarksEmpty || isShortlisting}
-              onClick={onShortlistFinal}
-              loading={finalizing}
-              loadingText="Continuing..."
-            >
+            </button>
+            <button className="confirm-btn confirm-danger" onClick={onOpenFinalSelectionWarning} type="button">
               {APPLICANT_LABELS.FINAL_SELECTION}
-            </Button>
+            </button>
           </div>
         </div>
       </BaseModal>

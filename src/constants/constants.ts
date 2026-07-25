@@ -90,8 +90,7 @@ export const APPLICANT_LABELS = {
   ROUNDS: "Rounds",
   LINKEDIN: "LinkedIn",
   CV: "CV",
-  VIEW_RESUME: "View Resume",
-  TIMELINE: "History",
+  TIMELINE: "Timeline",
   CANDIDATE_REJECTED: "Candidate rejected",
   CANDIDATE_HIRED: "Candidate hired",
   READ_MORE: "Read more",
@@ -129,10 +128,9 @@ export const APPLICANT_LABELS = {
 } as const;
 
 export const TIMELINE_LABELS = {
-  CANDIDATE_JOURNEY: "History",
+  CANDIDATE_JOURNEY: "Candidate Journey",
   DOWNLOAD_RESUME: "Download Resume",
   ADD_REMARK: "Add Remark",
-  MEET_LINK: "Meet link",
 } as const;
 
 /* ── API ── */

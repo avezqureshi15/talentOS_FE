@@ -1,9 +1,5 @@
 import { useMemo } from "react";
-import { STATE_CONFIGS, INFO_CHIP_STATUSES, ATS_SCORE_STATUSES } from "../applicants.constants";
-import {
-  normalizeApplicantStatus,
-  resolveChipForHiringState,
-} from "../applicant-status.helpers";
+import { STATE_CONFIGS, INFO_CHIP_STATUSES } from "../applicants.constants";
 import type { Applicant, HiringState, StateConfig } from "../applicants.types";
 
 export function useApplicantState(
@@ -13,18 +9,7 @@ export function useApplicantState(
   return useMemo(() => {
     const hiringState = computeHiringState(applicant, isScreening);
     const config = STATE_CONFIGS[hiringState] ?? STATE_CONFIGS.under_evaluation;
-    const chip = resolveChipForHiringState(
-      hiringState,
-      config.chip,
-      applicant.activeInterview,
-    );
-
-    return {
-      ...config,
-      chip,
-      showInfoChips: INFO_CHIP_STATUSES.has(hiringState),
-      showAtsScore: ATS_SCORE_STATUSES.has(hiringState),
-    };
+    return { ...config, showInfoChips: INFO_CHIP_STATUSES.has(hiringState) };
   }, [applicant, isScreening]);
 }
 
@@ -32,17 +17,12 @@ function computeHiringState(
   applicant: Applicant,
   isScreening: boolean,
 ): HiringState {
-  const final = applicant.finalVerdict?.toLowerCase();
-  if (final === "selected") return "selected";
-  if (final === "rejected") return "rejected";
+  if (applicant.finalVerdict === "selected") return "selected";
+  if (applicant.finalVerdict === "rejected") return "rejected";
 
-  const status = normalizeApplicantStatus(applicant.status);
+  const status = applicant.status?.toLowerCase();
 
   switch (status) {
-    case "queued":
-      return "queued";
-    case "processing":
-      return "processing";
     case "under_evaluation":
       return "under_evaluation";
     case "shortlisted":
@@ -58,12 +38,7 @@ function computeHiringState(
     case "interview_scheduled":
     case "scheduled":
       return "interview_scheduled";
-    case "invalid":
-      return "invalid";
-    case "failed":
-      return "failed";
     case "rejected":
-    case "moved_out_of_hiring_pipeline":
       return "rejected";
     default:
       return "under_evaluation";

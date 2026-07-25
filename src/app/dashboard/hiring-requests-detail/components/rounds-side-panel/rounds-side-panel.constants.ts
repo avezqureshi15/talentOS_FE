@@ -1,36 +1,6 @@
 export const ROUNDS_PANEL_LABELS = {
   TITLE: "Round Details",
-  ROUND_INFO: "Round info",
-  DECISIONS: "Decisions & Reviews",
-  INTERVIEWERS: "Interviewer(s)",
-  CANDIDATE: "Candidate",
-  HIRING_ROLE: "Hiring Role",
-  SCHEDULED_FOR: "Scheduled for",
-  DURATION: "Duration",
-  INTERVIEW_STATUS: "Interview status",
-  REVIEW_STATUS: "Review status",
-  SCREENED_ON: "Screened on",
-  STATUS: "Status",
 } as const;
-
-export const INTERVIEW_STATUS_LABELS: Record<string, string> = {
-  Scheduled: "Interview scheduled",
-  "In progress": "Interview in progress",
-  Completed: "Interview completed",
-  Cancelled: "Interview cancelled",
-};
-
-export const REVIEW_FORM_STATUS_LABELS: Record<string, string> = {
-  awaiting: "Awaiting review",
-  received: "Review received",
-  expired: "Review link expired",
-};
-
-export const COMPLETED_WITH_REVIEW_LABELS: Record<string, string> = {
-  awaiting: "Interview completed · Awaiting review",
-  received: "Interview completed · Review received",
-  expired: "Interview completed · Review link expired",
-};
 
 export const ROUNDS_PANEL_STATUS = {
   ERROR: "Failed to load round details.",
@@ -70,9 +40,6 @@ export const AI_SUMMARY_MAX_LENGTH = 300;
 export const ROUNDS_FALLBACK = {
   NO_NOTES: "No notes provided.",
   NO_AI_SUMMARY: "No AI summary available.",
-  NO_FULL_REVIEW: "No detailed review answers available.",
-  VIEW_FULL_REVIEW: "View full review",
-  HIDE_FULL_REVIEW: "Hide full review",
 } as const;
 
 export const CRITERION_LABELS: Record<string, string> = {

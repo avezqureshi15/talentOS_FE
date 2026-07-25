@@ -27,15 +27,6 @@ export type EvaluatedCandidate = {
   reviews?: Record<string, unknown> | null;
   review_verdict?: string | null;
   comparison_fields?: Array<{ label: string; value: { Expected: string; Actual: string } }>;
-  active_interview?: {
-    id: string;
-    status: string;
-    start_at: string | null;
-    round_id: string;
-    round_name: string | null;
-    interviewer_user_id: number | null;
-    interviewer_name: string | null;
-  } | null;
 };
 
 export type RoundFromApi = {
@@ -58,27 +49,11 @@ export type RatingItem = {
   entity_type?: string;
 };
 
-export type ReviewPhaseAnswerApi = {
-  question: string;
-  score: number;
-  notes?: string | null;
-};
-
-export type ReviewPhaseApi = {
-  phase: string;
-  answers: ReviewPhaseAnswerApi[];
-};
-
 export type ReviewEntity = {
   entity_type: string;
   verdict?: string;
   ratings: RatingItem[];
   rejection_details?: Array<Record<string, { JD: string; Candidate: string }>>;
-  average_rating?: number;
-  skills?: string[];
-  notes?: string;
-  phases?: ReviewPhaseApi[];
-  questions_source?: string;
   [key: string]: unknown;
 };
 
@@ -94,9 +69,6 @@ export type RoundDetailApiResponse = {
   role: string | null;
   jd_label: string | null;
   interviewer: string | null;
-  has_interview?: boolean;
-  interviewers?: string[];
-  review_form_status?: string | null;
   reviews: ReviewEntity[];
 };
 

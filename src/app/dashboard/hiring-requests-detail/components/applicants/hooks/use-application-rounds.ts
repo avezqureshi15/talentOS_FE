@@ -1,22 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import { fetchRoundsByCandidateId } from "@/services/applications/applications";
-import { displayRoundName, type RoundListItem } from "../round-display.helpers";
+
+type RoundListItem = {
+  id: string;
+  round: string;
+  roundVerdict: string | null;
+};
 
 const mapRoundListItem = (r: {
   id: string;
   name: string | null;
   round_verdict: string | null;
-  created_at: string;
 }): RoundListItem => ({
   id: r.id,
-  round: displayRoundName(r.name),
+  round: r.name ?? "Untitled Round",
   roundVerdict: r.round_verdict,
-  createdAt: r.created_at,
 });
 
-export const useApplicationRounds = (candidateId: number, enabled = true) => {
-  return useQuery<RoundListItem[]>({
+export const useApplicationRounds = (candidateId: number) => {
+  const query = useQuery<RoundListItem[]>({
     queryKey: [QUERY_KEYS.ROUNDS, candidateId],
     queryFn: async () => {
       const data = await fetchRoundsByCandidateId(candidateId);
@@ -24,6 +27,8 @@ export const useApplicationRounds = (candidateId: number, enabled = true) => {
     },
     staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
     retry: QUERY_CONFIG.DEFAULT_RETRY_COUNT,
-    enabled: enabled && candidateId > 0,
+    enabled: candidateId > 0,
   });
+
+  return query;
 };
