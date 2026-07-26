@@ -165,6 +165,11 @@ export const QUERY_KEYS = {
   SLOT_FORM: "slot-form",
   INTERVIEWER_SLOTS: "interviewer-slots",
   INTERVIEWER_SEARCH: "interviewer-search",
+  ROLES: "roles",
+  ROLE: "role",
+  TENANT: "tenant",
+  TENANT_USERS: "tenant-users",
+  TENANT_INVITES: "tenant-invites",
 } as const;
 
 export const QUERY_CONFIG = {

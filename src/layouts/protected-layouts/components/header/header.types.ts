@@ -4,6 +4,7 @@ export type IconComponent = ComponentType<{ className?: string }>;
 
 export type HeaderProps = {
   Icon: Record<string, IconComponent>;
+  sidebarOpen?: boolean;
 };
 
 export type HeaderLeftProps = Record<string, never>;

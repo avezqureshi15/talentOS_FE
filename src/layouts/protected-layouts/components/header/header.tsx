@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Button from "@/components/ui/button/button";
 import IconButton from "@/components/ui/icon-button/icon-button";
+import Select from "@/components/ui/select/select";
 import { useHeaderStore } from "@/store/header.store";
 import { HIRING_TABS } from "@/constants/routes";
 import { springSnap } from "@/utils/motion";
@@ -27,7 +28,7 @@ const HeaderLeft: React.FC<HeaderLeftProps> = () => {
 
 const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ className?: string }>> }) => {
   const config = useHeaderStore((s) => s.config);
-  const { title, meta, search, viewSwitcher, actions, totalCount } = config;
+  const { title, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
   const location = useLocation();
   const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));
   const [jdModalOpen, setJdModalOpen] = useState(false);
@@ -43,14 +44,17 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
           <>
             <TabDropdown totalCount={totalCount} />
             {config.hiringRequestName && (
-              <span className="hiring-request-chip" onClick={() => setJdModalOpen(true)}>{config.hiringRequestName}</span>
+              <span className="hiring-request-chip" onClick={() => setJdModalOpen(true)}><span className="hiring-request-chip-text">{config.hiringRequestName}</span></span>
             )}
           </>
         ) : (
           title && (
-            <div className="jobs-title-group">
-              <h1 className="jobs-title">{title}</h1>
-              {totalCount !== undefined && <span className="jobs-count-pill">{totalCount}</span>}
+            <div className={`jobs-title-group${subtitle ? " jobs-title-group--stacked" : ""}`}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <h1 className="jobs-title">{title}</h1>
+                {totalCount !== undefined && <span className="jobs-count-pill">{totalCount}</span>}
+              </div>
+              {subtitle && <span className="jobs-subtitle">{subtitle}</span>}
             </div>
           )
         )}
@@ -72,6 +76,17 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
             )}
           </div>
         )}
+        {filters?.map((filter, i) => (
+          <Select
+            key={i}
+            className="header-filter-select"
+            options={filter.options}
+            value={filter.value}
+            onChange={(e) => filter.onChange(e.target.value)}
+            variant="secondary"
+            size="sm"
+          />
+        ))}
         {viewSwitcher && (
           <div className="jobs-view-switcher">
             {viewSwitcher.options.map((opt) => (
@@ -94,7 +109,7 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
           <React.Fragment key={action.key}>
             {action.variant === "primary" ? (
               <motion.button
-                className="jobs-add-btn"
+                className={`jobs-add-btn${action.className ? ` ${action.className}` : ""}`}
                 onClick={action.onClick}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
@@ -104,8 +119,9 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
                 <span className="btn-label">{action.label}</span>
               </motion.button>
             ) : (
+              <div>
               <Button
-                className="jobs-export-btn"
+                className={`jobs-export-btn${action.className ? ` ${action.className}` : ""}`}
                 onClick={action.onClick}
                 loading={action.loading}
                 loadingText={action.loadingText}
@@ -114,8 +130,8 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
               >
                 <span className="btn-label">{action.label}</span>
               </Button>
+              </div>
             )}
-            {action.error && <span className="jobs-export-error">{action.error}</span>}
           </React.Fragment>
         ))}
       </div>
@@ -162,7 +178,7 @@ function isHiringListRoute(pathname: string): boolean {
 
 /* ───────── HEADER ───────── */
 
-const Header: React.FC<HeaderProps> = ({ Icon }) => {
+const Header: React.FC<HeaderProps> = ({ Icon, sidebarOpen }) => {
   const config = useHeaderStore((s) => s.config);
   const hasConfig = !!config.title;
   const hasMeta = hasConfig && !!config.meta;
@@ -173,8 +189,8 @@ const Header: React.FC<HeaderProps> = ({ Icon }) => {
   const onHiringList = isHiringListRoute(location.pathname);
 
   return (
-    <header className={`header${hasMeta ? " header--has-meta" : ""}`}>
-      {onHiringTab || onHiringList || (onHiringDetail && hasConfig) ? (
+    <header className={`header${hasMeta ? " header--has-meta" : ""}${sidebarOpen ? " header--sidebar-open" : ""}`}>
+      {onHiringTab || onHiringList || (onHiringDetail && hasConfig) || hasConfig ? (
         <JobsToolbar Icon={Icon} />
       ) : (
         <>

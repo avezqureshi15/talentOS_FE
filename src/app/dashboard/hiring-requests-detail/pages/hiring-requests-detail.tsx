@@ -34,7 +34,7 @@ const HiringRequestDetails = () => {
     select: (data) => data.total,
   });
 
-  const { handleExport, isExporting, exportError } = useExportCsv(id ?? "", HEADER_EXPORT_FILENAME);
+  const { handleExport, isExporting } = useExportCsv(id ?? "", HEADER_EXPORT_FILENAME);
 
   const setConfig = useHeaderStore((s) => s.setConfig);
   const clearConfig = useHeaderStore((s) => s.clearConfig);
@@ -65,7 +65,6 @@ const HiringRequestDetails = () => {
           onClick: handleExport,
           loading: isExporting,
           loadingText: EXPORT_LABELS.DOWNLOADING,
-          error: exportError,
         },
         {
           key: "add-candidate",
@@ -76,7 +75,7 @@ const HiringRequestDetails = () => {
       ],
     });
     return () => clearConfig();
-  }, [id, data, totalCount, handleExport, isExporting, exportError, setConfig, clearConfig]);
+  }, [id, data, totalCount, handleExport, isExporting, setConfig, clearConfig]);
 
   if (isLoading) {
     return <LoadingSpinner fullPage />;

@@ -23,12 +23,7 @@ import { getUx, patchUx } from "@/utils/storage";
 import "@/app/chat/pages/chat.css";
 
 function getInitialSidebarState(): boolean {
-  const ux = getUx(STORAGE_KEYS.UX);
-  if (ux.sb === undefined) {
-    patchUx(STORAGE_KEYS.UX, { sb: false });
-    return false;
-  }
-  return ux.sb;
+  return getUx(STORAGE_KEYS.UX).sb;
 }
 
 export default function ProtectedLayout() {
@@ -168,7 +163,7 @@ export default function ProtectedLayout() {
       />
 
       <main className="chat-main">
-        <Header Icon={Icon} />
+        {!location.pathname.startsWith("/chat") && <Header Icon={Icon} sidebarOpen={sidebarOpen} />}
         <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
             <AnimatePresence mode="popLayout">

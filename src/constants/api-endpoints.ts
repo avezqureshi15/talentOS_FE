@@ -30,6 +30,16 @@ export const API_ENDPOINTS = {
   ALERTS: "/alerts",
   FORMS_NOTIFY: "/forms/notify",
   EVENTS_BY_CANDIDATE: "/events/by-candidate/",
+  AUTH_LOGIN: "/auth/login",
+  AUTH_SIGNUP: "/auth/signup",
+  AUTH_CHANGE_PASSWORD: "/auth/change-password",
+  AUTH_INVITES: "/auth/invites",
+  AUTH_ACCEPT_INVITE: "/auth/accept-invite",
+  ADMIN_USERS: "/admin/users",
+  ADMIN_USERS_INVITES: "/admin/users/invites",
+  SETTINGS: "/settings",
+  SUPERADMIN_TENANTS: "/superadmin/tenants",
+  ADMIN_ORGANIZATION: "/admin/organization",
 } as const;
 
 export const PAGINATION = {

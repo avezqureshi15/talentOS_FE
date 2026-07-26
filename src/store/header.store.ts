@@ -7,6 +7,12 @@ export type HeaderViewOption = {
   icon: string;
 };
 
+export type HeaderFilterConfig = {
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (value: string) => void;
+};
+
 export type HeaderSearchConfig = {
   placeholder?: string;
   shortcut?: string;
@@ -29,7 +35,7 @@ export type HeaderActionConfig = {
   onClick?: () => void;
   loading?: boolean;
   loadingText?: string;
-  error?: string | null;
+  className?: string;
 };
 
 export type HeaderMetaItem = {
@@ -44,6 +50,7 @@ export type HeaderConfig = {
   totalCount?: number;
   meta?: HeaderMetaItem[];
   search?: HeaderSearchConfig | null;
+  filters?: HeaderFilterConfig[];
   viewSwitcher?: HeaderViewSwitcherConfig | null;
   actions?: HeaderActionConfig[];
   hiringRequestName?: string;

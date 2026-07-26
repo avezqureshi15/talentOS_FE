@@ -1,5 +1,6 @@
 .sidebar-user {
   position: relative;
+  margin-top: auto;
   border-top: 1px solid var(--border-subtle);
   padding-top: 14px;
 }

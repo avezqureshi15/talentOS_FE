@@ -217,12 +217,24 @@
   position: relative;
 }
 
+.jobs-title-group--stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
 .jobs-title {
   font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
   margin: 0;
+}
+
+.jobs-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .jobs-title-chevron {
@@ -303,6 +315,16 @@
   font-size: 11px;
   font-weight: 500;
   line-height: 1;
+}
+
+/* ── Header toolbar items equal height ── */
+
+.header-filter-select {
+  height: 32px;
+}
+.header-filter-select .select {
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 /* ── Search Input ── */
@@ -420,13 +442,24 @@
   color: #ffffff;
   font-size: 12px;
   font-weight: 600;
-  white-space: nowrap;
   cursor: pointer;
   transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.hiring-request-chip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
 }
 
 .hiring-request-chip:hover {
   opacity: 0.85;
+}
+
+.header--sidebar-open .hiring-request-chip {
+  display: none;
 }
 
 /* ── Export Button ── */
@@ -459,7 +492,7 @@
   font-size: 15px !important;
 }
 
-/* ── Add Candidate Button ── */
+/* ── Header Primary Action ── */
 
 .jobs-add-btn {
   display: flex;
@@ -468,9 +501,9 @@
   height: 32px;
   padding: 0 14px;
   border-radius: 8px;
-  border: none;
-  background: var(--accent);
-  color: var(--text-white);
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: #000000;
   font-size: 12px;
   font-weight: 500;
   font-family: var(--font-family);
@@ -480,17 +513,11 @@
 }
 
 .jobs-add-btn:hover {
-  opacity: 0.9;
-  background: var(--accent);
+  background: #f0f0f0;
 }
 
 .jobs-add-btn i {
   font-size: 16px;
-}
-
-.jobs-export-error {
-  font-size: 11px;
-  color: var(--danger);
 }
 
 /* ── Default header states (chat etc.) ── */

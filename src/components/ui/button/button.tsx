@@ -20,6 +20,7 @@ const Button = ({
   loadingText,
 }: ButtonProps) => {
   const classes = [
+    "btn",
     className,
     loading && "btn--loading",
     variant && `btn--${variant}`,

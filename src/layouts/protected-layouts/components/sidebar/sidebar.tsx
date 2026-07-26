@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import { useAuth } from "@/app/auth/hooks/use-auth";
+import { usePermissions } from "@/hooks/use-permissions";
 import { getInitials } from "@/utils/user";
 import "./sidebar.css";
 import type { SidebarProps, ChatHistoryItem } from "@/layouts/protected-layouts/components/sidebar/sidebar.types";
@@ -13,17 +14,7 @@ import ChatItem from "./chat-item";
 import SidebarNav from "./sidebar-nav";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
 import { Sidebar as SidebarShell, SidebarSection } from "@/components/ui/sidebar";
-
-const navItems = [
-  { icon: "bx bx-home", label: SIDEBAR_LABELS.HIRING_REQUESTS, shortcut: "Ctrl+Shift+H", href: "/hiring-requests" },
-  { icon: "bx bx-calendar-check", label: "Interviews", shortcut: "Ctrl+Shift+I", href: "/hiring-requests?tab=interviews" },
-  { icon: "bx bx-bell", label: "Alerts", shortcut: "Ctrl+Shift+A", href: "/hiring-requests?tab=alerts" },
-];
-
-const secondaryItems = [
-  { icon: "bx bx-search", label: SIDEBAR_LABELS.SEARCH, shortcut: "Ctrl+K" },
-  { icon: "bx bx-plus-circle", label: SIDEBAR_LABELS.NEW_CHAT, shortcut: "Ctrl+Shift+C", href: "/chat" },
-];
+import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS, type NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -40,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   Icon,
 }) => {
   const { user } = useAuth();
+  const { canAll } = usePermissions();
   const navigate = useNavigate();
   const [autoOpenUser, setAutoOpenUser] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(true);
@@ -51,6 +43,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   const renameInputRef = useRef<HTMLInputElement | null>(null);
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
+  const isSuperAdmin = user?.role === "superadmin";
+
+  const canSeeItem = (item: NavItemConfig) => canAll(...item.permissions);
+
+  const visibleMain = !isSuperAdmin ? MAIN_NAV_ITEMS.filter(canSeeItem) : [];
+  const visibleAdmin = !isSuperAdmin ? ADMIN_NAV_ITEMS.filter(canSeeItem) : [];
+  const visibleSuperadmin = isSuperAdmin ? SUPERADMIN_NAV_ITEMS.filter(canSeeItem) : [];
 
   const sentinelRef = useIntersectionObserver(
     useCallback(() => {
@@ -115,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     />
   );
 
-  const allNavItems = [...navItems, ...secondaryItems];
+  const allCollapsedItems = [...visibleMain, ...visibleAdmin, ...visibleSuperadmin];
 
   /* ---------- Collapsed Icon Strip ---------- */
 
@@ -133,13 +133,12 @@ const Sidebar: React.FC<SidebarProps> = ({
             </button>
 
             <div className="sidebar-collapsed-nav">
-              {allNavItems.map((item) => (
+              {allCollapsedItems.map((item) => (
                 <div key={item.label} className="sidebar-tooltip-wrapper">
                   <button
                     className="sidebar-collapsed-btn"
                     onClick={() => {
                       if (item.href) navigate(item.href);
-                      else if (item.label === SIDEBAR_LABELS.SEARCH) onSearch?.();
                     }}
                   >
                     <i className={item.icon} />
@@ -174,10 +173,18 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <SidebarShell open={sidebarOpen}>
-      <SidebarNav Icon={Icon} onSearch={onSearch} onClose={() => setSidebarOpen(false)} />
+      <SidebarNav
+        Icon={Icon}
+        onSearch={onSearch}
+        onClose={() => setSidebarOpen(false)}
+        mainItems={visibleMain}
+        adminItems={visibleAdmin}
+        superadminItems={visibleSuperadmin}
+        hideExtras={isSuperAdmin}
+      />
 
       {/* HISTORY */}
-      <div className="sidebar__history">
+      {!isSuperAdmin && (<div className="sidebar__history">
         <SidebarSection
           title={SIDEBAR_LABELS.HISTORY}
           collapsible
@@ -206,7 +213,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div ref={sentinelRef} className="sidebar-scroll-sentinel" />
           </div>
         </SidebarSection>
-      </div>
+      </div>)}
 
       {/* USER */}
       <SidebarUserPopover

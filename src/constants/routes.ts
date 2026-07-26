@@ -15,6 +15,12 @@ export const ROUTES = {
   RATE_CANDIDATE: "/rate-candidate",
   RATE_CANDIDATE_ID: "/rate-candidate/:reviewFormId",
   ROUND_DETAILS: "/hiring-requests/:id/round-details/:roundId",
+  ROLES: "/roles",
+  ADMIN_USERS: "/admin/users",
+  ADMIN_SETTINGS: "/admin/settings",
+  SUPERADMIN_TENANTS: "/superadmin/tenants",
+  SUPERADMIN_TENANT_DETAIL: "/superadmin/tenants/:tenantId",
+  AUTH_INVITE: "/auth/invite/:token",
 } as const;
 
 export const HIRING_TABS = ["applications", "interview-design", "proctoring", "email-manager", "team-members"] as const;

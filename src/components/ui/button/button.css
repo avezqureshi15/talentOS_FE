@@ -1,3 +1,124 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  font-family: var(--font-family);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+  line-height: 1;
+  white-space: nowrap;
+  outline: none;
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  min-height: 18px;
+  min-width: 0;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Sizes */
+.btn--sm {
+  padding: 6px 10px;
+  font-size: 12px;
+  min-height: 24px;
+}
+
+.btn--md {
+  padding: 8px 14px;
+  font-size: 13px;
+  min-height: 28px;
+}
+
+.btn--lg {
+  padding: 9px 18px;
+  font-size: 14px;
+  min-height: 32px;
+}
+
+/* Primary — white bg, black text */
+.btn--primary {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: #f0f0f0;
+}
+
+/* Secondary */
+.btn--secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-color: var(--border-default);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+/* Outline */
+.btn--outline {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-default);
+}
+
+.btn--outline:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+/* Danger */
+.btn--danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger-border);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: var(--danger-bg-strong);
+}
+
+/* Ghost */
+.btn--ghost {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-color: transparent;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Text — link-like */
+.btn--text {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 0;
+  border: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.btn--text:hover:not(:disabled) {
+  color: var(--text-primary);
+}
+
+/* Loading */
 .btn--loading {
   position: relative;
   pointer-events: none;
