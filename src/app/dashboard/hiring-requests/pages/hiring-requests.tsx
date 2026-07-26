@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import HiringRequestsTable from "@/app/dashboard/hiring-requests/components/table/table";
 import Alerts from "@/app/dashboard/hiring-requests/components/alerts/alerts";
@@ -7,12 +7,15 @@ import Interviews from "@/app/dashboard/hiring-requests/components/interviews/in
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useHiringRequests } from "@/app/dashboard/hiring-requests/hooks/use-hiring-requests";
+import { fetchHiringRequests } from "@/services/hiring-requests/hiring-requests";
 import type { HiringRequestsFilters } from "@/services/hiring-requests/hiring-requests.types";
 import { QUERY_KEYS, HR_TABS, ALERTS_TABS, ALERTS_CHIP_LABEL, ALERTS_DESCRIPTION } from "@/constants/constants";
+import { useCmdPaletteRegistration } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette-registration";
 import "./hiring-requests.css";
 
 const HiringRequests = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const tab = searchParams.get("tab") || "hiring-requests";
   const sub = searchParams.get("sub") || "slots";
   const highlight = searchParams.get("highlight") === "true";
@@ -52,6 +55,28 @@ const HiringRequests = () => {
   const handlePerPageChange = useCallback((per_page: number) => {
     setFilters((prev) => ({ ...prev, per_page, page: 1 }));
   }, []);
+
+  const cmdPaletteConfig = useMemo(
+    () => ({
+      placeholder: "Search hiring requests...",
+      sectionTitle: "Hiring Requests",
+      search: async (q: string) => {
+        if (!q.trim()) return [];
+        const res = await fetchHiringRequests({ q, page: 1, per_page: 10 });
+        return res.data.map((hr) => ({
+          id: hr.id,
+          label: hr.title,
+          sublabel: hr.department ? `${hr.department} · ${hr.location ?? ""}` : hr.location ?? "",
+          type: "hiring-request" as const,
+        }));
+      },
+      onSelect: (item: { id: string }) => {
+        navigate(`/hiring-requests/${item.id}`);
+      },
+    }),
+    [navigate],
+  );
+  useCmdPaletteRegistration(cmdPaletteConfig);
 
   return (
     <ErrorBoundary>

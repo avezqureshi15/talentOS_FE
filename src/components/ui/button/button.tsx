@@ -7,7 +7,7 @@ const Button = ({
   onClick,
   type = "button",
   variant,
-  size,
+  size = "md",
   loading = false,
   disabled = false,
   icon,
@@ -16,8 +16,12 @@ const Button = ({
   title,
   fullWidth = false,
   loadingText,
+  width,
+  height,
+  style,
 }: ButtonProps) => {
   const classes = [
+    "btn",
     className,
     loading && "btn--loading",
     variant && `btn--${variant}`,
@@ -34,6 +38,7 @@ const Button = ({
       type={type}
       disabled={disabled || loading}
       title={title}
+      style={{ ...style, width, height }}
     >
       {loading ? (
         <>

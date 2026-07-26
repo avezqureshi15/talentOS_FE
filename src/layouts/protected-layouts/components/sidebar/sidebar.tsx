@@ -9,6 +9,9 @@ import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
 import { Sidebar as SidebarShell, SidebarItem, SidebarSection } from "@/components/ui/sidebar";
+import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS, type NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
+import { usePermissions } from "@/hooks/use-permissions";
+import { useAuth } from "@/app/auth/hooks/use-auth";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -16,7 +19,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   chats,
   activeChatId,
   onSelectChat,
-  onSearch,
   onDeleteChat,
   onRenameChat,
   onLoadMore,
@@ -33,6 +35,15 @@ const Sidebar: React.FC<SidebarProps> = ({
   const renameInputRef = useRef<HTMLInputElement | null>(null);
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const { canAll } = usePermissions();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === "superadmin";
+
+  const canSeeItem = (item: NavItemConfig) => canAll(...item.permissions);
+
+  const visibleMain = !isSuperAdmin ? MAIN_NAV_ITEMS.filter(canSeeItem) : [];
+  const visibleAdmin = !isSuperAdmin ? ADMIN_NAV_ITEMS.filter(canSeeItem) : [];
+  const visibleSuperadmin = isSuperAdmin ? SUPERADMIN_NAV_ITEMS.filter(canSeeItem) : [];
 
   const sentinelRef = useIntersectionObserver(
     useCallback(() => {
@@ -113,40 +124,41 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* NAV */}
       <div className="sidebar__nav">
-        <SidebarItem
-          icon={<span className="bx bx-home text-lg" />}
-          label={SIDEBAR_LABELS.HIRING_REQUESTS}
-          shortcut="Ctrl+Shift+H"
-          href="/hiring-requests"
-        />
-        <SidebarItem
-          icon={<span className="bx bx-calendar-check text-lg" />}
-          label="Interviews"
-          shortcut="Ctrl+Shift+I"
-          href="/hiring-requests?tab=interviews"
-        />
-        <SidebarItem
-          icon={<span className="bx bx-bell text-lg" />}
-          label="Alerts"
-          shortcut="Ctrl+Shift+A"
-          href="/hiring-requests?tab=alerts"
-        />
-        <SidebarItem
-          icon={<Icon.Search />}
-          label={SIDEBAR_LABELS.SEARCH}
-          shortcut="Ctrl+K"
-          onClick={onSearch}
-        />
-        <SidebarItem
-          icon={<Icon.Edit />}
-          label={SIDEBAR_LABELS.NEW_CHAT}
-          shortcut="Ctrl+Shift+C"
-          href="/chat"
-        />
+        {visibleMain.map((item) => (
+          <SidebarItem
+            key={item.href}
+            icon={<span className={`${item.icon} text-lg`} />}
+            label={item.label}
+            shortcut={item.shortcut}
+            href={item.href}
+          />
+        ))}
+
+        {visibleAdmin.length > 0 && <div className="sidebar-nav-divider" />}
+
+        {visibleAdmin.map((item) => (
+          <SidebarItem
+            key={item.href}
+            icon={<span className={`${item.icon} text-lg`} />}
+            label={item.label}
+            href={item.href}
+          />
+        ))}
+
+        {visibleSuperadmin.length > 0 && <div className="sidebar-nav-divider" />}
+
+        {visibleSuperadmin.map((item) => (
+          <SidebarItem
+            key={item.href}
+            icon={<span className={`${item.icon} text-lg`} />}
+            label={item.label}
+            href={item.href}
+          />
+        ))}
       </div>
 
       {/* HISTORY */}
-      <div className="sidebar__history">
+      {!isSuperAdmin && (<div className="sidebar__history">
         <SidebarSection
           title={SIDEBAR_LABELS.HISTORY}
           collapsible
@@ -175,10 +187,12 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div ref={sentinelRef} className="sidebar-scroll-sentinel" />
           </div>
         </SidebarSection>
-      </div>
+      </div>)}
 
       {/* USER */}
-      <SidebarUserPopover />
+      <div className="sidebar__user-wrapper">
+        <SidebarUserPopover />
+      </div>
 
       <DeleteChatModal
         open={!!deleteTargetId}

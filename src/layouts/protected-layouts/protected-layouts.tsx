@@ -9,8 +9,7 @@ import { useDeleteChat } from "@/layouts/protected-layouts/components/sidebar/ho
 import { useRenameChat } from "@/layouts/protected-layouts/components/sidebar/hooks/use-rename-chat";
 import { useChatStore } from "@/store/chat.store";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
-import CommandPalette from "@/layouts/protected-layouts/components/command-palette/command-palette";
-import { useCommandPalette } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette";
+import CmdPaletteProvider from "@/layouts/protected-layouts/components/command-palette/command-palette-provider";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import { ROUTES } from "@/constants/routes";
 import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
@@ -18,6 +17,7 @@ import { useUiStore } from "@/store/ui.store";
 import { STORAGE_KEYS } from "@/constants/constants";
 import { getUx, patchUx } from "@/utils/storage";
 import { useAurora } from "@/hooks/use-aurora";
+import { usePermissions } from "@/hooks/use-permissions";
 
 function getInitialSidebarState(): boolean {
   const ux = getUx(STORAGE_KEYS.UX);
@@ -28,7 +28,7 @@ function getInitialSidebarState(): boolean {
   return ux.sb;
 }
 
-export default function ProtectedLayout() {
+function ProtectedLayoutInner() {
   const [sidebarOpen, setSidebarOpen] = useState(getInitialSidebarState);
   const { show: showAurora } = useAurora();
   const ux = useMemo(() => getUx(STORAGE_KEYS.UX), []);
@@ -42,17 +42,11 @@ export default function ProtectedLayout() {
   const { data: chats, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatHistory();
   const navigate = useNavigate();
   const resetChat = useChatStore((s) => s.reset);
+  const { can } = usePermissions();
 
   const handleSelectChat = (id: string) => {
     navigate(`${ROUTES.CHAT}/${id}`);
   };
-
-  const handleSelectHiringRequest = useCallback(
-    (id: string) => {
-      navigate(`${ROUTES.HIRING_REQUESTS}/${id}`);
-    },
-    [navigate],
-  );
 
   const deleteChatMutation = useDeleteChat();
   const renameChatMutation = useRenameChat();
@@ -101,8 +95,18 @@ export default function ProtectedLayout() {
   }, [navigate]);
 
   useEffect(() => {
+    const isSuperadmin = can("tenant.view");
     const handler = (e: KeyboardEvent) => {
       const k = KEYBOARD_SHORTCUTS;
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.TOGGLE_SIDEBAR.code) {
+        e.preventDefault();
+        handleToggleSidebar();
+      }
+      if (e.altKey && e.code === k.SHORTCUTS.code) {
+        e.preventDefault();
+        useUiStore.getState().toggleShortcutsModal();
+      }
+      if (isSuperadmin) return;
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.HOME.code) {
         e.preventDefault();
         handleHome();
@@ -110,10 +114,6 @@ export default function ProtectedLayout() {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.NEW_CHAT.code) {
         e.preventDefault();
         handleNewChat();
-      }
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.TOGGLE_SIDEBAR.code) {
-        e.preventDefault();
-        handleToggleSidebar();
       }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.INTERVIEWS.code) {
         e.preventDefault();
@@ -123,28 +123,10 @@ export default function ProtectedLayout() {
         e.preventDefault();
         handleAlerts();
       }
-      if (e.altKey && e.code === k.SHORTCUTS.code) {
-        e.preventDefault();
-        useUiStore.getState().toggleShortcutsModal();
-      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [handleNewChat, handleHome, handleToggleSidebar, handleAlerts, handleInterviews]);
-
-  const {
-    isOpen: cmdOpen,
-    query: cmdQuery,
-    setQuery: setCmdQuery,
-    sections: cmdSections,
-    selectedIndex: cmdSelectedIndex,
-    open: cmdOpenPalette,
-    close: cmdClose,
-    handleKeyDown: cmdHandleKeyDown,
-    loadMore: cmdLoadMore,
-    hasMore: cmdHasMore,
-    isLoadingMore: cmdIsLoadingMore,
-  } = useCommandPalette(handleSelectHiringRequest, handleNewChat);
 
   return (
     <div className="chat-root">
@@ -154,7 +136,6 @@ export default function ProtectedLayout() {
         chats={chats ?? { today: [], earlier: [] }}
         activeChatId={activeChatId}
         onSelectChat={handleSelectChat}
-        onSearch={cmdOpenPalette}
         onDeleteChat={handleDeleteChat}
         onRenameChat={handleRenameChat}
         onLoadMore={fetchNextPage}
@@ -179,20 +160,14 @@ export default function ProtectedLayout() {
         </ErrorBoundary>
       </main>
 
-      <CommandPalette
-        open={cmdOpen}
-        onClose={cmdClose}
-        query={cmdQuery}
-        onQueryChange={setCmdQuery}
-        sections={cmdSections}
-        selectedIndex={cmdSelectedIndex}
-        onKeyDown={cmdHandleKeyDown}
-        onSelectHiringRequest={handleSelectHiringRequest}
-        onNewChat={handleNewChat}
-        onLoadMore={cmdLoadMore}
-        hasMore={cmdHasMore}
-        isLoadingMore={cmdIsLoadingMore}
-      />
     </div>
+  );
+}
+
+export default function ProtectedLayout() {
+  return (
+    <CmdPaletteProvider>
+      <ProtectedLayoutInner />
+    </CmdPaletteProvider>
   );
 }
