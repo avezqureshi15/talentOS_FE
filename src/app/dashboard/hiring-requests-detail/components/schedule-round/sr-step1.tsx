@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP, AI_ID } from "./schedule-round-modal.constants";
+import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP, AI_ID, AI_SCREENING_ID } from "./schedule-round-modal.constants";
 import { askSlotsForEmployee } from "@/components/shared/mentions/services/ask-slots.service";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
@@ -92,6 +92,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
   );
 
   const aiActive = selectedInterviewers.some((s) => s.id === AI_ID) && aiTemplates && aiTemplates.length > 0;
+  const aiScreeningActive = selectedInterviewers.some((s) => s.id === AI_SCREENING_ID);
 
   const renderSlotList = () => (
     <div className="sr-slot-list">
@@ -201,6 +202,24 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
             </div>
             {selectedInterviewers.some((s) => s.id === AI_ID) && <i className="bx bx-check sr-interviewer-check" />}
           </button>
+          <button
+            key={AI_SCREENING_ID}
+            className={`sr-interviewer-item sr-interviewer-item--ai ${selectedInterviewers.some((s) => s.id === AI_SCREENING_ID) ? "sr-interviewer-item--selected" : ""}`}
+            onClick={() => onSelectInterviewer({
+              id: AI_SCREENING_ID, emp_id: AI_SCREENING_ID, name: SR_LABELS.AI_SCREENING_NAME,
+              designation: "AI Screening", department: "", email: "", slots_count: -1, has_slots: true,
+            })}
+            type="button"
+          >
+            <div className="sr-interviewer-avatar sr-interviewer-avatar--ai">
+              <i className="bx bx-microphone" />
+            </div>
+            <div className="sr-interviewer-info">
+              <span className="sr-interviewer-name">{SR_LABELS.AI_SCREENING_NAME}</span>
+              <span className="sr-interviewer-slots sr-interviewer-slots--ai">{SR_LABELS.AI_SLOTS_LABEL}</span>
+            </div>
+            {selectedInterviewers.some((s) => s.id === AI_SCREENING_ID) && <i className="bx bx-check sr-interviewer-check" />}
+          </button>
           {isSearching ? (
             <div className="sr-empty-slots">{SR_LABELS.SEARCH_LOADING}</div>
           ) : (
@@ -223,7 +242,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
       <div className="sr-right-col">
         {selectedInterviewers.length > 0 ? (
           <div className="sr-slot-section">
-            <span className="sr-section-label">{aiActive ? SR_LABELS.SELECT_TEMPLATE : SR_LABELS.SELECT_SLOT}</span>
+             <span className="sr-section-label">{aiScreeningActive ? "AI Interview Session" : aiActive ? SR_LABELS.SELECT_TEMPLATE : SR_LABELS.SELECT_SLOT}</span>
             {!aiActive && tabs.length > 0 && (
               <div className="sr-tabs-row">
                 {tabs.map((tab) => (
@@ -233,7 +252,16 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
                 ))}
               </div>
             )}
-            {aiActive ? (
+            {aiScreeningActive ? (
+              <div className="sr-confirm-ai-screening">
+                <div className="sr-ai-screening-card" onClick={() => onSlotSelect("ai-screening-confirmed")}>
+                  <div className="sr-ai-screening-icon"><i className="bx bx-microphone" /></div>
+                  <div className="sr-ai-screening-title">AI Interview Session</div>
+                  <div className="sr-ai-screening-desc">An AI-powered interview will be created for this candidate after scheduling.</div>
+                  {selectedSlotId === "ai-screening-confirmed" && <i className="bx bx-check sr-template-card-check" />}
+                </div>
+              </div>
+            ) : aiActive ? (
               renderTemplateCards()
             ) : isLoading ? (
               renderSkeleton()

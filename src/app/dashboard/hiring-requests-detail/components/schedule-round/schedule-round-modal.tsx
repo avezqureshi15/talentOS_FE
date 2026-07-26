@@ -7,11 +7,12 @@ import { useBookInterview } from "@/hooks/use-book-interview";
 import { useRescheduleInterview } from "@/hooks/use-reschedule-interview";
 import SrStep1 from "./sr-step1";
 import SrStep2 from "./sr-step2";
-import { SR_LABELS, AI_ID, AI_TEMPLATES } from "./schedule-round-modal.constants";
+import { SR_LABELS, AI_ID, AI_SCREENING_ID, AI_TEMPLATES } from "./schedule-round-modal.constants";
+import { useTriggerAiInterview } from "@/hooks/use-trigger-ai-interview";
 import type { ScheduleRoundModalProps, Interviewer, ScheduleStep } from "./schedule-round-modal.types";
 import "./schedule-round-modal.css";
 
-export default function ScheduleRoundModal({ open, candidateName, candidateId, candidateNumberId, jdId, interviewId, interviewerEmpId, interviewerName, roundName, rescheduleMode, onClose, onScheduled }: ScheduleRoundModalProps) {
+export default function ScheduleRoundModal({ open, candidateName, candidateId, candidateNumberId, jdId, interviewId, interviewerEmpId, interviewerName, roundName, rescheduleMode, hiringRequestId, onClose, onScheduled }: ScheduleRoundModalProps) {
   const [step, setStep] = useState<ScheduleStep>(1);
   const [search, setSearch] = useState("");
   // justification: stores multiple selected interviewers for a round
@@ -27,6 +28,8 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
   // justification: shows an inline confirmation when round name is still the default
   const [showNameConfirm, setShowNameConfirm] = useState(false);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
+
+  const aiScreeningActive = selectedInterviewers.some((s) => s.id === AI_SCREENING_ID);
 
   // justification: pre-populate the interviewer for reschedule mode — we use the emp_id from the existing interview
   useEffect(() => {
@@ -69,13 +72,13 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
     return null;
   }, [selectedInterviewers, activeTab]);
 
-  // skip slot API call when AI interviewer is the active interviewer
-  const slotFetchId = activeInterviewerId === AI_ID ? null : activeInterviewerId;
+  // skip slot API call when AI interviewer or AI Screening is the active interviewer
+  const slotFetchId = activeInterviewerId === AI_ID || activeInterviewerId === AI_SCREENING_ID ? null : activeInterviewerId;
 
   const { data: activeSlots, isLoading } = useInterviewerSlots(slotFetchId);
 
-  // check if the selected slot is a template slot
-  const isTemplateSlot = selectedSlotId?.startsWith("ai-");
+  // check if the selected slot is a template slot or AI screening
+  const isTemplateSlot = selectedSlotId?.startsWith("ai-") && !selectedSlotId?.startsWith("ai-screening-");
 
   // when AI is the only selected interviewer, show templates instead of virtual slot
   const aiActive = selectedInterviewers.some((s) => s.id === AI_ID) && activeInterviewerId === AI_ID;
@@ -86,15 +89,17 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
   }, [isTemplateSlot, activeSlots]);
 
   const selectedSlotData = selectedSlotId && allSlots ? allSlots.find((s) => s.id === selectedSlotId) : null;
-  const slotTime = selectedSlotData?.label ?? "";
-  const slotDate = selectedSlotData?.description ?? "";
+  const slotTime = aiScreeningActive ? "AI Scheduled" : (selectedSlotData?.label ?? "");
+  const slotDate = aiScreeningActive ? "AI Interview Session" : (selectedSlotData?.description ?? "");
   const interviewerNames = selectedInterviewers.map((iv) => iv.name).join(", ");
 
-  const invitePreview = SR_LABELS.INVITE_PREVIEW
-    .replace("{candidate}", candidateName)
-    .replace("{interviewer}", interviewerNames)
-    .replace("{date}", slotDate)
-    .replace("{time}", slotTime);
+  const invitePreview = aiScreeningActive
+    ? `An AI interview session will be created for ${candidateName}. The candidate will receive an invitation link to join the AI-powered interview.`
+    : SR_LABELS.INVITE_PREVIEW
+      .replace("{candidate}", candidateName)
+      .replace("{interviewer}", interviewerNames)
+      .replace("{date}", slotDate)
+      .replace("{time}", slotTime);
 
   const canProceedTo2 = selectedInterviewers.length > 0 && !!selectedSlotId;
   const canProceedTo3 = canProceedTo2;
@@ -105,9 +110,11 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
   };
 
   const handleSelectInterviewer = (iv: Interviewer) => {
-    if (iv.id === AI_ID) {
-      const isNowSelected = !selectedInterviewers.some((s) => s.id === AI_ID);
-      if (!isNowSelected) {
+    if (iv.id === AI_ID || iv.id === AI_SCREENING_ID) {
+      const isNowSelected = !selectedInterviewers.some((s) => s.id === iv.id);
+      if (isNowSelected) {
+        if (iv.id === AI_SCREENING_ID) setSelectedSlotId("ai-screening-confirmed");
+      } else {
         setSelectedSlotId(null);
       }
     } else {
@@ -154,8 +161,9 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
 
   const { mutateAsync: bookInterview, isPending: isBooking } = useBookInterview();
   const { mutateAsync: rescheduleInterviewMut, isPending: isRescheduling } = useRescheduleInterview();
+  const { mutateAsync: triggerAiInterviewMut, isPending: isTriggeringAi } = useTriggerAiInterview();
 
-  const isPending = isBooking || isRescheduling;
+  const isPending = isBooking || isRescheduling || isTriggeringAi;
 
   const handleClose = () => { resetState(); onClose(); };
   const handleDone = () => { onScheduled(candidateId); handleClose(); };
@@ -173,6 +181,22 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
 
   const doBook = async () => {
     if (!selectedSlotId || selectedInterviewers.length === 0) return;
+    if (aiScreeningActive && hiringRequestId && candidateNumberId) {
+      try {
+        await triggerAiInterviewMut({
+          hiringRequestId,
+          candidateId: candidateNumberId,
+          round_name: roundTitle,
+          interview_type: "AI_INTERVIEW",
+          round_type: "AI_INTERVIEW",
+        });
+      } catch {
+        return;
+      }
+      setShowNameConfirm(false);
+      nextStep();
+      return;
+    }
     if (jdId && candidateNumberId) {
       try {
         await bookInterview({
@@ -195,6 +219,10 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
     if (!selectedSlotId || selectedInterviewers.length === 0) return;
     if (rescheduleMode) {
       await doReschedule();
+      return;
+    }
+    if (aiScreeningActive) {
+      await doBook();
       return;
     }
     if (roundTitle === SR_LABELS.ROUND_TITLE_DEFAULT) {

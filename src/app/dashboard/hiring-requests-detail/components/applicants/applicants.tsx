@@ -7,6 +7,9 @@ import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/mo
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
+import { useMoveToScreening } from "@/hooks/use-move-to-screening";
+import { useToastStore } from "@/store/toast.store";
+import { ToastType } from "@/components/ui/toast/toast.types";
 import { useApplicantActions } from "./hooks/use-applicant-actions";
 import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps } from "./applicants.types";
 
@@ -186,6 +189,30 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     }
   };
 
+  const { mutateAsync: moveToScreeningMut, isPending: isMovingToScreening } = useMoveToScreening();
+
+  const handleMoveToScreening = useCallback(async (id: string) => {
+    const applicant = data.find((a) => a.id === id);
+    if (!applicant) return;
+    try {
+      const payload = {
+        name: applicant.name,
+        email: applicant.email ?? "",
+        phone: applicant.phone,
+        resume_url: applicant.cvUrl,
+      };
+      await moveToScreeningMut({
+        hiringRequestId: jdId,
+        candidateId: applicant.candidateId,
+        ...payload,
+      });
+      useToastStore.getState().addToast("Screening call triggered", ToastType.SUCCESS);
+      overrideStatus(id, "under_evaluation");
+    } catch {
+      useToastStore.getState().addToast("Failed to trigger screening", ToastType.ERROR);
+    }
+  }, [data, jdId, moveToScreeningMut]);
+
   const closeFinalDecision = () => {
     setFinalCandidateId(null);
     setFinalDecision(null);
@@ -207,6 +234,7 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     onRejectFromEvaluation: confirmRejectFromEvaluation,
     onMoveToNextRound: (id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); },
     onScheduleInterview: (id) => { setScheduleCandidateId(id); },
+    onMoveToScreening: handleMoveToScreening,
     onMenuSelect: (id) => { setFinalCandidateId(id); setFinalDecision("selected"); },
     onMenuReject: (id) => { setFinalCandidateId(id); setFinalDecision("rejected"); },
   });
@@ -273,7 +301,7 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
         isConfirmingHire={isConfirmingHire}
       />
 
-      <ScheduleRoundModal open={!!scheduleCandidateId} candidateName={data.find((a) => a.id === scheduleCandidateId)?.name ?? ""} candidateId={scheduleCandidateId ?? ""} candidateNumberId={data.find((a) => a.id === scheduleCandidateId)?.candidateId ?? 0} jdId={jdId} onClose={() => setScheduleCandidateId(null)} onScheduled={(id) => { overrideStatus(id, "scheduled"); setScreeningId(null); onRefresh?.(); }} />
+      <ScheduleRoundModal open={!!scheduleCandidateId} candidateName={data.find((a) => a.id === scheduleCandidateId)?.name ?? ""} candidateId={scheduleCandidateId ?? ""} candidateNumberId={data.find((a) => a.id === scheduleCandidateId)?.candidateId ?? 0} jdId={jdId} hiringRequestId={jdId} onClose={() => setScheduleCandidateId(null)} onScheduled={(id) => { overrideStatus(id, "scheduled"); setScreeningId(null); onRefresh?.(); }} />
 
       <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 

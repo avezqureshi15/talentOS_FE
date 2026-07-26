@@ -6,6 +6,7 @@ export type ActionHandlers = {
   onRejectFromEvaluation: (id: string) => void;
   onMoveToNextRound: (id: string) => void;
   onScheduleInterview: (id: string) => void;
+  onMoveToScreening: (id: string) => void;
   onMenuSelect: (id: string) => void;
   onMenuReject: (id: string) => void;
 };
@@ -18,6 +19,7 @@ export function useApplicantActions(handlers: ActionHandlers) {
         onRejectFromEvaluation: handlers.onRejectFromEvaluation,
         onMoveToNextRound: handlers.onMoveToNextRound,
         onScheduleInterview: handlers.onScheduleInterview,
+        onMoveToScreening: handlers.onMoveToScreening,
       };
       map[handlerKey]?.(id);
     },

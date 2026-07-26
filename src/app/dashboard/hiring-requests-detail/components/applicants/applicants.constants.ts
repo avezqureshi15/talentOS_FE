@@ -46,7 +46,9 @@ export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   chip: { label: "Awaiting Review", variant: "yellow" },
   showInfoChips: false,
   showExpandedContent: true,
-  actions: [],
+  actions: [
+    { label: "Move to Screening", icon: "bx bx-phone", variant: "screen", handler: "onMoveToScreening" },
+  ],
   menuActions: ["select", "reject"],
 };
 

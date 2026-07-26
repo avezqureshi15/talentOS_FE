@@ -170,6 +170,8 @@ export const QUERY_KEYS = {
   TENANT: "tenant",
   TENANT_USERS: "tenant-users",
   TENANT_INVITES: "tenant-invites",
+  AI_INTERVIEWS: "ai-interviews",
+  AI_SCREENING: "ai-screening",
 } as const;
 
 export const QUERY_CONFIG = {

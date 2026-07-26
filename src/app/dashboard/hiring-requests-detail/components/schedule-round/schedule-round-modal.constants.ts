@@ -2,6 +2,7 @@ export const SLOT_GROUP_ORDER = ["Today", "Tomorrow"];
 export const SLOT_FALLBACK_GROUP = "Other";
 
 export const AI_ID = "ai";
+export const AI_SCREENING_ID = "ai-screening";
 export const AI_AUTO_SLOT_ID = "ai-auto-slot";
 
 export const SR_LABELS = {
@@ -42,6 +43,7 @@ export const SR_LABELS = {
   RESCHEDULING_LABEL: "Rescheduling...",
 
   AI_NAME: "AI Interviewer",
+  AI_SCREENING_NAME: "AI Screening Interview",
   AI_SLOTS_LABEL: "Always available",
   PROCTORING_LABEL: "Proctoring",
   INSIGHTS_LABEL: "Insights",
