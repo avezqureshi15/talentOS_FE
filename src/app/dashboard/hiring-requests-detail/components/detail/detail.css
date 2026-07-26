@@ -378,6 +378,11 @@
   font-weight: 500;
 }
 
+.rounds-table-cell--type {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
 .rounds-table-cell--verdict {
   color: var(--text-secondary);
   text-align: right;

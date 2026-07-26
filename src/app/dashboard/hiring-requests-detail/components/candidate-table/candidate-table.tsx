@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
+import type { ReactNode } from "react";
 import "./candidate-table.css";
 import type { CandidateTableProps } from "./candidate-table.types";
+import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 
 const getInitials = (name: string) =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
@@ -33,15 +35,60 @@ function getDisplayStatus(score: number | undefined, rawStatus: string): { label
   return { label: STATUS_LABELS[rawStatus] ?? rawStatus, cssClass: rawStatus };
 }
 
-const CandidateTable = ({ data, onRowClick }: CandidateTableProps) => {
+const isInterviewStatus = (s: string) =>
+  s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled";
+
+const CELL_RENDERERS: Record<string, (c: Applicant, onInfo?: (c: Applicant) => void) => ReactNode> = {
+  name: (c) => (
+    <div className="applicant-table-cell applicant-table-cell--name">
+      <div className="candidate-avatar">{getInitials(c.name)}</div>
+      <div>
+        <div className="candidate-name">{c.name}</div>
+        {c.email && <div className="candidate-email">{c.email}</div>}
+      </div>
+    </div>
+  ),
+  score: (c) => (
+    <div className="applicant-table-cell">
+      {c.score != null ? (
+        <span className={`ats-score ${getScoreClass(c.score)}`}>{c.score}</span>
+      ) : (
+        <span className="text-muted">—</span>
+      )}
+    </div>
+  ),
+  status: (c) => {
+    const ds = getDisplayStatus(c.score, c.status);
+    return (
+      <div className="applicant-table-cell">
+        <span className={`status-chip status-chip--${ds.cssClass}`}>{ds.label}</span>
+      </div>
+    );
+  },
+  info: (c, onInfo) => (
+    <div className="applicant-table-cell applicant-table-cell--info">
+      <button
+        className="info-icon-btn"
+        onClick={(e) => { e.stopPropagation(); onInfo?.(c); }}
+        title="Candidate Info"
+        type="button"
+      >
+        <i className="bx bx-info-circle" />
+      </button>
+    </div>
+  ),
+};
+
+const CandidateTable = ({ data, columns, onRowClick, onInfoClick }: CandidateTableProps) => {
+  const gridTemplate = columns.map((col) => `${col.flex}fr`).join(" ");
+
   return (
     <div className="candidate-table-wrapper">
       <div className="applicant-table">
-        <div className="applicant-table-header">
-          <span className="applicant-table-cell applicant-table-cell--name">Candidate</span>
-          <span className="applicant-table-cell applicant-table-cell--score">Score</span>
-          <span className="applicant-table-cell applicant-table-cell--status">Status</span>
-          <span className="applicant-table-cell applicant-table-cell--round">Round</span>
+        <div className="applicant-table-header" style={{ gridTemplateColumns: gridTemplate }}>
+          {columns.map((col) => (
+            <span key={col.key} className="applicant-table-cell">{col.label}</span>
+          ))}
         </div>
 
         {data.length === 0 ? (
@@ -50,41 +97,17 @@ const CandidateTable = ({ data, onRowClick }: CandidateTableProps) => {
           data.map((candidate, idx) => (
             <motion.div
               key={candidate.id}
-              className="applicant-table-row"
+              className={`applicant-table-row${isInterviewStatus(candidate.status) ? " applicant-table-row--disabled" : ""}`}
+              style={{ gridTemplateColumns: gridTemplate }}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.03, duration: 0.2 }}
               onClick={() => onRowClick?.(candidate)}
             >
-              <div className="applicant-table-cell applicant-table-cell--name">
-                <div className="candidate-avatar">{getInitials(candidate.name)}</div>
-                <div>
-                  <div className="candidate-name">{candidate.name}</div>
-                  {candidate.email && <div className="candidate-email">{candidate.email}</div>}
-                </div>
-              </div>
-              <div className="applicant-table-cell applicant-table-cell--score">
-                {candidate.score != null ? (
-                  <span className={`ats-score ${getScoreClass(candidate.score)}`}>
-                    {candidate.score}
-                  </span>
-                ) : (
-                  <span className="text-muted">—</span>
-                )}
-              </div>
-              <div className="applicant-table-cell applicant-table-cell--status">
-                {(() => {
-                  const ds = getDisplayStatus(candidate.score, candidate.status);
-                  return <span className={`status-chip status-chip--${ds.cssClass}`}>{ds.label}</span>;
-                })()}
-              </div>
-              <div className="applicant-table-cell applicant-table-cell--round">
-                {candidate.currentRoundId ? (
-                  <span className="round-badge">{candidate.currentRoundId}</span>
-                ) : (
-                  <span className="text-muted">—</span>
-                )}
-              </div>
+              {columns.map((col) => {
+                const render = CELL_RENDERERS[col.key];
+                return render ? render(candidate, onInfoClick) : <div key={col.key} className="applicant-table-cell" />;
+              })}
             </motion.div>
           ))
         )}

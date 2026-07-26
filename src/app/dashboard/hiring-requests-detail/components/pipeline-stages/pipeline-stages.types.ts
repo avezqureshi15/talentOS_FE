@@ -1,4 +1,4 @@
-export type StageKey = "resume-shortlisting" | "screening" | "interview" | "waiting-evaluation" | "evaluated" | "outcome";
+export type StageKey = "resume-shortlisting" | "screening" | "interview" | "waiting-evaluation" | "evaluated";
 
 export type SubItem = {
   label: string;
@@ -6,11 +6,18 @@ export type SubItem = {
   color: "success" | "danger" | "warning" | "info";
 };
 
+export type StageColumn = {
+  key: string;
+  label: string;
+  flex: number;
+};
+
 export type StageData = {
   key: StageKey;
   label: string;
   count: number;
   subItems?: SubItem[];
+  columns: StageColumn[];
 };
 
 export type PipelineStagesProps = {

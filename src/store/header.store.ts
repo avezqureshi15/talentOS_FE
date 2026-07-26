@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
 
 export type HeaderViewOption = {
   key: string;
@@ -45,6 +46,8 @@ export type HeaderConfig = {
   search?: HeaderSearchConfig | null;
   viewSwitcher?: HeaderViewSwitcherConfig | null;
   actions?: HeaderActionConfig[];
+  hiringRequestName?: string;
+  hiringRequest?: HiringRequest;
 };
 
 type HeaderState = {

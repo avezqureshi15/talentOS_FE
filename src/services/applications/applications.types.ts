@@ -35,6 +35,7 @@ export type RoundFromApi = {
   slot_id: string | null;
   jd_id: string | null;
   name: string | null;
+  round_type: string | null;
   round_verdict: string | null;
   created_at: string;
   updated_at: string;
@@ -59,6 +60,7 @@ export type ReviewEntity = {
 
 export type RoundDetailApiResponse = {
   id: string;
+  round_type: string | null;
   round: string | null;
   duration: string | null;
   interview_type: string | null;

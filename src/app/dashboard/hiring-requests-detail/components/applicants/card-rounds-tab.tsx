@@ -51,6 +51,7 @@ const CardRoundsTab = ({ candidateId, jdId }: Props) => {
         <div className="rounds-table">
           <div className="rounds-table-header">
             <span className="rounds-table-cell rounds-table-cell--name">Round</span>
+            <span className="rounds-table-cell rounds-table-cell--type">Type</span>
             <span className="rounds-table-cell rounds-table-cell--verdict">Verdict</span>
           </div>
           {rounds.map((r) => (
@@ -61,6 +62,7 @@ const CardRoundsTab = ({ candidateId, jdId }: Props) => {
               type="button"
             >
               <span className="rounds-table-cell rounds-table-cell--name">{r.round}</span>
+              <span className="rounds-table-cell rounds-table-cell--type">{r.roundType ?? "-"}</span>
               <span className="rounds-table-cell rounds-table-cell--verdict">{verdictLabel(r.roundVerdict)}</span>
             </button>
           ))}

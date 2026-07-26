@@ -1,12 +1,11 @@
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
-import JobDetail from "@/app/dashboard/hiring-requests-detail/components/detail/detail";
+import DecisionBoard from "@/app/dashboard/hiring-requests-detail/components/decision-board/decision-board";
 import { useHiringRequestHeader } from "@/app/dashboard/hiring-requests-detail/pages/use-hiring-request-header";
-import { HEADER_DEFAULT_VIEW } from "@/layouts/protected-layouts/components/header/header.constants";
 import type { HiringRequestContext } from "./hiring-request-layout";
 
-const ApplicationsPage = () => {
+const DecisionBoardPage = () => {
   const { data } = useOutletContext<HiringRequestContext>();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -14,9 +13,9 @@ const ApplicationsPage = () => {
   const headerConfig = useHiringRequestHeader({
     id,
     data,
-    activeView: HEADER_DEFAULT_VIEW,
+    activeView: "board",
     onViewChange: (key: string) => {
-      if (key === "board") navigate(`/hiring-requests/${id}/board`);
+      if (key === "pipeline") navigate(`/hiring-requests/${id}/applications`);
     },
   });
 
@@ -24,10 +23,10 @@ const ApplicationsPage = () => {
     <>
       <PageHeader {...headerConfig} />
       <ErrorBoundary>
-        <JobDetail hiringRequest={data} />
+        <DecisionBoard jobId={id ?? ""} />
       </ErrorBoundary>
     </>
   );
 };
 
-export default ApplicationsPage;
+export default DecisionBoardPage;

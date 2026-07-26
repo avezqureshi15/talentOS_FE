@@ -14,8 +14,8 @@ const getInitials = (name: string) =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
 const detectMode = (data: RoundDetailApiResponse): RoundDetailsMode => {
-  const hasAiReview = data.reviews?.some((r) => r.entity_type === "ai");
-  return hasAiReview ? "ai-interview" : "normal-round";
+  if (data.round_type === "AI_INTERVIEW") return "ai-interview";
+  return "normal-round";
 };
 
 function buildMockHeader() {
@@ -41,7 +41,7 @@ function buildApiHeader(data: RoundDetailApiResponse) {
     title: data.candidate ?? "Round Details",
     avatarLabel: data.candidate ? getInitials(data.candidate) : "?",
     meta: [
-      ...(data.interview_type ? [{ label: data.interview_type }] : []),
+      ...(data.round_type ? [{ label: data.round_type }] : data.interview_type ? [{ label: data.interview_type }] : []),
       ...(data.interviewer ? [{ label: data.interviewer }] : []),
       ...(data.occurred_on ? [{ label: data.occurred_on }] : []),
     ].filter(Boolean),

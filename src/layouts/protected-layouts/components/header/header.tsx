@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Button from "@/components/ui/button/button";
@@ -8,6 +8,7 @@ import { HIRING_TABS } from "@/constants/routes";
 import { springSnap } from "@/utils/motion";
 import CandidateHeader from "./candidate-header";
 import TabDropdown from "./tab-dropdown";
+import JdDetailModal from "@/app/dashboard/hiring-requests-detail/components/modal/jd-detail-modal/jd-detail-modal";
 
 import "./header.css";
 import type {
@@ -29,6 +30,7 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
   const { title, meta, search, viewSwitcher, actions, totalCount } = config;
   const location = useLocation();
   const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));
+  const [jdModalOpen, setJdModalOpen] = useState(false);
 
   if (meta) {
     return <CandidateHeader title={title} avatarLabel={config.avatarLabel} meta={meta} actions={actions} />;
@@ -38,7 +40,12 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
     <div className="jobs-toolbar">
       <div className="jobs-toolbar-left">
         {isTabRoute ? (
-          <TabDropdown totalCount={totalCount} />
+          <>
+            <TabDropdown totalCount={totalCount} />
+            {config.hiringRequestName && (
+              <span className="hiring-request-chip" onClick={() => setJdModalOpen(true)}>{config.hiringRequestName}</span>
+            )}
+          </>
         ) : (
           title && (
             <div className="jobs-title-group">
@@ -112,6 +119,10 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
           </React.Fragment>
         ))}
       </div>
+
+      {config.hiringRequest && (
+        <JdDetailModal open={jdModalOpen} onClose={() => setJdModalOpen(false)} hiringRequest={config.hiringRequest} />
+      )}
     </div>
   );
 };
