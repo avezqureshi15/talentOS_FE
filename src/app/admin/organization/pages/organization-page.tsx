@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getOrganization, updateOrganization } from "../services/organization.service";
 import type { Organization, UpdateOrganizationPayload } from "../services/organization.types";
+import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import "./organization-page.css";
 
 export default function OrganizationPage() {
@@ -72,10 +73,7 @@ export default function OrganizationPage() {
 
   return (
     <div className="org-page">
-      <div className="org-header">
-        <h1 className="org-title">Organization</h1>
-        <p className="org-subtitle">Manage your organization's profile information</p>
-      </div>
+      <PageHeader title="Organization Profile"  />
 
       <div className="org-card">
         <div className="org-form-grid">

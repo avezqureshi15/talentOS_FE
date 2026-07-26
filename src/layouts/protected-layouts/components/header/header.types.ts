@@ -1,24 +1,18 @@
 import type { ComponentType } from "react";
 
-type IconComponent = ComponentType<{ className?: string }>;
+export type IconComponent = ComponentType<{ className?: string }>;
 
 export type HeaderProps = {
-  mounted: boolean;
-  sidebarOpen: boolean;
-  onToggleSidebar: () => void;
   Icon: Record<string, IconComponent>;
-  showHint: boolean;
-  onHintDismiss: () => void;
+  sidebarOpen?: boolean;
 };
 
-export type HeaderLeftProps = {
-  sidebarOpen: boolean;
-  onToggleSidebar: () => void;
-  Icon: Record<string, IconComponent>;
-  showHint: boolean;
-  onHintDismiss: () => void;
-};
+export type HeaderLeftProps = Record<string, never>;
 
 export type HeaderRightProps = {
+  Icon: Record<string, IconComponent>;
+};
+
+export type ConfigToolbarProps = {
   Icon: Record<string, IconComponent>;
 };

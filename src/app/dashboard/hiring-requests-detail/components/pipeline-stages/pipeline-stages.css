@@ -1,0 +1,135 @@
+.pipeline-root {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 16px 26px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.pipeline-stage {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 14px 16px;
+  min-height: 72px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  user-select: none;
+}
+
+.pipeline-stage + .pipeline-stage {
+  border-left: 1px solid var(--border-subtle);
+}
+
+.pipeline-stage--active {
+  background: var(--surface-card);
+}
+
+.pipeline-active-bar {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.pipeline-stage:first-child {
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.pipeline-stage:last-child {
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.pipeline-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pipeline-stage--active .pipeline-label {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* evaluated horizontal row */
+.pipeline-metrics-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.pipeline-sub-items-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.pipeline-count {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.pipeline-stage--active .pipeline-count {
+  color: var(--accent);
+}
+
+.pipeline-sub-items {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pipeline-sub-item {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.pipeline-sub-item--success {
+  background: var(--success-bg);
+  color: var(--success-light);
+}
+
+.pipeline-sub-item--warning {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.pipeline-sub-item--danger {
+  background: var(--danger-bg);
+  color: var(--danger-light);
+}
+
+.pipeline-sub-item--info {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+/* width adjustments */
+.pipeline-stage--waiting-evaluation {
+  flex: 1.4;
+}

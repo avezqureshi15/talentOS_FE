@@ -5,4 +5,5 @@ export type ProtectedRouteProps = {
   minimumRole?: Role;
   allowedRoles?: Role[];
   permissions?: Permission[];
+  redirectPath?: string;
 };

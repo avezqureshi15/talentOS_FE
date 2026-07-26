@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { formatDate } from "./applicants.utils";
 import Chip from "@/components/ui/chip/chip";
 import type { ChipVariant } from "@/components/ui/chip/chip.types";
 import { APPLICANT_LABELS } from "@/constants/constants";
-import { INFO_CHIP_SKIP_KEYS } from "./applicants.constants";
 import { useApplicantState } from "./hooks/use-applicant-state";
 import CardExpandedContent from "./card-expanded-content";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
@@ -23,7 +22,7 @@ const ApplicantCard = ({
   onAiSummaryReadMore,
   onDetailsReadMore,
   onTimeline,
-  onViewRound,
+  jdId,
   isRemote = false,
 }: ApplicantCardProps) => {
   const stateConfig = useApplicantState(a, isScreening);
@@ -62,89 +61,35 @@ const ApplicantCard = ({
   const showExpanded = isOpen && (stateConfig.showExpandedContent || readOnly);
   const showMenu = stateConfig.menuActions.length > 0 && a.finalVerdict == null && !readOnly;
 
-  const INFO_CHIP_LABELS: Record<string, string> = {
-    CTC: "Budget",
-    NOTICE_PERIOD: "Notice Period",
-  };
-
-  const infoChips = useMemo(() => {
-    if (!a.reviews) return [];
-
-    const rejectionKeys = new Set<string>();
-    if (Array.isArray(a.reviews.rejection_details)) {
-      const REJECTION_TO_INFO: Record<string, string> = { BUDGET: "CTC" };
-      for (const item of a.reviews.rejection_details) {
-        const k = Object.keys(item as Record<string, unknown>)[0];
-        rejectionKeys.add(REJECTION_TO_INFO[k] ?? k);
-      }
-    }
-
-    return Object.entries(a.reviews).flatMap(([key, value]) => {
-      if (INFO_CHIP_SKIP_KEYS.has(key)) return [];
-      if (rejectionKeys.has(key)) return [];
-      if (typeof value === "object" && value != null && "actual" in value && "expected" in value) {
-        return [{ key, value: value as { actual: string | number; expected: string | number } }];
-      }
-      return [];
-    });
-  }, [a.reviews]);
-
   return (
     <div className="accordion-card">
       <div className="accordion-header">
         <div className="header-left" onClick={() => { if (canExpand) onToggleOpen(a.id); }}>
-          <div className="name">
-            {a.name}
-          </div>
-          <div className="meta">
-            {a.email && <span><i className="bx bx-envelope"></i> {a.email}</span>}
-            {stateConfig.chip && (
-              <Chip variant={stateConfig.chip.variant as ChipVariant} size="sm">
-                {stateConfig.chip.label}
-              </Chip>
-            )}
-            {a.appliedAt && (
-              <span className="applied-date">
-                <i className="bx bx-calendar"></i> {APPLICANT_LABELS.APPLIED} {formatDate(a.appliedAt)}
-              </span>
-            )}
-          </div>
+          <span className="name">{a.name}</span>
+          {a.email && <span className="header-meta-item"><i className="bx bx-envelope"></i> {a.email}</span>}
+          {a.currentRoundId && jdId && (
+            <button
+              className="current-round-btn"
+              onClick={(e) => { e.stopPropagation(); window.open(`/hiring-requests/${jdId}/round-details/${a.currentRoundId}?candidateId=${a.id}`, "_blank"); }}
+              title="View round details"
+              type="button"
+            >
+              <i className="bx bx-info-circle" /> Current Round
+            </button>
+          )}
+          {stateConfig.chip && (
+            <Chip variant={stateConfig.chip.variant as ChipVariant} size="sm">
+              {stateConfig.chip.label}
+            </Chip>
+          )}
+          {a.appliedAt && (
+            <span className="applied-date">
+              <i className="bx bx-calendar"></i> {APPLICANT_LABELS.APPLIED} {formatDate(a.appliedAt)}
+            </span>
+          )}
         </div>
 
         <div className="header-right">
-          {stateConfig.showInfoChips && (
-            <div className="info-chip-row">
-              {infoChips.map((chip) => {
-                const actual = chip.value.actual;
-                const expected = chip.value.expected;
-                const hasActual = actual != null && actual !== "" && actual !== "?";
-                const hasExpected = expected != null && expected !== "" && expected !== "?";
-                if (!hasActual && !hasExpected) return null;
-                const label = INFO_CHIP_LABELS[chip.key] ?? chip.key;
-                const tipLines: string[] = [label, `Actual : ${hasActual ? actual : "—"}`, `Expected : ${hasExpected ? expected : "—"}`];
-                return (
-                  <span
-                    key={chip.key}
-                    className="info-chip info-chip--red"
-                    onMouseEnter={(e) => showTooltip(e, tipLines)}
-                    onMouseLeave={hideTooltip}
-                  >
-                    {label}
-                  </span>
-                );
-              })}
-            </div>
-          )}
-
-          {a.reviews && Array.isArray(a.reviews.rejection_details) && (a.reviews.rejection_details as unknown[]).length > 0 && (
-            <div className="info-chip-row--rejection">
-              {(a.reviews.rejection_details as Array<Record<string, { JD: string; Candidate: string }>>).map((item, i) => {
-                const key = Object.keys(item)[0];
-                return <span key={i} className="rejection-chip">{key}</span>;
-              })}
-            </div>
-          )}
-
           {stateConfig.showInfoChips && a.score != null && (
             <div
               className={`ats-score ${a.score >= 70 ? "score-high" : a.score >= 40 ? "score-mid" : "score-low"}`}
@@ -210,7 +155,7 @@ const ApplicantCard = ({
           onDetailsReadMore={onDetailsReadMore}
           onCoverLetterReadMore={onCoverLetterReadMore}
           onAiSummaryReadMore={onAiSummaryReadMore}
-          onViewRound={onViewRound}
+          jdId={jdId}
           isRemote={isRemote}
         />
       )}

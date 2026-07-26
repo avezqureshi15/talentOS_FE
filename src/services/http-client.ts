@@ -1,6 +1,8 @@
 import axios from "axios";
 import { BE_API_BASE_URL } from "@/constants/constants";
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/app/auth/hooks/auth.constants";
+import { AUTH_STORAGE_KEY } from "@/app/auth/hooks/auth.constants";
+import { storage } from "@/utils/storage";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 
@@ -28,7 +30,7 @@ export const publicClient = axios.create({
 // ── Attach Bearer token to every request ──────────────────────────────
 httpClient.interceptors.request.use((config) => {
   if (config.headers?.Authorization) return config;
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const token = storage.get(ACCESS_TOKEN_KEY);
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -72,9 +74,9 @@ httpClient.interceptors.response.use(
         error.response?.data?.detail || "Your account has been disabled. Please contact support.",
         ToastType.ERROR,
       );
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
-      localStorage.removeItem(REFRESH_TOKEN_KEY);
-      localStorage.removeItem("auth_user");
+      storage.remove(ACCESS_TOKEN_KEY);
+      storage.remove(REFRESH_TOKEN_KEY);
+      storage.remove(AUTH_STORAGE_KEY);
       window.location.href = "/login";
       return Promise.reject(error);
     }
@@ -105,7 +107,7 @@ httpClient.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const storedRefresh = localStorage.getItem(REFRESH_TOKEN_KEY);
+      const storedRefresh = storage.get(REFRESH_TOKEN_KEY);
       if (!storedRefresh) throw new Error("No refresh token");
 
       const { data } = await axios.post(
@@ -113,7 +115,7 @@ httpClient.interceptors.response.use(
         { refresh_token: storedRefresh },
       );
 
-      localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
+      storage.set(ACCESS_TOKEN_KEY, data.access_token);
       processQueue(null, data.access_token);
 
       originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
@@ -126,9 +128,9 @@ httpClient.interceptors.response.use(
         error.message ||
         "Session expired. Please sign in again.";
       useToastStore.getState().addToast(message, ToastType.ERROR);
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
-      localStorage.removeItem(REFRESH_TOKEN_KEY);
-      localStorage.removeItem("auth_user");
+      storage.remove(ACCESS_TOKEN_KEY);
+      storage.remove(REFRESH_TOKEN_KEY);
+      storage.remove(AUTH_STORAGE_KEY);
       window.location.href = "/login";
       return Promise.reject(refreshError);
     } finally {

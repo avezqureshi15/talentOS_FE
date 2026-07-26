@@ -9,13 +9,12 @@ export type StreamChunk = {
   final: Array<{
     type: string;
     content: string;
-    ui?: string;
   }>;
 };
 
 export type ChatStreamCallbacks = {
   onStep?: (step: StreamChunkStep) => void;
-  onFinal?: (block: { type: string; content: string; ui?: string }) => void;
+  onFinal?: (block: { type: string; content: string }) => void;
   onError?: (error: Error) => void;
   onComplete?: () => void;
   onChatId?: (chatId: string) => void;

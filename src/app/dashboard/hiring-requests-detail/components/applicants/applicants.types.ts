@@ -1,4 +1,4 @@
-export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_rescheduled" | "interview_cancelled";
+export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "resume_shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_rescheduled" | "interview_cancelled";
 
 export type HiringState =
   | "waiting_for_review"
@@ -58,7 +58,7 @@ export type ApplicantCardProps = {
   onAiSummaryReadMore: (id: string) => void;
   onDetailsReadMore: (id: string) => void;
   onTimeline: (id: number) => void;
-  onViewRound?: (roundId: string) => void;
+  jdId?: string;
   isRemote?: boolean;
 };
 
@@ -163,6 +163,6 @@ export type CardExpandedContentProps = {
   onDetailsReadMore: (id: string) => void;
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
-  onViewRound?: (roundId: string) => void;
+  jdId?: string;
   isRemote?: boolean;
 };

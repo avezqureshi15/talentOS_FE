@@ -1,0 +1,209 @@
+.candidate-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* ---------- Applicant Table (shared view) ---------- */
+.applicant-table {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.applicant-table-header {
+  display: grid;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-faint);
+}
+
+.applicant-table-row {
+  display: grid;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.12s ease;
+  animation: rowFadeIn 0.3s ease both;
+  cursor: pointer;
+}
+
+.applicant-table-row:last-child {
+  border-bottom: none;
+}
+
+.applicant-table-row:hover {
+  background: var(--bg-hover);
+}
+
+.applicant-table-row--disabled {
+  cursor: default;
+}
+
+.applicant-table-row--disabled:hover {
+  background: transparent;
+}
+
+.applicant-table-cell {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  min-width: 0;
+}
+
+.applicant-table-cell--name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.applicant-table-cell--info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.applicant-table-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* candidate info */
+.candidate-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 2px solid var(--accent-border);
+}
+
+.candidate-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.candidate-email {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* ATS score */
+.ats-score {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ats-score.score-high {
+  background: var(--success-bg-strong);
+  color: var(--success-light);
+  border: 1px solid var(--success-light-border);
+}
+
+.ats-score.score-mid {
+  background: var(--score-mid-bg);
+  color: var(--score-mid);
+  border: 1px solid var(--score-mid-border);
+}
+
+.ats-score.score-low {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+  border: 1px solid var(--danger-light-border);
+}
+
+/* status chip */
+.status-chip {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-chip--info {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.status-chip--warning {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--new,
+.status-chip--waiting_for_review {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--under_evaluation {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.status-chip--shortlisted,
+.status-chip--resume_shortlisted,
+.status-chip--selected,
+.status-chip--move_to_next_round {
+  background: var(--success-bg-strong);
+  color: var(--success-light);
+}
+
+.status-chip--rejected {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+}
+
+.status-chip--scheduled,
+.status-chip--interview_rescheduled,
+.status-chip--interview_cancelled {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+/* misc */
+.text-muted {
+  color: var(--text-muted);
+}
+
+.info-icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.12s;
+}
+
+.info-icon-btn:hover {
+  color: var(--text-primary);
+}
+
+@keyframes rowFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

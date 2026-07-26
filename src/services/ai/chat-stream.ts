@@ -1,4 +1,5 @@
 import { API_BASE_URL, CHAT_STREAM_ENDPOINT, ACCESS_TOKEN_KEY } from "@/constants/constants";
+import { storage } from "@/utils/storage";
 import type { ChatStreamCallbacks, StreamChunk } from "./chat-stream.types";
 
 export const streamChat = async (
@@ -8,7 +9,7 @@ export const streamChat = async (
 ): Promise<string | null> => {
   const url = `${API_BASE_URL}${CHAT_STREAM_ENDPOINT}`;
 
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const token = storage.get(ACCESS_TOKEN_KEY);
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };

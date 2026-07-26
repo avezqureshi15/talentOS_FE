@@ -5,17 +5,17 @@ export interface UxState {
   sbh: boolean;
 }
 
-const UX_DEFAULTS: UxState = { at: 0, ft: 0, sb: false, sbh: false };
+const UX_DEFAULTS: UxState = { at: 0, ft: 0, sb: true, sbh: false };
 
 export const storage = {
   get(key: string): string | null {
-    return localStorage.getItem(key);
+    try { return localStorage.getItem(key); } catch { return null; }
   },
   set(key: string, value: string): void {
-    localStorage.setItem(key, value);
+    try { localStorage.setItem(key, value); } catch { /* noop */ }
   },
   remove(key: string): void {
-    localStorage.removeItem(key);
+    try { localStorage.removeItem(key); } catch { /* noop */ }
   },
 };
 
@@ -28,8 +28,8 @@ function parseUx(raw: string | null): UxState {
     return {
       at: typeof parsed.at === "number" ? parsed.at : 0,
       ft: typeof parsed.ft === "number" ? parsed.ft : 0,
-      sb: typeof parsed.sb === "boolean" ? parsed.sb : false,
-      sbh: typeof parsed.sbh === "boolean" ? parsed.sbh : false,
+      sb: typeof parsed.sb === "boolean" ? parsed.sb : UX_DEFAULTS.sb,
+      sbh: typeof parsed.sbh === "boolean" ? parsed.sbh : UX_DEFAULTS.sbh,
     };
   } catch {
     return { ...UX_DEFAULTS };

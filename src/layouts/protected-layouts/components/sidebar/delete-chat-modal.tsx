@@ -1,5 +1,7 @@
+import { motion } from "framer-motion";
 import BaseModal from "@/components/ui/modal/base-modal";
 import { SIDEBAR_LABELS } from "@/constants/constants";
+import { springSnap } from "@/utils/motion";
 
 type DeleteChatModalProps = {
   open: boolean;
@@ -12,12 +14,24 @@ const DeleteChatModal = ({ open, onClose, onConfirm }: DeleteChatModalProps) => 
     <div className="sidebar-delete-body">
       <p className="sidebar-delete-text">{SIDEBAR_LABELS.DELETE_CHAT_CONFIRM}</p>
       <div className="sidebar-delete-actions">
-        <button className="sidebar-delete-btn sidebar-delete-btn--cancel" onClick={onClose}>
+        <motion.button
+          className="sidebar-delete-btn sidebar-delete-btn--cancel"
+          onClick={onClose}
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
+          transition={springSnap}
+        >
           {SIDEBAR_LABELS.CANCEL}
-        </button>
-        <button className="sidebar-delete-btn sidebar-delete-btn--confirm" onClick={onConfirm}>
+        </motion.button>
+        <motion.button
+          className="sidebar-delete-btn sidebar-delete-btn--confirm"
+          onClick={onConfirm}
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
+          transition={springSnap}
+        >
           {SIDEBAR_LABELS.DELETE_CONFIRM}
-        </button>
+        </motion.button>
       </div>
     </div>
   </BaseModal>

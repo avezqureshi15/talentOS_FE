@@ -58,7 +58,8 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate(ROUTES.CHAT, { replace: true })
+      const home = user.role === "superadmin" ? ROUTES.SUPERADMIN_TENANTS : ROUTES.CHAT
+      navigate(home, { replace: true })
     }
   }, [user, navigate])
 
@@ -192,7 +193,7 @@ export default function Login() {
             {loading && mode === 'google' ? (
               <div className="auth-loading">
                 <div className="auth-spinner" />
-                <p>Signing you in...</p>
+                <p style={{ color: "var(--text-white)" }}>Signing you in...</p>
               </div>
             ) : (
               <>

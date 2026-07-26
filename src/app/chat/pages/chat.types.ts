@@ -10,7 +10,7 @@ export type CodeBlock = { type: "code"; code: string };
 export type ImageBlock = { type: "image"; url: string };
 export type EmailBlock = { type: "email"; subject?: string; body?: string };
 export type LetterBlock = { type: "letter"; subject?: string; name?: string; meta?: string };
-export type MarkdownBlock = { type: "markdown"; content: string; ui?: string };
+export type MarkdownBlock = { type: "markdown"; content: string };
 
 export type ContentBlock =
   | TextBlock

@@ -1,32 +1,30 @@
 // render-block.ts
 
 import type { ContentBlock } from "@/app/chat/pages/chat.types";
-import type { BlockExtraProps } from "./block-renderer.types";
 import { blockRendererMap } from "./block-renderer";
 
-export const renderBlock = (block: ContentBlock, key: number, extra?: BlockExtraProps) => {
+export const renderBlock = (block: ContentBlock, key: number) => {
   switch (block.type) {
     case "text":
-      return blockRendererMap.text(block, key, extra);
+      return blockRendererMap.text(block, key);
 
     case "thinking":
-      return blockRendererMap.thinking(block, key, extra);
+      return blockRendererMap.thinking(block, key);
 
     case "code":
-      return blockRendererMap.code(block, key, extra);
+      return blockRendererMap.code(block, key);
 
     case "image":
-      return blockRendererMap.image(block, key, extra);
+      return blockRendererMap.image(block, key);
 
     case "email":
-      return blockRendererMap.email(block, key, extra);
+      return blockRendererMap.email(block, key);
 
     case "letter":
-      return blockRendererMap.letter(block, key, extra);
+      return blockRendererMap.letter(block, key);
 
     case "markdown":
-      console.log("Block",block)
-      return blockRendererMap.markdown(block, key, extra);
+      return blockRendererMap.markdown(block, key);
 
     default:
       return null;

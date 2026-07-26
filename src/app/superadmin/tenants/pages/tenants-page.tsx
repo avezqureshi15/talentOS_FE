@@ -6,6 +6,7 @@ import TenantTable from "@/app/superadmin/tenants/components/tenant-table";
 import CreateTenantModal from "@/app/superadmin/tenants/components/create-tenant-modal";
 import EditTenantModal from "@/app/superadmin/tenants/components/edit-tenant-modal";
 import DeleteTenantDialog from "@/app/superadmin/tenants/components/delete-dialog";
+import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import { useCmdPaletteRegistration } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette-registration";
 
 export default function TenantsPage() {
@@ -81,6 +82,11 @@ export default function TenantsPage() {
 
   const totalPages = Math.ceil(total / 20);
 
+  const handleOpenCreate = useCallback(() => {
+    setInviteInfo(null);
+    setShowCreateModal(true);
+  }, []);
+
   const cmdPaletteConfig = useMemo(
     () => ({
       placeholder: "Search tenants...",
@@ -105,42 +111,36 @@ export default function TenantsPage() {
 
   return (
     <div className="tenants-page">
-      <div className="tenants-header">
-        <div>
-          <h1 className="tenants-title">Tenant Management</h1>
-          <p className="tenants-subtitle">Manage organizations, approve signups, and provision new tenants</p>
-        </div>
-        <div className="w-10px" >
-        <Button variant="primary"  onClick={() => { setInviteInfo(null); setShowCreateModal(true); }}>
-          Create Tenant
-        </Button>
-        </div>
-      </div>
-
-      <div className="tenants-filters">
-        <div className="tenants-search-bar">
-          <span className="bx bx-search tenants-search-icon" />
-          <input
-            type="text"
-            className="tenants-search-input"
-            placeholder="Search by name or slug"
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-        </div>
-        <select
-          className="tenants-status-select"
-          value={statusFilter}
-          onChange={(e) => handleStatusFilter(e.target.value)}
-        >
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="suspended">Suspended</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
-      </div>
+      <PageHeader
+        title="Tenant Management"
+        search={{
+          placeholder: "Search by name or slug",
+          value: search,
+          onChange: handleSearch,
+        }}
+        filters={[
+          {
+            value: statusFilter,
+            onChange: handleStatusFilter,
+            options: [
+              { value: "", label: "All Status" },
+              { value: "active", label: "Active" },
+              { value: "suspended", label: "Suspended" },
+              { value: "pending", label: "Pending" },
+              { value: "approved", label: "Approved" },
+              { value: "rejected", label: "Rejected" },
+            ],
+          },
+        ]}
+        actions={[
+          {
+            key: "create-tenant",
+            label: "Create Tenant",
+            variant: "primary",
+            onClick: handleOpenCreate,
+          },
+        ]}
+      />
 
       <div className="tenants-content">
         <TenantTable
@@ -185,7 +185,7 @@ export default function TenantsPage() {
               <div className="tenants-invite-token">
                 <label>Invite Link (send to admin):</label>
                 <code>{window.location.origin}/auth/invite/{inviteInfo.invite_token}</code>
-                <Button variant="matte" size="sm" onClick={() => navigator.clipboard.writeText(
+                <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(
                     `${window.location.origin}/auth/invite/${inviteInfo.invite_token}`
                   )}>
                   Copy

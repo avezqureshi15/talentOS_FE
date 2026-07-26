@@ -1,21 +1,11 @@
 import { useEffect, useRef, useCallback } from "react";
 import "./command-palette.css";
-import type { SearchResultItem, CommandPaletteSection } from "./command-palette.types";
+import type { CommandPaletteProps, SearchResultItem } from "./command-palette.types";
+import type { CommandPaletteSection } from "./command-palette.types";
 import { COMMAND_PALETTE_LABELS } from "./command-palette.constants";
 import BaseModal from "@/components/ui/modal/base-modal";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
-
-type Props = {
-  open: boolean;
-  query: string;
-  onQueryChange: (q: string) => void;
-  sections: CommandPaletteSection[];
-  selectedIndex: number;
-  onClose: () => void;
-  onKeyDown: (e: React.KeyboardEvent) => void;
-  isSearching: boolean;
-  onSelectItem?: (item: SearchResultItem) => void;
-};
 
 const getSelectedSectionItem = (
   sections: CommandPaletteSection[],
@@ -31,23 +21,11 @@ const getSelectedSectionItem = (
   return null;
 };
 
-const getItemIcon = (type: SearchResultItem["type"]) => {
-  const icons: Record<string, string> = {
-    action: "bx bx-plus-circle",
-    "hiring-request": "bx bx-briefcase",
-    tenant: "bx bx-building",
-  };
-  return icons[type] ?? "bx bx-circle";
-};
+const getItemIcon = (type: SearchResultItem["type"]) =>
+  type === "action" ? "bx bx-plus-circle" : "bx bx-briefcase";
 
-const getItemIconClass = (type: SearchResultItem["type"]) => {
-  const classes: Record<string, string> = {
-    action: "cp-item-icon cp-item-icon--action",
-    "hiring-request": "cp-item-icon cp-item-icon--request",
-    tenant: "cp-item-icon cp-item-icon--request",
-  };
-  return classes[type] ?? "cp-item-icon cp-item-icon--request";
-};
+const getItemIconClass = (type: SearchResultItem["type"]) =>
+  type === "action" ? "cp-item-icon cp-item-icon--action" : "cp-item-icon cp-item-icon--request";
 
 export default function CommandPalette({
   open,
@@ -57,10 +35,22 @@ export default function CommandPalette({
   sections,
   selectedIndex,
   onKeyDown,
-  isSearching,
-  onSelectItem,
-}: Props) {
+  onSelectHiringRequest,
+  onNewChat,
+  onLoadMore,
+  hasMore,
+  isLoadingMore,
+}: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const sentinelRef = useIntersectionObserver(
+    useCallback(() => {
+      if (hasMore && !isLoadingMore) {
+        onLoadMore?.();
+      }
+    }, [hasMore, isLoadingMore, onLoadMore]),
+    !!hasMore && !isLoadingMore,
+  );
 
   useEffect(() => {
     if (open) {
@@ -70,13 +60,15 @@ export default function CommandPalette({
 
   const handleItemClick = useCallback(
     (item: SearchResultItem) => {
-      onSelectItem?.(item);
+      if (item.type === "action") {
+        onNewChat();
+      } else {
+        onSelectHiringRequest(item.id);
+      }
       onClose();
     },
-    [onClose, onSelectItem],
+    [onNewChat, onSelectHiringRequest, onClose],
   );
-
-  const isEmpty = sections.length === 0 || sections.every((s) => s.items.length === 0);
 
   return (
     <BaseModal open={open} onClose={onClose} className="command-palette-modal">
@@ -95,11 +87,7 @@ export default function CommandPalette({
         </div>
 
         <div className="cp-body">
-          {isSearching ? (
-            <div className="cp-loading-more">
-              <LoadingSpinner size="sm" />
-            </div>
-          ) : isEmpty ? (
+          {sections.length === 0 || sections.every((s) => s.items.length === 0) ? (
             <div className="cp-empty">{COMMAND_PALETTE_LABELS.NO_RESULTS}</div>
           ) : (
             sections.map((section) =>
@@ -134,6 +122,14 @@ export default function CommandPalette({
               ) : null,
             )
           )}
+
+          {isLoadingMore && (
+            <div className="cp-loading-more">
+              <LoadingSpinner size="sm" />
+            </div>
+          )}
+
+          <div ref={sentinelRef} className="cp-scroll-sentinel" />
         </div>
       </div>
     </BaseModal>

@@ -6,17 +6,24 @@ import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
 } from "@/app/auth/hooks/auth.constants";
+import { storage } from "@/utils/storage";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
 
-const getAccessToken = () => localStorage.getItem(ACCESS_TOKEN_KEY);
+const getAccessToken = () => storage.get(ACCESS_TOKEN_KEY);
 
 const clearSession = () => {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
-  localStorage.removeItem(AUTH_STORAGE_KEY);
+  storage.remove(ACCESS_TOKEN_KEY);
+  storage.remove(REFRESH_TOKEN_KEY);
+  storage.remove(AUTH_STORAGE_KEY);
 };
 
-export default function AuthProvider({ children }: { children: ReactNode }) {
+const storeAuth = (access: string, refresh: string, u: User) => {
+  storage.set(ACCESS_TOKEN_KEY, access);
+  storage.set(REFRESH_TOKEN_KEY, refresh);
+  storage.set(AUTH_STORAGE_KEY, JSON.stringify(u));
+};
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const restored = useRef(false);
@@ -26,8 +33,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     restored.current = true;
 
     const restore = async () => {
-      const storedUser = localStorage.getItem(AUTH_STORAGE_KEY);
-      const storedAccess = localStorage.getItem(ACCESS_TOKEN_KEY);
+      const storedUser = storage.get(AUTH_STORAGE_KEY);
+      const storedAccess = storage.get(ACCESS_TOKEN_KEY);
 
       if (!storedUser || !storedAccess) {
         setIsLoading(false);
@@ -35,12 +42,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        const { data } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME, {
-          headers: { Authorization: `Bearer ${storedAccess}` },
-        });
+        const { data } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME);
         setUser(data.user);
       } catch {
-        const storedRefresh = localStorage.getItem(REFRESH_TOKEN_KEY);
+        const storedRefresh = storage.get(REFRESH_TOKEN_KEY);
         if (!storedRefresh) {
           clearSession();
           setIsLoading(false);
@@ -51,10 +56,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
             API_ENDPOINTS.AUTH_REFRESH,
             { refresh_token: storedRefresh },
           );
-          localStorage.setItem(ACCESS_TOKEN_KEY, refreshData.access_token);
-          const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME, {
-            headers: { Authorization: `Bearer ${refreshData.access_token}` },
-          });
+          storage.set(ACCESS_TOKEN_KEY, refreshData.access_token);
+          const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME);
           setUser(meData.user);
         } catch {
           clearSession();
@@ -66,13 +69,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     restore();
   }, []);
 
-  const storeAuth = useCallback((access: string, refresh: string, u: User) => {
-    localStorage.setItem(ACCESS_TOKEN_KEY, access);
-    localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(u));
-    setUser(u);
-  }, []);
-
   const login = useCallback(async (credential: string) => {
     const { data } = await publicClient.post<{
       access_token: string;
@@ -80,12 +76,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       expires_in: number;
     }>(API_ENDPOINTS.AUTH_GOOGLE, { credential });
 
-    localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
+    storage.set(ACCESS_TOKEN_KEY, data.access_token);
 
     const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME);
 
     storeAuth(data.access_token, data.refresh_token, meData.user);
-  }, [storeAuth]);
+    setUser(meData.user);
+  }, []);
 
   const loginWithEmail = useCallback(async (email: string, password: string) => {
     const { data } = await publicClient.post<{
@@ -94,12 +91,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       expires_in: number;
     }>(API_ENDPOINTS.AUTH_LOGIN, { email, password });
 
-    localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
+    storage.set(ACCESS_TOKEN_KEY, data.access_token);
 
     const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME);
 
     storeAuth(data.access_token, data.refresh_token, meData.user);
-  }, [storeAuth]);
+    setUser(meData.user);
+  }, []);
 
   const signup = useCallback(async (email: string, password: string, fullName: string, orgName: string) => {
     const { data } = await publicClient.post<{
@@ -108,15 +106,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       expires_in: number;
     }>(API_ENDPOINTS.AUTH_SIGNUP, { email, password, full_name: fullName, org_name: orgName });
 
-    localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
+    storage.set(ACCESS_TOKEN_KEY, data.access_token);
 
     const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME);
 
     storeAuth(data.access_token, data.refresh_token, meData.user);
-  }, [storeAuth]);
+    setUser(meData.user);
+  }, []);
 
   const logout = useCallback(async () => {
-    const refresh = localStorage.getItem(REFRESH_TOKEN_KEY);
+    const refresh = storage.get(REFRESH_TOKEN_KEY);
     try {
       if (refresh) await httpClient.post(API_ENDPOINTS.AUTH_LOGOUT, { refresh_token: refresh });
     } catch { /* ignore */ }

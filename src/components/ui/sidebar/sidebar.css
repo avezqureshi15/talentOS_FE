@@ -1,20 +1,24 @@
 /* ─── Sidebar Shell ─── */
 .sidebar {
-  width: 280px;
-  min-width: 280px;
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
   background: var(--bg-secondary);
   border-right: 1px solid var(--border-subtle);
-  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              min-width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar--expanded {
+  overflow: hidden;
 }
 
 .sidebar--collapsed {
-  width: 0;
-  min-width: 0;
+  overflow: visible;
+}
+
+.sidebar--collapsed .sidebar__inner {
+  padding: 12px 0;
+  align-items: center;
 }
 
 .sidebar__inner {
@@ -24,6 +28,11 @@
   gap: 2px;
   flex: 1;
   overflow: hidden;
+}
+
+.sidebar--collapsed .sidebar__inner {
+  padding: 12px 0;
+  align-items: center;
 }
 
 .sidebar__scroll {
@@ -112,4 +121,134 @@
   display: flex;
   justify-content: center;
   padding: 8px 0;
+}
+
+.sidebar-section-content {
+  overflow: hidden;
+}
+
+/* ─── Collapsed Icon Strip ─── */
+
+.sidebar-collapsed-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  width: 100%;
+}
+
+.sidebar-collapsed-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.sidebar-collapsed-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sidebar-collapsed-divider {
+  width: 24px;
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 8px 0;
+}
+
+.sidebar-collapsed-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sidebar-collapsed-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.sidebar-collapsed-btn--active {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.sidebar-collapsed-btn--active:hover {
+  background: var(--accent-bg);
+}
+
+.sidebar-collapsed-indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 16px;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+}
+
+/* ─── Tooltip ─── */
+
+.sidebar-tooltip-wrapper {
+  position: relative;
+}
+
+.sidebar-tooltip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 5px 9px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  z-index: 60;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-tooltip-shortcut {
+  color: var(--text-faint);
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.sidebar-tooltip-wrapper:hover .sidebar-tooltip {
+  opacity: 1;
+}
+
+/* ─── Collapsed Avatar ─── */
+
+.sidebar-collapsed-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--avatar-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-white);
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
 }

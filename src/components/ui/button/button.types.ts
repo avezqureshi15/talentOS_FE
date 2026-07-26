@@ -1,6 +1,6 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
-export type ButtonVariant = "primary" | "secondary" | "danger" | "warning" | "matte" | "ghost" | "text";
+export type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "text";
 
 export type ButtonSize = "sm" | "md" | "lg";
 
@@ -18,7 +18,4 @@ export type ButtonProps = {
   title?: string;
   fullWidth?: boolean;
   loadingText?: string;
-  width?: string | number;
-  height?: string | number;
-  style?: CSSProperties;
 };

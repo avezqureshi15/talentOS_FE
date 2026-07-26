@@ -7,6 +7,7 @@ import CreateUserModal from "@/app/admin/users/components/create-user-modal";
 import EditUserModal from "@/app/admin/users/components/edit-user-modal";
 import DeactivateDialog from "@/app/admin/users/components/deactivate-dialog";
 import type { Tab } from "./users-page.types";
+import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import "./users-page.css";
 
 export default function UsersPage() {
@@ -64,20 +65,23 @@ export default function UsersPage() {
 
   return (
     <div className="users-page">
-      <div className="users-header">
-        <div>
-          <h1 className="users-title">User Management</h1>
-          <p className="users-subtitle">Manage users, roles, and invitations for your organization</p>
-        </div>
-        <div className="users-actions">
-          <button className="users-btn users-btn--primary" onClick={() => setShowInviteModal(true)}>
-            Invite User
-          </button>
-          <button className="users-btn users-btn--secondary" onClick={() => setShowCreateModal(true)}>
-            Create User
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="User Management"
+        actions={[
+          {
+            key: "invite-user",
+            label: "Invite User",
+            variant: "primary",
+            onClick: () => setShowInviteModal(true),
+          },
+          // {
+          //   key: "create-user",
+          //   label: "Create User",
+          //   variant: "outline",
+          //   onClick: () => setShowCreateModal(true),
+          // },
+        ]}
+      />
 
       <div className="users-tabs">
         <button

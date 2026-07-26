@@ -1,203 +1,141 @@
-import { useState, useEffect, useRef } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useState, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
 import "./detail.css";
 
-import JobDescription from "@/app/dashboard/hiring-requests-detail/components/job-desc/job-desc";
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
-import FinalVerdict from "@/app/dashboard/hiring-requests-detail/components/final-verdict/final-verdict";
+import ApplicantFilters from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-filters";
+import PipelineStages from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages";
+import { PIPELINE_STAGES } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.constants";
+import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
+import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table";
+import InterviewsTable from "@/app/dashboard/hiring-requests-detail/components/interviews-table/interviews-table";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
-import Button from "@/components/ui/button/button";
-import Chip from "@/components/ui/chip/chip";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
-import BaseModal from "@/components/ui/modal/base-modal";
-import { useToggleStatus } from "@/app/dashboard/hiring-requests/hooks/use-toggle-status";
-import { JOB_DETAIL } from "@/constants/constants";
-import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
-import { useExportCsv } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-csv";
-import { DEFAULT_FILTER } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
-import { PAGINATION } from "@/constants/api-endpoints";
-import type { JobDetailProps, Segment } from "./detail.types";
-
-const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = {
-  all: {},
-  gte80: { min: 80 },
-  gte70: { min: 70 },
-  gte50: { min: 50 },
-  lt50: { max: 49 },
-  lt30: { max: 29 },
-};
+import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
+import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
+import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
+import { DEFAULT_FILTER, STAGE_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import ViewToggle from "@/app/dashboard/hiring-requests-detail/components/detail/view-toggle";
+import InterviewFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
+import EvaluatedFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
+import { fadeSlideUp, staggerContainer } from "@/utils/motion";
+import type { JobDetailProps } from "./detail.types";
+import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const applicantParam = searchParams.get("applicant");
-  // justification: tracks active tab segment (job description vs applicants)
-  const [segment, setSegment] = useState<Segment>(applicantParam ? "applicants" : "jd");
-  // justification: tracks which applicant accordion is expanded
-  const [openId, setOpenId] = useState<string | null>(applicantParam ?? null);
-  // justification: tracks confirm modal visibility for close/reopen
-  const [showConfirm, setShowConfirm] = useState(false);
-  // justification: controls applicant filter value (shortlisted, all, etc.)
+  const [activeStage, setActiveStage] = useState<StageKey>("resume-shortlisting");
   const [filter, setFilter] = useState(DEFAULT_FILTER);
-  // justification: score range filter preset
   const [scoreFilter, setScoreFilter] = useState<string>("all");
-  // justification: multi-select rejection reason filter (comma-separated)
   const [rejectReason, setRejectReason] = useState<string>("");
+  const [interviewSubFilter, setInterviewSubFilter] = useState<"yet-to-start" | "no-show">("yet-to-start");
+  const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
 
-  const { mutate: toggleStatus, isPending: isToggling } = useToggleStatus();
-
-  const { handleExport, isExporting, exportError } = useExportCsv(
-    hiringRequest.id,
-    hiringRequest.title,
-  );
-
-  const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
   const jobId = hiringRequest.id;
-  const { applicants, isLoading: appsLoading, hasMore, fetchNext, refresh } = useApplicationsData(
-    jobId,
-    filter,
-    segment === "applicants",
-    applicantParam ? PAGINATION.APPLICATIONS_SEARCH_SIZE : undefined,
-    scoreRange.min,
-    scoreRange.max,
-    rejectReason,
+  const isRemote = hiringRequest.location?.toLowerCase() === "remote" || hiringRequest.type?.toLowerCase() === "remote";
+  const { applicants, isLoading: appsLoading, isLoadingMore, hasMore, fetchNext, refresh, interviewCount } = useApplicationsContext();
+
+  const { viewMode, setViewMode, openId, setOpenId, handleRowClick, handleInfoClick, isSearchingForApplicant } = useJobDetail({
+    applicantParam, applicants, appsLoading, isLoadingMore, hasMore, fetchNext, jobId,
+  });
+
+  const filteredApplicants = useFilteredApplicants({
+    applicants, activeStage, scoreFilter, rejectReason, interviewSubFilter, evaluatedSubFilter,
+  });
+
+  const stagesWithCounts = useMemo(() =>
+    PIPELINE_STAGES.map((s) => ({
+      ...s,
+      count: s.key === "interview" ? interviewCount : applicants.filter(STAGE_FILTER_MAP[s.key]).length,
+    })),
+    [applicants, interviewCount],
   );
-
-  const scrolledRef = useRef(false);
-
-  // justification: scroll + highlight after applicant appears, or clear param if not found
-  useEffect(() => {
-    if (!applicantParam || appsLoading || scrolledRef.current) return;
-    const found = applicants.some((a) => a.id === applicantParam);
-    if (!found) {
-      if (!hasMore) {
-        setSearchParams((prev) => {
-          prev.delete("applicant");
-          return prev;
-        });
-      }
-      return;
-    }
-    scrolledRef.current = true;
-    const scrollTimer = setTimeout(() => {
-      const el = document.querySelector(`[data-applicant-id="${applicantParam}"]`);
-      el?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 150);
-    // justification: clear ?applicant= param after highlight animation completes
-    const clearTimer = setTimeout(() => {
-      setSearchParams((prev) => {
-        prev.delete("applicant");
-        return prev;
-      });
-    }, 3000);
-    return () => {
-      clearTimeout(scrollTimer);
-      clearTimeout(clearTimer);
-    };
-  }, [applicantParam, appsLoading, applicants, hasMore, setSearchParams]);
 
   return (
     <div className="job-page">
-      <div className="job-header">
-        <Link to="/hiring-requests" className="back-btn">
-          <i className="bx bx-arrow-left-stroke"></i>
-        </Link>
-
-        <div className="header-text">
-          {hiringRequest.title}
-          {!hiringRequest.is_active && <Chip variant="danger" size="sm">Application Closed</Chip>}
-        </div>
-
-        <div className="header-actions">
-          <Button className="export-btn" onClick={handleExport} loading={isExporting} loadingText="Downloading..." icon="bx-download">
-            {JOB_DETAIL.EXPORT_AS_EXCEL}
-          </Button>
-          {exportError && <span className="export-error">{exportError}</span>}
-          <button
-            className={`status-btn ${hiringRequest.is_active ? "status-btn-close" : "status-btn-open"}`}
-            onClick={() => setShowConfirm(true)}
-            disabled={isToggling}
-            title={hiringRequest.is_active ? "Close Application" : "Reopen Application"}
-          >
-            {isToggling ? <LoadingSpinner size="sm" /> : <i className={`bx ${hiringRequest.is_active ? "bx-x-circle" : "bx-check-circle"}`} />}
-          </button>
-        </div>
-
-        <BaseModal open={showConfirm} onClose={() => setShowConfirm(false)} title={hiringRequest.is_active ? "Close Application" : "Reopen Application"}>
-          <div className="confirm-body">
-            <p>Are you sure you want to {hiringRequest.is_active ? "close" : "reopen"} this application?</p>
-            <div className="confirm-actions">
-              <Button className="confirm-btn confirm-cancel" onClick={() => setShowConfirm(false)}>
-                Cancel
-              </Button>
-              <Button className="confirm-btn confirm-proceed" onClick={() => { toggleStatus(hiringRequest.id); setShowConfirm(false); }} loading={isToggling} loadingText="Processing...">
-                {hiringRequest.is_active ? "Close" : "Reopen"}
-              </Button>
-            </div>
-          </div>
-        </BaseModal>
-      </div>
-
-      <div className="job-subtitle">
-        {hiringRequest.department} &middot; {hiringRequest.location} &middot; {hiringRequest.type}
-      </div>
-
-      <div className="segment-nav">
-        <button
-          className={`segment-item ${segment === "jd" ? "active" : ""}`}
-          onClick={() => setSegment("jd")}
-        >
-          {JOB_DETAIL.JOB_DESCRIPTION}
-        </button>
-
-        <button
-          className={`segment-item ${segment === "applicants" ? "active" : ""}`}
-          onClick={() => setSegment("applicants")}
-        >
-          {segment === "applicants"
-            ? `Applicants (${applicants.length})`
-            : "Applicants"}
-        </button>
-
-        <button
-          className={`segment-item ${segment === "final-verdict" ? "active" : ""}`}
-          onClick={() => setSegment("final-verdict")}
-        >
-          Final Verdict
-        </button>
-      </div>
-
-      <div className="tab-content">
+      <PipelineStages stages={stagesWithCounts} activeKey={activeStage} onStageChange={setActiveStage} />
+      <motion.div className="tab-content" variants={staggerContainer} initial="hidden" animate="visible">
         <ErrorBoundary>
-          {segment === "jd" && <JobDescription hiringRequest={hiringRequest} />}
-          {segment === "applicants" && (
-            appsLoading ? (
-              <LoadingSpinner />
-            ) : (
-              <Applicants
-                data={applicants}
-                openId={openId}
-                setOpenId={setOpenId}
-                filter={filter}
-                onFilterChange={setFilter}
-                hasMore={hasMore}
-                onLoadMore={fetchNext}
-                scoreFilter={scoreFilter}
-                onScoreFilterChange={setScoreFilter}
-                rejectReason={rejectReason}
-                onRejectReasonChange={setRejectReason}
-                applicantParam={applicantParam}
-                onRefresh={refresh}
-                jdId={hiringRequest.id}
-                isRemote={hiringRequest.location?.toLowerCase() === "remote" || hiringRequest.type?.toLowerCase() === "remote"}
-              />
-            )
-          )}
+          <ViewToggle viewMode={viewMode} onChange={setViewMode} />
 
-          {segment === "final-verdict" && (
-            <FinalVerdict jobId={hiringRequest.external_job_id ?? ""} />
+          {activeStage === "resume-shortlisting" && (
+            <ApplicantFilters
+              filter={filter} onFilterChange={setFilter}
+              scoreFilter={scoreFilter} onScoreFilterChange={setScoreFilter}
+              rejectReason={rejectReason} onRejectReasonChange={setRejectReason}
+            />
+          )}
+          {activeStage === "interview" && (
+            <InterviewFilterBar value={interviewSubFilter} onChange={setInterviewSubFilter} />
+          )}
+          {activeStage === "interview" && <div className="filter-chips" />}
+          {activeStage === "evaluated" && (
+            <EvaluatedFilterBar value={evaluatedSubFilter} onChange={setEvaluatedSubFilter} />
+          )}
+          {activeStage === "evaluated" && <div className="filter-chips" />}
+
+          {viewMode === "card" ? (
+            <>
+              <AnimatePresence>
+                {isSearchingForApplicant && (
+                  <motion.div
+                    className="applicant-search-indicator"
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <i className="bx bx-search" />
+                    <span>{UI_SEARCHING_APPLICANT}</span>
+                  </motion.div>
+                )}
+                {!isSearchingForApplicant && applicantParam && !applicants.some((a) => a.id === applicantParam) && (
+                  <motion.div
+                    className="applicant-search-indicator applicant-search-indicator--not-found"
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <i className="bx bx-x-circle" />
+                    <span>{UI_APPLICANT_NOT_FOUND}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              {appsLoading ? (
+                <motion.div variants={fadeSlideUp}><LoadingSpinner /></motion.div>
+              ) : (
+                <motion.div variants={fadeSlideUp}>
+                  <Applicants
+                    data={filteredApplicants} openId={openId} setOpenId={setOpenId}
+                    filter={filter} onFilterChange={setFilter}
+                    hasMore={hasMore} onLoadMore={fetchNext}
+                    scoreFilter={scoreFilter} onScoreFilterChange={setScoreFilter}
+                    rejectReason={rejectReason} onRejectReasonChange={setRejectReason}
+                    applicantParam={applicantParam} onRefresh={refresh}
+                    jdId={hiringRequest.id} isRemote={isRemote}
+                  />
+                </motion.div>
+              )}
+            </>
+          ) : activeStage === "interview" ? (
+            <motion.div variants={fadeSlideUp}>
+              <InterviewsTable hiringRequestId={jobId} subTab={interviewSubFilter} onInfoClick={(cid) => setSearchParams({ applicant: cid, view: "card" })} />
+            </motion.div>
+          ) : (
+            <motion.div variants={fadeSlideUp}>
+              <CandidateTable
+                data={filteredApplicants}
+                columns={PIPELINE_STAGES.find((s) => s.key === activeStage)?.columns ?? []}
+                onRowClick={(candidate) => handleRowClick(candidate as Applicant)}
+                onInfoClick={(candidate) => handleInfoClick(candidate as Applicant)}
+              />
+            </motion.div>
           )}
         </ErrorBoundary>
-      </div>
+      </motion.div>
     </div>
   );
 };

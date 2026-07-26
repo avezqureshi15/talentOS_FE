@@ -10,6 +10,7 @@ export type SidebarProps = {
   chats: GroupedChats;
   activeChatId?: string | null;
   onSelectChat?: (chatId: string) => void;
+  onSearch?: () => void;
   onDeleteChat?: (chatId: string) => void;
   onRenameChat?: (chatId: string, title: string) => void;
   onLoadMore?: () => void;

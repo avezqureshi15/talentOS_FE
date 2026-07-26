@@ -35,7 +35,7 @@ const Interviews = () => {
   }, []);
 
   const handleNavigateToApplicant = useCallback((hiringRequestId: string, candidateId: string) => {
-    navigate(`/hiring-requests/${hiringRequestId}?applicant=${candidateId}`);
+    navigate(`/hiring-requests/${hiringRequestId}/applications?applicant=${candidateId}&view=card`);
   }, [navigate]);
 
   return (

@@ -7,7 +7,7 @@ import { useAuth, useRole } from "@/app/auth/hooks/use-auth";
 import { usePermissions } from "@/hooks/use-permissions";
 import type { ProtectedRouteProps } from "./protected-route.types";
 
-export default function ProtectedRoute({ minimumRole, allowedRoles, permissions }: ProtectedRouteProps) {
+export default function ProtectedRoute({ minimumRole, allowedRoles, permissions, redirectPath = ROUTES.CHAT }: ProtectedRouteProps = {}) {
   const { user, isLoading } = useAuth();
   const { hasRole } = useRole();
   const { canAll } = usePermissions();
@@ -21,15 +21,15 @@ export default function ProtectedRoute({ minimumRole, allowedRoles, permissions 
   }
 
   if (minimumRole && !hasRole(minimumRole)) {
-    return <Navigate to={ROUTES.CHAT} replace />;
+    return <Navigate to={redirectPath} replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to={ROUTES.CHAT} replace />;
+    return <Navigate to={redirectPath} replace />;
   }
 
   if (permissions && !canAll(...permissions)) {
-    return <Navigate to={ROUTES.CHAT} replace />;
+    return <Navigate to={redirectPath} replace />;
   }
 
   return (

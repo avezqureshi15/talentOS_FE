@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
-import { Outlet, useParams, useNavigate } from "react-router-dom";
+import { Outlet, useParams, useNavigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { pageTransition, springSnap } from "@/utils/motion";
 
 import { Icon } from "@/components/ui/icons";
 import Header from "@/layouts/protected-layouts/components/header/header";
@@ -9,44 +11,41 @@ import { useDeleteChat } from "@/layouts/protected-layouts/components/sidebar/ho
 import { useRenameChat } from "@/layouts/protected-layouts/components/sidebar/hooks/use-rename-chat";
 import { useChatStore } from "@/store/chat.store";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
-import CmdPaletteProvider from "@/layouts/protected-layouts/components/command-palette/command-palette-provider";
+import CommandPalette from "@/layouts/protected-layouts/components/command-palette/command-palette";
+import { useCommandPalette } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
-import { ROUTES } from "@/constants/routes";
+import "./protected-layouts.css";
+import { ROUTES, HIRING_TABS } from "@/constants/routes";
 import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
 import { useUiStore } from "@/store/ui.store";
 import { STORAGE_KEYS } from "@/constants/constants";
 import { getUx, patchUx } from "@/utils/storage";
-import { useAurora } from "@/hooks/use-aurora";
-import { usePermissions } from "@/hooks/use-permissions";
+import "@/app/chat/pages/chat.css";
 
 function getInitialSidebarState(): boolean {
-  const ux = getUx(STORAGE_KEYS.UX);
-  if (ux.sb === undefined) {
-    patchUx(STORAGE_KEYS.UX, { sb: false });
-    return false;
-  }
-  return ux.sb;
+  return getUx(STORAGE_KEYS.UX).sb;
 }
 
-function ProtectedLayoutInner() {
+export default function ProtectedLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(getInitialSidebarState);
-  const { show: showAurora } = useAurora();
-  const ux = useMemo(() => getUx(STORAGE_KEYS.UX), []);
-  const showHint = !ux.sbh && !sidebarOpen && !showAurora;
-  const handleHintDismiss = useCallback(() => {
-    patchUx(STORAGE_KEYS.UX, { sbh: true });
-  }, []);
+  const location = useLocation();
   const { chatId: paramsChatId } = useParams();
   const storeChatId = useChatStore((s) => s.chatId);
   const activeChatId = paramsChatId ?? storeChatId;
   const { data: chats, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatHistory();
   const navigate = useNavigate();
   const resetChat = useChatStore((s) => s.reset);
-  const { can } = usePermissions();
 
   const handleSelectChat = (id: string) => {
     navigate(`${ROUTES.CHAT}/${id}`);
   };
+
+  const handleSelectHiringRequest = useCallback(
+    (id: string) => {
+      navigate(`${ROUTES.HIRING_REQUESTS}/${id}`);
+    },
+    [navigate],
+  );
 
   const deleteChatMutation = useDeleteChat();
   const renameChatMutation = useRenameChat();
@@ -95,18 +94,8 @@ function ProtectedLayoutInner() {
   }, [navigate]);
 
   useEffect(() => {
-    const isSuperadmin = can("tenant.view");
     const handler = (e: KeyboardEvent) => {
       const k = KEYBOARD_SHORTCUTS;
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.TOGGLE_SIDEBAR.code) {
-        e.preventDefault();
-        handleToggleSidebar();
-      }
-      if (e.altKey && e.code === k.SHORTCUTS.code) {
-        e.preventDefault();
-        useUiStore.getState().toggleShortcutsModal();
-      }
-      if (isSuperadmin) return;
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.HOME.code) {
         e.preventDefault();
         handleHome();
@@ -114,6 +103,10 @@ function ProtectedLayoutInner() {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.NEW_CHAT.code) {
         e.preventDefault();
         handleNewChat();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.TOGGLE_SIDEBAR.code) {
+        e.preventDefault();
+        handleToggleSidebar();
       }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.INTERVIEWS.code) {
         e.preventDefault();
@@ -123,10 +116,34 @@ function ProtectedLayoutInner() {
         e.preventDefault();
         handleAlerts();
       }
+      if (e.altKey && e.code === k.SHORTCUTS.code) {
+        e.preventDefault();
+        useUiStore.getState().toggleShortcutsModal();
+      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [handleNewChat, handleHome, handleToggleSidebar, handleAlerts, handleInterviews]);
+
+  const layoutKey = useMemo(() => {
+    const p = location.pathname;
+    const base = p.replace(new RegExp(`\\/(${HIRING_TABS.join("|")})$`), "");
+    return base !== p ? base : p;
+  }, [location.pathname]);
+
+  const {
+    isOpen: cmdOpen,
+    query: cmdQuery,
+    setQuery: setCmdQuery,
+    sections: cmdSections,
+    selectedIndex: cmdSelectedIndex,
+    open: cmdOpenPalette,
+    close: cmdClose,
+    handleKeyDown: cmdHandleKeyDown,
+    loadMore: cmdLoadMore,
+    hasMore: cmdHasMore,
+    isLoadingMore: cmdIsLoadingMore,
+  } = useCommandPalette(handleSelectHiringRequest, handleNewChat);
 
   return (
     <div className="chat-root">
@@ -136,6 +153,7 @@ function ProtectedLayoutInner() {
         chats={chats ?? { today: [], earlier: [] }}
         activeChatId={activeChatId}
         onSelectChat={handleSelectChat}
+        onSearch={cmdOpenPalette}
         onDeleteChat={handleDeleteChat}
         onRenameChat={handleRenameChat}
         onLoadMore={fetchNextPage}
@@ -145,29 +163,40 @@ function ProtectedLayoutInner() {
       />
 
       <main className="chat-main">
-        <Header
-          mounted={false}
-          sidebarOpen={sidebarOpen}
-          onToggleSidebar={handleToggleSidebar}
-          Icon={Icon}
-          showHint={showHint}
-          onHintDismiss={handleHintDismiss}
-        />
+        {!location.pathname.startsWith("/chat") && <Header Icon={Icon} sidebarOpen={sidebarOpen} />}
         <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
-            <Outlet />
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={layoutKey}
+                variants={pageTransition}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={springSnap}
+                className="protected-layout-content"
+              >
+                <Outlet />
+              </motion.div>
+            </AnimatePresence>
           </Suspense>
         </ErrorBoundary>
       </main>
 
+      <CommandPalette
+        open={cmdOpen}
+        onClose={cmdClose}
+        query={cmdQuery}
+        onQueryChange={setCmdQuery}
+        sections={cmdSections}
+        selectedIndex={cmdSelectedIndex}
+        onKeyDown={cmdHandleKeyDown}
+        onSelectHiringRequest={handleSelectHiringRequest}
+        onNewChat={handleNewChat}
+        onLoadMore={cmdLoadMore}
+        hasMore={cmdHasMore}
+        isLoadingMore={cmdIsLoadingMore}
+      />
     </div>
-  );
-}
-
-export default function ProtectedLayout() {
-  return (
-    <CmdPaletteProvider>
-      <ProtectedLayoutInner />
-    </CmdPaletteProvider>
   );
 }

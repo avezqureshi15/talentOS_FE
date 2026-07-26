@@ -4,6 +4,7 @@ import { useRoleDetail } from "../hooks/use-role-detail";
 import { useUpdateRolePermissions } from "../hooks/use-update-role-permissions";
 import { RolePermissionEditor } from "../components/role-permission-editor";
 import type { PermissionInfo } from "./roles-page.types";
+import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import "./roles-page.css";
 
 export default function RolesPage() {
@@ -64,67 +65,88 @@ export default function RolesPage() {
 
   return (
     <div className="rp-root">
-      <div className="rp-header">
-        <div>
-          <h1 className="rp-title">Role Management</h1>
-          <p className="rp-subtitle">Define roles and configure granular permissions</p>
-        </div>
-      </div>
+      <PageHeader
+        title="Role Management"
+        actions={[
+          {
+            key: "create-role",
+            label: "Create New Role",
+            variant: "primary",
+            onClick: () => {},
+          },
+        ]}
+      />
 
-      <div className="rp-body">
-        <aside className="rp-sidebar">
-          <div className="rp-sidebar-header">
-            <span className="rp-sidebar-title">Roles</span>
-            <span className="rp-sidebar-count">{roleList.length}</span>
-          </div>
-          <div className="rp-sidebar-list">
-            {roleList.map((role) => {
-              const isSelected = selectedRole === role.role_name;
-              return (
-                <button
-                  key={role.role_name}
-                  type="button"
-                  className={`rp-role-card${isSelected ? " rp-role-card--active" : ""}`}
-                  onClick={() => handleSelectRole(role.role_name)}
-                >
-                  <div className="rp-role-card-indicator" />
-                  <div className="rp-role-card-body">
-                    <span className="rp-role-card-name">{role.role_name}</span>
-                    <div className="rp-role-card-stats">
-                      <span>{role.permission_count} permissions</span>
-                      {role.user_count > 0 && <span>{role.user_count} users</span>}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </aside>
-
-        <main className="rp-detail">
-          {!selectedRole && (
-            <div className="rp-empty">
-              <span className="rp-empty-icon"><i className="bx bx-left-arrow-alt" /></span>
-              <p>Select a role to manage its permissions</p>
+      <div className="rp-card">
+        <div className="rp-body">
+          <aside className="rp-sidebar">
+            <div className="rp-sidebar-header">
+              <span className="rp-sidebar-title">Roles</span>
+              <span className="rp-sidebar-count">{roleList.length}</span>
             </div>
-          )}
+            <div className="rp-sidebar-list">
+              {roleList.map((role) => {
+                const isSelected = selectedRole === role.role_name;
+                return (
+                  <button
+                    key={role.role_name}
+                    type="button"
+                    className={`rp-role-card${isSelected ? " rp-role-card--active" : ""}`}
+                    onClick={() => handleSelectRole(role.role_name)}
+                  >
+                    <div className="rp-role-card-body">
+                      <span className="rp-role-card-name">{role.role_name}</span>
+                      <div className="rp-role-card-stats">
+                        <span className="rp-role-badge">
+                          <i className="bx bx-lock" />
+                          {role.permission_count} permissions
+                        </span>
+                        {role.user_count > 0 && (
+                          <span className="rp-role-badge">
+                            <i className="bx bx-user" />
+                            {role.user_count} user{role.user_count !== 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      className="rp-role-menu"
+                      onClick={(e) => { e.stopPropagation(); }}
+                      title="More actions"
+                    >
+                      <i className="bx bx-dots-vertical-rounded" />
+                    </button>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
 
-          {detailLoading && selectedRole && (
-            <div className="rp-loading">Loading permissions...</div>
-          )}
+          <main className="rp-detail">
+            {!selectedRole && (
+              <div className="rp-empty">
+                <span className="rp-empty-icon"><i className="bx bx-left-arrow-alt" /></span>
+                <p>Select a role to manage its permissions</p>
+              </div>
+            )}
 
-          {!detailLoading && selectedRole && permissions.length > 0 && (
-            <RolePermissionEditor
-              roleName={selectedRole}
-              permissions={permissions}
-              onToggle={handleToggle}
-              onSave={handleSave}
-              onCancel={handleCancel}
-              saving={updateMutation.isPending}
-              userCount={selectedRoleMeta?.user_count}
-            />
-          )}
-        </main>
+            {detailLoading && selectedRole && (
+              <div className="rp-loading">Loading permissions...</div>
+            )}
+
+            {!detailLoading && selectedRole && permissions.length > 0 && (
+              <RolePermissionEditor
+                roleName={selectedRole}
+                permissions={permissions}
+                onToggle={handleToggle}
+                onSave={handleSave}
+                onCancel={handleCancel}
+                saving={updateMutation.isPending}
+                userCount={selectedRoleMeta?.user_count}
+              />
+            )}
+          </main>
+        </div>
       </div>
     </div>
   );

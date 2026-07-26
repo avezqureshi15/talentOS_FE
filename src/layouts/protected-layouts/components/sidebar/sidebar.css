@@ -29,10 +29,6 @@
   overflow: hidden;
 }
 
-.sidebar__user-wrapper {
-  margin-top: auto;
-}
-
 /* ─── Chat sub-item ─── */
 .sidebar-subitem-wrapper {
   display: flex;

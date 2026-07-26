@@ -35,6 +35,7 @@ export const useSidebarUserPopover = () => {
 
   const onToggle = () => setIsOpen((prev) => !prev);
   const onClose = () => setIsOpen(false);
+  const forceOpen = () => setIsOpen(true);
 
   const openModal = (modal: NonNullable<ActiveModal>) => {
     setIsOpen(false);
@@ -47,6 +48,7 @@ export const useSidebarUserPopover = () => {
     isOpen,
     onToggle,
     onClose,
+    forceOpen,
     popoverRef,
     activeModal,
     openModal,

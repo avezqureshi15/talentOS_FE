@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
+import { motion } from "framer-motion";
 import { ToastType } from "@/components/ui/toast/toast.types";
-import { TOAST_ICONS, TOAST_ANIMATION_MS } from "@/components/ui/toast/toast.constants";
+import { TOAST_ICONS } from "@/components/ui/toast/toast.constants";
+import { springWarm } from "@/utils/motion";
 import "@/components/ui/toast/toast.css";
 
 type ToastProps = {
@@ -13,17 +15,9 @@ type ToastProps = {
 };
 
 export default function Toast({ id, message, type, duration, title, onDismiss }: ToastProps) {
-  const [exiting, setExiting] = useState(false);
-
   const handleDismiss = useCallback(() => {
-    setExiting(true);
-  }, []);
-
-  useEffect(() => {
-    if (!exiting) return;
-    const timer = setTimeout(() => onDismiss(id), TOAST_ANIMATION_MS);
-    return () => clearTimeout(timer);
-  }, [exiting, id, onDismiss]);
+    onDismiss(id);
+  }, [id, onDismiss]);
 
   useEffect(() => {
     if (!duration || duration <= 0) return;
@@ -39,15 +33,30 @@ export default function Toast({ id, message, type, duration, title, onDismiss }:
   }[type];
 
   return (
-    <div className={`toast ${typeClass}${exiting ? " toast--exiting" : ""}`} role="alert">
+    <motion.div
+      className={`toast ${typeClass}`}
+      role="alert"
+      layout
+      initial={{ opacity: 0, x: 30, scale: 0.96 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{ opacity: 0, x: 30, scale: 0.96 }}
+      transition={springWarm}
+    >
       <i className={`${TOAST_ICONS[type]} toast__icon`} />
       <div className="toast__body">
         {title && <div className="toast__title">{title}</div>}
         <div className="toast__message">{message}</div>
       </div>
-      <button className="toast__close" onClick={handleDismiss} aria-label="Dismiss">
+      <motion.button
+        className="toast__close"
+        onClick={handleDismiss}
+        aria-label="Dismiss"
+        whileHover={{ scale: 1.15 }}
+        whileTap={{ scale: 0.9 }}
+        transition={springWarm}
+      >
         <i className="bx bx-x" />
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   );
 }

@@ -12,14 +12,14 @@ type Props = {
 };
 
 const MODULES = [
-  { group: "application", label: "Applications" },
-  { group: "chat", label: "Chat" },
-  { group: "hiring_request", label: "Hiring Requests" },
-  { group: "review", label: "Reviews" },
-  { group: "settings", label: "Settings" },
-  { group: "slot", label: "Slots" },
-  { group: "tenant", label: "Tenants" },
-  { group: "user", label: "Users" },
+  { group: "application", label: "Applications", icon: "bx bx-grid-alt" },
+  { group: "chat", label: "Chat", icon: "bx bx-message-detail" },
+  { group: "hiring_request", label: "Hiring Requests", icon: "bx bx-briefcase" },
+  { group: "review", label: "Reviews", icon: "bx bx-star" },
+  { group: "settings", label: "Settings", icon: "bx bx-cog" },
+  { group: "slot", label: "Slots", icon: "bx bx-calendar" },
+  { group: "tenant", label: "Tenants", icon: "bx bx-building" },
+  { group: "user", label: "Users", icon: "bx bx-group" },
 ];
 
 export const RolePermissionEditor = ({
@@ -41,27 +41,49 @@ export const RolePermissionEditor = ({
     .map((m) => ({ ...m, items: permissionGroups[m.group] }));
 
   const checkedCount = permissions.filter((p) => p.assigned).length;
+  const totalCount = permissions.length;
+  const pct = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
 
   return (
     <div className="rpe-root">
-      <div className="rpe-header">
-        <div>
-          <h2 className="rpe-role-name">{roleName}</h2>
-          <p className="rpe-role-meta">
-            {checkedCount} / {permissions.length} permissions
-            {userCount !== undefined && ` \u00B7 ${userCount} users`}
-          </p>
+      {/* ── Role Summary Card ── */}
+      <div className="rpe-summary">
+        <div className="rpe-summary-left">
+          <div className="rpe-summary-avatar">{roleName.charAt(0)}</div>
+          <div className="rpe-summary-info">
+            <div className="rpe-summary-top">
+              <h3 className="rpe-summary-name">{roleName}</h3>
+              <span className="rpe-summary-badge">
+                <i className="bx bx-shield" style={{ marginRight: 4, fontSize: 11 }} />
+                {checkedCount === totalCount ? "Full Access" : "Custom"}
+              </span>
+            </div>
+            <span className="rpe-summary-meta">
+              {userCount !== undefined && `${userCount} user${userCount !== 1 ? "s" : ""} · `}
+              {checkedCount} of {totalCount} permissions enabled
+            </span>
+          </div>
+        </div>
+        <div className="rpe-summary-right">
+          <span className="rpe-progress-text">{pct}%</span>
+          <div className="rpe-progress-track">
+            <div className="rpe-progress-fill" style={{ width: `${pct}%` }} />
+          </div>
         </div>
       </div>
 
+      {/* ── Permissions Grid ── */}
       <div className="rpe-grid">
-        {sortedGroups.map(({ group, label, items }) => {
+        {sortedGroups.map(({ group, label, icon, items }) => {
           const groupChecked = items.filter((i) => i.assigned).length;
           const groupTotal = items.length;
           return (
             <div key={group} className="rpe-group">
               <div className="rpe-group-header">
-                <span className="rpe-group-label">{label}</span>
+                <span className="rpe-group-label">
+                  <i className={icon} />
+                  {label}
+                </span>
                 <span className="rpe-group-count">
                   {groupChecked}/{groupTotal}
                 </span>
@@ -71,13 +93,13 @@ export const RolePermissionEditor = ({
                   <button
                     key={p.code}
                     type="button"
-                    className={`rpe-item${p.assigned ? " rpe-item--on" : ""}`}
+                    className={`rpe-toggle${p.assigned ? " rpe-toggle--on" : ""}`}
                     onClick={() => onToggle(p.code)}
                   >
-                    <span className="rpe-item-check">
-                      {p.assigned ? <i className="bx bx-check" /> : ""}
+                    <span className="rpe-toggle-track">
+                      <span className="rpe-toggle-thumb" />
                     </span>
-                    <span className="rpe-item-label">{p.name}</span>
+                    <span className="rpe-toggle-label">{p.name}</span>
                   </button>
                 ))}
               </div>
@@ -86,8 +108,9 @@ export const RolePermissionEditor = ({
         })}
       </div>
 
+      {/* ── Sticky Footer ── */}
       <div className="rpe-sticky-footer">
-        <Button variant="matte" onClick={onCancel}>
+        <Button variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
         <Button variant="primary" onClick={onSave} loading={saving}>

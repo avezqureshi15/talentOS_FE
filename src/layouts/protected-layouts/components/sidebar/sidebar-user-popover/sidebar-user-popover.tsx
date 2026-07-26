@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PROFILE_MENU_ITEMS, PROFILE_DANGER_ITEM, LOGOUT_MODAL } from "@/constants/constants";
 import { useSidebarUserPopover } from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/use-sidebar-user-popover";
@@ -13,7 +13,12 @@ import KeyboardShortcutsModal from "@/layouts/protected-layouts/components/sideb
 import { useUiStore } from "@/store/ui.store";
 import "./sidebar-user-popover.css";
 
-const SidebarUserPopover = () => {
+type SidebarUserPopoverProps = {
+  autoOpen?: boolean;
+  onAutoOpened?: () => void;
+};
+
+const SidebarUserPopover = ({ autoOpen, onAutoOpened }: SidebarUserPopoverProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   // UI state for logout button loading indicator
@@ -35,11 +40,20 @@ const SidebarUserPopover = () => {
   const {
     isOpen,
     onToggle,
+    forceOpen,
     popoverRef,
     activeModal,
     openModal,
     closeModal,
   } = useSidebarUserPopover();
+
+  // justification: auto-opens the user popover when sidebar expands from collapsed avatar click
+  useEffect(() => {
+    if (autoOpen) {
+      forceOpen();
+      onAutoOpened?.();
+    }
+  }, [autoOpen, forceOpen, onAutoOpened]);
 
   return (
     <>

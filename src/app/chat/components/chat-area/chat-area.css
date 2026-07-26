@@ -49,19 +49,7 @@
   padding: 12px 0;
 }
 
-.chat-msg-toolbar {
-  display: flex;
-  gap: 4px;
-  margin-top: 8px;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.mb-10:hover .chat-msg-toolbar {
-  opacity: 1;
-}
-
-.chat-toolbar-btn {
+.chat-copy-btn {
   width: 28px;
   height: 28px;
   border-radius: 6px;
@@ -73,15 +61,15 @@
   justify-content: center;
   cursor: pointer;
   font-size: 15px;
+  margin-top: 8px;
 }
 
-.chat-toolbar-btn:hover {
+.chat-copy-btn:hover {
   background: var(--bg-hover);
   color: var(--text-primary);
 }
 
-.chat-toolbar-btn--active {
-  color: var(--accent, #4f8cff) !important;
-  background: var(--bg-hover);
+.chat-copy-btn--copied {
+  color: var(--green, var(--success)) !important;
 }
 

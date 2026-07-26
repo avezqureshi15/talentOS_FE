@@ -47,6 +47,6 @@ export const blockRendererMap: RendererMap = {
     />
   ),
 
-  markdown: (block, key, extra) =>
-    <MarkdownRenderer key={key} content={block.content} ui={block.ui} isEditing={extra?.isEditing} onSave={extra?.onSave} onEditRequest={extra?.onEditRequest} />,
+  markdown: (block, key) =>
+    <MarkdownRenderer key={key} content={block.content} />,
 };

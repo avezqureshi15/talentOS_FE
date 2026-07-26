@@ -1,15 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import ApplicantCard from "./applicant-card";
-import ApplicantFilters from "./applicant-filters";
 import ApplicantActionModals from "./applicant-action-modals";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
-import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
-import { fetchMockApplicants } from "@/services/mock/mock-applicants";
 import { useApplicantActions } from "./hooks/use-applicant-actions";
 import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps } from "./applicants.types";
 
@@ -29,7 +26,6 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
   const [finalCandidateId, setFinalCandidateId] = useState<string | null>(null);
   const [finalDecision, setFinalDecision] = useState<"selected" | "rejected" | null>(null);
-  const [selectedRound, setSelectedRound] = useState<string | null>(null);
   const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
   const [rejectRemarks, setRejectRemarks] = useState("");
   const [rejectStep, setRejectStep] = useState<1 | 2>(1);
@@ -38,21 +34,12 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
   const [shortlistStep, setShortlistStep] = useState<1 | 2>(1);
   const [shortlistRemarks, setShortlistRemarks] = useState("");
   const [finalConfirmId, setFinalConfirmId] = useState<string | null>(null);
-  const [mockData, setMockData] = useState<Applicant[] | null>(null);
-  // UI state for async action loading indicators
   const [isConfirmingFinalDecision, setIsConfirmingFinalDecision] = useState(false);
   const [isConfirmingReject, setIsConfirmingReject] = useState(false);
   const [isShortlisting, setIsShortlisting] = useState(false);
   const [isConfirmingHire, setIsConfirmingHire] = useState(false);
 
-  // justification: fallback to mock API when no prop data is provided
-  useEffect(() => {
-    if (!propData) {
-      fetchMockApplicants().then(setMockData);
-    }
-  }, [propData]);
-
-  const data = propData ?? mockData ?? [];
+  const data = propData ?? [];
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -226,7 +213,6 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
 
   return (
     <>
-      <ApplicantFilters filter={filter} onFilterChange={onFilterChange} scoreFilter={scoreFilter ?? "all"} onScoreFilterChange={onScoreFilterChange} rejectReason={rejectReason} onRejectReasonChange={onRejectReasonChange} />
       <div className="accordion-list">
       {data.map((a) => {
         const isOpen = openId === a.id;
@@ -248,9 +234,9 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
               onCoverLetterReadMore={setCoverLetterId}
               onAiSummaryReadMore={setAiSummaryId}
               onDetailsReadMore={setDetailsId}
-              onTimeline={setTimelineId}
-              onViewRound={setSelectedRound}
-              isRemote={isRemote}
+               onTimeline={setTimelineId}
+               jdId={jdId}
+               isRemote={isRemote}
             />
           </div>
         );
@@ -293,8 +279,6 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
 
       {data.map((a) => (<CoverLetterModal key={`cl-${a.id}`} open={coverLetterId === a.id} applicantName={a.name} coverLetter={a.coverLetter ?? ""} onClose={() => setCoverLetterId(null)} />))}
       {data.map((a) => (<AiSummaryModal key={`ai-${a.id}`} open={aiSummaryId === a.id} applicantName={a.name} aiSummary={a.aiSummary ?? ""} onClose={() => setAiSummaryId(null)} />))}
-
-      <RoundsSidePanel open={!!selectedRound} roundId={selectedRound} onClose={() => setSelectedRound(null)} />
 
       {data.map((a) => (<ApplicantDetailsModal
           key={`det-${a.id}`}

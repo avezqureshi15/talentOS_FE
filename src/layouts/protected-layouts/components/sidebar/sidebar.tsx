@@ -1,17 +1,20 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import { useAuth } from "@/app/auth/hooks/use-auth";
+import { usePermissions } from "@/hooks/use-permissions";
+import { getInitials } from "@/utils/user";
 import "./sidebar.css";
 import type { SidebarProps, ChatHistoryItem } from "@/layouts/protected-layouts/components/sidebar/sidebar.types";
 import { SIDEBAR_LABELS } from "@/constants/constants";
 import SidebarGroup from "./sidebar-group";
 import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
+import SidebarNav from "./sidebar-nav";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
-import { Sidebar as SidebarShell, SidebarItem, SidebarSection } from "@/components/ui/sidebar";
+import { Sidebar as SidebarShell, SidebarSection } from "@/components/ui/sidebar";
 import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS, type NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
-import { usePermissions } from "@/hooks/use-permissions";
-import { useAuth } from "@/app/auth/hooks/use-auth";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -19,6 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   chats,
   activeChatId,
   onSelectChat,
+  onSearch,
   onDeleteChat,
   onRenameChat,
   onLoadMore,
@@ -26,6 +30,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   isLoadingMore,
   Icon,
 }) => {
+  const { user } = useAuth();
+  const { canAll } = usePermissions();
+  const navigate = useNavigate();
+  const [autoOpenUser, setAutoOpenUser] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(true);
   const [menuOpen, setMenuOpen] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -35,8 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const renameInputRef = useRef<HTMLInputElement | null>(null);
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-  const { canAll } = usePermissions();
-  const { user } = useAuth();
+
   const isSuperAdmin = user?.role === "superadmin";
 
   const canSeeItem = (item: NavItemConfig) => canAll(...item.permissions);
@@ -108,54 +115,73 @@ const Sidebar: React.FC<SidebarProps> = ({
     />
   );
 
+  const allCollapsedItems = [...visibleMain, ...visibleAdmin, ...visibleSuperadmin];
+
+  /* ---------- Collapsed Icon Strip ---------- */
+
+  if (!sidebarOpen) {
+    return (
+      <SidebarShell open={sidebarOpen}>
+        <div className="sidebar-collapsed-inner">
+          <div className="sidebar-collapsed-top">
+            <button
+              className="sidebar-collapsed-btn"
+              onClick={() => setSidebarOpen(true)}
+              title="Expand sidebar"
+            >
+              <i className="bx bx-chevron-right" />
+            </button>
+
+            <div className="sidebar-collapsed-nav">
+              {allCollapsedItems.map((item) => (
+                <div key={item.label} className="sidebar-tooltip-wrapper">
+                  <button
+                    className="sidebar-collapsed-btn"
+                    onClick={() => {
+                      if (item.href) navigate(item.href);
+                    }}
+                  >
+                    <i className={item.icon} />
+                  </button>
+                  <span className="sidebar-tooltip">
+                    {item.label}
+                    {item.shortcut && <span className="sidebar-tooltip-shortcut">({item.shortcut})</span>}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+
+          <div className="sidebar-tooltip-wrapper">
+            <button
+              className="sidebar-collapsed-avatar"
+              onClick={() => { setSidebarOpen(true); setAutoOpenUser(true); }}
+            >
+              {user ? getInitials(user.name) : "?"}
+            </button>
+            <span className="sidebar-tooltip">
+              {user?.name ?? "User"}
+            </span>
+          </div>
+        </div>
+      </SidebarShell>
+    );
+  }
+
+  /* ---------- Expanded Sidebar ---------- */
+
   return (
     <SidebarShell open={sidebarOpen}>
-      {/* TOP */}
-      <div className="sidebar__top">
-        <Icon.Logo />
-
-        <button
-          className="sidebar-item flex justify-end"
-          onClick={() => setSidebarOpen(false)}
-        >
-          <Icon.DblChevron />
-        </button>
-      </div>
-
-      {/* NAV */}
-      <div className="sidebar__nav">
-        {visibleMain.map((item) => (
-          <SidebarItem
-            key={item.href}
-            icon={<span className={`${item.icon} text-lg`} />}
-            label={item.label}
-            shortcut={item.shortcut}
-            href={item.href}
-          />
-        ))}
-
-        {visibleAdmin.length > 0 && <div className="sidebar-nav-divider" />}
-
-        {visibleAdmin.map((item) => (
-          <SidebarItem
-            key={item.href}
-            icon={<span className={`${item.icon} text-lg`} />}
-            label={item.label}
-            href={item.href}
-          />
-        ))}
-
-        {visibleSuperadmin.length > 0 && <div className="sidebar-nav-divider" />}
-
-        {visibleSuperadmin.map((item) => (
-          <SidebarItem
-            key={item.href}
-            icon={<span className={`${item.icon} text-lg`} />}
-            label={item.label}
-            href={item.href}
-          />
-        ))}
-      </div>
+      <SidebarNav
+        Icon={Icon}
+        onSearch={onSearch}
+        onClose={() => setSidebarOpen(false)}
+        mainItems={visibleMain}
+        adminItems={visibleAdmin}
+        superadminItems={visibleSuperadmin}
+        hideExtras={isSuperAdmin}
+      />
 
       {/* HISTORY */}
       {!isSuperAdmin && (<div className="sidebar__history">
@@ -190,9 +216,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>)}
 
       {/* USER */}
-      <div className="sidebar__user-wrapper">
-        <SidebarUserPopover />
-      </div>
+      <SidebarUserPopover
+        autoOpen={autoOpenUser}
+        onAutoOpened={() => setAutoOpenUser(false)}
+      />
 
       <DeleteChatModal
         open={!!deleteTargetId}

@@ -4,7 +4,7 @@ import { useApplicationRounds } from "./hooks/use-application-rounds";
 
 type Props = {
   candidateId: number;
-  onViewRound?: (roundId: string) => void;
+  jdId?: string;
 };
 
 const verdictLabel = (v: string | null): string => {
@@ -12,7 +12,7 @@ const verdictLabel = (v: string | null): string => {
   return VERDICT_CONFIG[v] ?? v;
 };
 
-const CardRoundsTab = ({ candidateId, onViewRound }: Props) => {
+const CardRoundsTab = ({ candidateId, jdId }: Props) => {
   const { data: rounds, isLoading, isError, refetch } = useApplicationRounds(candidateId);
 
   if (isLoading) {
@@ -51,16 +51,18 @@ const CardRoundsTab = ({ candidateId, onViewRound }: Props) => {
         <div className="rounds-table">
           <div className="rounds-table-header">
             <span className="rounds-table-cell rounds-table-cell--name">Round</span>
+            <span className="rounds-table-cell rounds-table-cell--type">Type</span>
             <span className="rounds-table-cell rounds-table-cell--verdict">Verdict</span>
           </div>
           {rounds.map((r) => (
             <button
               key={r.id}
               className="rounds-table-row"
-              onClick={(e) => { e.stopPropagation(); onViewRound?.(r.id); }}
+              onClick={(e) => { e.stopPropagation(); if (jdId) { window.open(`/hiring-requests/${jdId}/round-details/${r.id}?candidateId=${candidateId}`, "_blank"); } }}
               type="button"
             >
               <span className="rounds-table-cell rounds-table-cell--name">{r.round}</span>
+              <span className="rounds-table-cell rounds-table-cell--type">{r.roundType ?? "-"}</span>
               <span className="rounds-table-cell rounds-table-cell--verdict">{verdictLabel(r.roundVerdict)}</span>
             </button>
           ))}
