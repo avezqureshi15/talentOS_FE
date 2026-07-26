@@ -152,6 +152,45 @@
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
+/* ── Section ── */
+.td-section {
+  margin-top: 32px;
+}
+
+.td-org-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.td-org-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.td-org-field--full {
+  grid-column: 1 / -1;
+}
+
+.td-org-label {
+  font-size: 11px;
+  color: var(--text-faint);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.td-org-value {
+  font-size: 13px;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
 /* ── Section Header ── */
 .td-section-header {
   display: flex;
@@ -542,8 +581,8 @@
 }
 
 .td-users-btn--primary {
-  background: var(--accent);
-  color: var(--text-white);
+  background: #ffffff;
+  color: #000000;
 }
 
 .td-users-btn--secondary {

@@ -64,15 +64,13 @@
 }
 
 .primary {
-  background: var(--accent);
+  background: #ffffff;
   border: none;
 
   padding: 7px 14px;
   border-radius: 8px;
 
-  color: var(--text-white);
+  color: #000000;
   cursor: pointer;
   font-size: 12px;
-
-  box-shadow: 0 0 0 1px var(--accent-glow);
 }

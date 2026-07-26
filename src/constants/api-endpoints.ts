@@ -39,6 +39,7 @@ export const API_ENDPOINTS = {
   FORMS_NOTIFY: "/forms/notify",
   EVENTS_BY_CANDIDATE: "/events/by-candidate/",
   SUPERADMIN_TENANTS: "/superadmin/tenants",
+  ADMIN_ORGANIZATION: "/admin/organization",
 } as const;
 
 export const PAGINATION = {

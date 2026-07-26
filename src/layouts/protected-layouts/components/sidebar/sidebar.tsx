@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const visibleMain = !isSuperAdmin ? MAIN_NAV_ITEMS.filter(canSeeItem) : [];
   const visibleAdmin = !isSuperAdmin ? ADMIN_NAV_ITEMS.filter(canSeeItem) : [];
-  const visibleSuperadmin = SUPERADMIN_NAV_ITEMS.filter(canSeeItem);
+  const visibleSuperadmin = isSuperAdmin ? SUPERADMIN_NAV_ITEMS.filter(canSeeItem) : [];
 
   const sentinelRef = useIntersectionObserver(
     useCallback(() => {

@@ -198,6 +198,7 @@ export default function Login() {
               <>
                 {mode === 'google' ? (
                   <div className="auth-google-section">
+                    {error && <div className="auth-error">{error}</div>}
                     <div className="auth-google-btn-wrapper">
                       <GoogleLogin
                         onSuccess={onSuccess}

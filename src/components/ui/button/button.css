@@ -113,12 +113,14 @@
 /* Text — link-like */
 .btn--text {
   background: transparent;
-  color: var(--accent, #4f8ef7);
+  color: #ffffff;
   padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .btn--text:hover:not(:disabled) {
-  text-decoration: underline;
+  opacity: 0.75;
 }
 
 /* Loading */

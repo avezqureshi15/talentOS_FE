@@ -97,8 +97,8 @@
 }
 
 .ai-btn--primary {
-  background: var(--accent);
-  color: #fff;
+  background: #ffffff;
+  color: #000000;
 }
 
 .ai-btn--primary:hover {

@@ -10,7 +10,7 @@ import SlotBooking from "@/app/slot-booking/pages/slot-booking";
 import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
 import UsersPage from "@/app/admin/users/pages/users-page";
 import RolesPage from "@/app/superadmin/roles/pages/roles-page";
-import SettingsPage from "@/app/admin/settings/pages/settings-page";
+import OrganizationPage from "@/app/admin/organization/pages/organization-page";
 import TenantsPage from "@/app/superadmin/tenants/pages/tenants-page";
 import TenantDetail from "@/app/superadmin/tenants/pages/tenant-detail";
 import "@/app/superadmin/tenants/pages/tenants-page.css";
@@ -68,7 +68,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to={ROUTES.ADMIN_USERS} replace /> },
           { path: "users", element: <RequirePermission permission="user.invite"><UsersPage /></RequirePermission> },
-          { path: "settings", element: <RequirePermission permission="settings.view"><SettingsPage /></RequirePermission> },
+          { path: "organization", element: <RequirePermission permission="settings.view"><OrganizationPage /></RequirePermission> },
         ],
       },
     ],

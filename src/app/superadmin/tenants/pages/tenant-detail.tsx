@@ -120,6 +120,82 @@ export default function TenantDetail() {
       </div>
 
       <TenantUserManagement tenantId={id} />
+
+      {(tenant.logo_url || tenant.website || tenant.phone || tenant.description ||
+        tenant.address_line1 || tenant.city || tenant.state || tenant.country ||
+        tenant.gst_number) && (
+        <div className="td-section">
+          <h2 className="td-section-title">Organization Details</h2>
+          <div className="td-org-grid">
+            {tenant.logo_url && (
+              <div className="td-org-field">
+                <span className="td-org-label">Logo</span>
+                <span className="td-org-value">{tenant.logo_url}</span>
+              </div>
+            )}
+            {tenant.website && (
+              <div className="td-org-field">
+                <span className="td-org-label">Website</span>
+                <span className="td-org-value">{tenant.website}</span>
+              </div>
+            )}
+            {tenant.phone && (
+              <div className="td-org-field">
+                <span className="td-org-label">Phone</span>
+                <span className="td-org-value">{tenant.phone}</span>
+              </div>
+            )}
+            {tenant.description && (
+              <div className="td-org-field td-org-field--full">
+                <span className="td-org-label">Description</span>
+                <span className="td-org-value">{tenant.description}</span>
+              </div>
+            )}
+            {tenant.gst_number && (
+              <div className="td-org-field">
+                <span className="td-org-label">GST Number</span>
+                <span className="td-org-value">{tenant.gst_number}</span>
+              </div>
+            )}
+            {tenant.address_line1 && (
+              <div className="td-org-field">
+                <span className="td-org-label">Address Line 1</span>
+                <span className="td-org-value">{tenant.address_line1}</span>
+              </div>
+            )}
+            {tenant.address_line2 && (
+              <div className="td-org-field">
+                <span className="td-org-label">Address Line 2</span>
+                <span className="td-org-value">{tenant.address_line2}</span>
+              </div>
+            )}
+            {tenant.city && (
+              <div className="td-org-field">
+                <span className="td-org-label">City</span>
+                <span className="td-org-value">{tenant.city}</span>
+              </div>
+            )}
+            {tenant.state && (
+              <div className="td-org-field">
+                <span className="td-org-label">State</span>
+                <span className="td-org-value">{tenant.state}</span>
+              </div>
+            )}
+            {tenant.postal_code && (
+              <div className="td-org-field">
+                <span className="td-org-label">Postal Code</span>
+                <span className="td-org-value">{tenant.postal_code}</span>
+              </div>
+            )}
+            {tenant.country && (
+              <div className="td-org-field">
+                <span className="td-org-label">Country</span>
+                <span className="td-org-value">{tenant.country}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,0 +1,142 @@
+.org-page {
+  padding: 32px 40px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.org-header {
+  margin-bottom: 24px;
+}
+
+.org-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.org-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+}
+
+.org-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.org-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 32px;
+}
+
+.org-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.org-field--full {
+  grid-column: 1 / -1;
+}
+
+.org-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.org-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-family);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.org-input:focus {
+  border-color: #ffffff;
+}
+
+.org-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.org-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 24px;
+  margin-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+  gap: 12px;
+  align-items: center;
+}
+
+.org-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: var(--font-family);
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+}
+
+.org-btn--primary {
+  background: #ffffff;
+  color: #000000;
+}
+
+.org-btn--primary:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.org-btn--primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.org-btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.org-btn--ghost:hover {
+  background: var(--bg-hover);
+}
+
+.org-saved-msg {
+  font-size: 12px;
+  color: var(--success);
+}
+
+.org-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.org-name-readonly {
+  padding: 10px 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
+  box-sizing: border-box;
+}

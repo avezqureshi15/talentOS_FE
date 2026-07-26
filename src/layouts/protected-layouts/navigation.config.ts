@@ -35,7 +35,7 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
   {
     label: SIDEBAR_LABELS.NEW_CHAT,
     href: "/chat",
-    icon: "bx bx-message-square-add",
+    icon: "bx bx-pencil",
     shortcut: "Ctrl+Shift+C",
     permissions: ["chat"],
   },
@@ -49,9 +49,9 @@ export const ADMIN_NAV_ITEMS: NavItemConfig[] = [
     permissions: ["user.invite"],
   },
   {
-    label: "Settings",
-    href: "/admin/settings",
-    icon: "bx bx-cog",
+    label: "Organization",
+    href: "/admin/organization",
+    icon: "bx bx-building",
     permissions: ["settings.view"],
   },
 ];
