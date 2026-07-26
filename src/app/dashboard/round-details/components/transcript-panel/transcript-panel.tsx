@@ -8,7 +8,7 @@ const SPEAKER_CLASS: Record<string, string> = {
   CANDIDATE: "tp-speaker--candidate",
 };
 
-const TranscriptPanel = ({ sections }: TranscriptPanelProps) => {
+const TranscriptPanel = ({ sections, onSeek }: TranscriptPanelProps) => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(
     () => Object.fromEntries(sections.map((s) => [s.id, true]))
   );
@@ -34,7 +34,7 @@ const TranscriptPanel = ({ sections }: TranscriptPanelProps) => {
               {sec.utterances.map((u) => (
                 <div key={u.id} className="tp-utterance">
                   <span className={`tp-speaker-tag ${SPEAKER_CLASS[u.speaker]}`}>{u.speaker}</span>
-                  <span className="tp-timestamp">{u.timestamp}</span>
+                  <span className="tp-timestamp" onClick={() => onSeek?.(u.timeInSeconds)}>{u.timestamp}</span>
                   <span className="tp-text">{u.text}</span>
                 </div>
               ))}

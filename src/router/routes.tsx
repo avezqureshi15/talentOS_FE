@@ -15,6 +15,7 @@ import TeamMembersPage from "@/app/dashboard/hiring-requests-detail/pages/team-m
 import DecisionBoardPage from "@/app/dashboard/hiring-requests-detail/pages/decision-board-page";
 import RoundDetails from "@/app/dashboard/round-details/pages/round-details";
 import SlotBooking from "@/app/slot-booking/pages/slot-booking";
+import AiInterviewTest from "@/app/dev/ai-interview-test/ai-interview-test";
 import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
 import UsersPage from "@/app/admin/users/pages/users-page";
 import RolesPage from "@/app/superadmin/roles/pages/roles-page";
@@ -74,8 +75,9 @@ export const router = createBrowserRouter([
       },
       { path: ROUTES.BOOK_SLOT, element: <SlotBooking />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
       { path: ROUTES.BOOK_SLOT_ID, element: <SlotBooking />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
-      { path: ROUTES.RATE_CANDIDATE, element: <RateCandidate />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
-      { path: ROUTES.RATE_CANDIDATE_ID, element: <RateCandidate />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+          { path: ROUTES.RATE_CANDIDATE, element: <RateCandidate />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+          { path: ROUTES.RATE_CANDIDATE_ID, element: <RateCandidate />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+          { path: ROUTES.AI_INTERVIEW_TEST, element: <AiInterviewTest />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
     ],
   },
 

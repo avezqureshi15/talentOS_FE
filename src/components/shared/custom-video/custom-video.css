@@ -1,0 +1,274 @@
+/* ─── Container ─── */
+.cv-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  user-select: none;
+}
+
+.cv-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: auto;
+}
+
+/* ─── Centre play button (large overlay) ─── */
+.cv-center-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 1;
+}
+
+.cv-container:hover .cv-center-play {
+  opacity: 1;
+}
+
+.cv-center-play-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-white);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.cv-center-play:hover .cv-center-play-inner {
+  transform: scale(1.08);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.cv-center-play-icon {
+  width: 22px;
+  height: 22px;
+  margin-left: 3px;
+}
+
+/* ─── Control bar ─── */
+.cv-controls {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(12, 12, 12, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: translateY(6px);
+  z-index: 2;
+}
+
+.cv-container:hover .cv-controls,
+.cv-controls.cv-controls--active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Buttons ─── */
+.cv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-white);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.cv-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.cv-btn:active {
+  transform: scale(0.92);
+}
+
+.cv-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ─── Seek bar ─── */
+.cv-seek-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 6px 0;
+  min-width: 0;
+}
+
+.cv-seek-track {
+  position: relative;
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  transition: height 0.15s ease;
+}
+
+.cv-seek-wrap:hover .cv-seek-track {
+  height: 5px;
+}
+
+.cv-seek-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  pointer-events: none;
+  transition: width 0.05s linear;
+}
+
+.cv-seek-thumb {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-white);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.15s ease;
+  pointer-events: none;
+}
+
+.cv-seek-wrap:hover .cv-seek-thumb,
+.cv-seek-wrap.cv-seek-wrap--dragging .cv-seek-thumb {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.cv-seek-wrap.cv-seek-wrap--dragging .cv-seek-track {
+  height: 5px;
+}
+
+/* ─── Time ─── */
+.cv-time {
+  font-family: "SF Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+  min-width: 72px;
+  text-align: center;
+}
+
+/* ─── Volume ─── */
+.cv-volume-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cv-volume-slider {
+  width: 0;
+  overflow: hidden;
+  transition: width 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.cv-volume-track {
+  width: 52px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cv-volume-fill {
+  height: 100%;
+  background: var(--text-white);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.cv-volume-thumb {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-white);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.12s ease;
+  pointer-events: none;
+}
+
+.cv-volume-track:hover .cv-volume-thumb {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.cv-volume-wrap:hover .cv-volume-slider,
+.cv-volume-slider.cv-volume-slider--open {
+  width: 60px;
+}
+
+.cv-volume-track:hover {
+  height: 5px;
+}
+
+/* ─── Speed badge ─── */
+.cv-speed {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: "SF Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cv-speed:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
+}
+
+/* ─── Right group ─── */
+.cv-right {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+}

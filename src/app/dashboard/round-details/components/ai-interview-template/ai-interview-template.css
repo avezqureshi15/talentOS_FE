@@ -1,0 +1,11 @@
+.rd-video-wrapper {
+  flex: 1;
+  min-height: 0;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.rd-video-wrapper .cv-container {
+  width: 100%;
+  height: 100%;
+}

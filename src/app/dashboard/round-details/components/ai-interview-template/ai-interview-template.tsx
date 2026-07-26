@@ -1,7 +1,10 @@
+import { useRef } from "react";
 import { Sparkles, Play, Info, Check, X, AlertTriangle, FileCode, ShieldAlert } from "lucide-react";
 import Chip from "@/components/ui/chip/chip";
 import TranscriptPanel from "../transcript-panel/transcript-panel";
-import type { CandidateEvaluationData, AIRecommendation } from "../../pages/round-details.types";
+import CustomVideo from "@/components/shared/custom-video/custom-video";
+import type { CandidateEvaluationData } from "../../pages/round-details.types";
+import type { CustomVideoHandle } from "@/components/shared/custom-video/custom-video.types";
 import "./ai-interview-template.css";
 
 const RING_CLASS: Record<string, string> = {
@@ -45,6 +48,10 @@ type Props = {
 };
 
 const AiInterviewTemplate = ({ data }: Props) => {
+  const videoRef = useRef<CustomVideoHandle>(null);
+  const handleSeek = (time: number) => {
+    videoRef.current?.seek(time);
+  };
   return (
     <div className="rd-split">
       <div className="rd-left">
@@ -148,11 +155,11 @@ const AiInterviewTemplate = ({ data }: Props) => {
       </div>
 
       <div className="rd-right">
-        <div className="rd-video-area">
-          <Play className="rd-video-play" />
+        <div className="rd-video-wrapper">
+          <CustomVideo ref={videoRef} src="/videos/video.mp4" />
         </div>
         <div className="rd-transcript-area">
-          <TranscriptPanel sections={data.transcriptSections} />
+          <TranscriptPanel sections={data.transcriptSections} onSeek={handleSeek} />
         </div>
       </div>
     </div>
