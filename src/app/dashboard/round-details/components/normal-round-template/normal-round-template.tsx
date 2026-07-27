@@ -174,8 +174,8 @@ function AiContent({ entity }: { entity: ReviewEntity }) {
               <div key={i} className="nrt-compare-field">
                 <span className="nrt-compare-title">{COMPARISON_LABELS[f.label] ?? f.label}</span>
                 <div className="nrt-compare-pair">
-                  <span className="nrt-compare-exp">Required: {f.expected}</span>
-                  <span className="nrt-compare-act">Actual: {f.actual}</span>
+                  <span className="nrt-compare-exp">JD: {f.expected}</span>
+                  <span className="nrt-compare-act">Candidate: {f.actual}</span>
                 </div>
               </div>
             ))}
@@ -194,7 +194,7 @@ function AiContent({ entity }: { entity: ReviewEntity }) {
                 <div key={i} className="nrt-compare-field">
                   <span className="nrt-compare-title">{CRITERION_LABELS[key] ?? key}</span>
                   <div className="nrt-compare-pair">
-                    <span className="nrt-compare-exp">Required: {detail.JD}</span>
+                    <span className="nrt-compare-exp">JD: {detail.JD}</span>
                     <span className="nrt-compare-act">Candidate: {detail.Candidate}</span>
                   </div>
                 </div>

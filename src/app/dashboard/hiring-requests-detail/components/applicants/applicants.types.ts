@@ -99,6 +99,7 @@ export type Applicant = {
   reviews?: Record<string, unknown>;
   reviewVerdict?: string;
   stage?: string;
+  disqualifiedBy?: string[];
 };
 
 export type ApplicantsProps = {

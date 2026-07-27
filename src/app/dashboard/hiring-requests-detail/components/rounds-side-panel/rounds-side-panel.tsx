@@ -78,11 +78,11 @@ function EntityAiContent({ entity }: { entity: ReviewEntity }) {
                 <span className="rp-comparison-label">{COMPARISON_LABELS[f.label] ?? f.label}</span>
                 <div className="rp-comparison-compare">
                   <div className="rp-comparison-col">
-                    <span className="rp-comparison-col-label">Required</span>
+                    <span className="rp-comparison-col-label">JD</span>
                     <span className="rp-comparison-value rp-comparison-value--expected">{f.expected}</span>
                   </div>
                   <div className="rp-comparison-col">
-                    <span className="rp-comparison-col-label">Actual</span>
+                    <span className="rp-comparison-col-label">Candidate</span>
                     <span className="rp-comparison-value rp-comparison-value--actual">{f.actual}</span>
                   </div>
                 </div>
@@ -105,7 +105,7 @@ function EntityAiContent({ entity }: { entity: ReviewEntity }) {
                   </span>
                   <div className="rp-rejection-detail-compare">
                     <div className="rp-rejection-detail-col">
-                      <span className="rp-rejection-detail-label">Required</span>
+                      <span className="rp-rejection-detail-label">JD</span>
                       <span className="rp-rejection-detail-value rp-rejection-detail-value--jd">{detail.JD}</span>
                     </div>
                     <div className="rp-rejection-detail-col">
