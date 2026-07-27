@@ -118,6 +118,11 @@ export type ApplicantsProps = {
   jdId: string;
   isRemote: boolean;
   showBulkSelection?: boolean;
+  selectedIds?: Set<string>;
+  onToggleSelect?: (id: string) => void;
+  onToggleSelectAll?: () => void;
+  allSelected?: boolean;
+  selectionCount?: number;
 };
 
 export type AccordionTab = "details" | "cover-letter" | "ai-summary" | "rounds";

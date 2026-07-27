@@ -10,12 +10,8 @@ export type CandidateTableProps = {
   onInfoClick?: (candidate: Applicant) => void;
   showBulkSelection?: boolean;
   selectedIds?: Set<string>;
-  isBulkProcessing?: boolean;
   onToggleSelect?: (id: string) => void;
   onToggleSelectAll?: () => void;
-  onClearSelection?: () => void;
-  onBulkMoveToScreening?: () => void;
-  onBulkMoveToInterview?: () => void;
-  selectionCount?: number;
   allSelected?: boolean;
+  activeStage?: string;
 };

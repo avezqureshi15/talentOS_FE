@@ -34,53 +34,62 @@ function getDisplayStatus(rawStatus: string): { label: string; cssClass: string 
 const isInterviewStatus = (s: string) =>
   s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled" || s === "screening_round_scheduled";
 
-const CELL_RENDERERS: Record<string, (c: Applicant, onInfo?: (c: Applicant) => void) => ReactNode> = {
-  name: (c) => (
-    <div className="applicant-table-cell applicant-table-cell--name">
-      <div className="candidate-avatar">{getInitials(c.name)}</div>
-      <div>
-        <div className="candidate-name">{c.name}</div>
-        {c.email && <div className="candidate-email">{c.email}</div>}
-      </div>
-    </div>
-  ),
-  score: (c) => (
-    <div className="applicant-table-cell">
-      {c.score != null ? (
-        <span className={`ats-score ${getScoreClass(c.score)}`}>{c.score}</span>
-      ) : (
-        <span className="text-muted">—</span>
-      )}
-    </div>
-  ),
-  status: (c) => {
-    const ds = getDisplayStatus(c.status);
-    return (
-      <div className="applicant-table-cell">
-        <span className={`status-chip status-chip--${ds.cssClass}`}>{ds.label}</span>
-      </div>
-    );
-  },
-  info: (c, onInfo) => (
-    <div className="applicant-table-cell applicant-table-cell--info">
-      <button
-        className="info-icon-btn"
-        onClick={(e) => { e.stopPropagation(); onInfo?.(c); }}
-        title="Candidate Info"
-        type="button"
-      >
-        <i className="bx bx-info-circle" />
-      </button>
-    </div>
-  ),
-};
-
 const CandidateTable = ({
   data, columns, onRowClick, onInfoClick,
-  showBulkSelection, selectedIds, isBulkProcessing,
-  onToggleSelect, onToggleSelectAll, onClearSelection,
-  onBulkMoveToScreening, onBulkMoveToInterview, selectionCount, allSelected,
+  showBulkSelection,
+  selectedIds,
+  onToggleSelect, onToggleSelectAll, allSelected,
+  activeStage,
 }: CandidateTableProps) => {
+  const CELL_RENDERERS: Record<string, (c: Applicant, onInfo?: (c: Applicant) => void) => ReactNode> = {
+    name: (c) => (
+      <div className="applicant-table-cell applicant-table-cell--name">
+        <div className="candidate-avatar">{getInitials(c.name)}</div>
+        <div>
+          <div className="candidate-name">{c.name}</div>
+          {c.email && <div className="candidate-email">{c.email}</div>}
+        </div>
+      </div>
+    ),
+    score: (c) => (
+      <div className="applicant-table-cell">
+        {c.score != null ? (
+          <span className={`ats-score ${getScoreClass(c.score)}`}>{c.score}</span>
+        ) : (
+          <span className="text-muted">—</span>
+        )}
+      </div>
+    ),
+    status: (c) => {
+      let label: string;
+      let cssClass: string;
+      if (activeStage === "resume-shortlisting" && c.score != null) {
+        label = c.score >= 70 ? "Selected" : "Rejected";
+        cssClass = c.score >= 70 ? "selected" : "rejected";
+      } else {
+        const ds = getDisplayStatus(c.status);
+        label = ds.label;
+        cssClass = ds.cssClass;
+      }
+      return (
+        <div className="applicant-table-cell">
+          <span className={`status-chip status-chip--${cssClass}`}>{label}</span>
+        </div>
+      );
+    },
+    info: (c, onInfo) => (
+      <div className="applicant-table-cell applicant-table-cell--info">
+        <button
+          className="info-btn"
+          onClick={(e) => { e.stopPropagation(); onInfo?.(c); }}
+          type="button"
+        >
+          <i className="bx bx-info-circle" />
+          <span>Info</span>
+        </button>
+      </div>
+    ),
+  };
   const checkboxFlex = "40px";
   const gridTemplate = showBulkSelection
     ? `${checkboxFlex} ${columns.map((col) => `${col.flex}fr`).join(" ")}`
@@ -132,40 +141,6 @@ const CandidateTable = ({
           ))
         )}
       </div>
-
-      {showBulkSelection && (selectionCount ?? 0) > 0 && (
-        <div className="bulk-action-bar">
-          <span className="bulk-action-count">{selectionCount} candidate{selectionCount !== 1 ? "s" : ""} selected</span>
-          <div className="bulk-action-buttons">
-            <button
-              className="btn screen-btn compact"
-              onClick={onBulkMoveToScreening}
-              disabled={isBulkProcessing}
-              type="button"
-            >
-              {isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-phone" />}
-              {" "}Move to AI Screening
-            </button>
-            <button
-              className="btn screen-btn compact"
-              onClick={onBulkMoveToInterview}
-              disabled={isBulkProcessing}
-              type="button"
-            >
-              {isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-bot" />}
-              {" "}Move to AI Interview
-            </button>
-            <button
-              className="bulk-action-clear"
-              onClick={onClearSelection}
-              disabled={isBulkProcessing}
-              type="button"
-            >
-              Clear
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

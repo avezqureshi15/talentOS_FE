@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useMoveToScreening } from "@/hooks/use-move-to-screening";
 import { useTriggerAiInterview } from "@/hooks/use-trigger-ai-interview";
 import { useUpdateCandidateRoundStatus } from "@/hooks/use-update-candidate-round-status";
+import { updateReviewByRound } from "@/services/reviews/reviews";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
@@ -37,11 +38,13 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
 
   const allSelected = showBulkSelection && selectedIds.size === data.length && data.length > 0;
   const selectionCount = selectedIds.size;
+  const hasCandidatesWithRound = data.some((a) => selectedIds.has(a.id) && a.currentRoundId);
 
-  const handleBulkMoveToScreening = useCallback(async () => {
+  const handleBulkMoveToScreening = useCallback(async (scheduledDate?: string, scheduledTime?: string) => {
     const candidates = data.filter((a) => selectedIds.has(a.id));
     if (candidates.length === 0) return;
     setIsBulkProcessing(true);
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const results = await Promise.allSettled(
       candidates.map(async (a) => {
         // TODO: temporary workaround — fix when asked
@@ -67,11 +70,16 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
             round_name: "AI Screening Round",
             interview_type: "AI_SCREENING",
             round_type: "AI_SCREENING_ROUND",
+            scheduled_date: scheduledDate || undefined,
+            scheduled_time: scheduledTime || undefined,
+            timezone,
           });
           round_id = resp.round_id;
         } catch {
           // proceed even if triggerAiInterview fails
         }
+
+        const scheduledAt = scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}:00` : undefined;
 
         // TODO: temporary workaround — fix when asked
         try {
@@ -80,6 +88,7 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
             stage: "AI_SCREENING",
             status: "SCREENING_ROUND_SCHEDULED",
             current_round_id: round_id,
+            scheduled_at: scheduledAt,
           });
           useToastStore.getState().addToast(`${a.name} moved to AI Screening`, ToastType.SUCCESS);
         } catch {
@@ -97,10 +106,11 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
     onRefresh?.();
   }, [data, selectedIds, jdId, moveToScreeningMut, triggerAiInterviewMut, updateCandidateRoundStatusMut, onRefresh]);
 
-  const handleBulkMoveToInterview = useCallback(async () => {
+  const handleBulkMoveToInterview = useCallback(async (scheduledDate?: string, scheduledTime?: string) => {
     const candidates = data.filter((a) => selectedIds.has(a.id));
     if (candidates.length === 0) return;
     setIsBulkProcessing(true);
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const results = await Promise.allSettled(
       candidates.map(async (a) => {
         let round_id = "";
@@ -112,11 +122,16 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
             round_name: "AI Interview Round",
             interview_type: "AI_INTERVIEW",
             round_type: "AI_INTERVIEW_ROUND",
+            scheduled_date: scheduledDate || undefined,
+            scheduled_time: scheduledTime || undefined,
+            timezone,
           });
           round_id = resp.round_id;
         } catch {
           // proceed even if triggerAiInterview fails
         }
+
+        const scheduledAt = scheduledDate && scheduledTime ? `${scheduledDate}T${scheduledTime}:00` : undefined;
 
         // TODO: temporary workaround — fix when asked
         try {
@@ -125,6 +140,7 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
             stage: "AI_INTERVIEW",
             status: "INTERVIEW_SCHEDULED",
             current_round_id: round_id,
+            scheduled_at: scheduledAt,
           });
           useToastStore.getState().addToast(`${a.name} moved to AI Interview`, ToastType.SUCCESS);
         } catch {
@@ -142,14 +158,35 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
     onRefresh?.();
   }, [data, selectedIds, jdId, triggerAiInterviewMut, updateCandidateRoundStatusMut, onRefresh]);
 
+  const handleSubmitRemarks = useCallback(async (remarks: string) => {
+    if (!remarks) return;
+    const candidates = data.filter((a) => selectedIds.has(a.id) && a.currentRoundId);
+    if (candidates.length === 0) return;
+    await Promise.allSettled(
+      candidates.map(async (a) => {
+        try {
+          await updateReviewByRound(a.currentRoundId!, {
+            entity_type: "hr",
+            reviews: { remarks },
+            verdict: "shortlisted",
+          });
+        } catch {
+          // TODO: temporary workaround — fix when asked
+        }
+      }),
+    );
+  }, [data, selectedIds]);
+
   return {
     selectedIds,
     isBulkProcessing,
     selectionCount,
     allSelected,
+    hasCandidatesWithRound,
     toggleSelect,
     toggleSelectAll,
     clearSelection,
+    handleSubmitRemarks,
     handleBulkMoveToScreening,
     handleBulkMoveToInterview,
   };

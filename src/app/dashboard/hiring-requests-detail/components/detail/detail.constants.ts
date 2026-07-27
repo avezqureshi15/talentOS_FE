@@ -24,8 +24,11 @@ export const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = 
 };
 
 export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
-  "yet-to-start": (a) => a.status === "interview_scheduled" || a.status === "interview_rescheduled" || a.status === "screening_round_scheduled",
-  "no-show": (a) => a.status === "interview_cancelled",
+  "yet-to-start": (a) =>
+    a.status?.toLowerCase() === "interview_scheduled" ||
+    a.status?.toLowerCase() === "interview_rescheduled" ||
+    a.status?.toLowerCase() === "screening_round_scheduled",
+  "no-show": (a) => a.status?.toLowerCase() === "interview_cancelled",
 };
 
 export const EVALUATED_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {

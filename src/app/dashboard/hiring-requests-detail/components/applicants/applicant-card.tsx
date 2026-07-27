@@ -67,7 +67,7 @@ const ApplicantCard = ({
   return (
     <div className="accordion-card">
       <div className="accordion-header">
-        <div className="header-left" onClick={() => { if (canExpand && !showCheckbox) onToggleOpen(a.id); }}>
+        <div className="header-left" onClick={() => { if (canExpand) onToggleOpen(a.id); }}>
           {showCheckbox && (
             <i
               className={`bx ${isSelected ? "bx-checkbox-checked" : "bx-checkbox"} applicant-checkbox`}
