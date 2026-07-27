@@ -49,3 +49,33 @@ export const toggleHiringRequestStatus = async (id: string): Promise<HiringReque
   const { data } = await httpClient.patch<HiringRequestDetailResponse>(`${API_ENDPOINTS.HIRING_REQUESTS}${id}/status`);
   return data.data;
 };
+
+export type ExportHiringRequestResult = {
+  blob: Blob;
+  filename: string;
+};
+
+const FALLBACK_EXPORT_FILENAME = "Hiring_Request_applicants.xlsx";
+
+function filenameFromContentDisposition(header: string | undefined): string | null {
+  if (!header) return null;
+  const utfMatch = /filename\*=UTF-8''([^;]+)/i.exec(header);
+  if (utfMatch?.[1]) {
+    try {
+      return decodeURIComponent(utfMatch[1].trim());
+    } catch {
+      return utfMatch[1].trim();
+    }
+  }
+  const plainMatch = /filename="?([^";]+)"?/i.exec(header);
+  return plainMatch?.[1]?.trim() ?? null;
+}
+
+export const exportHiringRequestExcel = async (id: string): Promise<ExportHiringRequestResult> => {
+  const response = await httpClient.get<Blob>(`${API_ENDPOINTS.HIRING_REQUESTS}${id}/export`, {
+    responseType: "blob",
+  });
+  const filename =
+    filenameFromContentDisposition(response.headers["content-disposition"]) ?? FALLBACK_EXPORT_FILENAME;
+  return { blob: response.data, filename };
+};
