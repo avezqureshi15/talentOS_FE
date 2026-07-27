@@ -1,6 +1,7 @@
 import httpClient from "@/services/http-client";
 import type {
   HiringRequest,
+  HiringRequestCreatePayload,
   HiringRequestsFilters,
   HiringRequestsListResponse,
   HiringRequestDetailResponse,
@@ -42,6 +43,11 @@ export const fetchHiringRequests = async (filters?: HiringRequestsFilters): Prom
 
 export const fetchHiringRequestById = async (id: string): Promise<HiringRequest> => {
   const { data } = await httpClient.get<HiringRequestDetailResponse>(`${API_ENDPOINTS.HIRING_REQUESTS}${id}`);
+  return data.data;
+};
+
+export const createHiringRequest = async (payload: HiringRequestCreatePayload): Promise<HiringRequest> => {
+  const { data } = await httpClient.post<HiringRequestDetailResponse>(API_ENDPOINTS.HIRING_REQUESTS, payload);
   return data.data;
 };
 

@@ -1,10 +1,11 @@
-import { useState, useCallback, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import HiringRequestsTable from "@/app/dashboard/hiring-requests/components/table/table";
 import Alerts from "@/app/dashboard/hiring-requests/components/alerts/alerts";
 import Interviews from "@/app/dashboard/hiring-requests/components/interviews/interviews";
+import CreateHiringRequestModal from "@/app/dashboard/hiring-requests/components/create-hiring-request-modal/create-hiring-request-modal";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
@@ -12,15 +13,19 @@ import { useHiringRequests } from "@/app/dashboard/hiring-requests/hooks/use-hir
 import type { HiringRequestsFilters } from "@/services/hiring-requests/hiring-requests.types";
 import type { HeaderConfig } from "@/store/header.store";
 import { QUERY_KEYS, HR_TABS, ALERTS_TABS, ALERTS_CHIP_LABEL, ALERTS_DESCRIPTION } from "@/constants/constants";
+import { ROUTES } from "@/constants/routes";
 import { spring, springSoft, fadeSlideUp, tabSlide, slideInLeft } from "@/utils/motion";
 import "./hiring-requests.css";
 
 const HiringRequests = () => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = searchParams.get("tab") || "hiring-requests";
   const sub = searchParams.get("sub") || "slots";
   const highlight = searchParams.get("highlight") === "true";
   const setTab = (key: string) => setSearchParams({ tab: key });
+
+  const [createOpen, setCreateOpen] = useState(false);
 
   useEffect(() => {
     if (!highlight) return;
@@ -53,7 +58,11 @@ const HiringRequests = () => {
     handleFilterChange({ q: value || undefined });
   }, [handleFilterChange]);
 
-  const headerConfig: HeaderConfig = {
+  const handleCreated = useCallback((id: string) => {
+    navigate(ROUTES.HIRING_APPLICATIONS.replace(":id", id));
+  }, [navigate]);
+
+  const headerConfig: HeaderConfig = useMemo(() => ({
     title: "Hiring Requests",
     search: {
       placeholder: "Search hiring requests...",
@@ -61,7 +70,18 @@ const HiringRequests = () => {
       value: filters.q || "",
       onChange: handleSearchChange,
     },
-  };
+    actions: tab === "hiring-requests"
+      ? [
+          {
+            key: "create",
+            label: "Create",
+            icon: "bx bx-plus",
+            variant: "primary",
+            onClick: () => setCreateOpen(true),
+          },
+        ]
+      : undefined,
+  }), [filters.q, handleSearchChange, tab]);
 
   const handlePageChange = useCallback((page: number) => {
     setFilters((prev) => ({ ...prev, page }));
@@ -74,6 +94,11 @@ const HiringRequests = () => {
   return (
     <>
       <PageHeader {...headerConfig} />
+      <CreateHiringRequestModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={handleCreated}
+      />
       <ErrorBoundary>
       <motion.div
         className="hiring-requests-page"
