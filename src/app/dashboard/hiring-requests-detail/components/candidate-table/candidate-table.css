@@ -175,6 +175,8 @@
 }
 
 .status-chip--scheduled,
+.status-chip--interview_scheduled,
+.status-chip--screening_round_scheduled,
 .status-chip--interview_rescheduled,
 .status-chip--interview_cancelled {
   background: var(--accent-bg);
@@ -201,6 +203,15 @@
 
 .info-icon-btn:hover {
   color: var(--text-primary);
+}
+
+/* ---------- Bulk Selection (table view) ---------- */
+.applicant-table-cell--checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  font-size: 18px;
 }
 
 @keyframes rowFadeIn {

@@ -8,7 +8,7 @@ type Props = {
   reviews?: Record<string, unknown>;
 };
 
-const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, reviews }: Props) => {
+const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore }: Props) => {
   const aiSum = aiSummary ? truncateText(aiSummary, 50) : null;
 
   return (

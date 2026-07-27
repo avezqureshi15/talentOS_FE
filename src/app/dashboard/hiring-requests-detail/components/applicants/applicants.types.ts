@@ -1,4 +1,4 @@
-export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "resume_shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_rescheduled" | "interview_cancelled";
+export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "resume_shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_scheduled" | "interview_rescheduled" | "interview_cancelled" | "SCREENING_ROUND_SCHEDULED" | "screening_round_scheduled";
 
 export type HiringState =
   | "waiting_for_review"
@@ -8,10 +8,11 @@ export type HiringState =
   | "interview_scheduled"
   | "interview_rescheduled"
   | "interview_cancelled"
+  | "screening_round_scheduled"
   | "rejected"
   | "selected";
 
-export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move";
+export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move" | "cancel";
 
 export type ActionConfig = {
   label: string;
@@ -49,15 +50,19 @@ export type ApplicantCardProps = {
   isOpen: boolean;
   isScreening?: boolean;
   readOnly?: boolean;
+  isSelected?: boolean;
+  showCheckbox?: boolean;
   accordionTab: AccordionTab;
   onToggleOpen: (id: string) => void;
   onAction?: (handlerKey: string, id: string) => void;
   onMenuAction?: (action: MenuAction, id: string) => void;
+  onToggleSelect?: (id: string) => void;
   onTabChange: (tab: AccordionTab) => void;
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore: (id: string) => void;
   onDetailsReadMore: (id: string) => void;
   onTimeline: (id: number) => void;
+  onViewRound?: (id: string) => void;
   jdId?: string;
   isRemote?: boolean;
 };
@@ -93,6 +98,7 @@ export type Applicant = {
   finalVerdict?: string;
   reviews?: Record<string, unknown>;
   reviewVerdict?: string;
+  stage?: string;
 };
 
 export type ApplicantsProps = {
@@ -111,6 +117,7 @@ export type ApplicantsProps = {
   onRefresh?: () => void;
   jdId: string;
   isRemote: boolean;
+  showBulkSelection?: boolean;
 };
 
 export type AccordionTab = "details" | "cover-letter" | "ai-summary" | "rounds";

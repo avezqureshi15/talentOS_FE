@@ -12,6 +12,7 @@ import { springSnap, fadeSlideUp, staggerContainer } from "@/utils/motion";
 import { DECISION_STAGES, STAGE_FILTER } from "./decision-board.constants";
 import type { DecisionStageKey } from "./decision-board.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import "../detail/detail.css";
 import "./decision-board.css";
 
@@ -21,7 +22,6 @@ type Props = {
 
 const DecisionBoard = ({ jobId }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const applicantParam = searchParams.get("applicant");
   const [viewMode, setViewMode] = useState<"table" | "card">(
     (searchParams.get("view") as "table" | "card") ?? "table"
   );
@@ -62,7 +62,7 @@ const DecisionBoard = ({ jobId }: Props) => {
       <PipelineStages
         stages={stagesWithCounts}
         activeKey={activeStage}
-        onStageChange={setActiveStage}
+        onStageChange={(k: StageKey) => setActiveStage(k as DecisionStageKey)}
       />
       <motion.div className="tab-content" variants={staggerContainer} initial="hidden" animate="visible">
         <ErrorBoundary>

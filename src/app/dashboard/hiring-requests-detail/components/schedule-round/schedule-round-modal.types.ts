@@ -16,18 +16,29 @@ export type SlotTab = {
   label: string;
 };
 
-export type AiTemplateProctoring = {
-  label: string;
-  enabled: boolean;
+export type ScreeningQuestion = {
+  id: string;
+  question: string;
 };
 
-export type AiTemplate = {
+export type InterviewQuestion = {
   id: string;
-  name: string;
-  description: string;
-  proctoring: AiTemplateProctoring[];
-  insights: string[];
-  teamMembers: { name: string; initials: string }[];
+  question: string;
+  score: number;
+  expected_points?: string[];
+};
+
+export type ScreeningRoundConfig = {
+  voice_screening_enabled: boolean;
+  screening_questions: ScreeningQuestion[];
+  screening_call_from: string | null;
+  screening_call_to: string | null;
+  screening_timezone: string;
+};
+
+export type InterviewRoundConfig = {
+  interview_questions: InterviewQuestion[];
+  interview_total_score: number;
 };
 
 export type ScheduleRoundModalProps = {

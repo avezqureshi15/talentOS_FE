@@ -45,56 +45,96 @@ export const SR_LABELS = {
   AI_NAME: "AI Interviewer",
   AI_SCREENING_NAME: "AI Screening Interview",
   AI_SLOTS_LABEL: "Always available",
+  AI_DURATION_BADGE: "~30 mins",
+  AI_VOICE_TEXT_BADGE: "Video, Voice & Text",
+  AI_VOICE_TEXT_SCREENING_BADGE: "Voice & Text",
   PROCTORING_LABEL: "Proctoring",
   INSIGHTS_LABEL: "Insights",
   TEAM_MEMBERS_LABEL: "Team",
+
+  SCREENING_ROUND_TITLE: "AI Screening Configuration",
+  SCREENING_ENABLED: "Voice Screening",
+  SCREENING_DISABLED: "Voice Screening",
+  SCREENING_CALL_WINDOW: "Call Window",
+  SCREENING_TIMEZONE: "Timezone",
+  SCREENING_QUESTIONS: "Screening Questions",
+  SCREENING_TRIGGER: "Trigger AI Screening",
+  SCREENING_TRIGGERED: "Screening Triggered",
+
+  INTERVIEW_ROUND_TITLE: "AI Interview Configuration",
+  INTERVIEW_QUESTIONS: "Interview Questions",
+  INTERVIEW_TOTAL: "Total",
+  INTERVIEW_SEND: "Send AI Interview Link",
+  INTERVIEW_EXPECTED: "Expected Points",
+  AI_SCHEDULE_DATE: "Select Date",
+  AI_SCHEDULE_TIME: "Select Time",
+  AI_SCHEDULE_HEADER: "Schedule",
 };
 
-import type { AiTemplate } from "./schedule-round-modal.types";
+import type { ScreeningRoundConfig, InterviewRoundConfig } from "./schedule-round-modal.types";
 
-export const AI_TEMPLATES: AiTemplate[] = [
-  {
-    id: "frontend",
-    name: "Frontend Interview Template",
-    description: "AI-powered interview for frontend engineering roles",
-    proctoring: [
-      { label: "Proctoring", enabled: true },
-      { label: "Lockdown Browser", enabled: true },
-      { label: "Candidate Force Visibility", enabled: true },
-      { label: "Require Screen Share", enabled: true },
-      { label: "Block Multiple Monitors", enabled: false },
-      { label: "Restrict Mobile Browsers", enabled: true },
-    ],
-    insights: [
-      "Live coding analysis",
-      "Problem-solving assessment",
-      "Communication score",
-    ],
-    teamMembers: [
-      { name: "Alice", initials: "AL" },
-      { name: "Bob", initials: "BO" },
-    ],
-  },
-  {
-    id: "backend",
-    name: "Backend Engineer Interview Template",
-    description: "AI-powered interview for backend engineering roles",
-    proctoring: [
-      { label: "Proctoring", enabled: true },
-      { label: "Lockdown Browser", enabled: false },
-      { label: "Candidate Force Visibility", enabled: true },
-      { label: "Require Screen Share", enabled: true },
-      { label: "Block Multiple Monitors", enabled: true },
-      { label: "Restrict Mobile Browsers", enabled: false },
-    ],
-    insights: [
-      "System design evaluation",
-      "API design assessment",
-      "Scalability analysis",
-    ],
-    teamMembers: [
-      { name: "Charlie", initials: "CH" },
-      { name: "Diana", initials: "DI" },
-    ],
-  },
-];
+export const AI_SLOT_ID = "ai-interview-confirmed";
+
+export const DUMMY_SCREENING_ROUND: ScreeningRoundConfig = {
+  voice_screening_enabled: true,
+  screening_call_from: "10:00",
+  screening_call_to: "18:00",
+  screening_timezone: "Asia/Kolkata",
+  screening_questions: [
+    { id: "sq-1", question: "What is your current CTC?" },
+    { id: "sq-2", question: "What is your expected CTC?" },
+    { id: "sq-3", question: "What is your notice period?" },
+    { id: "sq-4", question: "Why do you want to leave your current role?" },
+    { id: "sq-5", question: "Where are you currently located?" },
+    { id: "sq-6", question: "Are you comfortable working remotely?" },
+  ],
+};
+
+export const DUMMY_INTERVIEW_ROUND: InterviewRoundConfig = {
+  interview_total_score: 85,
+  interview_questions: [
+    {
+      id: "iq-1",
+      question: "Explain how React's virtual DOM works and its role in performance optimization.",
+      score: 20,
+      expected_points: [
+        "Understanding of virtual DOM diffing algorithm",
+        "Reconciliation process and key prop importance",
+        "Batching of updates and Fiber architecture",
+      ],
+    },
+    {
+      id: "iq-2",
+      question: "How would you identify and fix performance issues in a slow React application?",
+      score: 25,
+      expected_points: [
+        "Profiling with React DevTools",
+        "useMemo and useCallback strategies",
+        "Code splitting with React.lazy and Suspense",
+        "Avoiding unnecessary re-renders",
+      ],
+    },
+    {
+      id: "iq-3",
+      question: "Describe a real-world scenario where you managed complex state across multiple components.",
+      score: 20,
+      expected_points: [
+        "State lifting vs context vs external state library",
+        "Handling side effects and data dependencies",
+        "Testability and maintainability considerations",
+      ],
+    },
+    {
+      id: "iq-4",
+      question: "Implement a custom hook for polling an API endpoint at a configurable interval.",
+      score: 20,
+      expected_points: [
+        "useEffect cleanup to prevent memory leaks",
+        "Configurable delay and enabled/disabled toggle",
+        "Error handling and retry logic",
+      ],
+    },
+  ],
+};
+
+

@@ -15,6 +15,7 @@ import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
+import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
 import { DEFAULT_FILTER, STAGE_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import ViewToggle from "@/app/dashboard/hiring-requests-detail/components/detail/view-toggle";
 import InterviewFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
@@ -44,6 +45,9 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const filteredApplicants = useFilteredApplicants({
     applicants, activeStage, scoreFilter, rejectReason, interviewSubFilter, evaluatedSubFilter,
   });
+
+  const showBulkSelection = activeStage === "resume-shortlisting";
+  const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection);
 
   const stagesWithCounts = useMemo(() =>
     PIPELINE_STAGES.map((s) => ({
@@ -116,6 +120,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     rejectReason={rejectReason} onRejectReasonChange={setRejectReason}
                     applicantParam={applicantParam} onRefresh={refresh}
                     jdId={hiringRequest.id} isRemote={isRemote}
+                    showBulkSelection={showBulkSelection}
                   />
                 </motion.div>
               )}
@@ -131,6 +136,16 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 columns={PIPELINE_STAGES.find((s) => s.key === activeStage)?.columns ?? []}
                 onRowClick={(candidate) => handleRowClick(candidate as Applicant)}
                 onInfoClick={(candidate) => handleInfoClick(candidate as Applicant)}
+                showBulkSelection={showBulkSelection}
+                selectedIds={bulkSelection.selectedIds}
+                isBulkProcessing={bulkSelection.isBulkProcessing}
+                onToggleSelect={bulkSelection.toggleSelect}
+                onToggleSelectAll={bulkSelection.toggleSelectAll}
+                onClearSelection={bulkSelection.clearSelection}
+                onBulkMoveToScreening={bulkSelection.handleBulkMoveToScreening}
+                onBulkMoveToInterview={bulkSelection.handleBulkMoveToInterview}
+                selectionCount={bulkSelection.selectionCount}
+                allSelected={bulkSelection.allSelected}
               />
             </motion.div>
           )}

@@ -84,3 +84,25 @@ export const fetchFinalVerdicts = async (
   );
   return data;
 };
+
+export type UpdateCandidateRoundStatusPayload = {
+  stage: string;
+  status: string;
+  current_round_id: string;
+  scheduled_at?: string;
+};
+
+export type UpdateCandidateRoundStatusResponse = {
+  success: boolean;
+};
+
+export const updateCandidateRoundStatus = async (
+  candidateId: number,
+  payload: UpdateCandidateRoundStatusPayload,
+): Promise<UpdateCandidateRoundStatusResponse> => {
+  const { data } = await httpClient.patch<UpdateCandidateRoundStatusResponse>(
+    API_ENDPOINTS.APPLICATION_ROUND_STATUS.replace("{candidate_id}", String(candidateId)),
+    payload,
+  );
+  return data;
+};

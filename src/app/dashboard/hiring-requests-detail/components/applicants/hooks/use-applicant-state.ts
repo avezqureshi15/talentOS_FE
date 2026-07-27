@@ -39,6 +39,8 @@ function computeHiringState(
     case "interview_scheduled":
     case "scheduled":
       return "interview_scheduled";
+    case "screening_round_scheduled":
+      return "screening_round_scheduled";
     case "rejected":
       return "rejected";
     default:

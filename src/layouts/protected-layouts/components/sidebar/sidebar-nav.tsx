@@ -2,7 +2,6 @@ import type { ComponentType } from "react";
 import { motion } from "framer-motion";
 import { staggerContainer, slideInLeft, springSoft } from "@/utils/motion";
 import { SidebarItem } from "@/components/ui/sidebar";
-import { SIDEBAR_LABELS } from "@/constants/constants";
 import type { NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
 
 type SidebarNavProps = {
@@ -15,7 +14,7 @@ type SidebarNavProps = {
   hideExtras?: boolean;
 };
 
-export default function SidebarNav({ Icon, onSearch, onClose, mainItems, adminItems, superadminItems, hideExtras }: SidebarNavProps) {
+export default function SidebarNav({ Icon, onClose, mainItems, adminItems, superadminItems }: SidebarNavProps) {
   const renderNavItem = (item: NavItemConfig) => (
     <motion.div key={item.href} variants={slideInLeft} transition={springSoft}>
       <SidebarItem

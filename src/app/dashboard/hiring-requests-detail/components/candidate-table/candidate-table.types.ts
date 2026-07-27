@@ -1,9 +1,21 @@
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import type { StageColumn } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 
+export type Candidate = Applicant;
+
 export type CandidateTableProps = {
   data: Applicant[];
   columns: StageColumn[];
   onRowClick?: (candidate: Applicant) => void;
   onInfoClick?: (candidate: Applicant) => void;
+  showBulkSelection?: boolean;
+  selectedIds?: Set<string>;
+  isBulkProcessing?: boolean;
+  onToggleSelect?: (id: string) => void;
+  onToggleSelectAll?: () => void;
+  onClearSelection?: () => void;
+  onBulkMoveToScreening?: () => void;
+  onBulkMoveToInterview?: () => void;
+  selectionCount?: number;
+  allSelected?: boolean;
 };

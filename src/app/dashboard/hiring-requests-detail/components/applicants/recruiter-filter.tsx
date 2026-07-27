@@ -4,7 +4,6 @@ import "./recruiter-filter.css";
 import { MOCK_RECRUITERS, RECRUITER_COLORS } from "./recruiter-filter.constants";
 import type { RecruiterFilterProps } from "./recruiter-filter.types";
 import { getInitials } from "@/utils/user";
-import { springSnap } from "@/utils/motion";
 
 const RecruiterFilter = ({}: RecruiterFilterProps) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());

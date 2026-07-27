@@ -8,6 +8,8 @@ import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/compon
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
 import { useMoveToScreening } from "@/hooks/use-move-to-screening";
+import { useTriggerAiInterview } from "@/hooks/use-trigger-ai-interview";
+import { useUpdateCandidateRoundStatus } from "@/hooks/use-update-candidate-round-status";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import { useApplicantActions } from "./hooks/use-applicant-actions";
@@ -19,7 +21,7 @@ type LocalOverride = {
   finalVerdict?: string;
 };
 
-function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange, hasMore, onLoadMore, scoreFilter, onScoreFilterChange, rejectReason, onRejectReasonChange, applicantParam, onRefresh, jdId, isRemote }: ApplicantsProps) {
+function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, applicantParam, onRefresh, jdId, isRemote, showBulkSelection = false }: ApplicantsProps) {
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<number | null>(null);
@@ -41,6 +43,8 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
   const [isConfirmingReject, setIsConfirmingReject] = useState(false);
   const [isShortlisting, setIsShortlisting] = useState(false);
   const [isConfirmingHire, setIsConfirmingHire] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isBulkProcessing, setIsBulkProcessing] = useState(false);
 
   const data = propData ?? [];
 
@@ -189,7 +193,26 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     }
   };
 
-  const { mutateAsync: moveToScreeningMut, isPending: isMovingToScreening } = useMoveToScreening();
+  const { mutateAsync: moveToScreeningMut } = useMoveToScreening();
+  const { mutateAsync: triggerAiInterviewMut } = useTriggerAiInterview();
+  const { mutateAsync: updateCandidateRoundStatusMut } = useUpdateCandidateRoundStatus();
+
+  const handleCancelInterview = useCallback(async (id: string) => {
+    const applicant = data.find((a) => a.id === id);
+    if (!applicant) return;
+    try {
+      await updateCandidateRoundStatusMut({
+        candidateId: applicant.candidateId,
+        stage: applicant.stage ?? "AI_INTERVIEW",
+        status: "INTERVIEW_CANCELLED",
+        current_round_id: applicant.currentRoundId ?? "",
+      });
+      overrideStatus(id, "interview_cancelled");
+      useToastStore.getState().addToast("Interview cancelled", ToastType.SUCCESS);
+    } catch {
+      useToastStore.getState().addToast("Failed to cancel interview", ToastType.ERROR);
+    }
+  }, [data, updateCandidateRoundStatusMut]);
 
   const handleMoveToScreening = useCallback(async (id: string) => {
     const applicant = data.find((a) => a.id === id);
@@ -213,6 +236,111 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     }
   }, [data, jdId, moveToScreeningMut]);
 
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const toggleSelectAll = useCallback(() => {
+    if (!showBulkSelection) return;
+    setSelectedIds((prev) => {
+      if (prev.size === data.length) return new Set();
+      return new Set(data.map((a) => a.id));
+    });
+  }, [data, showBulkSelection]);
+
+  const allSelected = showBulkSelection && selectedIds.size === data.length && data.length > 0;
+
+  const clearSelection = useCallback(() => {
+    setSelectedIds(new Set());
+  }, []);
+
+  const handleBulkMoveToScreening = useCallback(async () => {
+    const candidates = data.filter((a) => selectedIds.has(a.id));
+    if (candidates.length === 0) return;
+    setIsBulkProcessing(true);
+    const results = await Promise.allSettled(
+      candidates.map(async (a) => {
+        try {
+          await moveToScreeningMut({
+            hiringRequestId: jdId,
+            candidateId: a.candidateId,
+            name: a.name,
+            email: a.email ?? "",
+            phone: a.phone,
+            resume_url: a.cvUrl,
+          });
+          const resp = await triggerAiInterviewMut({
+            hiringRequestId: jdId,
+            candidateId: a.candidateId,
+            round_name: "AI Screening Round",
+            interview_type: "AI_SCREENING",
+            round_type: "AI_SCREENING_ROUND",
+          });
+          await updateCandidateRoundStatusMut({
+            candidateId: a.candidateId,
+            stage: "AI_SCREENING",
+            status: "SCREENING_ROUND_SCHEDULED",
+            current_round_id: resp.round_id,
+          });
+          overrideStatus(a.id, "screening_round_scheduled");
+          useToastStore.getState().addToast(`${a.name} moved to AI Screening`, ToastType.SUCCESS);
+        } catch {
+          useToastStore.getState().addToast(`Failed to move ${a.name} to screening`, ToastType.ERROR);
+        }
+      }),
+    );
+    const succeeded = results.filter((r) => r.status === "fulfilled").length;
+    const failed = results.filter((r) => r.status === "rejected").length;
+    if (failed > 0) {
+      useToastStore.getState().addToast(`${succeeded} moved, ${failed} failed`, failed === 0 ? ToastType.SUCCESS : ToastType.WARNING);
+    }
+    setSelectedIds(new Set());
+    setIsBulkProcessing(false);
+    onRefresh?.();
+  }, [data, selectedIds, jdId, moveToScreeningMut, triggerAiInterviewMut, updateCandidateRoundStatusMut, onRefresh]);
+
+  const handleBulkMoveToInterview = useCallback(async () => {
+    const candidates = data.filter((a) => selectedIds.has(a.id));
+    if (candidates.length === 0) return;
+    setIsBulkProcessing(true);
+    const results = await Promise.allSettled(
+      candidates.map(async (a) => {
+        try {
+          const resp = await triggerAiInterviewMut({
+            hiringRequestId: jdId,
+            candidateId: a.candidateId,
+            round_name: "AI Interview Round",
+            interview_type: "AI_INTERVIEW",
+            round_type: "AI_INTERVIEW_ROUND",
+          });
+          await updateCandidateRoundStatusMut({
+            candidateId: a.candidateId,
+            stage: "AI_INTERVIEW",
+            status: "INTERVIEW_SCHEDULED",
+            current_round_id: resp.round_id,
+          });
+          overrideStatus(a.id, "interview_scheduled");
+          useToastStore.getState().addToast(`${a.name} moved to AI Interview`, ToastType.SUCCESS);
+        } catch {
+          useToastStore.getState().addToast(`Failed to move ${a.name} to interview`, ToastType.ERROR);
+        }
+      }),
+    );
+    const succeeded = results.filter((r) => r.status === "fulfilled").length;
+    const failed = results.filter((r) => r.status === "rejected").length;
+    if (failed > 0) {
+      useToastStore.getState().addToast(`${succeeded} moved, ${failed} failed`, failed === 0 ? ToastType.SUCCESS : ToastType.WARNING);
+    }
+    setSelectedIds(new Set());
+    setIsBulkProcessing(false);
+    onRefresh?.();
+  }, [data, selectedIds, jdId, triggerAiInterviewMut, updateCandidateRoundStatusMut, onRefresh]);
+
   const closeFinalDecision = () => {
     setFinalCandidateId(null);
     setFinalDecision(null);
@@ -235,13 +363,28 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
     onMoveToNextRound: (id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); },
     onScheduleInterview: (id) => { setScheduleCandidateId(id); },
     onMoveToScreening: handleMoveToScreening,
+    onCancelInterview: handleCancelInterview,
     onMenuSelect: (id) => { setFinalCandidateId(id); setFinalDecision("selected"); },
     onMenuReject: (id) => { setFinalCandidateId(id); setFinalDecision("rejected"); },
   });
 
+  const selectionCount = selectedIds.size;
+
   return (
     <>
       <div className="accordion-list">
+      {showBulkSelection && (
+        <div className="bulk-select-header">
+          <i
+            className={`bx ${allSelected ? "bx-checkbox-checked" : "bx-checkbox"} applicant-checkbox`}
+            onClick={toggleSelectAll}
+          />
+          <span className="bulk-select-label">Select All</span>
+          {selectionCount > 0 && (
+            <span className="bulk-select-count">{selectionCount} candidate{selectionCount !== 1 ? "s" : ""} selected</span>
+          )}
+        </div>
+      )}
       {data.map((a) => {
         const isOpen = openId === a.id;
         const isScreening = screeningId === a.id;
@@ -252,6 +395,9 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
               applicant={merged}
               isOpen={isOpen}
               isScreening={isScreening}
+              showCheckbox={showBulkSelection}
+              isSelected={selectedIds.has(a.id)}
+              onToggleSelect={toggleSelect}
               accordionTab={accordionTab}
               onToggleOpen={(id) => {
                 if (isOpen) { setOpenId(null); } else { setOpenId(id); setAccordionTab("details"); }
@@ -302,6 +448,40 @@ function Applicants({ data: propData, openId, setOpenId, filter, onFilterChange,
       />
 
       <ScheduleRoundModal open={!!scheduleCandidateId} candidateName={data.find((a) => a.id === scheduleCandidateId)?.name ?? ""} candidateId={scheduleCandidateId ?? ""} candidateNumberId={data.find((a) => a.id === scheduleCandidateId)?.candidateId ?? 0} jdId={jdId} hiringRequestId={jdId} onClose={() => setScheduleCandidateId(null)} onScheduled={(id) => { overrideStatus(id, "scheduled"); setScreeningId(null); onRefresh?.(); }} />
+
+      {showBulkSelection && selectionCount > 0 && (
+        <div className="bulk-action-bar">
+          <span className="bulk-action-count">{selectionCount} candidate{selectionCount !== 1 ? "s" : ""} selected</span>
+          <div className="bulk-action-buttons">
+            <button
+              className="btn screen-btn compact"
+              onClick={handleBulkMoveToScreening}
+              disabled={isBulkProcessing}
+              type="button"
+            >
+              {isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-phone" />}
+              {" "}Move to AI Screening
+            </button>
+            <button
+              className="btn screen-btn compact"
+              onClick={handleBulkMoveToInterview}
+              disabled={isBulkProcessing}
+              type="button"
+            >
+              {isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-bot" />}
+              {" "}Move to AI Interview
+            </button>
+            <button
+              className="bulk-action-clear"
+              onClick={clearSelection}
+              disabled={isBulkProcessing}
+              type="button"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
 
       <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 

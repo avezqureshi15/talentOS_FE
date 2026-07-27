@@ -4,7 +4,7 @@ export type SearchResultItem = {
   id: string;
   label: string;
   sublabel: string;
-  type: "action" | "hiring-request";
+  type: "action" | "hiring-request" | "tenant";
   hiringRequest?: HiringRequest;
 };
 
@@ -26,4 +26,11 @@ export type CommandPaletteProps = {
 export type CommandPaletteSection = {
   title: string;
   items: SearchResultItem[];
+};
+
+export type CommandPaletteConfig = {
+  placeholder: string;
+  sectionTitle: string;
+  search: (q: string) => Promise<SearchResultItem[]>;
+  onSelect: (item: { id: string }) => void;
 };

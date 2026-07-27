@@ -5,9 +5,11 @@ import { ToastType } from "@/components/ui/toast/toast.types";
 
 export const useExportCsv = (hiringRequestId: string, title: string) => {
   const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const handleExport = async () => {
     setIsExporting(true);
+    setExportError(null);
     try {
       const res = await fetch(`${BE_API_BASE_URL}/hiring-requests/${hiringRequestId}/export`);
       if (!res.ok) throw new Error("Export failed");
@@ -22,11 +24,12 @@ export const useExportCsv = (hiringRequestId: string, title: string) => {
       URL.revokeObjectURL(url);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Export failed";
+      setExportError(message);
       useToastStore.getState().addToast(message, ToastType.ERROR);
     } finally {
       setIsExporting(false);
     }
   };
 
-  return { handleExport, isExporting };
+  return { handleExport, isExporting, exportError };
 };

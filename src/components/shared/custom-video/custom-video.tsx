@@ -30,7 +30,7 @@ const CustomVideo = forwardRef<CustomVideoHandle, CustomVideoProps>(({ src }, re
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const seekTrackRef = useRef<HTMLDivElement>(null);
-  const hideTimer = useRef<ReturnType<typeof setTimeout>>();
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -41,7 +41,6 @@ const CustomVideo = forwardRef<CustomVideoHandle, CustomVideoProps>(({ src }, re
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isSeeking, setIsSeeking] = useState(false);
   const seekingRef = useRef(false);
-  const [buffered, setBuffered] = useState(0);
 
   useImperativeHandle(ref, () => ({
     seek: (time: number) => {
@@ -49,8 +48,6 @@ const CustomVideo = forwardRef<CustomVideoHandle, CustomVideoProps>(({ src }, re
     },
     get video() { return videoRef.current; },
   }), []);
-
-  /* ─── video event listeners ─── */
   useEffect(() => {
     const el = videoRef.current;
     if (!el) return;
@@ -59,16 +56,12 @@ const CustomVideo = forwardRef<CustomVideoHandle, CustomVideoProps>(({ src }, re
     const onPlay = () => setPlaying(true);
     const onPause = () => setPlaying(false);
     const onEnd = () => setPlaying(false);
-    const onProgress = () => {
-      if (el.buffered.length > 0) setBuffered(el.buffered.end(el.buffered.length - 1));
-    };
     const onRate = () => setPlaybackRate(el.playbackRate);
     el.addEventListener("timeupdate", onTime);
     el.addEventListener("loadedmetadata", onMeta);
     el.addEventListener("play", onPlay);
     el.addEventListener("pause", onPause);
     el.addEventListener("ended", onEnd);
-    el.addEventListener("progress", onProgress);
     el.addEventListener("ratechange", onRate);
     return () => {
       el.removeEventListener("timeupdate", onTime);
@@ -76,7 +69,6 @@ const CustomVideo = forwardRef<CustomVideoHandle, CustomVideoProps>(({ src }, re
       el.removeEventListener("play", onPlay);
       el.removeEventListener("pause", onPause);
       el.removeEventListener("ended", onEnd);
-      el.removeEventListener("progress", onProgress);
       el.removeEventListener("ratechange", onRate);
     };
   }, []);
@@ -203,7 +195,6 @@ const CustomVideo = forwardRef<CustomVideoHandle, CustomVideoProps>(({ src }, re
 
   /* ─── render ─── */
   const pct = duration > 0 ? (currentTime / duration) * 100 : 0;
-  const bufPct = duration > 0 ? (buffered / duration) * 100 : 0;
   const volPct = muted ? 0 : volume * 100;
 
   return (

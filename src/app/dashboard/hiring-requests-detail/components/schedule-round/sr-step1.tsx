@@ -1,11 +1,11 @@
 import { useState, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP, AI_ID, AI_SCREENING_ID } from "./schedule-round-modal.constants";
+import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP, AI_ID, AI_SCREENING_ID, DUMMY_SCREENING_ROUND, DUMMY_INTERVIEW_ROUND } from "./schedule-round-modal.constants";
 import { askSlotsForEmployee } from "@/components/shared/mentions/services/ask-slots.service";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
-import type { Interviewer, SlotTab, AiTemplate } from "./schedule-round-modal.types";
+import type { Interviewer, SlotTab, ScreeningRoundConfig, InterviewRoundConfig } from "./schedule-round-modal.types";
 import type { CommandItem } from "@/components/shared/mentions/types";
 
 type SrStep1Props = {
@@ -23,7 +23,8 @@ type SrStep1Props = {
   isLoading: boolean;
   isSearching: boolean;
   hideSearch?: boolean;
-  aiTemplates?: AiTemplate[];
+  onNext?: () => void;
+  canProceed?: boolean;
 };
 
 const slotsLabel = (count: number): string => {
@@ -42,12 +43,23 @@ const groupSlots = (items: CommandItem[]) => {
   return [...map.entries()].sort(([a], [b]) => sortKey(a) - sortKey(b)).map(([group, items]) => ({ group, items }));
 };
 
-const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch, aiTemplates }: SrStep1Props) => {
+const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch, onNext, canProceed }: SrStep1Props) => {
   const isSelected = (iv: Interviewer) => selectedInterviewers.some((s) => s.id === iv.id);
   // justification: stores tooltip state for avatar hover (name + designation)
   const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
   // justification: stores tooltip state for ask-slots button hover
   const [askTooltip, setAskTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
+
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set(["iq-1"]));
+
+  const toggleCard = useCallback((id: string) => {
+    setExpandedCards((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
 
   const clearTooltip = useCallback(() => setTooltip(null), []);
   const clearAskTooltip = useCallback(() => setAskTooltip(null), []);
@@ -91,7 +103,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
     </div>
   );
 
-  const aiActive = selectedInterviewers.some((s) => s.id === AI_ID) && aiTemplates && aiTemplates.length > 0;
+  const aiActive = selectedInterviewers.some((s) => s.id === AI_ID);
   const aiScreeningActive = selectedInterviewers.some((s) => s.id === AI_SCREENING_ID);
 
   const renderSlotList = () => (
@@ -116,65 +128,77 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
     </div>
   );
 
-  const renderTemplateCards = () => (
-    <div className="sr-template-list">
-      {aiTemplates!.map((tmpl) => {
-        const isSelected = selectedSlotId === `ai-${tmpl.id}`;
-        return (
-          <div
-            key={tmpl.id}
-            className={`sr-template-card${isSelected ? " sr-template-card--selected" : ""}`}
-            onClick={() => onSlotSelect(`ai-${tmpl.id}`)}
-          >
-            <div className="sr-template-card-header">
-              <i className="bx bx-sparkles sr-template-card-icon" />
-              <div>
-                <div className="sr-template-card-name">{tmpl.name}</div>
-                <div className="sr-template-card-desc">{tmpl.description}</div>
-              </div>
-            </div>
+  const interviewConfig: InterviewRoundConfig = DUMMY_INTERVIEW_ROUND;
 
-            <div className="sr-template-card-section">
-              <div className="sr-template-card-section-label">{SR_LABELS.PROCTORING_LABEL}</div>
-              <div className="sr-template-card-chips">
-                {tmpl.proctoring.map((p) => (
-                  <span key={p.label} className={`sr-template-chip${p.enabled ? " sr-template-chip--on" : " sr-template-chip--off"}`}>
-                    {p.enabled ? <i className="bx bx-check" /> : <i className="bx bx-x" />}
-                    {p.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="sr-template-card-section">
-              <div className="sr-template-card-section-label">{SR_LABELS.INSIGHTS_LABEL}</div>
-              <div className="sr-template-card-insights">
-                {tmpl.insights.map((insight) => (
-                  <span key={insight} className="sr-template-insight">
-                    <i className="bx bx-line-chart" />
-                    {insight}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="sr-template-card-section">
-              <div className="sr-template-card-section-label">{SR_LABELS.TEAM_MEMBERS_LABEL}</div>
-              <div className="sr-template-card-team">
-                {tmpl.teamMembers.map((m) => (
-                  <div key={m.name} className="sr-template-team-avatar" title={m.name}>
-                    {m.initials}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {isSelected && <i className="bx bx-check sr-template-card-check" />}
+  const renderScreeningConfig = (config: ScreeningRoundConfig) => {
+    return (
+      <div className="sr-config-panel-v2">
+        <div className="sr-config-meta-bar">
+          <div className="sr-config-meta-bar-left">
+            <i className="bx bx-microphone" />
+            <span className="sr-config-meta-bar-title">{SR_LABELS.SCREENING_ROUND_TITLE}</span>
           </div>
-        );
-      })}
-    </div>
-  );
+          <div className="sr-config-meta-bar-right">
+            <span className="sr-config-badge sr-config-badge--accent"><i className="bx bx-time-five" />{SR_LABELS.AI_DURATION_BADGE}</span>
+            <span className="sr-config-badge sr-config-badge--accent"><i className="bx bx-microphone" />{SR_LABELS.AI_VOICE_TEXT_SCREENING_BADGE}</span>
+          </div>
+        </div>
+        <div className="sr-config-questions-v2">
+          {config.screening_questions.map((q, i) => (
+            <div key={q.id} className="sr-question-card">
+              <div className="sr-question-card-header" style={{ cursor: "default" }}>
+                <span className="sr-question-card-num">{String(i + 1).padStart(2, "0")}</span>
+                <span className="sr-question-card-text">{q.question}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderInterviewConfig = (config: InterviewRoundConfig) => {
+    return (
+      <div className="sr-config-panel-v2">
+        <div className="sr-config-meta-bar">
+          <div className="sr-config-meta-bar-left">
+            <i className="bx bx-sparkles" />
+            <span className="sr-config-meta-bar-title">{SR_LABELS.INTERVIEW_ROUND_TITLE}</span>
+          </div>
+          <div className="sr-config-meta-bar-right">
+            <span className="sr-config-badge sr-config-badge--accent"><i className="bx bx-time-five" />{SR_LABELS.AI_DURATION_BADGE}</span>
+            <span className="sr-config-badge sr-config-badge--accent"><i className="bx bx-video" />{SR_LABELS.AI_VOICE_TEXT_BADGE}</span>
+            <span className="sr-config-badge sr-config-badge--score">{config.interview_total_score} pts</span>
+          </div>
+        </div>
+        <div className="sr-config-questions-v2">
+          {config.interview_questions.map((q, i) => {
+            const isRubricVisible = expandedCards.has(q.id);
+            return (
+              <div key={q.id} className={`sr-question-card${isRubricVisible ? " sr-question-card--expanded" : ""}`}>
+                <div className="sr-question-card-header" onClick={() => toggleCard(q.id)}>
+                  <span className="sr-question-card-num">Q{i + 1}</span>
+                  <span className="sr-question-card-text">{q.question}</span>
+                  <span className="sr-question-card-toggle">
+                    <i className={`bx ${isRubricVisible ? "bx-chevron-down" : "bx-chevron-right"}`} />
+                  </span>
+                  <span className="sr-question-card-score">{q.score}</span>
+                </div>
+                {isRubricVisible && q.expected_points && q.expected_points.length > 0 && (
+                  <div className="sr-question-card-rubric">
+                    <span className="sr-question-card-rubric-label">{SR_LABELS.INTERVIEW_EXPECTED}</span>
+                    {q.expected_points.map((pt, pi) => (
+                      <span key={pi} className="sr-question-card-rubric-item">{pt}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="sr-two-col">
@@ -186,7 +210,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
         <div className="sr-interviewer-list">
           <button
             key={AI_ID}
-            className={`sr-interviewer-item sr-interviewer-item--ai ${selectedInterviewers.some((s) => s.id === AI_ID) ? "sr-interviewer-item--selected" : ""}`}
+            className={`sr-interviewer-item sr-interviewer-item--ai ${selectedInterviewers.some((s) => s.id === AI_ID) ? "sr-interviewer-item--selected" : "sr-interviewer-item--unavailable"}`}
             onClick={() => onSelectInterviewer({
               id: AI_ID, emp_id: AI_ID, name: SR_LABELS.AI_NAME,
               designation: "AI", department: "", email: "", slots_count: -1, has_slots: true,
@@ -197,14 +221,16 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
               <i className="bx bx-sparkles" />
             </div>
             <div className="sr-interviewer-info">
-              <span className="sr-interviewer-name">{SR_LABELS.AI_NAME}</span>
-              <span className="sr-interviewer-slots sr-interviewer-slots--ai">{SR_LABELS.AI_SLOTS_LABEL}</span>
+              <div className="sr-interviewer-name">{SR_LABELS.AI_NAME}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 1 }}>
+                <span className="sr-interviewer-slots sr-interviewer-slots--ai">{SR_LABELS.AI_SLOTS_LABEL}</span>
+              </div>
             </div>
             {selectedInterviewers.some((s) => s.id === AI_ID) && <i className="bx bx-check sr-interviewer-check" />}
           </button>
           <button
             key={AI_SCREENING_ID}
-            className={`sr-interviewer-item sr-interviewer-item--ai ${selectedInterviewers.some((s) => s.id === AI_SCREENING_ID) ? "sr-interviewer-item--selected" : ""}`}
+            className={`sr-interviewer-item sr-interviewer-item--ai ${selectedInterviewers.some((s) => s.id === AI_SCREENING_ID) ? "sr-interviewer-item--selected" : "sr-interviewer-item--unavailable"}`}
             onClick={() => onSelectInterviewer({
               id: AI_SCREENING_ID, emp_id: AI_SCREENING_ID, name: SR_LABELS.AI_SCREENING_NAME,
               designation: "AI Screening", department: "", email: "", slots_count: -1, has_slots: true,
@@ -215,8 +241,10 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
               <i className="bx bx-microphone" />
             </div>
             <div className="sr-interviewer-info">
-              <span className="sr-interviewer-name">{SR_LABELS.AI_SCREENING_NAME}</span>
-              <span className="sr-interviewer-slots sr-interviewer-slots--ai">{SR_LABELS.AI_SLOTS_LABEL}</span>
+              <div className="sr-interviewer-name">{SR_LABELS.AI_SCREENING_NAME}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 1 }}>
+                <span className="sr-interviewer-slots sr-interviewer-slots--ai">{SR_LABELS.AI_SLOTS_LABEL}</span>
+              </div>
             </div>
             {selectedInterviewers.some((s) => s.id === AI_SCREENING_ID) && <i className="bx bx-check sr-interviewer-check" />}
           </button>
@@ -240,39 +268,39 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
         </div>
       </div>}
       <div className="sr-right-col">
-        {selectedInterviewers.length > 0 ? (
-          <div className="sr-slot-section">
-             <span className="sr-section-label">{aiScreeningActive ? "AI Interview Session" : aiActive ? SR_LABELS.SELECT_TEMPLATE : SR_LABELS.SELECT_SLOT}</span>
-            {!aiActive && tabs.length > 0 && (
-              <div className="sr-tabs-row">
-                {tabs.map((tab) => (
-                  <button key={tab.id} className={`sr-tab ${activeTab === tab.id ? "sr-tab--active" : ""}`} onClick={() => onTabChange(tab.id)} type="button">
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            )}
-            {aiScreeningActive ? (
-              <div className="sr-confirm-ai-screening">
-                <div className="sr-ai-screening-card" onClick={() => onSlotSelect("ai-screening-confirmed")}>
-                  <div className="sr-ai-screening-icon"><i className="bx bx-microphone" /></div>
-                  <div className="sr-ai-screening-title">AI Interview Session</div>
-                  <div className="sr-ai-screening-desc">An AI-powered interview will be created for this candidate after scheduling.</div>
-                  {selectedSlotId === "ai-screening-confirmed" && <i className="bx bx-check sr-template-card-check" />}
+        <div className="sr-right-col-scroll">
+          {selectedInterviewers.length > 0 ? (
+            <div className="sr-slot-section">
+              {!aiActive && !aiScreeningActive && <span className="sr-section-label">{SR_LABELS.SELECT_SLOT}</span>}
+              {!aiActive && !aiScreeningActive && tabs.length > 0 && (
+                <div className="sr-tabs-row">
+                  {tabs.map((tab) => (
+                    <button key={tab.id} className={`sr-tab ${activeTab === tab.id ? "sr-tab--active" : ""}`} onClick={() => onTabChange(tab.id)} type="button">
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
-              </div>
-            ) : aiActive ? (
-              renderTemplateCards()
-            ) : isLoading ? (
-              renderSkeleton()
-            ) : activeSlots.length > 0 ? (
-              renderSlotList()
-            ) : (
-              <div className="sr-empty-slots">{SR_LABELS.NO_SLOTS}</div>
-            )}
+              )}
+              {aiScreeningActive ? (
+                renderScreeningConfig(DUMMY_SCREENING_ROUND)
+              ) : aiActive ? (
+                renderInterviewConfig(interviewConfig)
+              ) : isLoading ? (
+                renderSkeleton()
+              ) : activeSlots.length > 0 ? (
+                renderSlotList()
+              ) : (
+                <div className="sr-empty-slots">{SR_LABELS.NO_SLOTS}</div>
+              )}
+            </div>
+          ) : (
+            <div className="sr-empty-slots">{SR_LABELS.NO_INTERVIEWER}</div>
+          )}
+        </div>
+        {(aiActive || aiScreeningActive) && (
+          <div className="sr-config-footer">
+            <button className="sr-btn sr-btn--primary" disabled={!canProceed} onClick={onNext} type="button">{SR_LABELS.NEXT} →</button>
           </div>
-        ) : (
-          <div className="sr-empty-slots">{SR_LABELS.NO_INTERVIEWER}</div>
         )}
       </div>
 

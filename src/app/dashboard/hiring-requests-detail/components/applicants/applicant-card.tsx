@@ -13,10 +13,13 @@ const ApplicantCard = ({
   isOpen,
   isScreening = false,
   readOnly = false,
+  isSelected = false,
+  showCheckbox = false,
   accordionTab,
   onToggleOpen,
   onAction,
   onMenuAction,
+  onToggleSelect,
   onTabChange,
   onCoverLetterReadMore,
   onAiSummaryReadMore,
@@ -64,7 +67,13 @@ const ApplicantCard = ({
   return (
     <div className="accordion-card">
       <div className="accordion-header">
-        <div className="header-left" onClick={() => { if (canExpand) onToggleOpen(a.id); }}>
+        <div className="header-left" onClick={() => { if (canExpand && !showCheckbox) onToggleOpen(a.id); }}>
+          {showCheckbox && (
+            <i
+              className={`bx ${isSelected ? "bx-checkbox-checked" : "bx-checkbox"} applicant-checkbox`}
+              onClick={(e) => { e.stopPropagation(); onToggleSelect?.(a.id); }}
+            />
+          )}
           <span className="name">{a.name}</span>
           {a.email && <span className="header-meta-item"><i className="bx bx-envelope"></i> {a.email}</span>}
           {a.currentRoundId && jdId && (
@@ -106,7 +115,7 @@ const ApplicantCard = ({
             onAction && (
               <button
                 key={action.handler}
-                className={`btn ${action.variant === "shortlist" || action.variant === "schedule" ? "shortlist" : action.variant === "reject" ? "reject" : "screen-btn"} compact`}
+                className={`btn ${action.variant === "shortlist" || action.variant === "schedule" ? "shortlist" : action.variant === "reject" ? "reject" : action.variant === "cancel" ? "cancel" : "screen-btn"} compact`}
                 onClick={(e) => { e.stopPropagation(); onAction(action.handler, a.id); }}
               >
                 {action.icon && <i className={action.icon} />} {action.label}

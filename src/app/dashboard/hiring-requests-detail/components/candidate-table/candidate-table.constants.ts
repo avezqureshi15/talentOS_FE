@@ -1,13 +1,10 @@
-import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
-import type { Candidate } from "./candidate-table.types";
-
 export type ColumnDef = {
   key: string;
   label: string;
   width: string;
 };
 
-export const STAGE_COLUMNS: Record<StageKey, ColumnDef[]> = {
+export const STAGE_COLUMNS: Record<string, ColumnDef[]> = {
   "yet-to-start": [
     { key: "candidate", label: "CANDIDATE", width: "2fr" },
     { key: "addedBy", label: "ADDED BY", width: "1fr" },
@@ -56,7 +53,8 @@ export const SCORE_PILLS: { max: number; label: string; cls: string }[] = [
   { max: 0, label: "Reject", cls: "score-pill--danger" },
 ];
 
-export const MOCK_CANDIDATES: Record<StageKey, Candidate[]> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const MOCK_CANDIDATES: Record<string, any> = {
   "yet-to-start": [
     { id: "c1", name: "Sarah Johnson", email: "sarah@example.com", addedBy: "Alice", addedAt: "2026-07-20", openingDate: "2026-07-01", deadline: "2026-07-25" },
     { id: "c2", name: "Mike Peters", email: "mike@example.com", addedBy: "Bob", addedAt: "2026-07-21", openingDate: "2026-07-01", deadline: "2026-07-22" },

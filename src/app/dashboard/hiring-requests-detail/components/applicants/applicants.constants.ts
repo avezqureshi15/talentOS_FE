@@ -39,7 +39,7 @@ export const ROUND_VERDICT_LABELS: Record<string, string> = {
 
 export const INFO_CHIP_SKIP_KEYS = new Set(["fitscore", "summary", "summary_md", "rejection_details", "strong_matches", "gaps_and_concerns"]);
 
-export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round", "interview_scheduled", "interview_rescheduled", "interview_cancelled"]);
+export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round", "interview_scheduled", "interview_rescheduled", "interview_cancelled", "screening_round_scheduled"]);
 
 export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   state: "waiting_for_review",
@@ -88,7 +88,20 @@ export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
   chip: { label: "Interview Scheduled", variant: "info" },
   showInfoChips: false,
   showExpandedContent: true,
-  actions: [],
+  actions: [
+    { label: "Cancel", icon: "bx bx-x-circle", variant: "cancel", handler: "onCancelInterview" },
+  ],
+  menuActions: ["select", "reject"],
+};
+
+export const SCREENING_ROUND_SCHEDULED_CONFIG: StateConfig = {
+  state: "screening_round_scheduled",
+  chip: { label: "Screening Round Scheduled", variant: "info" },
+  showInfoChips: false,
+  showExpandedContent: true,
+  actions: [
+    { label: "Cancel", icon: "bx bx-x-circle", variant: "cancel", handler: "onCancelInterview" },
+  ],
   menuActions: ["select", "reject"],
 };
 
@@ -138,6 +151,7 @@ export const STATE_CONFIGS: Record<string, StateConfig> = {
   interview_scheduled: INTERVIEW_SCHEDULED_CONFIG,
   interview_rescheduled: INTERVIEW_RESCHEDULED_CONFIG,
   interview_cancelled: INTERVIEW_CANCELLED_CONFIG,
+  screening_round_scheduled: SCREENING_ROUND_SCHEDULED_CONFIG,
   rejected: REJECTED_CONFIG,
   selected: SELECTED_CONFIG,
 };

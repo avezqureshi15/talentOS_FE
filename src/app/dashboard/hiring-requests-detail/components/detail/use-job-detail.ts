@@ -103,7 +103,7 @@ export function useJobDetail({
 
   const handleRowClick = useCallback(
     (candidate: Applicant) => {
-      if (candidate.status === "interview_scheduled" || candidate.status === "interview_rescheduled" || candidate.status === "interview_cancelled") return;
+      if (candidate.status === "interview_scheduled" || candidate.status === "interview_rescheduled" || candidate.status === "interview_cancelled" || candidate.status === "screening_round_scheduled") return;
       const roundId = candidate.currentRoundId ?? candidate.id;
       window.open(`/hiring-requests/${jobId}/round-details/${roundId}?candidateId=${candidate.id}`, "_blank");
     },

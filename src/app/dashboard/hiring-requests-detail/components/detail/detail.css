@@ -644,11 +644,23 @@
 }
 
 .screen-btn.compact,
-.btn.compact {
+.btn.compact,
+.cancel.compact {
   white-space: nowrap;
-  padding: 4px 8px;
+  padding: 8px 8px;
   font-size: 12px;
   flex: none;
+}
+
+.cancel.compact {
+  color: var(--danger-light);
+  border: 1px solid var(--danger-light-border);
+  background: var(--danger-bg-strong);
+}
+
+.cancel.compact:hover {
+  background: var(--danger-light);
+  color: #fff;
 }
 
 .job-header {
@@ -1056,6 +1068,66 @@
 }
 
 /* =========================
+   CONFIRM BUTTONS
+========================= */
+.confirm-btn {
+  flex: 1;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.confirm-cancel {
+  background: var(--surface-card);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.confirm-cancel:hover:not(:disabled) {
+  background: var(--surface-card-hover);
+}
+
+.confirm-proceed {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.confirm-proceed:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.confirm-body {
+  padding: 16px;
+}
+
+.confirm-body p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 16px;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.confirm-actions .confirm-btn {
+  flex: 1;
+}
+
+/* =========================
    CONFIRM DANGER BUTTON
 ========================= */
 .confirm-danger {
@@ -1376,4 +1448,110 @@
 .view-toggle-icon--active {
   color: var(--accent);
   background: var(--accent-bg);
+}
+
+/* =========================
+   BULK SELECTION CHECKBOX
+========================= */
+.applicant-checkbox {
+  font-size: 18px;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.applicant-checkbox:hover {
+  color: var(--text-primary);
+}
+
+.bx-checkbox-checked.applicant-checkbox {
+  color: var(--accent);
+}
+
+/* =========================
+   BULK SELECT HEADER ROW
+========================= */
+.bulk-select-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 4px;
+}
+
+.bulk-select-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.bulk-select-label:hover {
+  color: var(--text-primary);
+}
+
+.bulk-select-count {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-left: auto;
+}
+
+/* =========================
+   BULK ACTION BOTTOM BAR
+========================= */
+.bulk-action-bar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  margin-top: 8px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(12px);
+  z-index: 50;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.bulk-action-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.bulk-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bulk-action-clear {
+  padding: 6px 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.bulk-action-clear:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.bulk-action-clear:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

@@ -4,11 +4,14 @@ import type { Applicant } from "@/app/dashboard/hiring-requests-detail/component
 export const DEFAULT_FILTER = "all";
 
 export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
-  "resume-shortlisting": (a) => a.status === "new" || a.status === "resume_shortlisted",
-  screening: (a) => a.status === "under_evaluation",
-  interview: (a) => a.status === "interview_scheduled" || a.status === "interview_rescheduled" || a.status === "interview_cancelled",
-  "waiting-evaluation": (a) => a.status === "waiting_for_review",
-  evaluated: (a) => a.status === "under_evaluation",
+  "resume-shortlisting": (a) => a.stage === "RESUME_SHORTLISTED",
+  screening: (a) => a.stage === "SCREENING" || a.stage === "AI_SCREENING",
+  interview: (a) => a.stage === "INTERVIEW" || a.stage === "AI_INTERVIEW" || a.stage === "REGULAR_INTERVIEW",
+  "waiting-evaluation": (a) => a.stage === "WAITING_FOR_EVALUATION",
+  evaluated: (a) => a.stage === "EVALUATED" || a.stage === "AI_INTERVIEW_EVALUATED" || a.stage === "AI_SCREENING_EVALUATED",
+  selected: () => false,
+  rejected: () => false,
+  "on-hold": () => false,
 };
 
 export const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = {
@@ -21,7 +24,7 @@ export const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = 
 };
 
 export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
-  "yet-to-start": (a) => a.status === "interview_scheduled" || a.status === "interview_rescheduled",
+  "yet-to-start": (a) => a.status === "interview_scheduled" || a.status === "interview_rescheduled" || a.status === "screening_round_scheduled",
   "no-show": (a) => a.status === "interview_cancelled",
 };
 
