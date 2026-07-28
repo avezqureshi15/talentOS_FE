@@ -8,7 +8,7 @@ export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
   screening: (a) => a.stage === "SCREENING" || a.stage === "AI_SCREENING",
   interview: (a) => a.stage === "INTERVIEW" || a.stage === "AI_INTERVIEW" || a.stage === "REGULAR_INTERVIEW",
   "waiting-evaluation": (a) => a.stage === "WAITING_FOR_EVALUATION" || a.status?.toLowerCase() === "waiting_for_review",
-  evaluated: (a) => a.stage === "EVALUATED" || a.stage === "AI_INTERVIEW_EVALUATED" || a.stage === "AI_SCREENING_EVALUATED" || a.stage === "INTERVIEW" || a.stage === "AI_INTERVIEW",
+  evaluated: (a) => (a.stage === "INTERVIEW" || a.stage === "AI_INTERVIEW") && a.status?.toLowerCase() === "under_evaluation",
   selected: () => false,
   rejected: () => false,
   "on-hold": () => false,
@@ -31,8 +31,8 @@ export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean>
 };
 
 export const EVALUATED_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
-  ai: (a) => a.stage === "AI_INTERVIEW",
-  regular: (a) => a.stage === "INTERVIEW",
+  ai: (a) => a.stage === "AI_INTERVIEW" && a.status?.toLowerCase() === "under_evaluation",
+  regular: (a) => a.stage === "INTERVIEW" && a.status?.toLowerCase() === "under_evaluation",
 };
 export const UI_TABLE_VIEW = "Overview";
 

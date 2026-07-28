@@ -366,6 +366,8 @@
   font-family: var(--font-family);
   outline: none;
   min-width: 0;
+  line-height: 1;
+  padding: 0;
 }
 
 .jobs-search input::placeholder {
@@ -504,9 +506,10 @@
   border: 1px solid #ffffff;
   background: #ffffff;
   color: #000000;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   font-family: var(--font-family);
+  line-height: 1;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
