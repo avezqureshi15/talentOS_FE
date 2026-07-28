@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import "./detail.css";
@@ -57,6 +57,17 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection);
   const [pendingBulkAction, setPendingBulkAction] = useState<"screening" | "interview" | null>(null);
   const [pendingBulkRemarks, setPendingBulkRemarks] = useState<"screening" | "interview" | null>(null);
+  const [selectionStage, setSelectionStage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (showBulkSelection && bulkSelection.selectionCount > 0 && !selectionStage) {
+      setSelectionStage(activeStage);
+    } else if (bulkSelection.selectionCount === 0 && selectionStage) {
+      setSelectionStage(null);
+    }
+  }, [showBulkSelection, bulkSelection.selectionCount, activeStage, selectionStage]);
+
+  const stageLabel = selectionStage ? (PIPELINE_STAGES.find((s) => s.key === selectionStage)?.label ?? selectionStage) : "";
 
   const handleBulkRemarksConfirm = (remarks: string) => {
     if (remarks) bulkSelection.handleSubmitRemarks(remarks);
@@ -90,7 +101,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
         <ErrorBoundary>
           {showBulkSelection && bulkSelection.selectionCount > 0 && (
             <div className="bulk-action-bar">
-              <span className="bulk-action-count">{bulkSelection.selectionCount} candidate{bulkSelection.selectionCount !== 1 ? "s" : ""} selected</span>
+              <span className="bulk-action-count">{bulkSelection.selectionCount} candidate{bulkSelection.selectionCount !== 1 ? "s" : ""} selected in <span className="bulk-stage-chip">{stageLabel}</span> stage</span>
               <div className="bulk-action-buttons">
                 {showBulkScreening && (
                   <button
@@ -213,6 +224,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 onToggleSelectAll={bulkSelection.toggleSelectAll}
                 allSelected={bulkSelection.allSelected}
                 activeStage={activeStage}
+                loading={appsLoading}
               />
             </motion.div>
           )}

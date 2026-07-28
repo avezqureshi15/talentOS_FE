@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchApplicationsPaginated } from "@/services/applications/applications";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { fetchApplicationsPaginated, fetchFinalVerdicts } from "@/services/applications/applications";
 import { PAGINATION } from "@/constants/api-endpoints";
 import { QUERY_KEYS } from "@/constants/constants";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
@@ -79,6 +79,37 @@ export const useApplicationsData = (
   };
 };
 
+type UseFinalizedDataResult = {
+  applicants: Applicant[];
+  total: number;
+  isLoading: boolean;
+  refresh: () => void;
+};
+
+export const useFinalizedData = (
+  jobId?: string,
+  enabled: boolean = true,
+): UseFinalizedDataResult => {
+  const query = useQuery({
+    queryKey: [QUERY_KEYS.FINAL_VERDICTS, jobId],
+    queryFn: () => fetchFinalVerdicts(undefined, 100, 0, jobId),
+    enabled,
+    staleTime: 30_000,
+  });
+
+  const applicants = useMemo<Applicant[]>(
+    () => query.data?.data.map(mapCandidate) ?? [],
+    [query.data],
+  );
+
+  return {
+    applicants,
+    total: query.data?.total ?? 0,
+    isLoading: query.isFetching,
+    refresh: query.refetch,
+  };
+};
+
 function mapCandidate(app: {
   id: string;
   candidate_id: number;
@@ -104,6 +135,10 @@ function mapCandidate(app: {
   stage?: string | null;
   reviews?: Record<string, unknown> | null;
   review_verdict?: string | null;
+  interview_id?: string | null;
+  interviewer_emp_id?: string | null;
+  interviewer_name?: string | null;
+  round_name?: string | null;
 }): Applicant {
   return {
     id: app.id,
@@ -134,5 +169,9 @@ function mapCandidate(app: {
     finalVerdict: app.final_verdict ?? undefined,
     reviews: app.reviews ?? undefined,
     reviewVerdict: app.review_verdict ?? undefined,
+    interviewId: app.interview_id ?? undefined,
+    interviewerEmpId: app.interviewer_emp_id ?? undefined,
+    interviewerName: app.interviewer_name ?? undefined,
+    roundName: app.round_name ?? undefined,
   };
 }

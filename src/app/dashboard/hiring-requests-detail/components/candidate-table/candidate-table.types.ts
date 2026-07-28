@@ -14,4 +14,5 @@ export type CandidateTableProps = {
   onToggleSelectAll?: () => void;
   allSelected?: boolean;
   activeStage?: string;
+  loading?: boolean;
 };

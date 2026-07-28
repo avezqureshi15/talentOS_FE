@@ -10,9 +10,10 @@ export type HiringState =
   | "interview_cancelled"
   | "screening_round_scheduled"
   | "rejected"
-  | "selected";
+  | "selected"
+  | "on-hold";
 
-export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move" | "cancel";
+export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move" | "cancel" | "reschedule";
 
 export type ActionConfig = {
   label: string;
@@ -26,7 +27,7 @@ export type ChipConfig = {
   variant: "success" | "danger" | "warning" | "info" | "neutral" | "yellow";
 };
 
-export type MenuAction = "select" | "reject";
+export type MenuAction = "select" | "reject" | "hold";
 
 export type StateConfig = {
   state: HiringState;
@@ -99,6 +100,10 @@ export type Applicant = {
   reviews?: Record<string, unknown>;
   reviewVerdict?: string;
   stage?: string;
+  interviewId?: string;
+  interviewerEmpId?: string;
+  interviewerName?: string;
+  roundName?: string;
 };
 
 export type ApplicantsProps = {

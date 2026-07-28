@@ -13,7 +13,7 @@ export const HEADER_DEFAULT_VIEW = "pipeline";
 export const HEADER_EXPORT_LABEL = "Export";
 export const HEADER_EXPORT_ICON = "bx-archive-arrow-down";
 
-export const HEADER_ADD_CANDIDATE_LABEL = "Add Candidate";
-export const HEADER_ADD_CANDIDATE_ICON = "bx bx-plus";
+export const HEADER_REFRESH_LABEL = "Refresh";
+export const HEADER_REFRESH_ICON = "bx bx-refresh-cw-alt";
 
 export const HEADER_EXPORT_FILENAME = "Hiring Request";

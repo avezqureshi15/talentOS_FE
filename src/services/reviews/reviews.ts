@@ -37,7 +37,7 @@ type FinalVerdictResponse = {
 
 export const updateFinalVerdict = async (
   candidateId: number,
-  verdict: "SELECTED" | "REJECTED",
+  verdict: "ON_HOLD" | "SELECTED" | "REJECTED",
 ): Promise<FinalVerdictResponse> => {
   const { data } = await httpClient.patch<FinalVerdictResponse>(
     API_ENDPOINTS.FINAL_VERDICT.replace("{candidate_id}", String(candidateId)),

@@ -9,26 +9,28 @@ type Props = {
 
 const ViewToggle = ({ viewMode, onChange }: Props) => (
   <div className="persistent-view-toggle">
-    <motion.button
-      className={`view-toggle-icon${viewMode === "table" ? " view-toggle-icon--active" : ""}`}
-      onClick={() => onChange("table")}
-      title={UI_TABLE_VIEW}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      transition={springSnap}
-    >
-      <i className="bx bx-border-all" />
-    </motion.button>
-    <motion.button
-      className={`view-toggle-icon${viewMode === "card" ? " view-toggle-icon--active" : ""}`}
-      onClick={() => onChange("card")}
-      title={UI_CARD_VIEW}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      transition={springSnap}
-    >
-      <i className="bx bx-grid" />
-    </motion.button>
+    <div className="segmented-control">
+      <motion.button
+        className={`view-toggle-icon${viewMode === "table" ? " view-toggle-icon--active" : ""}`}
+        onClick={() => onChange("table")}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.97 }}
+        transition={springSnap}
+      >
+        <i className="bx bx-border-all" />
+        <span className="view-toggle-label">{UI_TABLE_VIEW}</span>
+      </motion.button>
+      <motion.button
+        className={`view-toggle-icon${viewMode === "card" ? " view-toggle-icon--active" : ""}`}
+        onClick={() => onChange("card")}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.97 }}
+        transition={springSnap}
+      >
+        <i className="bx bx-grid" />
+        <span className="view-toggle-label">{UI_CARD_VIEW}</span>
+      </motion.button>
+    </div>
   </div>
 );
 

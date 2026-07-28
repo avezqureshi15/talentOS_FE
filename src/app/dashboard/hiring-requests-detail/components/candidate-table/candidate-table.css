@@ -188,23 +188,40 @@
   color: var(--text-muted);
 }
 
-.info-btn {
+.info-icon-btn {
   background: none;
-  border: 1px solid var(--border-default);
+  border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 4px;
-  display: inline-flex;
+  padding: 4px;
+  font-size: 16px;
+  display: flex;
   align-items: center;
-  gap: 4px;
-  transition: all 0.12s;
+  justify-content: center;
+  transition: color 0.12s;
 }
 
-.info-btn:hover {
+.info-icon-btn:hover {
   color: var(--text-primary);
-  background: var(--bg-hover);
+}
+
+.info-text-btn {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  margin-right: 12px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.info-text-btn:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent);
 }
 
 /* ---------- Bulk Selection (table view) ---------- */
@@ -219,4 +236,41 @@
 @keyframes rowFadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes skeletonPulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+.applicant-table-row--skeleton {
+  cursor: default;
+  pointer-events: none;
+}
+
+.applicant-table-row--skeleton:hover {
+  background: transparent;
+}
+
+.skeleton-pulse {
+  display: block;
+  background: var(--border-subtle);
+  border-radius: 4px;
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-box {
+  width: 18px;
+  height: 18px;
+}
+
+.skeleton-text {
+  width: 60%;
+  height: 12px;
+}
+
+.skeleton-name {
+  width: 140px;
+  height: 14px;
 }

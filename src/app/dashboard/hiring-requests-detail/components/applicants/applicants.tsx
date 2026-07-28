@@ -6,9 +6,11 @@ import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
+import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/interviews/cancel-interview-modal";
 import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
 import { useMoveToScreening } from "@/hooks/use-move-to-screening";
 import { useUpdateCandidateRoundStatus } from "@/hooks/use-update-candidate-round-status";
+import { useCancelInterview } from "@/hooks/use-cancel-interview";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import { useApplicantActions } from "./hooks/use-applicant-actions";
@@ -42,6 +44,16 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
   const [isConfirmingReject, setIsConfirmingReject] = useState(false);
   const [isShortlisting, setIsShortlisting] = useState(false);
   const [isConfirmingHire, setIsConfirmingHire] = useState(false);
+  const [rescheduleTarget, setRescheduleTarget] = useState<{
+    id: string;
+    name: string;
+    candidateId: number;
+    interviewId: string;
+    interviewerEmpId?: string;
+    interviewerName?: string;
+    roundName?: string;
+  } | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<{ id: string; name: string; interviewId: string } | null>(null);
 
   const data = propData ?? [];
 
@@ -78,7 +90,7 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
       const applicant = data.find((a) => a.id === finalCandidateId);
       if (applicant) {
         try {
-          const verdict = finalDecision === "selected" ? "SELECTED" as const : "REJECTED" as const;
+          const verdict = finalDecision === "selected" ? "SELECTED" as const : finalDecision === "on-hold" ? "ON_HOLD" as const : "REJECTED" as const;
           await updateFinalVerdict(applicant.candidateId, verdict);
           overrideFinalVerdict(finalCandidateId, finalDecision);
         } catch {
@@ -192,23 +204,64 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
 
   const { mutateAsync: moveToScreeningMut } = useMoveToScreening();
   const { mutateAsync: updateCandidateRoundStatusMut } = useUpdateCandidateRoundStatus();
+  const { mutateAsync: cancelInterviewMut } = useCancelInterview();
 
   const handleCancelInterview = useCallback(async (id: string) => {
     const applicant = data.find((a) => a.id === id);
     if (!applicant) return;
+    if (applicant.interviewId) {
+      setCancelTarget({ id, name: applicant.name, interviewId: applicant.interviewId });
+    } else {
+      try {
+        await updateCandidateRoundStatusMut({
+          candidateId: applicant.candidateId,
+          stage: applicant.stage ?? "AI_INTERVIEW",
+          status: "INTERVIEW_CANCELLED",
+          current_round_id: applicant.currentRoundId ?? "",
+        });
+        overrideStatus(id, "interview_cancelled");
+        useToastStore.getState().addToast("Interview cancelled", ToastType.SUCCESS);
+      } catch {
+        useToastStore.getState().addToast("Failed to cancel interview", ToastType.ERROR);
+      }
+    }
+  }, [data, updateCandidateRoundStatusMut]);
+
+  const handleCancelConfirm = useCallback(async () => {
+    if (!cancelTarget) return;
     try {
-      await updateCandidateRoundStatusMut({
-        candidateId: applicant.candidateId,
-        stage: applicant.stage ?? "AI_INTERVIEW",
-        status: "INTERVIEW_CANCELLED",
-        current_round_id: applicant.currentRoundId ?? "",
-      });
-      overrideStatus(id, "interview_cancelled");
+      await cancelInterviewMut(cancelTarget.interviewId);
+      overrideStatus(cancelTarget.id, "interview_cancelled");
       useToastStore.getState().addToast("Interview cancelled", ToastType.SUCCESS);
+      setCancelTarget(null);
+      onRefresh?.();
     } catch {
       useToastStore.getState().addToast("Failed to cancel interview", ToastType.ERROR);
     }
-  }, [data, updateCandidateRoundStatusMut]);
+  }, [cancelTarget, cancelInterviewMut, onRefresh]);
+
+  const handleRescheduleInterview = useCallback((id: string) => {
+    const applicant = data.find((a) => a.id === id);
+    if (!applicant) return;
+    if (applicant.interviewId) {
+      setRescheduleTarget({
+        id,
+        name: applicant.name,
+        candidateId: applicant.candidateId,
+        interviewId: applicant.interviewId,
+        interviewerEmpId: applicant.interviewerEmpId,
+        interviewerName: applicant.interviewerName,
+        roundName: applicant.roundName,
+      });
+    } else {
+      useToastStore.getState().addToast("Interview data not available for rescheduling", ToastType.ERROR);
+    }
+  }, [data]);
+
+  const handleRescheduleScheduled = useCallback((_candidateId: string) => {
+    setRescheduleTarget(null);
+    onRefresh?.();
+  }, [onRefresh]);
 
   const handleMoveToScreening = useCallback(async (id: string) => {
     const applicant = data.find((a) => a.id === id);
@@ -255,8 +308,10 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
     onScheduleInterview: (id) => { setScheduleCandidateId(id); },
     onMoveToScreening: handleMoveToScreening,
     onCancelInterview: handleCancelInterview,
+    onRescheduleInterview: handleRescheduleInterview,
     onMenuSelect: (id) => { setFinalCandidateId(id); setFinalDecision("selected"); },
     onMenuReject: (id) => { setFinalCandidateId(id); setFinalDecision("rejected"); },
+    onMenuHold: (id) => { setFinalCandidateId(id); setFinalDecision("on-hold"); },
   });
 
   return (
@@ -338,6 +393,28 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
 
       <ScheduleRoundModal open={!!scheduleCandidateId} candidateName={data.find((a) => a.id === scheduleCandidateId)?.name ?? ""} candidateId={scheduleCandidateId ?? ""} candidateNumberId={data.find((a) => a.id === scheduleCandidateId)?.candidateId ?? 0} jdId={jdId} hiringRequestId={jdId} onClose={() => setScheduleCandidateId(null)} onScheduled={(id) => { overrideStatus(id, "scheduled"); setScreeningId(null); onRefresh?.(); }} />
 
+      <ScheduleRoundModal
+        open={!!rescheduleTarget}
+        rescheduleMode
+        candidateName={rescheduleTarget?.name ?? ""}
+        candidateId={rescheduleTarget?.id ?? ""}
+        interviewId={rescheduleTarget?.interviewId}
+        interviewerEmpId={rescheduleTarget?.interviewerEmpId}
+        interviewerName={rescheduleTarget?.interviewerName}
+        roundName={rescheduleTarget?.roundName}
+        jdId={jdId}
+        hiringRequestId={jdId}
+        onClose={() => setRescheduleTarget(null)}
+        onScheduled={handleRescheduleScheduled}
+      />
+
+      <CancelInterviewModal
+        open={!!cancelTarget}
+        interviewId={cancelTarget?.interviewId ?? ""}
+        candidateName={cancelTarget?.name ?? ""}
+        onClose={() => setCancelTarget(null)}
+        onConfirm={handleCancelConfirm}
+      />
 
       <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 

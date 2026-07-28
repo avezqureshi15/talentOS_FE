@@ -6,8 +6,8 @@ import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/ca
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
-import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
-import { DEFAULT_FILTER } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { useFinalizedData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
+import { DEFAULT_FILTER, UI_TABLE_VIEW, UI_CARD_VIEW } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import { springSnap, fadeSlideUp, staggerContainer } from "@/utils/motion";
 import { DECISION_STAGES, STAGE_FILTER } from "./decision-board.constants";
 import type { DecisionStageKey } from "./decision-board.types";
@@ -36,7 +36,9 @@ const DecisionBoard = ({ jobId }: Props) => {
     [searchParams],
   );
 
-  const { applicants, isLoading: appsLoading, hasMore, fetchNext, refresh } = useApplicationsContext();
+  const { applicants, isLoading: appsLoading, refresh } = useFinalizedData(jobId, true);
+  const hasMore = false;
+  const fetchNext = () => {};
 
   const stagesWithCounts = useMemo(() =>
     DECISION_STAGES.map((s) => ({
@@ -67,26 +69,28 @@ const DecisionBoard = ({ jobId }: Props) => {
       <motion.div className="tab-content" variants={staggerContainer} initial="hidden" animate="visible">
         <ErrorBoundary>
           <div className="persistent-view-toggle">
-            <motion.button
-              className={`view-toggle-icon${viewMode === "table" ? " view-toggle-icon--active" : ""}`}
-              onClick={() => setViewMode("table")}
-              title="Table view"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={springSnap}
-            >
-              <i className="bx bx-border-all" />
-            </motion.button>
-            <motion.button
-              className={`view-toggle-icon${viewMode === "card" ? " view-toggle-icon--active" : ""}`}
-              onClick={() => setViewMode("card")}
-              title="Card view"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={springSnap}
-            >
-              <i className="bx bx-grid" />
-            </motion.button>
+            <div className="segmented-control">
+              <motion.button
+                className={`view-toggle-icon${viewMode === "table" ? " view-toggle-icon--active" : ""}`}
+                onClick={() => setViewMode("table")}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={springSnap}
+              >
+                <i className="bx bx-border-all" />
+                <span className="view-toggle-label">{UI_TABLE_VIEW}</span>
+              </motion.button>
+              <motion.button
+                className={`view-toggle-icon${viewMode === "card" ? " view-toggle-icon--active" : ""}`}
+                onClick={() => setViewMode("card")}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                transition={springSnap}
+              >
+                <i className="bx bx-grid" />
+                <span className="view-toggle-label">{UI_CARD_VIEW}</span>
+              </motion.button>
+            </div>
           </div>
 
           {viewMode === "card" ? (
@@ -118,6 +122,7 @@ const DecisionBoard = ({ jobId }: Props) => {
                 data={filteredApplicants}
                 columns={DECISION_STAGES.find((s) => s.key === activeStage)?.columns ?? []}
                 onInfoClick={handleInfoClick}
+                loading={appsLoading}
               />
             </motion.div>
           )}

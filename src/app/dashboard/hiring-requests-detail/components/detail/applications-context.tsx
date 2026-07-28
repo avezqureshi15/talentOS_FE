@@ -10,6 +10,10 @@ export type ApplicationsData = {
   fetchNext: () => void;
   refresh: () => void;
   interviewCount: number;
+  finalizedApplicants: Applicant[];
+  finalizedTotal: number;
+  finalizedLoading: boolean;
+  finalizedRefresh: () => void;
 };
 
 export const ApplicationsContext = createContext<ApplicationsData | null>(null);

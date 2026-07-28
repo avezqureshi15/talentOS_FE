@@ -34,12 +34,33 @@ function getDisplayStatus(rawStatus: string): { label: string; cssClass: string 
 const isInterviewStatus = (s: string) =>
   s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled" || s === "screening_round_scheduled";
 
+const SkeletonRows = ({ count, columns, showBulkSelection }: { count: number; columns: CandidateTableProps["columns"]; showBulkSelection?: boolean }) => {
+  const checkboxFlex = "40px";
+  const gridTemplate = showBulkSelection
+    ? `${checkboxFlex} ${columns.map((col) => `${col.flex}fr`).join(" ")}`
+    : columns.map((col) => `${col.flex}fr`).join(" ");
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="applicant-table-row applicant-table-row--skeleton" style={{ gridTemplateColumns: gridTemplate }}>
+          {showBulkSelection && <div className="applicant-table-cell"><span className="skeleton-pulse skeleton-box" /></div>}
+          {columns.map((col) => (
+            <div key={col.key} className="applicant-table-cell">
+              <span className={`skeleton-pulse ${col.key === "name" ? "skeleton-name" : "skeleton-text"}`} />
+            </div>
+          ))}
+        </div>
+      ))}
+    </>
+  );
+};
+
 const CandidateTable = ({
   data, columns, onRowClick, onInfoClick,
   showBulkSelection,
   selectedIds,
   onToggleSelect, onToggleSelectAll, allSelected,
-  activeStage,
+  activeStage, loading,
 }: CandidateTableProps) => {
   const CELL_RENDERERS: Record<string, (c: Applicant, onInfo?: (c: Applicant) => void) => ReactNode> = {
     name: (c) => (
@@ -80,12 +101,11 @@ const CandidateTable = ({
     info: (c, onInfo) => (
       <div className="applicant-table-cell applicant-table-cell--info">
         <button
-          className="info-btn"
+          className="info-text-btn"
           onClick={(e) => { e.stopPropagation(); onInfo?.(c); }}
           type="button"
         >
-          <i className="bx bx-info-circle" />
-          <span>Info</span>
+          Profile View
         </button>
       </div>
     ),
@@ -112,7 +132,9 @@ const CandidateTable = ({
           ))}
         </div>
 
-        {data.length === 0 ? (
+        {loading ? (
+          <SkeletonRows count={5} columns={columns} showBulkSelection={showBulkSelection} />
+        ) : data.length === 0 ? (
           <div className="applicant-table-empty">No candidates match the current filters.</div>
         ) : (
           data.map((candidate, idx) => (

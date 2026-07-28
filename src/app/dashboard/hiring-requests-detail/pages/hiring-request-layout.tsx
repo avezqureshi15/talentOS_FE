@@ -23,7 +23,14 @@ const HiringRequestLayout = () => {
   if (!data || !id) return null;
 
   return (
-    <ApplicationsContext.Provider value={{ ...appsData, interviewCount }}>
+    <ApplicationsContext.Provider value={{
+      ...appsData,
+      interviewCount,
+      finalizedApplicants: [],
+      finalizedTotal: 0,
+      finalizedLoading: false,
+      finalizedRefresh: () => {},
+    }}>
       <Outlet context={{ data, id } as HiringRequestContext} />
     </ApplicationsContext.Provider>
   );
