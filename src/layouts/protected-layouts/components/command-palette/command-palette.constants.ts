@@ -1,7 +1,8 @@
 export const COMMAND_PALETTE_LABELS = {
-  PLACEHOLDER: "Search hiring requests or type a command...",
+  PLACEHOLDER: "Search job listings or type a command...",
   ACTIONS_SECTION: "Actions",
-  HIRING_REQUESTS_SECTION: "Hiring Requests",
+  // "Hiring Requests" renamed to "Job Listings"
+  HIRING_REQUESTS_SECTION: "Job Listings",
   NEW_CHAT_ACTION: "Start a New Chat",
   NEW_CHAT_DESC: "Begin a new conversation with the AI assistant",
   NO_RESULTS: "No results found",

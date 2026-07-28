@@ -18,7 +18,7 @@ import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/c
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
-import { STAGE_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATED_SUB_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import ViewToggle from "@/app/dashboard/hiring-requests-detail/components/detail/view-toggle";
 import InterviewFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
 import EvaluatedFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
@@ -42,7 +42,6 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     hasMore,
     fetchNext,
     refresh,
-    interviewCount,
     filter,
     scoreFilter,
     rejectReason,
@@ -100,10 +99,28 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const stagesWithCounts = useMemo(() =>
     PIPELINE_STAGES.map((s) => ({
       ...s,
-      count: s.key === "interview" ? interviewCount : applicants.filter(STAGE_FILTER_MAP[s.key]).length,
+      count: applicants.filter(STAGE_FILTER_MAP[s.key]).length,
     })),
-    [applicants, interviewCount],
+    [applicants],
   );
+
+  const interviewSubCounts = useMemo(() => ({
+    "yet-to-start": applicants.filter(
+      (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["yet-to-start"](a),
+    ).length,
+    "no-show": applicants.filter(
+      (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["no-show"](a),
+    ).length,
+  }), [applicants]);
+
+  const evaluatedSubCounts = useMemo(() => ({
+    ai: applicants.filter(
+      (a) => STAGE_FILTER_MAP["evaluated"](a) && EVALUATED_SUB_FILTER_MAP["ai"](a),
+    ).length,
+    regular: applicants.filter(
+      (a) => STAGE_FILTER_MAP["evaluated"](a) && EVALUATED_SUB_FILTER_MAP["regular"](a),
+    ).length,
+  }), [applicants]);
 
   return (
     <div className="job-page">
@@ -164,11 +181,11 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
             />
           )}
           {activeStage === "interview" && (
-            <InterviewFilterBar value={interviewSubFilter} onChange={setInterviewSubFilter} />
+            <InterviewFilterBar value={interviewSubFilter} onChange={setInterviewSubFilter} counts={interviewSubCounts} />
           )}
           {activeStage === "interview" && <div className="filter-chips" />}
           {activeStage === "evaluated" && (
-            <EvaluatedFilterBar value={evaluatedSubFilter} onChange={setEvaluatedSubFilter} />
+            <EvaluatedFilterBar value={evaluatedSubFilter} onChange={setEvaluatedSubFilter} counts={evaluatedSubCounts} />
           )}
           {activeStage === "evaluated" && <div className="filter-chips" />}
 

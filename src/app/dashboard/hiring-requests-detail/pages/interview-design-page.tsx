@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, Lock, Clock, ChevronDown } from "lucide-react";
+import { Clock, ChevronDown } from "lucide-react";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { springSnap, fadeSlideUp } from "@/utils/motion";
@@ -272,55 +272,40 @@ const InterviewDesignPage = () => {
 
   return (
     <>
-      <PageHeader title="Interview Design" />
+      <PageHeader
+        title="Interview Design"
+        badge={{ label: "Read-only", icon: "bx-lock-alt" }}
+        actions={[
+          { key: "export", label: "Export PDF", icon: "bx-download", variant: "primary" },
+        ]}
+      />
       <ErrorBoundary>
         <div className="id-page">
-          <div className="id-header">
-            <div className="id-header-top">
-              <div className="id-header-left">
-                <h1 className="id-title">Interview Design</h1>
-                <span className="id-badge">
-                  <Lock className="id-badge-icon" />
-                  Read-only
-                </span>
-              </div>
-              <motion.button
-                className="id-export-btn"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
-                transition={springSnap}
+          <div className="id-meta-row">
+            <span className="id-meta-pill">
+              <Clock className="id-meta-pill-icon" />
+              INTERVIEW BRIEF &middot; 49 MIN &middot; 5 SECTIONS
+            </span>
+          </div>
+
+          <p className="id-objective">
+            Evaluate deep architectural design, operations, security and
+            troubleshooting competencies on GCP within 45 minutes.
+          </p>
+
+          <div className="id-tabs">
+            {TAB_KEYS.map((t) => (
+              <button
+                key={t.key}
+                className={`id-tab ${
+                  activeTab === t.key ? "id-tab--active" : ""
+                }`}
+                onClick={() => setActiveTab(t.key)}
               >
-                <Download className="id-export-icon" />
-                <span>Export PDF</span>
-              </motion.button>
-            </div>
-
-            <div className="id-meta-row">
-              <span className="id-meta-pill">
-                <Clock className="id-meta-pill-icon" />
-                INTERVIEW BRIEF &middot; 49 MIN &middot; 5 SECTIONS
-              </span>
-            </div>
-
-            <p className="id-objective">
-              Evaluate deep architectural design, operations, security and
-              troubleshooting competencies on GCP within 45 minutes.
-            </p>
-
-            <div className="id-tabs">
-              {TAB_KEYS.map((t) => (
-                <button
-                  key={t.key}
-                  className={`id-tab ${
-                    activeTab === t.key ? "id-tab--active" : ""
-                  }`}
-                  onClick={() => setActiveTab(t.key)}
-                >
-                  {t.label}
-                  {t.badge && <span className="id-tab-badge">{t.badge}</span>}
-                </button>
-              ))}
-            </div>
+                {t.label}
+                {t.badge && <span className="id-tab-badge">{t.badge}</span>}
+              </button>
+            ))}
           </div>
 
           <div className="id-content">

@@ -86,11 +86,7 @@ export default function ProtectedLayout() {
   }, []);
 
   const handleAlerts = useCallback(() => {
-    navigate("/hiring-requests?tab=alerts&highlight=true");
-  }, [navigate]);
-
-  const handleInterviews = useCallback(() => {
-    navigate("/hiring-requests?tab=interviews");
+    navigate("/alerts");
   }, [navigate]);
 
   useEffect(() => {
@@ -108,10 +104,6 @@ export default function ProtectedLayout() {
         e.preventDefault();
         handleToggleSidebar();
       }
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.INTERVIEWS.code) {
-        e.preventDefault();
-        handleInterviews();
-      }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.ALERTS.code) {
         e.preventDefault();
         handleAlerts();
@@ -123,7 +115,7 @@ export default function ProtectedLayout() {
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [handleNewChat, handleHome, handleToggleSidebar, handleAlerts, handleInterviews]);
+  }, [handleNewChat, handleHome, handleToggleSidebar, handleAlerts]);
 
   const layoutKey = useMemo(() => {
     const p = location.pathname;

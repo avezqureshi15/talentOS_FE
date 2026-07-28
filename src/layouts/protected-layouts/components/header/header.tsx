@@ -28,7 +28,7 @@ const HeaderLeft: React.FC<HeaderLeftProps> = () => {
 
 const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ className?: string }>> }) => {
   const config = useHeaderStore((s) => s.config);
-  const { title, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
+  const { title, titleIcon, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
   const location = useLocation();
   const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));
   const [jdModalOpen, setJdModalOpen] = useState(false);
@@ -43,6 +43,12 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
         {isTabRoute ? (
           <>
             <TabDropdown totalCount={totalCount} />
+            {config.badge && (
+              <span className="header-badge">
+                {config.badge.icon && <i className={config.badge.icon} />}
+                <span>{config.badge.label}</span>
+              </span>
+            )}
             {config.hiringRequestName && (
               <span className="hiring-request-chip" onClick={() => setJdModalOpen(true)}><span className="hiring-request-chip-text">{config.hiringRequestName}</span></span>
             )}
@@ -51,6 +57,7 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
           title && (
             <div className={`jobs-title-group${subtitle ? " jobs-title-group--stacked" : ""}`}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {titleIcon && <i className={titleIcon} />}
                 <h1 className="jobs-title">{title}</h1>
                 {totalCount !== undefined && <span className="jobs-count-pill">{totalCount}</span>}
               </div>

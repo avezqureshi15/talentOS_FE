@@ -19,7 +19,8 @@ const PLACEHOLDER_PHRASES = [
   "Ask anything...",
   "@ Book Interview",
   "@ Send Mail",
-  "@ View Hiring Requests",
+  // "Hiring Requests" renamed to "Job Listings"
+  "@ View Job Listings",
   "@ View Applicants",
   "@ View Employees",
   "@ Ask Slots",

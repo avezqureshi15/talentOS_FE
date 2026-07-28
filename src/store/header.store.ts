@@ -43,8 +43,14 @@ export type HeaderMetaItem = {
   variant?: "success" | "warning" | "danger";
 };
 
+export type HeaderBadge = {
+  label: string;
+  icon?: string;
+};
+
 export type HeaderConfig = {
   title?: string;
+  titleIcon?: string;
   subtitle?: string;
   avatarLabel?: string;
   totalCount?: number;
@@ -53,6 +59,7 @@ export type HeaderConfig = {
   filters?: HeaderFilterConfig[];
   viewSwitcher?: HeaderViewSwitcherConfig | null;
   actions?: HeaderActionConfig[];
+  badge?: HeaderBadge;
   hiringRequestName?: string;
   hiringRequest?: HiringRequest;
 };

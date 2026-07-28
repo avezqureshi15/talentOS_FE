@@ -14,20 +14,13 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
   {
     label: SIDEBAR_LABELS.HIRING_REQUESTS,
     href: "/hiring-requests",
-    icon: "bx bx-home",
+    icon: "bx bx-briefcase",
     shortcut: "Ctrl+Shift+H",
     permissions: ["hiring_request.view"],
   },
   {
-    label: "Interviews",
-    href: "/hiring-requests?tab=interviews",
-    icon: "bx bx-calendar-check",
-    shortcut: "Ctrl+Shift+I",
-    permissions: ["application.view"],
-  },
-  {
     label: "Alerts",
-    href: "/hiring-requests?tab=alerts",
+    href: "/alerts",
     icon: "bx bx-bell",
     shortcut: "Ctrl+Shift+A",
     permissions: ["application.view"],

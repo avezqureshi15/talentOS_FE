@@ -1,0 +1,82 @@
+.alerts-page {
+  padding: 12px 18px 14px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.ac-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ac-info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.ac-info-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+}
+
+.ac-info-chip i {
+  font-size: 12px;
+}
+
+.ac-info-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.ac-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ac-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.ac-tab i {
+  font-size: 14px;
+}
+
+.ac-tab:hover {
+  color: var(--text-primary);
+}
+
+.ac-tab--active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent, var(--accent-indigo-light));
+}

@@ -14,7 +14,8 @@ type Props = {
 const MODULES = [
   { group: "application", label: "Applications", icon: "bx bx-grid-alt" },
   { group: "chat", label: "Chat", icon: "bx bx-message-detail" },
-  { group: "hiring_request", label: "Hiring Requests", icon: "bx bx-briefcase" },
+  // "Hiring Requests" renamed to "Job Listings"
+  { group: "hiring_request", label: "Job Listings", icon: "bx bx-briefcase" },
   { group: "review", label: "Reviews", icon: "bx bx-star" },
   { group: "settings", label: "Settings", icon: "bx bx-cog" },
   { group: "slot", label: "Slots", icon: "bx bx-calendar" },

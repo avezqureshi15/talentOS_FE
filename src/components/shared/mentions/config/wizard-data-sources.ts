@@ -38,7 +38,8 @@ function createPaginatableEntry(id: string, label: string, placeholder: string, 
 }
 
 function createHiringRequestEntry(): CommandEntry {
-  return createPaginatableEntry("hiring-request-search", "Hiring Requests", "Search hiring requests...", fetchHiringRequestsForMentions);
+  // "Hiring Requests" renamed to "Job Listings"
+  return createPaginatableEntry("hiring-request-search", "Job Listings", "Search job listings...", fetchHiringRequestsForMentions);
 }
 
 function createInterviewerEntry(): CommandEntry {

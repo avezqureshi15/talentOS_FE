@@ -15,6 +15,7 @@
   padding: 7px 12px;
   min-height: 18px;
   min-width: 0;
+  width: max-content;
   box-sizing: border-box;
   font-size: 14px;
 }

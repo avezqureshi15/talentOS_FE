@@ -6,7 +6,9 @@ export const DEFAULT_FILTER = "all";
 export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
   "resume-shortlisting": (a) => a.stage === "RESUME_SHORTLISTING" || a.stage === "RESUME_SHORTLISTED",
   screening: (a) => a.stage === "SCREENING" || a.stage === "AI_SCREENING",
-  interview: (a) => a.stage === "INTERVIEW" || a.stage === "AI_INTERVIEW" || a.stage === "REGULAR_INTERVIEW",
+  interview: (a) =>
+    (a.stage === "INTERVIEW" || a.stage === "AI_INTERVIEW") &&
+    ["interview_scheduled", "interview_rescheduled", "interview_cancelled"].includes(a.status?.toLowerCase() ?? ""),
   "waiting-evaluation": (a) => a.stage === "WAITING_FOR_EVALUATION" || a.status?.toLowerCase() === "waiting_for_review",
   evaluated: (a) => (a.stage === "INTERVIEW" || a.stage === "AI_INTERVIEW") && a.status?.toLowerCase() === "under_evaluation",
   selected: () => false,

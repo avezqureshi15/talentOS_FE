@@ -11,7 +11,8 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
     stages: [
       {
         stage: 1,
-        header: "Select Hiring Request...",
+        // "Hiring Request" renamed to "Job Listing"
+        header: "Select Job Listing...",
         fetcher: fetchMockRecruitments,
         tokenType: "hiring-request",
         isFinal: false,
@@ -42,14 +43,15 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
   },
   "hr-request": {
     id: "hr-request",
-    label: "Hiring Requests",
+    // "Hiring Requests" renamed to "Job Listings"
+    label: "Job Listings",
     icon: "bx bx-briefcase",
     totalTokens: 2,
-    executionCue: "Press Enter to send inquiry about Hiring Requests",
+    executionCue: "Press Enter to send inquiry about Job Listings",
     stages: [
       {
         stage: 1,
-        header: "Select Hiring Requests...",
+        header: "Select Job Listings...",
         fetcher: fetchMockRecruitments,
         tokenType: "entity",
         isFinal: true,

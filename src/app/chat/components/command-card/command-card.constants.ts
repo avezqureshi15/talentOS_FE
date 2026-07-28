@@ -31,7 +31,8 @@ export const COMMAND_CARD_LABELS = {
   SLOT_BOOKING: "Slot Booking Request",
   SEND_MAIL: "Send Mail",
   INTERVIEW_BOOKING: "Interview Booking Request",
-  HIRING_REQUEST: "Hiring Requests",
+  // "Hiring Requests" renamed to "Job Listings"
+  HIRING_REQUEST: "Job Listings",
   CANDIDATE: "Candidate",
   INTERVIEWER: "Interviewer",
   TIME_SLOT: "Time Slot",
@@ -50,12 +51,14 @@ export const INTENT_LABELS: Record<string, string> = {
   "alerts": "Alerts",
   "rounds": "Rounds",
   "send-mail": "Send Mail",
-  "hr-request": "Hiring Requests",
+  // "Hiring Requests" renamed to "Job Listings"
+  "hr-request": "Job Listings",
   "applicants": "Applicants",
   "applicants-view": "View Applicants",
   "employees-view": "View Employees",
   "employees-ask-slots": "Ask Slots",
-  "INQUIRE_HR_REQUEST": "Hiring Requests",
+  // "Hiring Requests" renamed to "Job Listings"
+  "INQUIRE_HR_REQUEST": "Job Listings",
   "INQUIRE_APPLICANT": "Applicant Inquiry",
   "INQUIRE_EMPLOYEE": "Employee Inquiry",
   "INQUIRE_INTERVIEW": "Interview Inquiry",

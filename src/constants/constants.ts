@@ -10,8 +10,9 @@ export const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
 export const AURORA_AUTO_HIDE_MS = 8000;
 
 /* ── Sidebar ── */
+// "Hiring Requests" renamed to "Job Listings"
 export const SIDEBAR_LABELS = {
-  HIRING_REQUESTS: "Hiring Requests",
+  HIRING_REQUESTS: "Job Listings",
   SEARCH: "Search",
   NEW_CHAT: "New Chat",
   HISTORY: "History",
@@ -193,9 +194,10 @@ export const FILTER_OPTIONS = {
 export const PER_PAGE_OPTIONS = [5, 10, 50] as const;
 
 export const HR_TABS = [
-  { key: "hiring-requests", label: "All Hiring Requests", icon: "bx bx-briefcase" },
-  { key: "interviews", label: "Interviews", icon: "bx bx-calendar-check" },
-  { key: "alerts", label: "Alerts", icon: "bx bx-bell" },
+  // "Hiring Requests" renamed to "Job Listings"
+  { key: "hiring-requests", label: "All Job Listings", icon: "bx bx-briefcase" },
+  // { key: "interviews", label: "Interviews", icon: "bx bx-calendar-check" },
+  // { key: "alerts", label: "Alerts", icon: "bx bx-bell" },
 ] as const;
 
 export const ALERTS_TABS = [
@@ -247,8 +249,8 @@ export const KEYBOARD_SHORTCUTS_MODAL = {
 
 export const KEYBOARD_SHORTCUTS_LIST = [
   { label: "New Chat", keys: "Ctrl+Shift+C" },
-  { label: "Hiring Requests", keys: "Ctrl+Shift+H" },
-  { label: "Interviews", keys: "Ctrl+Shift+I" },
+  // "Hiring Requests" renamed to "Job Listings"
+  { label: "Job Listings", keys: "Ctrl+Shift+H" },
   { label: "Alerts", keys: "Ctrl+Shift+A" },
   { label: "Search", keys: "Ctrl+K" },
   { label: "Toggle Sidebar", keys: "Ctrl+Shift+S" },

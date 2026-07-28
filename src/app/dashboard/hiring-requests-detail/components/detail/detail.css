@@ -923,6 +923,27 @@
   font-weight: 600;
 }
 
+.status-toggle-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 5px;
+  margin-left: 5px;
+  border-radius: 999px;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.status-toggle-btn.active .status-toggle-count {
+  background: var(--accent-indigo-border);
+  color: var(--accent-indigo-light);
+}
+
 /* ---------- Section 2: Score Filter ---------- */
 .filter-section-score .score-label {
   font-size: 12px;
