@@ -148,3 +148,13 @@
 .resolve-modal-btn--confirm:hover {
   opacity: 0.9;
 }
+
+.alerts-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+}

@@ -44,11 +44,11 @@ const Alerts = ({ sub }: { sub: AlertsSubTab }) => {
   };
 
   if (isLoading) {
-    return <div className="hr-tab-placeholder">Loading...</div>;
+    return <div className="alerts-empty">Loading...</div>;
   }
 
   if (alerts.length === 0) {
-    return <div className="hr-tab-placeholder">{ALERTS_LABELS.NO_ALERTS}</div>;
+    return <div className="alerts-empty">{ALERTS_LABELS.NO_ALERTS}</div>;
   }
 
   return (
