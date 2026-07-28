@@ -6,7 +6,7 @@ import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useHiringRequest } from "@/app/dashboard/hiring-requests/hooks/use-hiring-requests";
-import { useExportCsv } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-csv";
+import { useExportExcel } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-excel";
 import { fetchApplicationsPaginated } from "@/services/applications/applications";
 import { useHeaderStore } from "@/store/header.store";
 import { QUERY_KEYS, EXPORT_LABELS } from "@/constants/constants";
@@ -34,7 +34,7 @@ const HiringRequestDetails = () => {
     select: (data) => data.total,
   });
 
-  const { handleExport, isExporting } = useExportCsv(id ?? "", HEADER_EXPORT_FILENAME);
+  const { handleExport, isExporting } = useExportExcel(id ?? "", HEADER_EXPORT_FILENAME);
   const queryClient = useQueryClient();
 
   const handleRefresh = useCallback(() => {

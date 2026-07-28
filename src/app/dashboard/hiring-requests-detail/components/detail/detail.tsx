@@ -18,7 +18,7 @@ import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/c
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
-import { DEFAULT_FILTER, STAGE_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { STAGE_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import ViewToggle from "@/app/dashboard/hiring-requests-detail/components/detail/view-toggle";
 import InterviewFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
 import EvaluatedFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
@@ -30,22 +30,33 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [searchParams] = useSearchParams();
   const applicantParam = searchParams.get("applicant");
   const [activeStage, setActiveStage] = useState<StageKey>("resume-shortlisting");
-  const [filter, setFilter] = useState(DEFAULT_FILTER);
-  const [scoreFilter, setScoreFilter] = useState<string>("all");
-  const [rejectReason, setRejectReason] = useState<string>("");
   const [interviewSubFilter, setInterviewSubFilter] = useState<"yet-to-start" | "no-show">("yet-to-start");
   const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
 
   const jobId = hiringRequest.id;
   const isRemote = hiringRequest.location?.toLowerCase() === "remote" || hiringRequest.type?.toLowerCase() === "remote";
-  const { applicants, isLoading: appsLoading, isLoadingMore, hasMore, fetchNext, refresh, interviewCount } = useApplicationsContext();
+  const {
+    applicants,
+    isLoading: appsLoading,
+    isLoadingMore,
+    hasMore,
+    fetchNext,
+    refresh,
+    interviewCount,
+    filter,
+    scoreFilter,
+    rejectReason,
+    setFilter,
+    setScoreFilter,
+    setRejectReason,
+  } = useApplicationsContext();
 
   const { viewMode, setViewMode, openId, setOpenId, handleRowClick, handleInfoClick, isSearchingForApplicant } = useJobDetail({
     applicantParam, applicants, appsLoading, isLoadingMore, hasMore, fetchNext, jobId,
   });
 
   const filteredApplicants = useFilteredApplicants({
-    applicants, activeStage, scoreFilter, rejectReason, interviewSubFilter, evaluatedSubFilter,
+    applicants, activeStage, interviewSubFilter, evaluatedSubFilter, rejectReason,
   });
 
   const BULK_STAGE_ACTIONS: Record<string, { screening: boolean; interview: boolean }> = {

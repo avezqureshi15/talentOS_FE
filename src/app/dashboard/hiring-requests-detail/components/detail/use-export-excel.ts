@@ -1,23 +1,28 @@
 import { useState } from "react";
-import { BE_API_BASE_URL } from "@/constants/constants";
+import { exportHiringRequestExcel } from "@/services/hiring-requests/hiring-requests";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 
-export const useExportCsv = (hiringRequestId: string, title: string) => {
+export const useExportExcel = (hiringRequestId: string, fallbackTitle: string) => {
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
 
   const handleExport = async () => {
+    if (!hiringRequestId) {
+      const message = "Missing hiring request id";
+      setExportError(message);
+      useToastStore.getState().addToast(message, ToastType.ERROR);
+      return;
+    }
+
     setIsExporting(true);
     setExportError(null);
     try {
-      const res = await fetch(`${BE_API_BASE_URL}/hiring-requests/${hiringRequestId}/export`);
-      if (!res.ok) throw new Error("Export failed");
-      const blob = await res.blob();
+      const { blob, filename } = await exportHiringRequestExcel(hiringRequestId);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${title}_applicants.xlsx`;
+      a.download = filename || `${fallbackTitle}_applicants.xlsx`;
       document.body.appendChild(a);
       a.click();
       a.remove();

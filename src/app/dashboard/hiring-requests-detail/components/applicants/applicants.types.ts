@@ -100,6 +100,7 @@ export type Applicant = {
   reviews?: Record<string, unknown>;
   reviewVerdict?: string;
   stage?: string;
+  disqualifiedBy?: string[];
   interviewId?: string;
   interviewerEmpId?: string;
   interviewerName?: string;

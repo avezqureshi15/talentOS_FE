@@ -13,19 +13,20 @@ const REJECT_REASON_OPTIONS = [
 const ApplicantFilters = ({ filter, onFilterChange, scoreFilter, onScoreFilterChange, rejectReason, onRejectReasonChange }: ApplicantFiltersProps) => {
   const activeReasons = rejectReason ? rejectReason.split(",").filter(Boolean) : [];
 
+  const handleStatusFilterChange = (value: string) => {
+    onFilterChange(value);
+    if (value === "selected") {
+      onRejectReasonChange("");
+    }
+  };
+
   const toggleReason = (value: string) => {
     const exists = activeReasons.includes(value);
-    let next: string[];
-    if (exists) {
-      next = activeReasons.filter((r) => r !== value);
-    } else {
-      next = [...activeReasons, value];
-    }
-    const nextStr = next.join(",");
-    onRejectReasonChange(nextStr);
-    if (next.length > 0) {
-      onFilterChange("rejected");
-    } else if (filter === "rejected") {
+    const next = exists
+      ? activeReasons.filter((r) => r !== value)
+      : [...activeReasons, value];
+    onRejectReasonChange(next.join(","));
+    if (next.length > 0 && filter !== "all") {
       onFilterChange("all");
     }
   };
@@ -40,7 +41,7 @@ const ApplicantFilters = ({ filter, onFilterChange, scoreFilter, onScoreFilterCh
               <button
                 key={opt.value}
                 className={`status-toggle-btn${filter === opt.value ? " active" : ""}`}
-                onClick={() => onFilterChange(opt.value)}
+                onClick={() => handleStatusFilterChange(opt.value)}
               >
                 {opt.label}
               </button>

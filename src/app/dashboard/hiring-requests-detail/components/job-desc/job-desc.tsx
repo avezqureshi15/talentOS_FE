@@ -10,11 +10,11 @@ const JobDescription = ({ hiringRequest }: JobDescriptionProps) => {
           <p>{hiringRequest.description}</p>
         </div>
 
-        {hiringRequest.requirements.length > 0 && (
+        {(hiringRequest.requirements ?? []).length > 0 && (
           <div className="bento-card">
             <h3>Requirements</h3>
             <div className="jd-chip-list">
-              {hiringRequest.requirements.map((req, i) => (
+              {(hiringRequest.requirements ?? []).map((req, i) => (
                 <span key={i} className="jd-chip">{req}</span>
               ))}
             </div>
@@ -39,13 +39,13 @@ const JobDescription = ({ hiringRequest }: JobDescriptionProps) => {
               <span className="jd-detail-value">{hiringRequest.location}</span>
             </div>
           </div>
-          {hiringRequest.benefits.length > 0 && (
+          {(hiringRequest.benefits ?? []).length > 0 && (
             <div className="jd-detail-row">
               <span className="jd-detail-icon"><i className="bx bx-gift" /></span>
               <div className="jd-detail-body">
                 <span className="jd-detail-label">Benefits</span>
                 <div className="jd-chip-list">
-                  {hiringRequest.benefits.map((ben, i) => (
+                  {(hiringRequest.benefits ?? []).map((ben, i) => (
                     <span key={i} className="jd-chip">{ben}</span>
                   ))}
                 </div>

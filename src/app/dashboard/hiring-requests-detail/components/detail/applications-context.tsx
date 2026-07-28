@@ -10,6 +10,13 @@ export type ApplicationsData = {
   fetchNext: () => void;
   refresh: () => void;
   interviewCount: number;
+  filter: string;
+  scoreFilter: string;
+  rejectReason: string;
+  setFilter: (value: string) => void;
+  setScoreFilter: (value: string) => void;
+  setRejectReason: (value: string) => void;
+  resetListFilters: () => void;
   finalizedApplicants: Applicant[];
   finalizedTotal: number;
   finalizedLoading: boolean;

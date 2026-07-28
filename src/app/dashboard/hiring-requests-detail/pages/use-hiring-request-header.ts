@@ -2,7 +2,7 @@ import { useMemo, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchApplicationsPaginated } from "@/services/applications/applications";
 import { QUERY_KEYS, EXPORT_LABELS } from "@/constants/constants";
-import { useExportCsv } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-csv";
+import { useExportExcel } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-excel";
 import {
   HEADER_SEARCH_PLACEHOLDER, HEADER_SEARCH_SHORTCUT, HEADER_VIEW_OPTIONS,
   HEADER_EXPORT_LABEL, HEADER_EXPORT_ICON,
@@ -31,7 +31,7 @@ export function useHiringRequestHeader({
     select: (d) => d.total,
   });
 
-  const { handleExport, isExporting, exportError } = useExportCsv(id ?? "", HEADER_EXPORT_FILENAME);
+  const { handleExport, isExporting, exportError } = useExportExcel(id ?? "", HEADER_EXPORT_FILENAME);
   const queryClient = useQueryClient();
   const handleRefresh = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.HIRING_REQUEST] });

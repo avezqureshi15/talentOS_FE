@@ -12,11 +12,11 @@ const JdDetailModal = ({ open, onClose, hiringRequest }: JdDetailModalProps) => 
             <p>{hiringRequest.description}</p>
           </div>
 
-          {hiringRequest.requirements.length > 0 && (
+          {(hiringRequest.requirements ?? []).length > 0 && (
             <div className="jd-modal-section">
               <h3><i className="bx bx-list-check" /> Requirements</h3>
               <div className="jd-modal-chip-list">
-                {hiringRequest.requirements.map((req, i) => (
+                {(hiringRequest.requirements ?? []).map((req, i) => (
                   <span key={i} className="jd-modal-chip">{req}</span>
                 ))}
               </div>
@@ -47,11 +47,11 @@ const JdDetailModal = ({ open, onClose, hiringRequest }: JdDetailModalProps) => 
             </div>
           </div>
 
-          {hiringRequest.benefits.length > 0 && (
+          {(hiringRequest.benefits ?? []).length > 0 && (
             <div className="jd-modal-section">
               <h3><i className="bx bx-gift" /> Benefits</h3>
               <div className="jd-modal-chip-list">
-                {hiringRequest.benefits.map((ben, i) => (
+                {(hiringRequest.benefits ?? []).map((ben, i) => (
                   <span key={i} className="jd-modal-chip">{ben}</span>
                 ))}
               </div>

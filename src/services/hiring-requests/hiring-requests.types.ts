@@ -5,14 +5,26 @@ export type HiringRequest = {
   location: string;
   type: string;
   description: string;
-  requirements: string[];
-  benefits: string[];
+  requirements: string[] | null;
+  benefits: string[] | null;
   is_active: boolean;
-  custom_evaluation_criteria: string;
+  custom_evaluation_criteria: string | null;
   external_job_id: string | null;
   deleted_at: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type HiringRequestCreatePayload = {
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  description: string;
+  requirements?: string[] | null;
+  benefits?: string[] | null;
+  is_active?: boolean;
+  custom_evaluation_criteria?: string | null;
 };
 
 export type HiringRequestsListResponse = {

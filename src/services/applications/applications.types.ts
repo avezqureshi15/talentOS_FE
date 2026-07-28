@@ -27,6 +27,7 @@ export type EvaluatedCandidate = {
   reviews?: Record<string, unknown> | null;
   review_verdict?: string | null;
   comparison_fields?: Array<{ label: string; value: { Expected: string; Actual: string } }>;
+  disqualified_by?: string[];
 };
 
 export type RoundFromApi = {
