@@ -9,7 +9,13 @@ export function useApplicantState(
   return useMemo(() => {
     const hiringState = computeHiringState(applicant, isScreening);
     const config = STATE_CONFIGS[hiringState] ?? STATE_CONFIGS.under_evaluation;
-    return { ...config, showInfoChips: INFO_CHIP_STATUSES.has(hiringState) };
+    return {
+      ...config,
+      actions: config.actions.filter(
+        (a) => !(a.handler === "onCancelInterview" && applicant.stage === "AI_SCREENING"),
+      ),
+      showInfoChips: INFO_CHIP_STATUSES.has(hiringState),
+    };
   }, [applicant, isScreening]);
 }
 
@@ -19,6 +25,7 @@ function computeHiringState(
 ): HiringState {
   if (applicant.finalVerdict === "selected") return "selected";
   if (applicant.finalVerdict === "rejected") return "rejected";
+  if (applicant.finalVerdict === "on-hold") return "on-hold";
 
   const status = applicant.status?.toLowerCase();
 

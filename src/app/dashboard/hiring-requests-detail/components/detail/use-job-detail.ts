@@ -112,6 +112,7 @@ export function useJobDetail({
 
   const handleInfoClick = useCallback(
     (candidate: Applicant) => {
+      scrollAttemptedRef.current = false;
       setSearchParams({ applicant: candidate.id, view: "card" });
     },
     [setSearchParams],

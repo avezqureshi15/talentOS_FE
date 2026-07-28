@@ -3,7 +3,7 @@ import { Outlet, useLocation, useParams } from "react-router-dom";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import { useHiringRequest } from "@/app/dashboard/hiring-requests/hooks/use-hiring-requests";
-import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
+import { useApplicationsData, useFinalizedData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
 import { useInterviewCount } from "@/app/dashboard/hiring-requests-detail/components/detail/use-interview-count";
 import { ApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { DEFAULT_FILTER, SCORE_FILTER_MAP } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
@@ -35,6 +35,7 @@ const HiringRequestLayout = () => {
     scoreRange.max,
   );
   const interviewCount = useInterviewCount(id);
+  const finalizedData = useFinalizedData(id, !!id);
 
   const resetListFilters = useCallback(() => {
     setFilter(DEFAULT_FILTER);
@@ -59,8 +60,12 @@ const HiringRequestLayout = () => {
       setScoreFilter,
       setRejectReason,
       resetListFilters,
+      finalizedApplicants: finalizedData.applicants,
+      finalizedTotal: finalizedData.total,
+      finalizedLoading: finalizedData.isLoading,
+      finalizedRefresh: finalizedData.refresh,
     }),
-    [appsData, interviewCount, filter, scoreFilter, rejectReason, resetListFilters],
+    [appsData, interviewCount, finalizedData, filter, scoreFilter, rejectReason, resetListFilters],
   );
 
   if (isLoading) return <LoadingSpinner fullPage />;

@@ -34,6 +34,8 @@ const ApplicantActionModals = ({
 }: ApplicantActionModalsProps) => {
   const actionLabel = finalDecision === "selected"
     ? APPLICANT_LABELS.SELECT_CANDIDATE
+    : finalDecision === "on-hold"
+    ? "On Hold"
     : APPLICANT_LABELS.REJECT_CANDIDATE;
 
   return (
@@ -45,19 +47,19 @@ const ApplicantActionModals = ({
       >
         <div className="confirm-body">
           <p>
-            {APPLICANT_LABELS.FINAL_DECISION_CONFIRM.replace("{action}", finalDecision === "selected" ? "select" : "reject")}
+            {APPLICANT_LABELS.FINAL_DECISION_CONFIRM.replace("{action}", finalDecision === "selected" ? "select" : finalDecision === "on-hold" ? "hold" : "reject")}
           </p>
           <div className="confirm-actions">
             <button className="confirm-btn confirm-cancel" onClick={onCloseFinalDecision} type="button">
               Cancel
             </button>
             <Button
-              className={`confirm-btn ${finalDecision === "selected" ? "confirm-proceed" : "confirm-danger"}`}
+              className={`confirm-btn ${finalDecision === "selected" || finalDecision === "on-hold" ? "confirm-proceed" : "confirm-danger"}`}
               onClick={confirmFinalDecision}
               loading={isConfirmingFinalDecision}
-              loadingText={finalDecision === "selected" ? "Selecting..." : "Rejecting..."}
+              loadingText={finalDecision === "selected" ? "Selecting..." : finalDecision === "on-hold" ? "Putting on hold..." : "Rejecting..."}
             >
-              {finalDecision === "selected" ? "Select" : "Reject"}
+              {finalDecision === "selected" ? "Select" : finalDecision === "on-hold" ? "Hold" : "Reject"}
             </Button>
           </div>
         </div>

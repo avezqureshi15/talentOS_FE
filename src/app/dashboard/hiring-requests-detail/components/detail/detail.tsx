@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import "./detail.css";
@@ -9,9 +9,11 @@ import PipelineStages from "@/app/dashboard/hiring-requests-detail/components/pi
 import { PIPELINE_STAGES } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.constants";
 import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table";
-import InterviewsTable from "@/app/dashboard/hiring-requests-detail/components/interviews-table/interviews-table";
+
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import BulkScheduleModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-schedule-modal";
+import BulkRemarksModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-remarks-modal";
 import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
@@ -25,7 +27,7 @@ import type { JobDetailProps } from "./detail.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const applicantParam = searchParams.get("applicant");
   const [activeStage, setActiveStage] = useState<StageKey>("resume-shortlisting");
   const [interviewSubFilter, setInterviewSubFilter] = useState<"yet-to-start" | "no-show">("yet-to-start");
@@ -57,8 +59,43 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     applicants, activeStage, interviewSubFilter, evaluatedSubFilter, rejectReason,
   });
 
-  const showBulkSelection = activeStage === "resume-shortlisting";
+  const BULK_STAGE_ACTIONS: Record<string, { screening: boolean; interview: boolean }> = {
+    "resume-shortlisting": { screening: true, interview: true },
+    "screening": { screening: false, interview: true },
+  };
+  const showBulkSelection = activeStage in BULK_STAGE_ACTIONS;
+  const { screening: showBulkScreening, interview: showBulkInterview } = BULK_STAGE_ACTIONS[activeStage] ?? { screening: false, interview: false };
   const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection);
+  const [pendingBulkAction, setPendingBulkAction] = useState<"screening" | "interview" | null>(null);
+  const [pendingBulkRemarks, setPendingBulkRemarks] = useState<"screening" | "interview" | null>(null);
+  const [selectionStage, setSelectionStage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (showBulkSelection && bulkSelection.selectionCount > 0 && !selectionStage) {
+      setSelectionStage(activeStage);
+    } else if (bulkSelection.selectionCount === 0 && selectionStage) {
+      setSelectionStage(null);
+    }
+  }, [showBulkSelection, bulkSelection.selectionCount, activeStage, selectionStage]);
+
+  const stageLabel = selectionStage ? (PIPELINE_STAGES.find((s) => s.key === selectionStage)?.label ?? selectionStage) : "";
+
+  const handleBulkRemarksConfirm = (remarks: string) => {
+    if (remarks) bulkSelection.handleSubmitRemarks(remarks);
+    const action = pendingBulkRemarks;
+    setPendingBulkRemarks(null);
+    if (action) setPendingBulkAction(action);
+  };
+
+  const handleBulkScheduleConfirm = ({ scheduledDate, scheduledTime }: { scheduledDate: string; scheduledTime: string }) => {
+    if (pendingBulkAction === "screening") bulkSelection.handleBulkMoveToScreening(scheduledDate, scheduledTime);
+    else if (pendingBulkAction === "interview") bulkSelection.handleBulkMoveToInterview(scheduledDate, scheduledTime);
+    setPendingBulkAction(null);
+  };
+
+  const bulkModalTitle = pendingBulkAction === "screening" ? "Schedule AI Screening" : "Schedule AI Interview";
+  const bulkModalLabel = pendingBulkAction === "screening" ? "From when should we start screening calls?" : "Select when the candidate can give the AI interview";
+  const bulkModalIncludeEnd = pendingBulkAction === "interview";
 
   const stagesWithCounts = useMemo(() =>
     PIPELINE_STAGES.map((s) => ({
@@ -73,6 +110,50 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
       <PipelineStages stages={stagesWithCounts} activeKey={activeStage} onStageChange={setActiveStage} />
       <motion.div className="tab-content" variants={staggerContainer} initial="hidden" animate="visible">
         <ErrorBoundary>
+          {showBulkSelection && bulkSelection.selectionCount > 0 && (
+            <div className="bulk-action-bar">
+              <span className="bulk-action-count">{bulkSelection.selectionCount} candidate{bulkSelection.selectionCount !== 1 ? "s" : ""} selected in <span className="bulk-stage-chip">{stageLabel}</span> stage</span>
+              <div className="bulk-action-buttons">
+                {showBulkScreening && (
+                  <button
+                    className="btn screen-btn compact"
+                    onClick={() => {
+                      if (bulkSelection.hasCandidatesWithRound) setPendingBulkRemarks("screening");
+                      else setPendingBulkAction("screening");
+                    }}
+                    disabled={bulkSelection.isBulkProcessing}
+                    type="button"
+                  >
+                    {bulkSelection.isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-phone" />}
+                    {" "}Move to AI Screening
+                  </button>
+                )}
+                {showBulkInterview && (
+                  <button
+                    className="btn screen-btn compact"
+                    onClick={() => {
+                      if (bulkSelection.hasCandidatesWithRound) setPendingBulkRemarks("interview");
+                      else setPendingBulkAction("interview");
+                    }}
+                    disabled={bulkSelection.isBulkProcessing}
+                    type="button"
+                  >
+                    {bulkSelection.isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-bot" />}
+                    {" "}Move to AI Interview
+                  </button>
+                )}
+                <button
+                  className="bulk-action-clear"
+                  onClick={bulkSelection.clearSelection}
+                  disabled={bulkSelection.isBulkProcessing}
+                  type="button"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          )}
+
           <ViewToggle viewMode={viewMode} onChange={setViewMode} />
 
           {activeStage === "resume-shortlisting" && (
@@ -132,14 +213,15 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     applicantParam={applicantParam} onRefresh={refresh}
                     jdId={hiringRequest.id} isRemote={isRemote}
                     showBulkSelection={showBulkSelection}
+                    selectedIds={bulkSelection.selectedIds}
+                    onToggleSelect={bulkSelection.toggleSelect}
+                    onToggleSelectAll={bulkSelection.toggleSelectAll}
+                    allSelected={bulkSelection.allSelected}
+                    selectionCount={bulkSelection.selectionCount}
                   />
                 </motion.div>
               )}
             </>
-          ) : activeStage === "interview" ? (
-            <motion.div variants={fadeSlideUp}>
-              <InterviewsTable hiringRequestId={jobId} subTab={interviewSubFilter} onInfoClick={(cid) => setSearchParams({ applicant: cid, view: "card" })} />
-            </motion.div>
           ) : (
             <motion.div variants={fadeSlideUp}>
               <CandidateTable
@@ -149,18 +231,30 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 onInfoClick={(candidate) => handleInfoClick(candidate as Applicant)}
                 showBulkSelection={showBulkSelection}
                 selectedIds={bulkSelection.selectedIds}
-                isBulkProcessing={bulkSelection.isBulkProcessing}
                 onToggleSelect={bulkSelection.toggleSelect}
                 onToggleSelectAll={bulkSelection.toggleSelectAll}
-                onClearSelection={bulkSelection.clearSelection}
-                onBulkMoveToScreening={bulkSelection.handleBulkMoveToScreening}
-                onBulkMoveToInterview={bulkSelection.handleBulkMoveToInterview}
-                selectionCount={bulkSelection.selectionCount}
                 allSelected={bulkSelection.allSelected}
+                activeStage={activeStage}
+                loading={appsLoading}
               />
             </motion.div>
           )}
         </ErrorBoundary>
+
+        <BulkRemarksModal
+          open={pendingBulkRemarks !== null}
+          onClose={() => setPendingBulkRemarks(null)}
+          onConfirm={handleBulkRemarksConfirm}
+          title={pendingBulkRemarks === "screening" ? "HR Remarks — Move to AI Screening" : "HR Remarks — Move to AI Interview"}
+        />
+        <BulkScheduleModal
+          open={pendingBulkAction !== null}
+          onClose={() => setPendingBulkAction(null)}
+          onConfirm={handleBulkScheduleConfirm}
+          title={bulkModalTitle}
+          dateLabel={bulkModalLabel}
+          includeEnd={bulkModalIncludeEnd}
+        />
       </motion.div>
     </div>
   );

@@ -46,10 +46,8 @@ export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   chip: { label: "Awaiting Review", variant: "yellow" },
   showInfoChips: false,
   showExpandedContent: true,
-  actions: [
-    { label: "Move to Screening", icon: "bx bx-phone", variant: "screen", handler: "onMoveToScreening" },
-  ],
-  menuActions: ["select", "reject"],
+  actions: [],
+  menuActions: ["select", "reject", "hold"],
 };
 
 export const UNDER_EVALUATION_CONFIG: StateConfig = {
@@ -60,7 +58,7 @@ export const UNDER_EVALUATION_CONFIG: StateConfig = {
     { label: "Shortlist", icon: "bx bx-check", variant: "shortlist", handler: "onShortlist" },
     { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation" },
   ],
-  menuActions: ["select", "reject"],
+  menuActions: ["select", "reject", "hold"],
 };
 
 export const SHORTLISTED_CONFIG: StateConfig = {
@@ -70,7 +68,7 @@ export const SHORTLISTED_CONFIG: StateConfig = {
   actions: [
     { label: "Move to Next Round", icon: "bx bx-right-arrow", variant: "move", handler: "onMoveToNextRound" },
   ],
-  menuActions: ["select", "reject"],
+  menuActions: ["select", "reject", "hold"],
 };
 
 export const MOVE_TO_NEXT_ROUND_CONFIG: StateConfig = {
@@ -80,7 +78,7 @@ export const MOVE_TO_NEXT_ROUND_CONFIG: StateConfig = {
   actions: [
     { label: "Schedule Round", icon: "bx bx-calendar", variant: "schedule", handler: "onScheduleInterview" },
   ],
-  menuActions: ["select", "reject"],
+  menuActions: ["select", "reject", "hold"],
 };
 
 export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
@@ -89,9 +87,10 @@ export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
   showInfoChips: false,
   showExpandedContent: true,
   actions: [
+    { label: "Reschedule", icon: "bx bx-calendar", variant: "reschedule", handler: "onRescheduleInterview" },
     { label: "Cancel", icon: "bx bx-x-circle", variant: "cancel", handler: "onCancelInterview" },
   ],
-  menuActions: ["select", "reject"],
+  menuActions: ["select", "reject", "hold"],
 };
 
 export const SCREENING_ROUND_SCHEDULED_CONFIG: StateConfig = {
@@ -102,7 +101,7 @@ export const SCREENING_ROUND_SCHEDULED_CONFIG: StateConfig = {
   actions: [
     { label: "Cancel", icon: "bx bx-x-circle", variant: "cancel", handler: "onCancelInterview" },
   ],
-  menuActions: ["select", "reject"],
+  menuActions: ["select", "reject", "hold"],
 };
 
 export const INTERVIEW_RESCHEDULED_CONFIG: StateConfig = {
@@ -110,8 +109,11 @@ export const INTERVIEW_RESCHEDULED_CONFIG: StateConfig = {
   chip: { label: "Interview Rescheduled", variant: "warning" },
   showInfoChips: true,
   showExpandedContent: true,
-  actions: [],
-  menuActions: ["select", "reject"],
+  actions: [
+    { label: "Reschedule", icon: "bx bx-calendar", variant: "reschedule", handler: "onRescheduleInterview" },
+    { label: "Cancel", icon: "bx bx-x-circle", variant: "cancel", handler: "onCancelInterview" },
+  ],
+  menuActions: ["select", "reject", "hold"],
 };
 
 export const INTERVIEW_CANCELLED_CONFIG: StateConfig = {
@@ -120,7 +122,7 @@ export const INTERVIEW_CANCELLED_CONFIG: StateConfig = {
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],
-  menuActions: ["select", "reject"],
+  menuActions: ["select", "reject", "hold"],
 };
 
 export const REJECTED_CONFIG: StateConfig = {
@@ -143,6 +145,16 @@ export const SELECTED_CONFIG: StateConfig = {
   footerBadge: { text: "Candidate selected and moved out of pipeline", className: "selected-text" },
 };
 
+export const ON_HOLD_CONFIG: StateConfig = {
+  state: "on-hold",
+  chip: { label: "On Hold", variant: "warning" },
+  showInfoChips: false,
+  showExpandedContent: false,
+  actions: [],
+  menuActions: [],
+  footerBadge: { text: "Candidate put on hold", className: "onhold-text" },
+};
+
 export const STATE_CONFIGS: Record<string, StateConfig> = {
   waiting_for_review: WAITING_FOR_REVIEW_CONFIG,
   under_evaluation: UNDER_EVALUATION_CONFIG,
@@ -154,4 +166,5 @@ export const STATE_CONFIGS: Record<string, StateConfig> = {
   screening_round_scheduled: SCREENING_ROUND_SCHEDULED_CONFIG,
   rejected: REJECTED_CONFIG,
   selected: SELECTED_CONFIG,
+  "on-hold": ON_HOLD_CONFIG,
 };

@@ -67,7 +67,7 @@ const ApplicantCard = ({
   return (
     <div className="accordion-card">
       <div className="accordion-header">
-        <div className="header-left" onClick={() => { if (canExpand && !showCheckbox) onToggleOpen(a.id); }}>
+        <div className="header-left" onClick={() => { if (canExpand) onToggleOpen(a.id); }}>
           {showCheckbox && (
             <i
               className={`bx ${isSelected ? "bx-checkbox-checked" : "bx-checkbox"} applicant-checkbox`}
@@ -115,7 +115,7 @@ const ApplicantCard = ({
             onAction && (
               <button
                 key={action.handler}
-                className={`btn ${action.variant === "shortlist" || action.variant === "schedule" ? "shortlist" : action.variant === "reject" ? "reject" : action.variant === "cancel" ? "cancel" : "screen-btn"} compact`}
+                className={`btn ${action.variant === "shortlist" || action.variant === "schedule" || action.variant === "reschedule" ? "shortlist" : action.variant === "reject" ? "reject" : action.variant === "cancel" ? "cancel" : "screen-btn"} compact`}
                 onClick={(e) => { e.stopPropagation(); onAction(action.handler, a.id); }}
               >
                 {action.icon && <i className={action.icon} />} {action.label}
@@ -144,6 +144,11 @@ const ApplicantCard = ({
                     {stateConfig.menuActions.includes("reject") && (
                       <button className="menu-item menu-item-reject" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onMenuAction("reject", a.id); }} type="button">
                         {APPLICANT_LABELS.REJECT_CANDIDATE}
+                      </button>
+                    )}
+                    {stateConfig.menuActions.includes("hold") && (
+                      <button className="menu-item" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onMenuAction("hold", a.id); }} type="button">
+                        Hold
                       </button>
                     )}
                   </div>

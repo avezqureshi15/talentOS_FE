@@ -17,6 +17,10 @@ export type ApplicationsData = {
   setScoreFilter: (value: string) => void;
   setRejectReason: (value: string) => void;
   resetListFilters: () => void;
+  finalizedApplicants: Applicant[];
+  finalizedTotal: number;
+  finalizedLoading: boolean;
+  finalizedRefresh: () => void;
 };
 
 export const ApplicationsContext = createContext<ApplicationsData | null>(null);

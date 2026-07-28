@@ -10,9 +10,10 @@ export type HiringState =
   | "interview_cancelled"
   | "screening_round_scheduled"
   | "rejected"
-  | "selected";
+  | "selected"
+  | "on-hold";
 
-export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move" | "cancel";
+export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move" | "cancel" | "reschedule";
 
 export type ActionConfig = {
   label: string;
@@ -26,7 +27,7 @@ export type ChipConfig = {
   variant: "success" | "danger" | "warning" | "info" | "neutral" | "yellow";
 };
 
-export type MenuAction = "select" | "reject";
+export type MenuAction = "select" | "reject" | "hold";
 
 export type StateConfig = {
   state: HiringState;
@@ -100,6 +101,10 @@ export type Applicant = {
   reviewVerdict?: string;
   stage?: string;
   disqualifiedBy?: string[];
+  interviewId?: string;
+  interviewerEmpId?: string;
+  interviewerName?: string;
+  roundName?: string;
 };
 
 export type ApplicantsProps = {
@@ -119,6 +124,11 @@ export type ApplicantsProps = {
   jdId: string;
   isRemote: boolean;
   showBulkSelection?: boolean;
+  selectedIds?: Set<string>;
+  onToggleSelect?: (id: string) => void;
+  onToggleSelectAll?: () => void;
+  allSelected?: boolean;
+  selectionCount?: number;
 };
 
 export type AccordionTab = "details" | "cover-letter" | "ai-summary" | "rounds";

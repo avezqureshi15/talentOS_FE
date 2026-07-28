@@ -1,12 +1,12 @@
-import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMemo, useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchApplicationsPaginated } from "@/services/applications/applications";
 import { QUERY_KEYS, EXPORT_LABELS } from "@/constants/constants";
 import { useExportExcel } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-excel";
 import {
   HEADER_SEARCH_PLACEHOLDER, HEADER_SEARCH_SHORTCUT, HEADER_VIEW_OPTIONS,
   HEADER_EXPORT_LABEL, HEADER_EXPORT_ICON,
-  HEADER_ADD_CANDIDATE_LABEL, HEADER_ADD_CANDIDATE_ICON, HEADER_EXPORT_FILENAME,
+  HEADER_REFRESH_LABEL, HEADER_REFRESH_ICON, HEADER_EXPORT_FILENAME,
 } from "@/layouts/protected-layouts/components/header/header.constants";
 import type { HeaderConfig } from "@/store/header.store";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
@@ -32,6 +32,13 @@ export function useHiringRequestHeader({
   });
 
   const { handleExport, isExporting, exportError } = useExportExcel(id ?? "", HEADER_EXPORT_FILENAME);
+  const queryClient = useQueryClient();
+  const handleRefresh = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.HIRING_REQUEST] });
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.APPLICATIONS] });
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.FINAL_VERDICTS] });
+    queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INTERVIEWS] });
+  }, [queryClient]);
 
   return useMemo(() => ({
     title: "Applications",
@@ -55,7 +62,7 @@ export function useHiringRequestHeader({
         loadingText: EXPORT_LABELS.DOWNLOADING,
         error: exportError,
       },
-      { key: "add-candidate", label: HEADER_ADD_CANDIDATE_LABEL, icon: HEADER_ADD_CANDIDATE_ICON, variant: "primary" },
+      { key: "refresh", label: HEADER_REFRESH_LABEL, icon: HEADER_REFRESH_ICON, variant: "primary", onClick: handleRefresh },
     ],
-  }), [totalCount, handleExport, isExporting, exportError, data, activeView, onViewChange]);
+  }), [totalCount, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange]);
 }

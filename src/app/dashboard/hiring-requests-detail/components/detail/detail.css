@@ -45,7 +45,7 @@
 }
 
 .tab-content {
-  padding: 0 26px;
+  padding: 0 26px 72px;
 }
 
 .segment-item {
@@ -1417,37 +1417,51 @@
 .persistent-view-toggle {
   display: flex;
   align-items: center;
-  gap: 4px;
   justify-content: flex-end;
   margin-bottom: 12px;
 }
 
-.view-toggle-icon {
+.persistent-view-toggle .segmented-control {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: none;
   background: var(--surface-glass);
   border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 0;
+}
+
+.persistent-view-toggle .segmented-control .view-toggle-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border: none;
+  background: transparent;
+  border-radius: calc(var(--radius-sm) - 2px);
   color: var(--text-muted);
   cursor: pointer;
   transition: all 0.15s ease;
+  font-family: var(--font-family);
 }
 
-.view-toggle-icon i {
-  font-size: 16px;
+.persistent-view-toggle .segmented-control .view-toggle-icon i {
+  font-size: 15px;
 }
 
-.view-toggle-icon:hover {
+.persistent-view-toggle .segmented-control .view-toggle-label {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.persistent-view-toggle .segmented-control .view-toggle-icon:hover {
   color: var(--text-primary);
-  background: var(--surface-card);
 }
 
-.view-toggle-icon--active {
+.persistent-view-toggle .segmented-control .view-toggle-icon--active {
   color: var(--accent);
-  background: var(--accent-bg);
+  background: var(--bg-secondary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 /* =========================
@@ -1505,19 +1519,18 @@
 ========================= */
 .bulk-action-bar {
   position: sticky;
-  bottom: 0;
+  top: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 16px;
-  margin-top: 8px;
-  background: var(--surface-elevated);
+  margin: 8px 0;
+  background: #1a1a1a;
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  backdrop-filter: blur(12px);
   z-index: 50;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .bulk-action-count {
@@ -1525,6 +1538,17 @@
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
+}
+
+.bulk-stage-chip {
+  display: inline-block;
+  padding: 0 6px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 20px;
 }
 
 .bulk-action-buttons {
