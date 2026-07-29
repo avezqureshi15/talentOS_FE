@@ -1,7 +1,8 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { motion } from "framer-motion";
 import { staggerContainer, slideInLeft, springSoft } from "@/utils/motion";
 import { SidebarItem } from "@/components/ui/sidebar";
+import SidebarGroup from "@/layouts/protected-layouts/components/sidebar/sidebar-group";
 import type { NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
 
 type SidebarNavProps = {
@@ -15,7 +16,7 @@ type SidebarNavProps = {
 };
 
 export default function SidebarNav({ Icon, onClose, mainItems, adminItems, superadminItems }: SidebarNavProps) {
-  const renderNavItem = (item: NavItemConfig) => (
+  const renderNavItem = (item: NavItemConfig): ReactNode => (
     <motion.div key={item.href} variants={slideInLeft} transition={springSoft}>
       <SidebarItem
         icon={<span className={`${item.icon} text-lg`} />}
@@ -47,7 +48,15 @@ export default function SidebarNav({ Icon, onClose, mainItems, adminItems, super
         {adminItems.map(renderNavItem)}
 
         {superadminItems.length > 0 && <div className="sidebar-nav-divider" />}
-        {superadminItems.map(renderNavItem)}
+        {superadminItems.map((item) => (
+          item.label === "Apps" ? (
+            <SidebarGroup key="developers" title="Developers">
+              {renderNavItem(item)}
+            </SidebarGroup>
+          ) : (
+            renderNavItem(item)
+          )
+        ))}
 
 
       </motion.div>

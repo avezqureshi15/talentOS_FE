@@ -21,6 +21,8 @@ import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
 import UsersPage from "@/app/admin/users/pages/users-page";
 import RolesPage from "@/app/superadmin/roles/pages/roles-page";
 import OrganizationPage from "@/app/admin/organization/pages/organization-page";
+import AppDetailPage from "@/app/superadmin/apps/pages/app-detail-page";
+import AppsPage from "@/app/superadmin/apps/pages/apps-page";
 import TenantsPage from "@/app/superadmin/tenants/pages/tenants-page";
 import TenantDetail from "@/app/superadmin/tenants/pages/tenant-detail";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
@@ -124,6 +126,8 @@ export const router = createBrowserRouter([
         element: <ProtectedLayout />,
         children: [
           { index: true, element: <Navigate to={ROUTES.SUPERADMIN_TENANTS} replace /> },
+          { path: "apps", element: <AppsPage /> },
+          { path: "apps/:appId", element: <AppDetailPage /> },
           { path: "tenants", element: <TenantsPage /> },
           { path: "tenants/:tenantId", element: <TenantDetail /> },
         ],

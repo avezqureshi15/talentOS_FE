@@ -83,9 +83,10 @@ httpClient.interceptors.response.use(
 
     if (error.response?.status !== 401 || originalRequest._retry) {
       if (originalRequest?.toastOnError !== false) {
+        const detail = error.response?.data?.detail;
         const message =
           error.response?.data?.error ||
-          error.response?.data?.detail ||
+          (Array.isArray(detail) ? detail.map((d: { msg?: string }) => d.msg).join("; ") : detail) ||
           error.response?.data?.message ||
           error.message ||
           "An unexpected error occurred";

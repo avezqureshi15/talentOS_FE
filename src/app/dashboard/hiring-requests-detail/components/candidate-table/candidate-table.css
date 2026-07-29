@@ -176,11 +176,24 @@
 
 .status-chip--scheduled,
 .status-chip--interview_scheduled,
-.status-chip--screening_round_scheduled,
-.status-chip--interview_rescheduled,
-.status-chip--interview_cancelled {
+.status-chip--screening_round_scheduled {
   background: var(--accent-bg);
   color: var(--accent);
+}
+
+.status-chip--interview_rescheduled {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--interview_cancelled {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+}
+
+.status-chip--on-hold {
+  background: var(--yellow-bg);
+  color: var(--yellow);
 }
 
 /* misc */

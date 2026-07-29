@@ -129,7 +129,7 @@ export default function Login() {
           <h1 className="auth-left-title">
             Hire Smarter with
             <br />
-            <span className="auth-left-title-bold">webHyre.ai</span>
+            <span className="auth-left-title-bold">TalentOS</span>
           </h1>
 
           <p className="auth-left-subtitle">
@@ -185,7 +185,7 @@ export default function Login() {
               </h2>
               <p className="auth-form-subtitle">
                 {isSignUp
-                  ? 'Get started with webHyre.ai in seconds.'
+                  ? 'Get started with TalentOS in seconds.'
                   : 'Sign in to access your hiring dashboard.'}
               </p>
             </div>

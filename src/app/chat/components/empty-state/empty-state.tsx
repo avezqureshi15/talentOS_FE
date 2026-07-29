@@ -28,7 +28,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onSuggestionClick, showAurora }
         {/* Welcome chip */}
         <div className="empty-state-welcome-chip">
           <span className="empty-state-welcome-chip__sparkle">✦</span>
-          Welcome to webHyre AI
+          Welcome to TalentOS
         </div>
 
         {/* Greeting */}

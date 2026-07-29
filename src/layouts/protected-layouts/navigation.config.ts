@@ -51,15 +51,21 @@ export const ADMIN_NAV_ITEMS: NavItemConfig[] = [
 
 export const SUPERADMIN_NAV_ITEMS: NavItemConfig[] = [
   {
+    label: "Tenants",
+    href: "/superadmin/tenants",
+    icon: "bx bx-building",
+    permissions: ["tenant.view"],
+  },
+  {
     label: "Roles",
     href: ROUTES.ROLES,
     icon: "bx bx-lock",
     permissions: ["user.manage"],
   },
   {
-    label: "Tenants",
-    href: "/superadmin/tenants",
-    icon: "bx bx-building",
+    label: "Apps",
+    href: "/superadmin/apps",
+    icon: "bx bx-code-alt",
     permissions: ["tenant.view"],
   },
 ];

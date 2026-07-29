@@ -18,6 +18,8 @@ export const ROUTES = {
   ROLES: "/roles",
   ADMIN_USERS: "/admin/users",
   ADMIN_SETTINGS: "/admin/settings",
+  SUPERADMIN_APPS: "/superadmin/apps",
+  SUPERADMIN_APP_DETAIL: "/superadmin/apps/:appId",
   SUPERADMIN_TENANTS: "/superadmin/tenants",
   SUPERADMIN_TENANT_DETAIL: "/superadmin/tenants/:tenantId",
   AUTH_INVITE: "/auth/invite/:token",

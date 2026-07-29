@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
 import { useTenantDetail } from "../hooks/use-tenant-detail";
 import { getTenants, type Tenant } from "../services/tenants.service";
 import TenantUserManagement from "../components/tenant-user-management";
 import { useCmdPaletteRegistration } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette-registration";
+import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import "./tenant-detail.css";
 
 export default function TenantDetail() {
@@ -64,10 +64,7 @@ export default function TenantDetail() {
   if (error || !tenant) {
     return (
       <div className="td-page">
-        <button className="td-back" onClick={() => navigate("/superadmin/tenants")}>
-          <ChevronLeft size={14} />
-          Back to Tenants
-        </button>
+        <PageHeader title="Back to Tenants" titleIcon="bx bx-chevron-left" backRoute="/superadmin/tenants" />
         <div className="td-error">{error instanceof Error ? error.message : "Tenant not found"}</div>
       </div>
     );
@@ -79,10 +76,7 @@ export default function TenantDetail() {
 
   return (
     <div className="td-page">
-      <button className="td-back" onClick={() => navigate("/superadmin/tenants")}>
-        <ChevronLeft size={14} />
-        Back to Tenants
-      </button>
+      <PageHeader title="Back to Tenants" titleIcon="bx bx-chevron-left" backRoute="/superadmin/tenants" />
 
       <div className="td-header">
         <div className="td-header-left">

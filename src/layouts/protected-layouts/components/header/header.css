@@ -223,6 +223,26 @@
   gap: 2px;
 }
 
+.jobs-title-group--back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 6px;
+  transition: background 0.12s;
+  color: inherit;
+}
+
+.jobs-title-group--back:hover {
+  background: var(--bg-hover);
+}
+
 .jobs-title {
   font-size: 15px;
   font-weight: 600;
@@ -540,6 +560,13 @@
 
 .jobs-add-btn:hover {
   background: #f0f0f0;
+}
+
+.jobs-add-btn--disabled,
+.jobs-add-btn--disabled:hover {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #ffffff;
 }
 
 .jobs-add-btn i {

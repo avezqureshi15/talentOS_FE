@@ -33,6 +33,7 @@ export type HeaderActionConfig = {
   iconPosition?: "left" | "right";
   variant?: "primary" | "outline";
   onClick?: () => void;
+  disabled?: boolean;
   loading?: boolean;
   loadingText?: string;
   className?: string;
@@ -51,6 +52,7 @@ export type HeaderBadge = {
 export type HeaderConfig = {
   title?: string;
   titleIcon?: string;
+  backRoute?: string;
   subtitle?: string;
   avatarLabel?: string;
   totalCount?: number;

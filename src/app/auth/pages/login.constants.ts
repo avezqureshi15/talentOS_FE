@@ -1,5 +1,5 @@
 export const LOGIN = {
-  BRAND: "webHyre.ai",
+  BRAND: "TalentOS",
   SUBTITLE: "AI Hiring Platform",
   SIGN_IN_LABEL: "Sign in with your work account",
   SIGNING_IN_LABEL: "Signing you in\u2026",

@@ -8,7 +8,6 @@ import { getInitials } from "@/utils/user";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
 import ProfileModal from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/profile-modal";
-import SettingsModal from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/settings-modal";
 import KeyboardShortcutsModal from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/keyboard-shortcuts-modal";
 import { useUiStore } from "@/store/ui.store";
 import "./sidebar-user-popover.css";
@@ -76,7 +75,7 @@ const SidebarUserPopover = ({ autoOpen, onAutoOpened }: SidebarUserPopoverProps)
                   if (item.id === "keyboard-shortcuts") {
                     useUiStore.getState().openShortcutsModal();
                   } else {
-                    openModal(item.id as "profile" | "settings");
+                    openModal(item.id as "profile");
                   }
                 }}
                 type="button"
@@ -101,7 +100,6 @@ const SidebarUserPopover = ({ autoOpen, onAutoOpened }: SidebarUserPopoverProps)
       </div>
 
       <ProfileModal open={activeModal === "profile"} onClose={closeModal} />
-      <SettingsModal open={activeModal === "settings"} onClose={closeModal} />
       <KeyboardShortcutsModal open={showShortcutsModal} onClose={closeShortcutsModal} />
 
       <BaseModal open={activeModal === "logout"} onClose={closeModal} title={LOGOUT_MODAL.TITLE} icon="bx bx-arrow-out-right-square-half">

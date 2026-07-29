@@ -3,6 +3,7 @@ export type PermissionInfo = {
   name: string;
   group: string;
   assigned: boolean;
+  endpoint: string;
 };
 
 export type RoleData = {

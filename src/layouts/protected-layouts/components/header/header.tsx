@@ -28,7 +28,8 @@ const HeaderLeft: React.FC<HeaderLeftProps> = () => {
 
 const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ className?: string }>> }) => {
   const config = useHeaderStore((s) => s.config);
-  const { title, titleIcon, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
+  const { title, titleIcon, backRoute, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
+  const navigate = useNavigate();
   const location = useLocation();
   const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));
   const [jdModalOpen, setJdModalOpen] = useState(false);
@@ -55,14 +56,23 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
           </>
         ) : (
           title && (
-            <div className={`jobs-title-group${subtitle ? " jobs-title-group--stacked" : ""}`}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                {titleIcon && <i className={titleIcon} />}
-                <h1 className="jobs-title">{title}</h1>
-                {totalCount !== undefined && <span className="jobs-count-pill">{totalCount}</span>}
+            config.backRoute ? (
+              <button className="jobs-title-group jobs-title-group--back" onClick={() => navigate(config.backRoute!)}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {titleIcon && <i className={titleIcon} />}
+                  <span className="jobs-title">{title}</span>
+                </div>
+              </button>
+            ) : (
+              <div className={`jobs-title-group${subtitle ? " jobs-title-group--stacked" : ""}`}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {titleIcon && <i className={titleIcon} />}
+                  <h1 className="jobs-title">{title}</h1>
+                  {totalCount !== undefined && <span className="jobs-count-pill">{totalCount}</span>}
+                </div>
+                {subtitle && <span className="jobs-subtitle">{subtitle}</span>}
               </div>
-              {subtitle && <span className="jobs-subtitle">{subtitle}</span>}
-            </div>
+            )
           )
         )}
 
@@ -116,10 +126,11 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
           <React.Fragment key={action.key}>
             {action.variant === "primary" ? (
               <motion.button
-                className={`jobs-add-btn${action.className ? ` ${action.className}` : ""}`}
+                className={`jobs-add-btn${action.className ? ` ${action.className}` : ""}${action.disabled ? " jobs-add-btn--disabled" : ""}`}
                 onClick={action.onClick}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.97 }}
+                disabled={action.disabled}
+                whileHover={action.disabled ? {} : { scale: 1.02 }}
+                whileTap={action.disabled ? {} : { scale: 0.97 }}
                 transition={springSnap}
               >
                 {action.icon && <i className={action.icon} />}
@@ -130,6 +141,7 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
               <Button
                 className={`jobs-export-btn${action.className ? ` ${action.className}` : ""}`}
                 onClick={action.onClick}
+                disabled={action.disabled}
                 loading={action.loading}
                 loadingText={action.loadingText}
                 icon={action.icon}

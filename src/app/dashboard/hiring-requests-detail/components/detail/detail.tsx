@@ -247,7 +247,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
               <CandidateTable
                 data={filteredApplicants}
                 columns={PIPELINE_STAGES.find((s) => s.key === activeStage)?.columns ?? []}
-                onRowClick={(candidate) => handleRowClick(candidate as Applicant)}
+                onRowClick={activeStage !== "waiting-evaluation" ? (candidate) => handleRowClick(candidate as Applicant) : undefined}
                 onInfoClick={(candidate) => handleInfoClick(candidate as Applicant)}
                 showBulkSelection={showBulkSelection}
                 selectedIds={bulkSelection.selectedIds}

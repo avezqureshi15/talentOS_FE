@@ -147,7 +147,7 @@ const CandidateTable = ({
           data.map((candidate, idx) => (
             <motion.div
               key={candidate.id}
-              className={`applicant-table-row${isInterviewStatus(candidate.status) ? " applicant-table-row--disabled" : ""}`}
+              className={`applicant-table-row${isInterviewStatus(candidate.status) || activeStage === "waiting-evaluation" || !onRowClick ? " applicant-table-row--disabled" : ""}`}
               style={{ gridTemplateColumns: gridTemplate }}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
