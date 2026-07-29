@@ -109,6 +109,6 @@ function mapFinalVerdictCandidate(app: {
     howDidYouHear: app.how_did_you_hear ?? undefined,
     willingToRelocate: app.willing_to_relocate ?? undefined,
     currentRoundId: app.current_round_id ?? undefined,
-    finalVerdict: app.final_verdict ?? undefined,
+    finalVerdict: app.final_verdict?.toLowerCase() ?? undefined,
   };
 }

@@ -15,7 +15,7 @@ export const DECISION_STAGES: { key: DecisionStageKey; label: string; columns: S
 ];
 
 export const STAGE_FILTER: Record<DecisionStageKey, (a: Applicant) => boolean> = {
-  "on-hold": (a) => a.finalVerdict === "ON_HOLD",
-  selected: (a) => a.finalVerdict === "SELECTED",
-  rejected: (a) => a.finalVerdict === "REJECTED",
+  "on-hold": (a) => a.finalVerdict === "on-hold",
+  selected: (a) => a.finalVerdict === "selected",
+  rejected: (a) => a.finalVerdict === "rejected",
 };

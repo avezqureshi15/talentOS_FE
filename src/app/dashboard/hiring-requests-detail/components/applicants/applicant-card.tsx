@@ -59,10 +59,9 @@ const ApplicantCard = ({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [menuOpen]);
 
-  const isFinal = stateConfig.state === "rejected" || stateConfig.state === "selected";
-  const canExpand = readOnly || !isFinal;
+  const canExpand = readOnly || true;
   const showExpanded = isOpen && (stateConfig.showExpandedContent || readOnly);
-  const showMenu = stateConfig.menuActions.length > 0 && a.finalVerdict == null && !readOnly;
+  const showMenu = stateConfig.menuActions.length > 0 && !readOnly;
 
   return (
     <div className="accordion-card">
