@@ -24,7 +24,7 @@ const INSTRUCTIONS = [
 
 const ProctoringPage = () => {
   const [rules, setRules] = useState<ProctoringRule[]>([
-    { id: "lockdown", title: "Lockdown Browser", description: "Candidate must download WebHyre\u2019s secure desktop app. It kills blacklisted software (even those hidden from screen share) and prevents window or screen switching. Available on macOS and Windows.", enabled: false },
+    { id: "lockdown", title: "Lockdown Browser", description: "Candidate must download TalentOS\u2019s secure desktop app. It kills blacklisted software (even those hidden from screen share) and prevents window or screen switching. Available on macOS and Windows.", enabled: false },
     { id: "face_visibility", title: "Candidate Face Visibility", description: "Candidate will receive a 30s warning if their face is hidden or multiple faces appear. Interview ends if not resolved.", enabled: true },
     { id: "screen_share", title: "Require Screen Share", description: "Candidate must share their full screen. A 30s warning appears if sharing stops. Interview ends if not resumed.", enabled: true },
     { id: "multiple_monitors", title: "Block Multiple Monitors", description: "Candidate must disconnect external monitors before starting. A 30s warning appears if one is connected during the interview.", enabled: true },
@@ -71,7 +71,7 @@ const ProctoringPage = () => {
                 </div>
                 <div>
                   <h3 className="proctoring-hero-title">Lockdown Browser</h3>
-                  <p className="proctoring-hero-desc">Candidate must download WebHyre&rsquo;s secure desktop app. It kills blacklisted software (even those hidden from screen share) and prevents window or screen switching. Available on macOS and Windows.</p>
+                  <p className="proctoring-hero-desc">Candidate must download TalentOS&rsquo;s secure desktop app. It kills blacklisted software (even those hidden from screen share) and prevents window or screen switching. Available on macOS and Windows.</p>
                 </div>
               </div>
               <Switch
