@@ -6,9 +6,10 @@ import "./detail.css";
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
 import ApplicantFilters from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-filters";
 import PipelineStages from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages";
-import { PIPELINE_STAGES } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.constants";
-import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
+import { PIPELINE_STAGES, NAME_SCORE_STATUS, SUFFIX_COLUMNS } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.constants";
+import type { StageColumn, StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table";
+import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
@@ -65,6 +66,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const showBulkSelection = activeStage in BULK_STAGE_ACTIONS;
   const { screening: showBulkScreening, interview: showBulkInterview } = BULK_STAGE_ACTIONS[activeStage] ?? { screening: false, interview: false };
   const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection);
+  const [timelineId, setTimelineId] = useState<number | null>(null);
   const [pendingBulkAction, setPendingBulkAction] = useState<"screening" | "interview" | null>(null);
   const [pendingBulkRemarks, setPendingBulkRemarks] = useState<"screening" | "interview" | null>(null);
   const [selectionStage, setSelectionStage] = useState<string | null>(null);
@@ -86,9 +88,9 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     if (action) setPendingBulkAction(action);
   };
 
-  const handleBulkScheduleConfirm = ({ scheduledDate, scheduledTime }: { scheduledDate: string; scheduledTime: string }) => {
+  const handleBulkScheduleConfirm = ({ scheduledDate, scheduledTime, scheduledEndDate, scheduledEndTime }: { scheduledDate: string; scheduledTime: string; scheduledEndDate?: string; scheduledEndTime?: string }) => {
     if (pendingBulkAction === "screening") bulkSelection.handleBulkMoveToScreening(scheduledDate, scheduledTime);
-    else if (pendingBulkAction === "interview") bulkSelection.handleBulkMoveToInterview(scheduledDate, scheduledTime);
+    else if (pendingBulkAction === "interview") bulkSelection.handleBulkMoveToInterview(scheduledDate, scheduledTime, scheduledEndDate, scheduledEndTime);
     setPendingBulkAction(null);
   };
 
@@ -115,6 +117,47 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
       (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["no-show"](a),
     ).length,
   }), [applicants]);
+
+  const columns = useMemo<StageColumn[]>(() => {
+    if (activeStage === "interview") {
+      if (interviewSubFilter === "ai-incoming") {
+        return [
+          ...NAME_SCORE_STATUS,
+          { key: "startDate", label: "Start Date", flex: 0.9 },
+          { key: "endDate", label: "End Date", flex: 0.9 },
+          ...SUFFIX_COLUMNS,
+        ];
+      }
+      if (interviewSubFilter === "regular-incoming") {
+        return [
+          ...NAME_SCORE_STATUS,
+          { key: "startDate", label: "Start Date", flex: 0.9 },
+          { key: "time", label: "Time", flex: 0.7 },
+          ...SUFFIX_COLUMNS,
+        ];
+      }
+    }
+    if (activeStage === "evaluated") {
+      if (evaluatedSubFilter === "ai") {
+        return [
+          ...NAME_SCORE_STATUS,
+          { key: "startDate", label: "Start Date", flex: 0.9 },
+          { key: "endDate", label: "End Date", flex: 0.9 },
+          ...SUFFIX_COLUMNS,
+        ];
+      }
+      if (evaluatedSubFilter === "regular") {
+        return [
+          ...NAME_SCORE_STATUS,
+          { key: "startDate", label: "Start Date", flex: 0.9 },
+          { key: "time", label: "Time", flex: 0.7 },
+          ...SUFFIX_COLUMNS,
+        ];
+      }
+    }
+    const base = PIPELINE_STAGES.find((s) => s.key === activeStage)?.columns ?? [];
+    return base;
+  }, [activeStage, interviewSubFilter, evaluatedSubFilter, PIPELINE_STAGES]);
 
   const evaluatedSubCounts = useMemo(() => ({
     ai: applicants.filter(
@@ -238,6 +281,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     onToggleSelectAll={bulkSelection.toggleSelectAll}
                     allSelected={bulkSelection.allSelected}
                     selectionCount={bulkSelection.selectionCount}
+                    timelineId={timelineId}
+                    onTimeline={setTimelineId}
                   />
                 </motion.div>
               )}
@@ -246,9 +291,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
             <motion.div variants={fadeSlideUp}>
               <CandidateTable
                 data={filteredApplicants}
-                columns={PIPELINE_STAGES.find((s) => s.key === activeStage)?.columns ?? []}
+                columns={columns}
                 onRowClick={activeStage !== "waiting-evaluation" ? (candidate) => handleRowClick(candidate as Applicant) : undefined}
                 onInfoClick={(candidate) => handleInfoClick(candidate as Applicant)}
+                onTimelineOpen={(candidate) => setTimelineId(candidate.candidateId)}
                 showBulkSelection={showBulkSelection}
                 selectedIds={bulkSelection.selectedIds}
                 onToggleSelect={bulkSelection.toggleSelect}
@@ -275,6 +321,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           dateLabel={bulkModalLabel}
           includeEnd={bulkModalIncludeEnd}
         />
+
+        <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
       </motion.div>
     </div>
   );

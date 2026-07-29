@@ -105,6 +105,8 @@ export type Applicant = {
   interviewerEmpId?: string;
   interviewerName?: string;
   roundName?: string;
+  scheduledAt?: string;
+  scheduledEndAt?: string;
 };
 
 export type ApplicantsProps = {
@@ -129,6 +131,8 @@ export type ApplicantsProps = {
   onToggleSelectAll?: () => void;
   allSelected?: boolean;
   selectionCount?: number;
+  timelineId: number | null;
+  onTimeline: (id: number) => void;
 };
 
 export type AccordionTab = "details" | "cover-letter" | "ai-summary" | "rounds";

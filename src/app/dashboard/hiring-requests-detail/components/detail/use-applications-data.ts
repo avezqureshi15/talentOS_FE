@@ -138,6 +138,8 @@ function mapCandidate(app: {
   interviewer_emp_id?: string | null;
   interviewer_name?: string | null;
   round_name?: string | null;
+  scheduled_at?: string | null;
+  scheduled_end_at?: string | null;
 }): Applicant {
   return {
     id: app.id,
@@ -173,5 +175,7 @@ function mapCandidate(app: {
     interviewerEmpId: app.interviewer_emp_id ?? undefined,
     interviewerName: app.interviewer_name ?? undefined,
     roundName: app.round_name ?? undefined,
+    scheduledAt: app.scheduled_at ?? undefined,
+    scheduledEndAt: app.scheduled_end_at ?? undefined,
   };
 }

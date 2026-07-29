@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import PipelineStages from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages";
 import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table";
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
+import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { useFinalizedData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
@@ -28,6 +29,7 @@ const DecisionBoard = ({ jobId }: Props) => {
   );
   const [activeStage, setActiveStage] = useState<DecisionStageKey>("selected");
   const [openId, setOpenId] = useState<string | null>(null);
+  const [timelineId, setTimelineId] = useState<number | null>(null);
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
 
   useEffect(
@@ -115,6 +117,8 @@ const DecisionBoard = ({ jobId }: Props) => {
                     onRefresh={refresh}
                     jdId={jobId}
                     isRemote={false}
+                    timelineId={timelineId}
+                    onTimeline={setTimelineId}
                   />
                 </motion.div>
               )}
@@ -125,11 +129,14 @@ const DecisionBoard = ({ jobId }: Props) => {
                 data={filteredApplicants}
                 columns={DECISION_STAGES.find((s) => s.key === activeStage)?.columns ?? []}
                 onInfoClick={handleInfoClick}
+                onTimelineOpen={(candidate) => setTimelineId(candidate.candidateId)}
                 loading={appsLoading}
               />
             </motion.div>
           )}
         </ErrorBoundary>
+
+        <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
       </motion.div>
     </div>
   );

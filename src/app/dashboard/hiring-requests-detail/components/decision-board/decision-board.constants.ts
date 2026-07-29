@@ -5,7 +5,9 @@ const NAME_SCORE_STATUS_INFO: StageColumn[] = [
   { key: "name", label: "Candidate", flex: 2 },
   { key: "score", label: "Score", flex: 0.8 },
   { key: "status", label: "Status", flex: 1 },
-  { key: "info", label: "", flex: 0.3 },
+  { key: "cv", label: "CV", flex: 0.6 },
+  { key: "timeline", label: "Timeline", flex: 0.6 },
+  { key: "info", label: "", flex: 0.4 },
 ];
 
 export const DECISION_STAGES: { key: DecisionStageKey; label: string; columns: StageColumn[] }[] = [

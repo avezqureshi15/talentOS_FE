@@ -8,6 +8,7 @@ export type CandidateTableProps = {
   columns: StageColumn[];
   onRowClick?: (candidate: Applicant) => void;
   onInfoClick?: (candidate: Applicant) => void;
+  onTimelineOpen?: (candidate: Applicant) => void;
   showBulkSelection?: boolean;
   selectedIds?: Set<string>;
   onToggleSelect?: (id: string) => void;

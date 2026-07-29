@@ -133,11 +133,15 @@
 
 /* status chip */
 .status-chip {
-  display: inline-flex;
+  display: inline-block;
   padding: 2px 8px;
   border-radius: 999px;
   font-size: 11px;
   font-weight: 500;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .status-chip--info {
@@ -214,8 +218,27 @@
   transition: color 0.12s;
 }
 
+.info-icon-btn {
+  background: var(--accent-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  margin-right: 12px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
 .info-icon-btn:hover {
-  color: var(--text-primary);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
 }
 
 .info-text-btn {
@@ -235,6 +258,61 @@
 .info-text-btn:hover {
   background: var(--accent-bg);
   border-color: var(--accent);
+}
+
+.cv-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease;
+}
+
+.cv-link:hover {
+  background: var(--accent-bg);
+}
+
+.timeline-btn {
+  background: rgba(234, 179, 8, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-radius: var(--radius-sm);
+  color: var(--yellow);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  width: 26px;
+  height: 26px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-btn:hover {
+  background: rgba(234, 179, 8, 0.2);
+  border-color: rgba(234, 179, 8, 0.4);
+}
+
+/* ---------- Interview date/time cells ---------- */
+.interview-date {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.interview-time {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
 }
 
 /* ---------- Bulk Selection (table view) ---------- */

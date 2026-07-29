@@ -28,6 +28,8 @@ export type EvaluatedCandidate = {
   review_verdict?: string | null;
   comparison_fields?: Array<{ label: string; value: { Expected: string; Actual: string } }>;
   disqualified_by?: string[];
+  scheduled_at?: string | null;
+  scheduled_end_at?: string | null;
 };
 
 export type RoundFromApi = {

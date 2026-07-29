@@ -7,6 +7,20 @@ import type { Applicant } from "@/app/dashboard/hiring-requests-detail/component
 const getInitials = (name: string) =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
+const formatDate = (iso?: string): string => {
+  if (!iso) return "";
+  try {
+    return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  } catch { return ""; }
+};
+
+const formatTime = (iso?: string): string => {
+  if (!iso) return "";
+  try {
+    return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
+  } catch { return ""; }
+};
+
 const getScoreClass = (score?: number) => {
   if (score == null) return "";
   if (score >= 70) return "score-high";
@@ -18,11 +32,22 @@ const STATUS_LABELS: Record<string, string> = {
   new: "New",
   under_evaluation: "Completed",
   shortlisted: "Shortlisted",
-  resume_shortlisted: "Resume Shortlisted",
-  rejected: "Moved Out Of Pipeline",
+  resume_shortlisted: "Shortlisted",
+  rejected: "Rejected",
   scheduled: "Scheduled",
   move_to_next_round: "Move to Next",
   waiting_for_review: "Waiting",
+  selected: "Selected",
+  screening_round_scheduled: "Scheduled",
+  interview_scheduled: "Scheduled",
+  interview_rescheduled: "Rescheduled",
+  interview_cancelled: "Cancelled",
+};
+
+const STATUS_TOOLTIPS: Record<string, string> = {
+  resume_shortlisted: "Resume Shortlisted",
+  rejected: "Moved Out Of Pipeline",
+  move_to_next_round: "Move to Next Round",
   selected: "Selected And Closed",
   screening_round_scheduled: "Screening Round Scheduled",
   interview_scheduled: "Interview Scheduled",
@@ -34,8 +59,12 @@ function toLabel(raw: string): string {
   return raw.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function getDisplayStatus(rawStatus: string): { label: string; cssClass: string } {
-  return { label: STATUS_LABELS[rawStatus] ?? toLabel(rawStatus), cssClass: rawStatus };
+function getDisplayStatus(rawStatus: string): { label: string; cssClass: string; tooltip: string } {
+  return {
+    label: STATUS_LABELS[rawStatus] ?? toLabel(rawStatus),
+    cssClass: rawStatus,
+    tooltip: STATUS_TOOLTIPS[rawStatus] ?? STATUS_LABELS[rawStatus] ?? toLabel(rawStatus),
+  };
 }
 
 const isInterviewStatus = (s: string) =>
@@ -63,7 +92,7 @@ const SkeletonRows = ({ count, columns, showBulkSelection }: { count: number; co
 };
 
 const CandidateTable = ({
-  data, columns, onRowClick, onInfoClick,
+  data, columns, onRowClick, onInfoClick, onTimelineOpen,
   showBulkSelection,
   selectedIds,
   onToggleSelect, onToggleSelectAll, allSelected,
@@ -91,29 +120,79 @@ const CandidateTable = ({
     status: (c) => {
       let label: string;
       let cssClass: string;
+      let tooltip: string;
       if (activeStage === "resume-shortlisting" && c.score != null) {
         label = c.score >= 70 ? "Selected" : "Rejected";
         cssClass = c.score >= 70 ? "selected" : "rejected";
+        tooltip = label;
       } else {
         const ds = getDisplayStatus(c.status);
         label = ds.label;
         cssClass = ds.cssClass;
+        tooltip = ds.tooltip;
       }
       return (
         <div className="applicant-table-cell">
-          <span className={`status-chip status-chip--${cssClass}`}>{label}</span>
+          <span className={`status-chip status-chip--${cssClass}`} title={tooltip}>{label}</span>
         </div>
       );
     },
+    cv: (c) => (
+      <div className="applicant-table-cell">
+        {c.cvUrl ? (
+          <a href={c.cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link" onClick={(e) => e.stopPropagation()}>
+            <i className="bx bx-arrow-in-up-right-circle" />
+          </a>
+        ) : (
+          <span className="text-muted">—</span>
+        )}
+      </div>
+    ),
+    timeline: (c) => (
+      <div className="applicant-table-cell">
+        <button className="timeline-btn" onClick={(e) => { e.stopPropagation(); onTimelineOpen?.(c); }} type="button">
+          <i className="bx bx-timeline" />
+        </button>
+      </div>
+    ),
     info: (c, onInfo) => (
       <div className="applicant-table-cell applicant-table-cell--info">
         <button
-          className="info-text-btn"
+          className="info-icon-btn"
           onClick={(e) => { e.stopPropagation(); onInfo?.(c); }}
           type="button"
+          title="View Profile"
         >
-          Profile View
+          <i className="bx bx-user" />
+          <span>View</span>
         </button>
+      </div>
+    ),
+    startDate: (c) => (
+      <div className="applicant-table-cell">
+        {c.scheduledAt ? (
+          <span className="interview-date">{formatDate(c.scheduledAt)}</span>
+        ) : (
+          <span className="text-muted">—</span>
+        )}
+      </div>
+    ),
+    endDate: (c) => (
+      <div className="applicant-table-cell">
+        {c.scheduledEndAt ? (
+          <span className="interview-date">{formatDate(c.scheduledEndAt)}</span>
+        ) : (
+          <span className="text-muted">—</span>
+        )}
+      </div>
+    ),
+    time: (c) => (
+      <div className="applicant-table-cell">
+        {c.scheduledAt ? (
+          <span className="interview-time">{formatTime(c.scheduledAt)}</span>
+        ) : (
+          <span className="text-muted">—</span>
+        )}
       </div>
     ),
   };

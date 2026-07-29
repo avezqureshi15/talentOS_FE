@@ -59,6 +59,8 @@ export type TriggerInterviewPayload = {
   round_type?: string;
   scheduled_date?: string;
   scheduled_time?: string;
+  scheduled_end_date?: string;
+  scheduled_end_time?: string;
   timezone?: string;
 };
 

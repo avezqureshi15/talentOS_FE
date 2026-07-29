@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import ApplicantCard from "./applicant-card";
 import ApplicantActionModals from "./applicant-action-modals";
-import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
@@ -22,10 +21,9 @@ type LocalOverride = {
   finalVerdict?: string;
 };
 
-function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, applicantParam, onRefresh, jdId, isRemote, showBulkSelection = false, selectedIds, onToggleSelect, onToggleSelectAll, allSelected, selectionCount = 0 }: ApplicantsProps) {
+function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, applicantParam, onRefresh, jdId, isRemote, showBulkSelection = false, selectedIds, onToggleSelect, onToggleSelectAll, allSelected, selectionCount = 0, onTimeline }: ApplicantsProps) {
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
-  const [timelineId, setTimelineId] = useState<number | null>(null);
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
   const [aiSummaryId, setAiSummaryId] = useState<string | null>(null);
   const [detailsId, setDetailsId] = useState<string | null>(null);
@@ -353,7 +351,7 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
               onCoverLetterReadMore={setCoverLetterId}
               onAiSummaryReadMore={setAiSummaryId}
               onDetailsReadMore={setDetailsId}
-               onTimeline={setTimelineId}
+               onTimeline={onTimeline}
                jdId={jdId}
                isRemote={isRemote}
             />
@@ -416,8 +414,6 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
         onClose={() => setCancelTarget(null)}
         onConfirm={handleCancelConfirm}
       />
-
-      <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 
       {data.map((a) => (<CoverLetterModal key={`cl-${a.id}`} open={coverLetterId === a.id} applicantName={a.name} coverLetter={a.coverLetter ?? ""} onClose={() => setCoverLetterId(null)} />))}
       {data.map((a) => (<AiSummaryModal key={`ai-${a.id}`} open={aiSummaryId === a.id} applicantName={a.name} aiSummary={a.aiSummary ?? ""} onClose={() => setAiSummaryId(null)} />))}

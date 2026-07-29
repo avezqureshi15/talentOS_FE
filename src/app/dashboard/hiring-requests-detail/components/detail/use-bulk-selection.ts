@@ -106,7 +106,7 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
     onRefresh?.();
   }, [data, selectedIds, jdId, moveToScreeningMut, triggerAiInterviewMut, updateCandidateRoundStatusMut, onRefresh]);
 
-  const handleBulkMoveToInterview = useCallback(async (scheduledDate?: string, scheduledTime?: string) => {
+  const handleBulkMoveToInterview = useCallback(async (scheduledDate?: string, scheduledTime?: string, scheduledEndDate?: string, scheduledEndTime?: string) => {
     const candidates = data.filter((a) => selectedIds.has(a.id));
     if (candidates.length === 0) return;
     setIsBulkProcessing(true);
@@ -124,6 +124,8 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
             round_type: "AI_INTERVIEW_ROUND",
             scheduled_date: scheduledDate || undefined,
             scheduled_time: scheduledTime || undefined,
+            scheduled_end_date: scheduledEndDate || undefined,
+            scheduled_end_time: scheduledEndTime || undefined,
             timezone,
           });
           round_id = resp.round_id;
