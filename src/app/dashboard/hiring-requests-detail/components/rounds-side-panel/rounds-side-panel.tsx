@@ -9,7 +9,7 @@ import type { RoundsSidePanelProps, PanelContentProps, RowProps, ReviewEntity } 
 import {
   ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK,
   VERDICT_LABELS, VERDICT_ICONS, ENTITY_TITLE_LABELS, RATING_LABELS,
-  CRITERION_LABELS, COMPARISON_LABELS,
+  CRITERION_LABELS, COMPARISON_LABELS, ROUND_STATUS_LABELS, toLabel,
 } from "./rounds-side-panel.constants";
 import "./rounds-side-panel.css";
 
@@ -199,7 +199,7 @@ const PanelContent = ({ round, hideReviews }: PanelContentProps) => {
           <Row label="Slot" icon="bx bx-clock" value={round.slot} />
           <Row label="Duration" icon="bx bx-stopwatch" value={round.duration} />
           <Row label="Interview Type" icon="bx bx-video" value={round.interviewType} />
-          <Row label="Status" icon="bx bx-check-circle" value={round.status} />
+          <Row label="Status" icon="bx bx-check-circle" value={ROUND_STATUS_LABELS[round.status] ?? toLabel(round.status)} />
         </div>
       </div>
 

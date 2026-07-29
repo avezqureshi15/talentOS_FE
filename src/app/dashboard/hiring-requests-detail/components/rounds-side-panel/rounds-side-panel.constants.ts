@@ -55,3 +55,16 @@ export const COMPARISON_LABELS: Record<string, string> = {
   LOCATION: "Location",
   NOTICE_PERIOD: "Notice Period",
 };
+
+export const ROUND_STATUS_LABELS: Record<string, string> = {
+  scheduled: "Scheduled",
+  completed: "Completed",
+  cancelled: "Cancelled",
+  rescheduled: "Rescheduled",
+  in_progress: "In Progress",
+  pending: "Pending",
+};
+
+export function toLabel(raw: string): string {
+  return raw.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}

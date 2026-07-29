@@ -19,16 +19,23 @@ const STATUS_LABELS: Record<string, string> = {
   under_evaluation: "Completed",
   shortlisted: "Shortlisted",
   resume_shortlisted: "Resume Shortlisted",
-  rejected: "Rejected",
+  rejected: "Moved Out Of Pipeline",
   scheduled: "Scheduled",
   move_to_next_round: "Move to Next",
   waiting_for_review: "Waiting",
-  selected: "Selected",
+  selected: "Selected And Closed",
   screening_round_scheduled: "Screening Round Scheduled",
+  interview_scheduled: "Interview Scheduled",
+  interview_rescheduled: "Interview Rescheduled",
+  interview_cancelled: "Interview Cancelled",
 };
 
+function toLabel(raw: string): string {
+  return raw.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 function getDisplayStatus(rawStatus: string): { label: string; cssClass: string } {
-  return { label: STATUS_LABELS[rawStatus] ?? rawStatus, cssClass: rawStatus };
+  return { label: STATUS_LABELS[rawStatus] ?? toLabel(rawStatus), cssClass: rawStatus };
 }
 
 const isInterviewStatus = (s: string) =>

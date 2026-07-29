@@ -1,16 +1,25 @@
 import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import { STAGE_TO_BACKEND_STAGE } from "@/app/dashboard/hiring-requests-detail/components/applicants/fsm.constants";
 
 export const DEFAULT_FILTER = "all";
 
+function includesStage(a: Applicant, stageKey: StageKey): boolean {
+  return STAGE_TO_BACKEND_STAGE[stageKey].includes(a.stage ?? "");
+}
+
 export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
-  "resume-shortlisting": (a) => a.stage === "RESUME_SHORTLISTING" || a.stage === "RESUME_SHORTLISTED",
-  screening: (a) => a.stage === "SCREENING" || a.stage === "AI_SCREENING",
+  "resume-shortlisting": (a) => includesStage(a, "resume-shortlisting"),
+  screening: (a) => includesStage(a, "screening"),
   interview: (a) =>
-    (a.stage === "INTERVIEW" || a.stage === "AI_INTERVIEW") &&
+    includesStage(a, "interview") &&
     ["interview_scheduled", "interview_rescheduled", "interview_cancelled"].includes(a.status?.toLowerCase() ?? ""),
-  "waiting-evaluation": (a) => a.stage === "WAITING_FOR_EVALUATION" || a.status?.toLowerCase() === "waiting_for_review",
-  evaluated: (a) => (a.stage === "INTERVIEW" || a.stage === "AI_INTERVIEW") && a.status?.toLowerCase() === "under_evaluation",
+  "waiting-evaluation": (a) =>
+    includesStage(a, "waiting-evaluation") ||
+    a.status?.toLowerCase() === "waiting_for_review",
+  evaluated: (a) =>
+    includesStage(a, "evaluated") &&
+    a.status?.toLowerCase() === "under_evaluation",
   selected: () => false,
   rejected: () => false,
   "on-hold": () => false,
