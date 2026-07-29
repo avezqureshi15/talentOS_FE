@@ -165,7 +165,7 @@ function mapCandidate(app: {
     howDidYouHear: app.how_did_you_hear ?? undefined,
     willingToRelocate: app.willing_to_relocate ?? undefined,
     currentRoundId: app.current_round_id ?? undefined,
-    finalVerdict: app.final_verdict?.toLowerCase() ?? undefined,
+    finalVerdict: app.final_verdict?.toLowerCase().replace(/_/g, "-") ?? undefined,
     reviews: app.reviews ?? undefined,
     reviewVerdict: app.review_verdict ?? undefined,
     disqualifiedBy: app.disqualified_by ?? [],

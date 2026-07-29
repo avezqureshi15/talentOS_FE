@@ -13,4 +13,5 @@ export const PIPELINE_STAGES: StageData[] = [
   { key: "interview",           label: "INTERVIEW",            count: 0, columns: NAME_SCORE_STATUS_INFO },
   { key: "waiting-evaluation",  label: "WAITING FOR EVALUATION", count: 0, columns: NAME_SCORE_STATUS_INFO },
   { key: "evaluated",           label: "EVALUATED",             count: 0, columns: NAME_SCORE_STATUS_INFO },
+
 ];
