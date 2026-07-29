@@ -5,6 +5,7 @@ import PanelSkeleton from "./panel-skeleton";
 import ReadMoreText from "./read-more-text";
 import ExpandableAiSummary from "./expandable-ai-summary";
 import { useRoundDetail } from "./use-round-detail";
+import { toISTDisplay, toISTTimeRange } from "@/utils/date";
 import type { RoundsSidePanelProps, PanelContentProps, RowProps, ReviewEntity } from "./rounds-side-panel.types";
 import {
   ROUNDS_PANEL_LABELS, ROUNDS_PANEL_STATUS, ROUNDS_FALLBACK,
@@ -195,8 +196,8 @@ const PanelContent = ({ round, hideReviews }: PanelContentProps) => {
             </div>
           )}
           <Row label="Candidate" icon="bx bx-user-voice" value={round.candidate} />
-          <Row label="Occurred On" icon="bx bx-calendar" value={round.occurredOn} />
-          <Row label="Slot" icon="bx bx-clock" value={round.slot} />
+          <Row label="Occurred On" icon="bx bx-calendar" value={toISTDisplay(round.occurredOn)} />
+          <Row label="Slot" icon="bx bx-clock" value={toISTTimeRange(round.slot)} />
           <Row label="Duration" icon="bx bx-stopwatch" value={round.duration} />
           <Row label="Interview Type" icon="bx bx-video" value={round.interviewType} />
           <Row label="Status" icon="bx bx-check-circle" value={ROUND_STATUS_LABELS[round.status] ?? toLabel(round.status)} />

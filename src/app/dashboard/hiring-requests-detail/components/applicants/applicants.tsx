@@ -143,20 +143,21 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
     setShortlistCandidateId(null);
   };
 
-  const handleConfirmFinalHire = async () => {
+  const handleFinalConfirmAction = async (decision: "selected" | "rejected" | "on-hold") => {
     setIsConfirmingHire(true);
     try {
       if (finalConfirmId) {
         const applicant = data.find((a) => a.id === finalConfirmId);
+        const verdict = decision === "selected" ? "SELECTED" : decision === "rejected" ? "REJECTED" : "ON_HOLD";
         if (applicant) {
           try {
-            await updateFinalVerdict(applicant.candidateId, "SELECTED");
-            overrideFinalVerdict(finalConfirmId, "selected");
+            await updateFinalVerdict(applicant.candidateId, verdict);
+            overrideFinalVerdict(finalConfirmId, decision);
           } catch {
-            overrideFinalVerdict(finalConfirmId, "selected");
+            overrideFinalVerdict(finalConfirmId, decision);
           }
         } else {
-          overrideFinalVerdict(finalConfirmId, "selected");
+          overrideFinalVerdict(finalConfirmId, decision);
         }
         setScreeningId(null);
       }
@@ -383,7 +384,7 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
         onOpenFinalSelectionWarning={handleOpenFinalSelectionWarning}
         onCloseShortlist={closeShortlist}
         finalConfirmId={finalConfirmId}
-        onConfirmHire={handleConfirmFinalHire}
+        onFinalConfirmAction={handleFinalConfirmAction}
         onCloseFinalConfirm={() => setFinalConfirmId(null)}
         isConfirmingFinalDecision={isConfirmingFinalDecision}
         isConfirmingReject={isConfirmingReject}

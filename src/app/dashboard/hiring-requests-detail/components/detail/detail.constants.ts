@@ -35,9 +35,14 @@ export const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = 
 };
 
 export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
-  "yet-to-start": (a) =>
-    a.status?.toLowerCase() === "interview_scheduled" ||
-    a.status?.toLowerCase() === "interview_rescheduled",
+  "ai-incoming": (a) =>
+    a.stage === "AI_INTERVIEW" &&
+    (a.status?.toLowerCase() === "interview_scheduled" ||
+     a.status?.toLowerCase() === "interview_rescheduled"),
+  "regular-incoming": (a) =>
+    a.stage === "INTERVIEW" &&
+    (a.status?.toLowerCase() === "interview_scheduled" ||
+     a.status?.toLowerCase() === "interview_rescheduled"),
   "no-show": (a) => a.status?.toLowerCase() === "interview_cancelled",
 };
 
@@ -48,7 +53,8 @@ export const EVALUATED_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean>
 export const UI_TABLE_VIEW = "Overview";
 
 export const UI_CARD_VIEW = "Profile View";
-export const UI_INTERVIEW_YET_TO_START = "Yet to Start";
+export const UI_INTERVIEW_AI_INCOMING = "AI Incoming";
+export const UI_INTERVIEW_REGULAR_INCOMING = "Regular Incoming";
 export const UI_INTERVIEW_NO_SHOW = "No Show";
 export const UI_EVALUATED_AI = "AI";
 export const UI_EVALUATED_REGULAR = "Regular";

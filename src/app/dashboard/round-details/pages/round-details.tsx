@@ -4,6 +4,7 @@ import "./round-details.css";
 import { MOCK_EVALUATION } from "./round-details.constants";
 import { fetchRoundDetail } from "@/services/applications/applications";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
+import { toISTDisplay } from "@/utils/date";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import AiInterviewTemplate from "../components/ai-interview-template/ai-interview-template";
 import NormalRoundTemplate from "../components/normal-round-template/normal-round-template";
@@ -14,7 +15,7 @@ const getInitials = (name: string) =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
 const detectMode = (data: RoundDetailApiResponse): RoundDetailsMode => {
-  if (data.round_type === "AI_INTERVIEW") return "ai-interview";
+  if (data.round_type === "AI_INTERVIEW" || data.round_type === "AI_INTERVIEW_ROUND") return "ai-interview";
   return "normal-round";
 };
 
@@ -43,7 +44,7 @@ function buildApiHeader(data: RoundDetailApiResponse) {
     meta: [
       ...(data.round_type ? [{ label: data.round_type }] : data.interview_type ? [{ label: data.interview_type }] : []),
       ...(data.interviewer ? [{ label: data.interviewer }] : []),
-      ...(data.occurred_on ? [{ label: data.occurred_on }] : []),
+      ...(data.occurred_on ? [{ label: toISTDisplay(data.occurred_on) }] : []),
     ].filter(Boolean),
     actions: [
       { key: "resume", label: "Resume", icon: "bx-file" },
@@ -82,7 +83,7 @@ const RoundDetails = () => {
         </div>
       )}
 
-      {isError && (
+      {isError && mode === "normal-round" && (
         <div className="rd-split" style={{ alignItems: "center", justifyContent: "center" }}>
           <p className="rd-error">Failed to load round details.</p>
         </div>

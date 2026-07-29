@@ -25,7 +25,7 @@ const ApplicantActionModals = ({
   onOpenFinalSelectionWarning,
   onCloseShortlist,
   finalConfirmId,
-  onConfirmHire,
+  onFinalConfirmAction,
   onCloseFinalConfirm,
   isConfirmingFinalDecision,
   isConfirmingReject,
@@ -178,9 +178,15 @@ const ApplicantActionModals = ({
             <button className="confirm-btn confirm-cancel" onClick={onCloseFinalConfirm} type="button">
               Cancel
             </button>
-            <Button className="confirm-btn confirm-danger" onClick={onConfirmHire} loading={isConfirmingHire} loadingText="Confirming...">
-              Confirm
+            <Button className="confirm-btn confirm-proceed" onClick={() => onFinalConfirmAction("selected")} loading={isConfirmingHire} loadingText="Selecting...">
+              Select
             </Button>
+            <Button className="confirm-btn confirm-danger" onClick={() => onFinalConfirmAction("rejected")} loading={isConfirmingHire} loadingText="Rejecting...">
+              Reject
+            </Button>
+            <button className="confirm-btn confirm-cancel" onClick={() => onFinalConfirmAction("on-hold")} type="button">
+              Hold
+            </button>
           </div>
         </div>
       </BaseModal>

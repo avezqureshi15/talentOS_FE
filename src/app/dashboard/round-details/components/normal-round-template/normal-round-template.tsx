@@ -1,6 +1,7 @@
 import Chip from "@/components/ui/chip/chip";
 import ReadMoreText from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/read-more-text";
 import ExpandableAiSummary from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/expandable-ai-summary";
+import { toISTDisplay, toISTTimeRange } from "@/utils/date";
 import type { RoundDetailApiResponse, ReviewEntity, RatingItem } from "@/services/applications/applications.types";
 import {
   RATING_LABELS, ENTITY_TITLE_LABELS, VERDICT_LABELS, VERDICT_ICONS,
@@ -59,8 +60,8 @@ const NormalRoundTemplate = ({ data, candidateId, hiringRequestId }: NormalRound
             <div className="nrt-card-body nrt-overview-body">
               <OverviewItem icon="bx bx-user" label="Candidate" value={data.candidate} />
               <OverviewItem icon="bx bx-user-voice" label="Interviewer" value={data.interviewer} />
-              <OverviewItem icon="bx bx-calendar" label="Occurred On" value={data.occurred_on} />
-              <OverviewItem icon="bx bx-clock" label="Slot" value={data.slot} />
+              <OverviewItem icon="bx bx-calendar" label="Occurred On" value={toISTDisplay(data.occurred_on)} />
+              <OverviewItem icon="bx bx-clock" label="Slot" value={toISTTimeRange(data.slot)} />
               <OverviewItem icon="bx bx-stopwatch" label="Duration" value={data.duration} />
               <OverviewItem icon={interviewTypeIcon} label="Type" value={data.interview_type} />
             </div>

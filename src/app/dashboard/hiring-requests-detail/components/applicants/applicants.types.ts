@@ -164,7 +164,7 @@ export type ApplicantActionModalsProps = {
   onOpenFinalSelectionWarning: () => void;
   onCloseShortlist: () => void;
   finalConfirmId: string | null;
-  onConfirmHire: () => void;
+  onFinalConfirmAction: (decision: "selected" | "rejected" | "on-hold") => void;
   onCloseFinalConfirm: () => void;
   isConfirmingFinalDecision?: boolean;
   isConfirmingReject?: boolean;

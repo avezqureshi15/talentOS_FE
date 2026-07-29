@@ -30,7 +30,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [searchParams] = useSearchParams();
   const applicantParam = searchParams.get("applicant");
   const [activeStage, setActiveStage] = useState<StageKey>("resume-shortlisting");
-  const [interviewSubFilter, setInterviewSubFilter] = useState<"yet-to-start" | "no-show">("yet-to-start");
+  const [interviewSubFilter, setInterviewSubFilter] = useState<"ai-incoming" | "regular-incoming" | "no-show">("ai-incoming");
   const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
 
   const jobId = hiringRequest.id;
@@ -105,8 +105,11 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   );
 
   const interviewSubCounts = useMemo(() => ({
-    "yet-to-start": applicants.filter(
-      (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["yet-to-start"](a),
+    "ai-incoming": applicants.filter(
+      (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["ai-incoming"](a),
+    ).length,
+    "regular-incoming": applicants.filter(
+      (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["regular-incoming"](a),
     ).length,
     "no-show": applicants.filter(
       (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["no-show"](a),
