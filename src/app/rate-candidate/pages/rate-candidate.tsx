@@ -1,36 +1,71 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Icon } from "@/components/ui/icons";
 import Button from "@/components/ui/button/button";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import RatingPanel from "@/app/rate-candidate/components/rating-panel/rating-panel";
-import ReviewForm from "@/app/rate-candidate/components/review-form/review-form";
 import SkillChips from "@/app/rate-candidate/components/skill-chips/skill-chips";
 import VerdictButtons from "@/app/rate-candidate/components/verdict-buttons/verdict-buttons";
 import type { VerdictValue } from "@/app/rate-candidate/components/verdict-buttons/verdict-buttons.types";
 import { RATE_LABELS } from "./rate-candidate.constants";
-import { RATING_CRITERIA, RUBRIC_LEVELS } from "@/app/rate-candidate/components/rating-panel/rating-panel.constants";
+import {
+  NOTES_MAX_CHARS,
+  RUBRIC_LEVELS,
+} from "@/app/rate-candidate/components/rating-panel/rating-panel.constants";
+import {
+  allQuestionsScored,
+  averageScore,
+  buildEmptyAnswers,
+  phasesKey,
+} from "@/app/rate-candidate/components/rating-panel/rating-panel.helpers";
 import { SKILL_CHIPS } from "@/app/rate-candidate/components/skill-chips/skill-chips.constants";
 import { CONTEXT_SECTIONS } from "./rate-candidate.constants";
 import { useRateCandidate } from "../hooks/use-rate-candidate";
+import type { AnswerMap } from "@/app/rate-candidate/services/rate-candidate.types";
 import "./rate-candidate.css";
 
-const initRatings = () => {
-  const r: Record<string, number> = {};
-  RATING_CRITERIA.forEach((c) => { r[c.key] = 0; });
-  return r;
-};
-
 const RateCandidate = () => {
-  const { formId, formLoading, formError, formValid, formValidated, roundDetail, roundLoading, isSubmitting, isSubmitted, submitError, handleSubmitReview } = useRateCandidate();
+  const {
+    formId,
+    formLoading,
+    formError,
+    formValid,
+    formValidated,
+    resolvedQuestions,
+    roundDetail,
+    roundLoading,
+    isSubmitting,
+    isSubmitted,
+    submitError,
+    handleSubmitReview,
+  } = useRateCandidate();
 
-  const [ratings, setRatings] = useState<Record<string, number>>(initRatings);
+  const [answers, setAnswers] = useState<AnswerMap>({});
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [review, setReview] = useState("");
   const [verdict, setVerdict] = useState<VerdictValue | null>(null);
 
-  const handleChangeRating = useCallback((key: string, value: number) => {
-    setRatings((prev) => ({ ...prev, [key]: value }));
+  const phasesFingerprint = useMemo(
+    () => (resolvedQuestions ? phasesKey(resolvedQuestions.phases) : ""),
+    [resolvedQuestions],
+  );
+
+  useEffect(() => {
+    if (!resolvedQuestions) return;
+    setAnswers(buildEmptyAnswers(resolvedQuestions.phases));
+  }, [phasesFingerprint, resolvedQuestions]);
+
+  const handleChangeScore = useCallback((key: string, score: number) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [key]: { score, notes: prev[key]?.notes ?? "" },
+    }));
+  }, []);
+
+  const handleChangeNotes = useCallback((key: string, notes: string) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [key]: { score: prev[key]?.score ?? 0, notes },
+    }));
   }, []);
 
   const handleToggleSkill = useCallback((key: string) => {
@@ -44,20 +79,27 @@ const RateCandidate = () => {
   }, []);
 
   const handleClear = useCallback(() => {
-    setRatings(initRatings());
+    if (resolvedQuestions) {
+      setAnswers(buildEmptyAnswers(resolvedQuestions.phases));
+    }
     setSelectedSkills([]);
-    setReview("");
     setVerdict(null);
-  }, []);
+  }, [resolvedQuestions]);
 
   const handleSubmit = useCallback(async () => {
-    if (!verdict) return;
+    if (!verdict || !resolvedQuestions) return;
     try {
-      await handleSubmitReview(ratings, selectedSkills, review, verdict);
+      await handleSubmitReview(
+        resolvedQuestions.phases,
+        resolvedQuestions.questions_source,
+        answers,
+        selectedSkills,
+        verdict,
+      );
     } catch {
       // error surfaced by submitError
     }
-  }, [ratings, selectedSkills, review, verdict, handleSubmitReview]);
+  }, [verdict, resolvedQuestions, answers, selectedSkills, handleSubmitReview]);
 
   if (formLoading || (!formValidated && !!formId)) {
     return (
@@ -73,7 +115,7 @@ const RateCandidate = () => {
     );
   }
 
-  if (!formValid || !formId) {
+  if (!formValid || !formId || !resolvedQuestions) {
     return (
       <div className="rate-page">
         <ErrorFallback title="Review Form" message="Invalid review link." />
@@ -82,15 +124,15 @@ const RateCandidate = () => {
   }
 
   if (isSubmitted) {
-    const values = Object.values(ratings).filter(Boolean);
-    const avg = values.length > 0 ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1) : "—";
+    const avg = averageScore(answers);
+    const avgLabel = avg > 0 ? avg.toFixed(1) : "—";
     const labelMap: Record<VerdictValue, string> = { selected: "Selected", rejected: "Rejected" };
     return (
       <div className="rate-page">
         <div className="rate-submitted">
           <i className="bx bx-check-circle submitted-icon" />
           <h2 className="submitted-title">{RATE_LABELS.SUBMITTED_TITLE}</h2>
-          <p className="submitted-desc">Average Rating: {avg}/4</p>
+          <p className="submitted-desc">Average Rating: {avgLabel}/5</p>
           {verdict && <p className="submitted-verdict">{labelMap[verdict]}</p>}
         </div>
       </div>
@@ -121,7 +163,10 @@ const RateCandidate = () => {
       ]
     : CONTEXT_SECTIONS;
 
-  const canSubmit = Object.values(ratings).some(Boolean) && verdict !== null && !isSubmitting;
+  const canSubmit =
+    allQuestionsScored(resolvedQuestions.phases, answers) &&
+    verdict !== null &&
+    !isSubmitting;
 
   return (
     <div className="rate-page">
@@ -177,10 +222,12 @@ const RateCandidate = () => {
 
                 <div className="rate-main">
                   <RatingPanel
-                    criteria={[...RATING_CRITERIA]}
-                    ratings={ratings}
-                    onChangeRating={handleChangeRating}
+                    phases={resolvedQuestions.phases}
+                    answers={answers}
+                    onChangeScore={handleChangeScore}
+                    onChangeNotes={handleChangeNotes}
                     levels={[...RUBRIC_LEVELS]}
+                    notesMaxChars={NOTES_MAX_CHARS}
                   />
 
                   <div className="rate-divider" />
@@ -190,14 +237,6 @@ const RateCandidate = () => {
                     chips={[...SKILL_CHIPS]}
                     selected={selectedSkills}
                     onToggle={handleToggleSkill}
-                  />
-
-                  <div className="rate-divider" />
-
-                  <ReviewForm
-                    review={review}
-                    onChangeReview={setReview}
-                    maxChars={RATE_LABELS.MAX_CHARS}
                   />
 
                   <div className="rate-divider" />
