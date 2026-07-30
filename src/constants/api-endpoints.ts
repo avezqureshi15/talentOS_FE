@@ -46,6 +46,7 @@ export const API_ENDPOINTS = {
   AI_MOVE_TO_SCREENING: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-screening",
   AI_TRIGGER_INTERVIEW: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/trigger-interview",
   APPLICATION_ROUND_STATUS: "/applications/{candidate_id}/round-status",
+  HIRING_REQUESTS_CANDIDATES_IMPORT: "/hiring-requests/{hiring_request_id}/candidates/import",
 } as const;
 
 export const PAGINATION = {
