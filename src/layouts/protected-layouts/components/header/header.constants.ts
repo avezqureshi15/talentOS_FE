@@ -10,9 +10,6 @@ export const HEADER_VIEW_OPTIONS = [
 
 export const HEADER_DEFAULT_VIEW = "pipeline";
 
-export const HEADER_IMPORT_LABEL = "Import";
-export const HEADER_IMPORT_ICON = "bx bx-file-plus";
-
 export const HEADER_EXPORT_LABEL = "Export";
 export const HEADER_EXPORT_ICON = "bx-archive-arrow-down";
 
