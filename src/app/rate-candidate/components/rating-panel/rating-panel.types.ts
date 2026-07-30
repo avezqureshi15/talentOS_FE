@@ -1,3 +1,5 @@
+import type { AnswerMap, ReviewPhase } from "@/app/rate-candidate/services/rate-candidate.types";
+
 export type RubricLevel = {
   score: number;
   icon: string;
@@ -5,14 +7,11 @@ export type RubricLevel = {
   desc: string;
 };
 
-export type RatingCriterion = {
-  key: string;
-  label: string;
-};
-
 export type RatingPanelProps = {
-  criteria: RatingCriterion[];
-  ratings: Record<string, number>;
-  onChangeRating: (key: string, value: number) => void;
+  phases: ReviewPhase[];
+  answers: AnswerMap;
+  onChangeScore: (key: string, score: number) => void;
+  onChangeNotes: (key: string, notes: string) => void;
   levels: RubricLevel[];
+  notesMaxChars: number;
 };
