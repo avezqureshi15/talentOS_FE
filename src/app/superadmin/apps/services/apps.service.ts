@@ -9,23 +9,32 @@ import type {
   UpdatePermissionsRequest,
 } from "./apps.service.types";
 
-export const listApps = (params: { page?: number; per_page?: number; q?: string }) =>
-  httpClient.get<ApiKeyListResponse>("/superadmin/apps", { params });
+export type AppsScope = "superadmin" | "admin";
 
-export const getApp = (appId: number) =>
-  httpClient.get<ApiKeyDetailResponse>(`/superadmin/apps/${appId}`);
+const APPS_BASE: Record<AppsScope, string> = {
+  superadmin: "/superadmin/apps",
+  admin: "/admin/apps",
+};
 
-export const createApp = (body: CreateAppRequest) =>
-  httpClient.post<ApiKeyCreatedResponse>("/superadmin/apps", body);
+export const listApps = (
+  params: { page?: number; per_page?: number; q?: string; tenant_id?: number },
+  scope: AppsScope = "superadmin",
+) => httpClient.get<ApiKeyListResponse>(APPS_BASE[scope], { params });
 
-export const updateApp = (appId: number, body: UpdateAppRequest) =>
-  httpClient.patch<ApiKeyResponse>(`/superadmin/apps/${appId}`, body);
+export const getApp = (appId: number, scope: AppsScope = "superadmin") =>
+  httpClient.get<ApiKeyDetailResponse>(`${APPS_BASE[scope]}/${appId}`);
 
-export const revokeApp = (appId: number) =>
-  httpClient.delete<{ message: string }>(`/superadmin/apps/${appId}`);
+export const createApp = (body: CreateAppRequest, scope: AppsScope = "superadmin") =>
+  httpClient.post<ApiKeyCreatedResponse>(APPS_BASE[scope], body);
 
-export const rotateKey = (appId: number) =>
-  httpClient.post<ApiKeyCreatedResponse>(`/superadmin/apps/${appId}/rotate`);
+export const updateApp = (appId: number, body: UpdateAppRequest, scope: AppsScope = "superadmin") =>
+  httpClient.patch<ApiKeyResponse>(`${APPS_BASE[scope]}/${appId}`, body);
 
-export const updateAppPermissions = (appId: number, body: UpdatePermissionsRequest) =>
-  httpClient.put<ApiKeyDetailResponse>(`/superadmin/apps/${appId}/permissions`, body);
+export const revokeApp = (appId: number, scope: AppsScope = "superadmin") =>
+  httpClient.delete<{ message: string }>(`${APPS_BASE[scope]}/${appId}`);
+
+export const rotateKey = (appId: number, scope: AppsScope = "superadmin") =>
+  httpClient.post<ApiKeyCreatedResponse>(`${APPS_BASE[scope]}/${appId}/rotate`);
+
+export const updateAppPermissions = (appId: number, body: UpdatePermissionsRequest, scope: AppsScope = "superadmin") =>
+  httpClient.put<ApiKeyDetailResponse>(`${APPS_BASE[scope]}/${appId}/permissions`, body);

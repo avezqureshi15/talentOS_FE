@@ -1,17 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
-import { listApps } from "@/app/superadmin/apps/services/apps.service";
+import { listApps, type AppsScope } from "@/app/superadmin/apps/services/apps.service";
 import { APPS_QUERY_KEYS } from "@/app/superadmin/apps/apps.constants";
 import type { ApiKeyListResponse } from "@/app/superadmin/apps/services/apps.service.types";
 
-export const useAppsList = (page: number, search: string) => {
+export const useAppsList = (
+  page: number,
+  search: string,
+  tenantId?: number | null,
+  scope: AppsScope = "superadmin",
+) => {
   return useQuery<ApiKeyListResponse>({
-    queryKey: [APPS_QUERY_KEYS.APPS_LIST, page, search],
+    queryKey: [APPS_QUERY_KEYS.APPS_LIST, scope, tenantId ?? "all", page, search],
     queryFn: async () => {
-      const { data } = await listApps({
-        page,
-        per_page: 20,
-        q: search || undefined,
-      });
+      const { data } = await listApps(
+        {
+          page,
+          per_page: 20,
+          q: search || undefined,
+          tenant_id: tenantId ?? undefined,
+        },
+        scope,
+      );
       return data;
     },
   });

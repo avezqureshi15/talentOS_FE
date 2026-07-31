@@ -39,12 +39,13 @@ export const API_ENDPOINTS = {
   ADMIN_USERS_INVITES: "/admin/users/invites",
   SETTINGS: "/settings",
   SUPERADMIN_APPS: "/superadmin/apps",
+  ADMIN_APPS: "/admin/apps",
   SUPERADMIN_TENANTS: "/superadmin/tenants",
   ADMIN_ORGANIZATION: "/admin/organization",
   AI_SCREENING: "/hiring-requests/{hiring_request_id}/ai/screening",
   AI_INTERVIEWS: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/interviews",
   AI_MOVE_TO_SCREENING: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-screening",
-  AI_TRIGGER_INTERVIEW: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/trigger-interview",
+  AI_MOVE_TO_INTERVIEW: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-interview",
   APPLICATION_ROUND_STATUS: "/applications/{candidate_id}/round-status",
 } as const;
 

@@ -6,10 +6,11 @@ import type { CreateAppModalProps } from "./create-app-modal.types";
 
 type Step = "form" | "result";
 
-export default function CreateAppModal({ open, onClose, onSuccess }: CreateAppModalProps) {
+export default function CreateAppModal({ open, onClose, onSuccess, tenants }: CreateAppModalProps) {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [tenantId, setTenantId] = useState<number | "">("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fullKey, setFullKey] = useState("");
@@ -19,6 +20,7 @@ export default function CreateAppModal({ open, onClose, onSuccess }: CreateAppMo
       setStep("form");
       setName("");
       setDescription("");
+      setTenantId("");
       setError(null);
       setFullKey("");
     }
@@ -27,10 +29,15 @@ export default function CreateAppModal({ open, onClose, onSuccess }: CreateAppMo
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
+    if (tenants && tenants.length > 0 && tenantId === "") return;
     setSubmitting(true);
     setError(null);
     try {
-      const result = await onSuccess({ name: name.trim(), description: description.trim() || undefined });
+      const result = await onSuccess({
+        name: name.trim(),
+        description: description.trim() || undefined,
+        tenant_id: tenantId === "" ? null : tenantId,
+      });
       setFullKey(result.full_key);
       setStep("result");
     } catch (err: unknown) {
@@ -71,6 +78,21 @@ export default function CreateAppModal({ open, onClose, onSuccess }: CreateAppMo
                 required
               />
             </div>
+            {tenants && tenants.length > 0 && (
+              <div className="ap-field">
+                <label>Tenant</label>
+                <select
+                  value={tenantId}
+                  onChange={(e) => setTenantId(e.target.value === "" ? "" : Number(e.target.value))}
+                  required
+                >
+                  <option value="">Select tenant...</option>
+                  {tenants.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="ap-field">
               <label>Description</label>
               <textarea

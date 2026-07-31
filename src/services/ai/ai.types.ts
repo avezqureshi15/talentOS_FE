@@ -41,9 +41,20 @@ export type AiInterviewDetail = AiInterviewItem & {
 };
 
 export type MoveToScreeningResponse = {
-  rh_candidate_id: string;
-  screening_call_id: string;
-  status: string;
+  candidate: {
+    id: string;
+    job_id: string;
+    name: string;
+    email: string;
+    phone: string | null;
+    external_candidate_id: string | null;
+    pipeline_status: string;
+    created_at: string;
+  };
+  screening_call_id: string | null;
+  screening_initiated: boolean;
+  screening_queued: boolean;
+  screening_skipped: { name?: string; reason: string }[] | null;
 };
 
 export type MoveToScreeningPayload = {
@@ -51,21 +62,39 @@ export type MoveToScreeningPayload = {
   email: string;
   phone?: string;
   resume_url?: string;
-};
-
-export type TriggerInterviewPayload = {
+  force?: boolean;
   round_name?: string;
-  interview_type?: string;
   round_type?: string;
   scheduled_date?: string;
   scheduled_time?: string;
   scheduled_end_date?: string;
   scheduled_end_time?: string;
-  timezone?: string;
 };
 
-export type TriggerInterviewResponse = {
+export type MoveToInterviewPayload = {
+  force?: boolean;
+  interview_type?: string;
+  round_name?: string;
+  round_type?: string;
+  scheduled_date?: string;
+  scheduled_time?: string;
+  scheduled_end_date?: string;
+  scheduled_end_time?: string;
+};
+
+export type MoveToInterviewResponse = {
   round_id: string;
-  rh_external_session_id: string;
+  rh_external_session_id: string | null;
+  interview_url: string | null;
+  candidate: {
+    id: string;
+    job_id: string;
+    name: string;
+    email: string;
+    phone: string | null;
+    external_candidate_id: string | null;
+    pipeline_status: string;
+    created_at: string;
+  };
   status: string;
 };

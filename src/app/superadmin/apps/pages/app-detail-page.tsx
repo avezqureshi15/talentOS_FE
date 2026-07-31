@@ -11,18 +11,20 @@ import RotateKeyDialog from "@/app/superadmin/apps/components/rotate-key-dialog"
 import Button from "@/components/ui/button/button";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import "@/app/superadmin/apps/app-detail-page.css";
+import type { AppsScope } from "@/app/superadmin/apps/services/apps.service";
 import type { PermissionInfo } from "@/app/superadmin/apps/services/apps.service.types";
 
 type Tab = "details" | "permissions";
 
-export default function AppDetailPage() {
+export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsScope }) {
   const { appId } = useParams<{ appId: string }>();
   const navigate = useNavigate();
   const id = Number(appId);
-  const { data: app, isLoading, error } = useAppDetail(id);
-  const { mutateAsync: revokeAppAsync } = useRevokeApp();
-  const { mutateAsync: rotateKeyAsync } = useRotateKey();
-  const updatePermsMutation = useUpdatePermissions();
+  const appsBasePath = scope === "admin" ? "/admin/apps" : "/superadmin/apps";
+  const { data: app, isLoading, error } = useAppDetail(id, scope);
+  const { mutateAsync: revokeAppAsync } = useRevokeApp(scope);
+  const { mutateAsync: rotateKeyAsync } = useRotateKey(scope);
+  const updatePermsMutation = useUpdatePermissions(scope);
   const [permissions, setPermissions] = useState<PermissionInfo[]>([]);
   const [showRevoke, setShowRevoke] = useState(false);
   const [showRotate, setShowRotate] = useState(false);
@@ -84,7 +86,7 @@ export default function AppDetailPage() {
   if (error || !app) {
     return (
       <div className="ad-page">
-        <button className="ad-back" onClick={() => navigate("/superadmin/apps")}>
+        <button className="ad-back" onClick={() => navigate(appsBasePath)}>
           <ChevronLeft size={14} />Back to Apps
         </button>
         <div className="ad-error">{error instanceof Error ? error.message : "App not found"}</div>
@@ -99,7 +101,7 @@ export default function AppDetailPage() {
       <PageHeader
         title="Back to Apps"
         titleIcon="bx bx-chevron-left"
-        backRoute="/superadmin/apps"
+        backRoute={appsBasePath}
         actions={[
           {
             key: "cancel",

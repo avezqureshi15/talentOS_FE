@@ -17,6 +17,7 @@ export const PERMISSIONS = {
   REVIEW_SUBMIT: "review.submit",
   REVIEW_VIEW_ALL: "review.view_all",
   CHAT: "chat",
+  API_KEY_MANAGE: "api_key.manage",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

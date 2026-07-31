@@ -7,6 +7,8 @@ export type ApiKeyResponse = {
   expires_at: string | null;
   last_used_at: string | null;
   created_at: string;
+  tenant_id: number | null;
+  tenant_name: string | null;
 };
 
 export type ApiKeyCreatedResponse = ApiKeyResponse & {
@@ -36,6 +38,7 @@ export type ApiKeyDetailResponse = ApiKeyResponse & {
 export type CreateAppRequest = {
   name: string;
   description?: string;
+  tenant_id?: number | null;
 };
 
 export type UpdateAppRequest = {

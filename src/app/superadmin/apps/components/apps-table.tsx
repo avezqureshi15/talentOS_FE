@@ -12,6 +12,7 @@ export default function AppsTable({
   onRevoke,
   onRotate,
   onRowClick,
+  showTenant = false,
 }: AppsTableProps) {
   return (
     <DataTable
@@ -22,6 +23,9 @@ export default function AppsTable({
           header: "Key",
           render: (app) => <code className="ap-key-prefix">{app.key_prefix}...</code>,
         },
+        ...(showTenant
+          ? [{ header: "Tenant", render: (app: ApiKeyResponse) => app.tenant_name ?? "—" }]
+          : []),
         {
           header: "Status",
           render: (app) => {
@@ -59,7 +63,7 @@ export default function AppsTable({
       loading={loading}
       keyExtractor={(app) => app.id}
       emptyMessage="No apps found"
-      gridTemplateColumns="40px 2fr 1.5fr 1fr 1fr 1fr 80px"
+      gridTemplateColumns={showTenant ? "40px 1.6fr 1.2fr 1.2fr 1fr 1fr 1fr 80px" : "40px 2fr 1.5fr 1fr 1fr 1fr 80px"}
       onRowClick={onRowClick}
     />
   );

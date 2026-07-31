@@ -47,6 +47,12 @@ export const ADMIN_NAV_ITEMS: NavItemConfig[] = [
     icon: "bx bx-building",
     permissions: ["settings.view"],
   },
+  {
+    label: "Apps",
+    href: "/admin/apps",
+    icon: "bx bx-code-alt",
+    permissions: ["api_key.manage"],
+  },
 ];
 
 export const SUPERADMIN_NAV_ITEMS: NavItemConfig[] = [

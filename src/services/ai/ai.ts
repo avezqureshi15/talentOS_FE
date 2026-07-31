@@ -1,6 +1,6 @@
 import httpClient from "@/services/http-client";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
-import type { AiScreeningResult, AiInterviewItem, AiInterviewDetail, MoveToScreeningResponse, MoveToScreeningPayload, TriggerInterviewPayload, TriggerInterviewResponse } from "./ai.types";
+import type { AiScreeningResult, AiInterviewItem, AiInterviewDetail, MoveToScreeningResponse, MoveToScreeningPayload, MoveToInterviewPayload, MoveToInterviewResponse } from "./ai.types";
 
 export const fetchAiScreeningResult = async (hiringRequestId: string, candidateId: number): Promise<AiScreeningResult> => {
   const url = API_ENDPOINTS.AI_SCREENING.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId));
@@ -26,8 +26,8 @@ export const moveToScreening = async (hiringRequestId: string, candidateId: numb
   return data;
 };
 
-export const triggerAiInterview = async (hiringRequestId: string, candidateId: number, payload: TriggerInterviewPayload): Promise<TriggerInterviewResponse> => {
-  const url = API_ENDPOINTS.AI_TRIGGER_INTERVIEW.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId));
-  const { data } = await httpClient.post<TriggerInterviewResponse>(url, payload);
+export const moveToInterview = async (hiringRequestId: string, candidateId: number, payload: MoveToInterviewPayload): Promise<MoveToInterviewResponse> => {
+  const url = API_ENDPOINTS.AI_MOVE_TO_INTERVIEW.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId));
+  const { data } = await httpClient.post<MoveToInterviewResponse>(url, payload);
   return data;
 };
