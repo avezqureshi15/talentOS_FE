@@ -26,7 +26,7 @@ export const CREATE_HR_FIELDS = {
   },
   department: {
     label: "Department",
-    placeholder: "Select department",
+    placeholder: "Select or type a department",
     required: true,
     maxLength: 255,
   },

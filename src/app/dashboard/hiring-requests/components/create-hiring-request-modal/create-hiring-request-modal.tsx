@@ -1,9 +1,11 @@
 import { useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
+import Combobox from "@/components/ui/combobox/combobox";
 import Select from "@/components/ui/select/select";
 import Switch from "@/components/ui/switch/switch";
 import { useCreateHiringRequest } from "@/app/dashboard/hiring-requests/hooks/use-create-hiring-request";
+import { useDepartments } from "@/app/dashboard/hiring-requests/hooks/use-departments";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import { FILTER_OPTIONS } from "@/constants/constants";
@@ -23,11 +25,8 @@ export default function CreateHiringRequestModal({
 }: CreateHiringRequestModalProps) {
   const { values, errors, setField, reset, validate, toPayload } = useCreateHiringRequestForm();
   const { mutateAsync, isPending } = useCreateHiringRequest();
+  const { data: departmentOptions = [] } = useDepartments();
 
-  const departmentOptions = useMemo(
-    () => FILTER_OPTIONS.DEPARTMENTS.map((d) => ({ value: d, label: d })),
-    [],
-  );
   const typeOptions = useMemo(
     () => FILTER_OPTIONS.TYPES.map((t) => ({ value: t, label: t })),
     [],
@@ -84,14 +83,14 @@ export default function CreateHiringRequestModal({
           </Field>
 
           <Field label={CREATE_HR_FIELDS.department.label} required error={errors.department}>
-            <Select
-              className="create-hr-select"
+            <Combobox
+              className="create-hr-combobox"
               options={departmentOptions}
               placeholder={CREATE_HR_FIELDS.department.placeholder}
               value={values.department}
               disabled={isPending}
-              error={errors.department ? " " : undefined}
-              onChange={(e) => setField("department", e.target.value)}
+              error={!!errors.department}
+              onChange={(v) => setField("department", v)}
             />
           </Field>
 
@@ -124,6 +123,20 @@ export default function CreateHiringRequestModal({
             />
           </Field>
 
+          <div className="create-hr-field">
+            <div className="create-hr-active">
+              <div className="create-hr-active-copy">
+                <span className="create-hr-active-title">{CREATE_HR_MODAL.ACTIVE_LABEL}</span>
+                <span className="create-hr-active-hint">{CREATE_HR_MODAL.ACTIVE_HINT}</span>
+              </div>
+              <Switch
+                checked={values.is_active}
+                disabled={isPending}
+                onCheckedChange={(checked) => setField("is_active", checked)}
+              />
+            </div>
+          </div>
+
           <Field
             label={CREATE_HR_FIELDS.description.label}
             required
@@ -139,9 +152,9 @@ export default function CreateHiringRequestModal({
             />
           </Field>
 
-          <Field label={CREATE_HR_FIELDS.requirements.label} className="create-hr-field--full">
+          <Field label={CREATE_HR_FIELDS.requirements.label} className="create-hr-field--pair">
             <textarea
-              className="create-hr-textarea"
+              className="create-hr-textarea create-hr-textarea--pair"
               value={values.requirements}
               placeholder={CREATE_HR_FIELDS.requirements.placeholder}
               disabled={isPending}
@@ -149,9 +162,9 @@ export default function CreateHiringRequestModal({
             />
           </Field>
 
-          <Field label={CREATE_HR_FIELDS.benefits.label} className="create-hr-field--full">
+          <Field label={CREATE_HR_FIELDS.benefits.label} className="create-hr-field--pair">
             <textarea
-              className="create-hr-textarea"
+              className="create-hr-textarea create-hr-textarea--pair"
               value={values.benefits}
               placeholder={CREATE_HR_FIELDS.benefits.placeholder}
               disabled={isPending}
@@ -171,20 +184,6 @@ export default function CreateHiringRequestModal({
               onChange={(e) => setField("custom_evaluation_criteria", e.target.value)}
             />
           </Field>
-
-          <div className="create-hr-field create-hr-field--full">
-            <div className="create-hr-active">
-              <div className="create-hr-active-copy">
-                <span className="create-hr-active-title">{CREATE_HR_MODAL.ACTIVE_LABEL}</span>
-                <span className="create-hr-active-hint">{CREATE_HR_MODAL.ACTIVE_HINT}</span>
-              </div>
-              <Switch
-                checked={values.is_active}
-                disabled={isPending}
-                onCheckedChange={(checked) => setField("is_active", checked)}
-              />
-            </div>
-          </div>
         </div>
       </div>
 

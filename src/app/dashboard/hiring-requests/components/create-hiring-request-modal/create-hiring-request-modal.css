@@ -1,5 +1,5 @@
 .base-modal.create-hr-modal {
-  width: min(720px, calc(100vw - 32px));
+  width: min(1080px, calc(100vw - 48px));
   max-height: min(860px, calc(100vh - 48px));
 }
 
@@ -26,6 +26,10 @@
 
 .create-hr-field--full {
   grid-column: 1 / -1;
+}
+
+.create-hr-field--pair {
+  grid-column: span 1;
 }
 
 .create-hr-label {
@@ -91,8 +95,12 @@
   min-height: 88px;
 }
 
+.create-hr-textarea--pair {
+  min-height: 150px;
+}
+
 .create-hr-textarea--lg {
-  min-height: 120px;
+  min-height: 140px;
 }
 
 .create-hr-error {
