@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useLocation } from "react-router-dom";
-import { ROUTES } from "@/constants/routes";
+import { isCommandPaletteRoute } from "@/layouts/protected-layouts/components/command-palette/command-palette.registry";
 import type { SearchResultItem, CommandPaletteSection } from "@/layouts/protected-layouts/components/command-palette/command-palette.types";
 import { COMMAND_PALETTE_LABELS, SEARCH_DEBOUNCE_MS } from "@/layouts/protected-layouts/components/command-palette/command-palette.constants";
 import { useHiringSearch } from "./use-hiring-search";
@@ -30,9 +30,7 @@ export const useCommandPalette = (
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const location = useLocation();
-  const isHiringRoute =
-    location.pathname === ROUTES.HIRING_REQUESTS ||
-    location.pathname.startsWith(`${ROUTES.HIRING_REQUESTS}/`);
+  const isPaletteRoute = isCommandPaletteRoute(location.pathname);
 
   const debouncedQuery = useDebounce(query, SEARCH_DEBOUNCE_MS);
 
@@ -56,8 +54,10 @@ export const useCommandPalette = (
   }, []);
 
   useEffect(() => {
+    if (!isPaletteRoute) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isHiringRoute && (e.ctrlKey || e.metaKey) && e.key === "k") {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
         if (isOpen) {
           close();
@@ -72,7 +72,7 @@ export const useCommandPalette = (
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, open, close, isHiringRoute]);
+  }, [isPaletteRoute, isOpen, open, close]);
 
   const sections = useMemo((): CommandPaletteSection[] => {
     const result: CommandPaletteSection[] = [];

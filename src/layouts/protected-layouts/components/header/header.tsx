@@ -7,6 +7,7 @@ import Select from "@/components/ui/select/select";
 import SearchInput from "@/components/ui/search-input/search-input";
 import { useHeaderStore } from "@/store/header.store";
 import { HIRING_TABS } from "@/constants/routes";
+import { isCommandPaletteRoute } from "@/layouts/protected-layouts/components/command-palette/command-palette.registry";
 import { springSnap } from "@/utils/motion";
 import CandidateHeader from "./candidate-header";
 import TabDropdown from "./tab-dropdown";
@@ -33,7 +34,7 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));
-  const isHiringRoute = isHiringListRoute(location.pathname) || isHiringDetailRoute(location.pathname);
+  const isPaletteRoute = isCommandPaletteRoute(location.pathname);
   const [jdModalOpen, setJdModalOpen] = useState(false);
 
   if (meta) {
@@ -88,7 +89,7 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
             value={search.value ?? ""}
             onChange={(value) => search.onChange?.(value)}
             shortcut={search.shortcut}
-            onActivate={isHiringRoute && onOpenPalette ? onOpenPalette : undefined}
+            onActivate={isPaletteRoute && onOpenPalette ? onOpenPalette : undefined}
           />
         )}
         {filters?.map((filter, i) => (
