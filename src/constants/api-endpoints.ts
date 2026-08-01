@@ -48,6 +48,12 @@ export const API_ENDPOINTS = {
   AI_MOVE_TO_INTERVIEW: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-interview",
   AI_QUESTIONS: "/hiring-requests/{hiring_request_id}/ai/questions",
   APPLICATION_ROUND_STATUS: "/applications/{candidate_id}/round-status",
+  HIRING_REQUEST_EXPORT: "/hiring-requests/{hiring_request_id}/export",
+  JOB_TEAM: "/hiring-requests/{hiring_request_id}/team",
+  JOB_TEAM_MEMBER: "/hiring-requests/{hiring_request_id}/team/{user_id}",
+  ADMIN_ROLES: "/admin/roles",
+  ADMIN_ROLES_PERMISSIONS: "/admin/roles/permissions",
+  ADMIN_ROLE_PERMISSIONS: "/admin/roles/{role_name}/permissions",
 } as const;
 
 export const PAGINATION = {

@@ -14,7 +14,6 @@ import { DECISION_STAGES, STAGE_FILTER } from "./decision-board.constants";
 import type { DecisionStageKey } from "./decision-board.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
-import type { AccordionTab } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import "../detail/detail.css";
 import "./decision-board.css";
 
@@ -30,7 +29,6 @@ const DecisionBoard = ({ jobId }: Props) => {
   const [activeStage, setActiveStage] = useState<DecisionStageKey>("selected");
   const [openId, setOpenId] = useState<string | null>(null);
   const [timelineId, setTimelineId] = useState<number | null>(null);
-  const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
 
   useEffect(
     () => {

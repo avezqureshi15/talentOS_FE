@@ -1,11 +1,18 @@
-export const ROLES = ["superadmin", "admin", "hr", "viewer"] as const;
+export const ROLES = [
+  "superadmin",
+  "account_admin",
+  "job_owner",
+  "recruiter",
+  "reviewer",
+] as const;
 export type Role = (typeof ROLES)[number];
 
 export const ROLE_HIERARCHY: Record<Role, number> = {
-  superadmin: 40,
-  admin: 30,
-  hr: 20,
-  viewer: 10,
+  superadmin: 50,
+  account_admin: 40,
+  job_owner: 35,
+  recruiter: 30,
+  reviewer: 25,
 };
 
 export function hasMinimumRole(userRole: Role | undefined, minimumRole: Role): boolean {

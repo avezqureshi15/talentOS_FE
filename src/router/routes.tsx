@@ -46,7 +46,7 @@ export const router = createBrowserRouter([
 
   {
     errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
-    element: <ProtectedRoute allowedRoles={["admin", "hr", "viewer"]} permissions={["chat"]} redirectPath="/roles" />,
+    element: <ProtectedRoute allowedRoles={["account_admin", "job_owner", "recruiter", "reviewer"]} permissions={["chat"]} redirectPath="/roles" />,
     children: [
       {
         element: <ProtectedLayout />,

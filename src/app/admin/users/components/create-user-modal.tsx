@@ -16,7 +16,7 @@ export default function CreateUserModal({ onClose, onSuccess, tenantId }: Props)
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("hr");
+  const [role, setRole] = useState("recruiter");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 

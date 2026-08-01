@@ -18,10 +18,11 @@ export default function TenantTable({
   onRowClick,
 }: TenantTableProps) {
   return (
+    <div className="tenants-table">
     <DataTable
       columns={[
-        { header: "#", render: (_, i) => i + 1 },
-        { header: "Organization", render: (t: Tenant) => t.name },
+        { header: "#", className: "dt-cell-num", render: (_, i) => i + 1 },
+        { header: "Organization", className: "dt-cell-name", render: (t: Tenant) => t.name },
         {
           header: "Status",
           render: (t: Tenant) => {
@@ -38,7 +39,7 @@ export default function TenantTable({
             );
           },
         },
-        { header: "Users", render: (t: Tenant) => t.user_count },
+        { header: "Users", className: "dt-cell-muted", render: (t: Tenant) => t.user_count },
         {
           header: "Verification",
           render: (t: Tenant) => {
@@ -46,7 +47,7 @@ export default function TenantTable({
             return <span className={`dt-badge dt-badge--${cfg.badge}`}>{cfg.label}</span>;
           },
         },
-        { header: "Created", render: (t: Tenant) => new Date(t.created_at).toLocaleDateString() },
+        { header: "Created", className: "dt-cell-date", render: (t: Tenant) => new Date(t.created_at).toLocaleDateString() },
 {
   header: "",
   render: (t: Tenant) => (
@@ -78,5 +79,6 @@ export default function TenantTable({
       gridTemplateColumns="40px 2fr 1fr 60px 1fr 1fr 80px"
       onRowClick={onRowClick}
     />
+    </div>
   );
 }

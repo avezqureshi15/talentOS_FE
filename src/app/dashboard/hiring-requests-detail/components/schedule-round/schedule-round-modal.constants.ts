@@ -28,6 +28,8 @@ export const SR_LABELS = {
   INTERVIEWER_LABEL: "Interviewer",
   DATE_LABEL: "Date",
   TIME_LABEL: "Time",
+  AI_SCHEDULE_HEADER: "AI-Scheduled Date",
+  AI_SCHEDULE_TIME: "AI-Scheduled Time",
   GMEET_TOGGLE: "Generate Google Meet Link",
   INVITE_PREVIEW: "Hi {candidate}, your Round 1 interview with {interviewer} has been scheduled for {date} at {time}. A Google Meet link has been generated for this session.",
 

@@ -14,7 +14,7 @@ type Props = {
 
 export default function InviteUserModal({ onClose, onSuccess, tenantId }: Props) {
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("hr");
+  const [role, setRole] = useState("recruiter");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 

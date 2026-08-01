@@ -1,11 +1,12 @@
 import { createContext } from "react";
+import type { Role } from "@/constants/roles";
 
 export type User = {
   id: number;
   email: string;
   name: string;
   picture?: string;
-  role: "superadmin" | "admin" | "hr" | "viewer";
+  role: Role;
   tenant_id: number | null;
   auth_provider: "google" | "email";
   is_active: boolean;

@@ -29,7 +29,7 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
   const [detailsId, setDetailsId] = useState<string | null>(null);
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
   const [finalCandidateId, setFinalCandidateId] = useState<string | null>(null);
-  const [finalDecision, setFinalDecision] = useState<"selected" | "rejected" | null>(null);
+  const [finalDecision, setFinalDecision] = useState<"selected" | "on-hold" | "rejected" | null>(null);
   const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
   const [rejectRemarks, setRejectRemarks] = useState("");
   const [rejectStep, setRejectStep] = useState<1 | 2>(1);

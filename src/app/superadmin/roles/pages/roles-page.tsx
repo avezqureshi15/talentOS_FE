@@ -3,6 +3,7 @@ import { useRolesList } from "../hooks/use-roles-list";
 import { useRoleDetail } from "../hooks/use-role-detail";
 import { useUpdateRolePermissions } from "../hooks/use-update-role-permissions";
 import { RolePermissionEditor } from "../components/role-permission-editor";
+import CreateRoleModal from "../components/create-role-modal";
 import type { PermissionInfo } from "./roles-page.types";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import "./roles-page.css";
@@ -11,6 +12,7 @@ export default function RolesPage() {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [permissions, setPermissions] = useState<PermissionInfo[]>([]);
   const [, setDirty] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const { data: rolesData, isLoading, error: listError } = useRolesList();
   const { data: roleDetail, isFetching: detailLoading } = useRoleDetail(selectedRole);
@@ -72,10 +74,12 @@ export default function RolesPage() {
             key: "create-role",
             label: "Create New Role",
             variant: "primary",
-            onClick: () => {},
+            onClick: () => setCreateOpen(true),
           },
         ]}
       />
+
+      <CreateRoleModal open={createOpen} onClose={() => setCreateOpen(false)} />
 
       <div className="rp-card">
         <div className="rp-body">

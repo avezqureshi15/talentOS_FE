@@ -1,4 +1,5 @@
 import DataTable from "@/components/ui/data-table/data-table";
+import type { ApiKeyResponse } from "@/app/superadmin/apps/services/apps.service.types";
 import type { AppsTableProps } from "./apps-table.types";
 
 const STATUS_LABELS: Record<string, { badge: string; label: string }> = {

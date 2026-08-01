@@ -147,7 +147,7 @@ export type ApplicantFiltersProps = {
 export type ApplicantActionModalsProps = {
   data: Applicant[];
   finalCandidateId: string | null;
-  finalDecision: "selected" | "rejected" | null;
+  finalDecision: "selected" | "on-hold" | "rejected" | null;
   onCloseFinalDecision: () => void;
   confirmFinalDecision: () => void;
   rejectConfirmId: string | null;

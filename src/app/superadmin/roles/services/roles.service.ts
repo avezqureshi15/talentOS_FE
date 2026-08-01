@@ -24,3 +24,11 @@ export const updateRolePermissions = (roleName: string, permissionCodes: string[
 
 export const listAllPermissions = () =>
   httpClient.get<PermissionsListResponse>(`${BASE}/permissions`);
+
+export type CreateRolePayload = {
+  role_name: string;
+  description?: string;
+};
+
+export const createRole = (payload: CreateRolePayload) =>
+  httpClient.post<RoleData>(BASE, payload);

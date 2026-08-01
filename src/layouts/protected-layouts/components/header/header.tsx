@@ -28,7 +28,7 @@ const HeaderLeft: React.FC<HeaderLeftProps> = () => {
 
 const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ className?: string }>> }) => {
   const config = useHeaderStore((s) => s.config);
-  const { title, titleIcon, backRoute, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
+  const { title, titleIcon, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
   const navigate = useNavigate();
   const location = useLocation();
   const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));

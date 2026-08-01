@@ -16,12 +16,19 @@ const MODULES = [
   { group: "chat", label: "Chat", icon: "bx bx-message-detail" },
   // "Hiring Requests" renamed to "Job Listings"
   { group: "hiring_request", label: "Job Listings", icon: "bx bx-briefcase" },
+  { group: "interview", label: "Interview Plan", icon: "bx bx-clipboard" },
+  { group: "job", label: "Job Team", icon: "bx bx-group" },
+  { group: "report", label: "Reports", icon: "bx bx-bar-chart-alt-2" },
   { group: "review", label: "Reviews", icon: "bx bx-star" },
   { group: "settings", label: "Settings", icon: "bx bx-cog" },
   { group: "slot", label: "Slots", icon: "bx bx-calendar" },
   { group: "tenant", label: "Tenants", icon: "bx bx-building" },
-  { group: "user", label: "Users", icon: "bx bx-group" },
+  { group: "user", label: "Users", icon: "bx bx-user-pin" },
 ];
+
+const FALLBACK_ICON = "bx bx-lock";
+
+const MODULE_LOOKUP = new Map(MODULES.map((m) => [m.group, m]));
 
 export const RolePermissionEditor = ({
   roleName,
@@ -37,9 +44,18 @@ export const RolePermissionEditor = ({
     return acc;
   }, {});
 
-  const sortedGroups = MODULES
-    .filter((m) => permissionGroups[m.group])
-    .map((m) => ({ ...m, items: permissionGroups[m.group] }));
+  const groups = Object.keys(permissionGroups).sort(
+    (a, b) => MODULE_LOOKUP.has(a) === MODULE_LOOKUP.has(b) ? 0 : (MODULE_LOOKUP.has(a) ? -1 : 1)
+  );
+  const sortedGroups = groups.map((group) => {
+    const meta = MODULE_LOOKUP.get(group);
+    return {
+      group,
+      label: meta?.label ?? group,
+      icon: meta?.icon ?? FALLBACK_ICON,
+      items: permissionGroups[group],
+    };
+  });
 
   const checkedCount = permissions.filter((p) => p.assigned).length;
   const totalCount = permissions.length;

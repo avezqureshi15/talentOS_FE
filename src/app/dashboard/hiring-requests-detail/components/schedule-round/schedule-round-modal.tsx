@@ -11,7 +11,7 @@ import { SR_LABELS } from "./schedule-round-modal.constants";
 import type { ScheduleRoundModalProps, Interviewer, ScheduleStep } from "./schedule-round-modal.types";
 import "./schedule-round-modal.css";
 
-export default function ScheduleRoundModal({ open, candidateName, candidateId, candidateNumberId, jdId, interviewId, interviewerEmpId, interviewerName, roundName, rescheduleMode, hiringRequestId, onClose, onScheduled }: ScheduleRoundModalProps) {
+export default function ScheduleRoundModal({ open, candidateName, candidateId, candidateNumberId, jdId, interviewId, interviewerEmpId, interviewerName, roundName, rescheduleMode, onClose, onScheduled }: ScheduleRoundModalProps) {
   const [step, setStep] = useState<ScheduleStep>(1);
   const [search, setSearch] = useState("");
   // justification: stores multiple selected interviewers for a round
@@ -153,7 +153,7 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
     if (!selectedSlotId || selectedInterviewers.length === 0) return;
     if (jdId && candidateNumberId) {
       try {
-        const resp = await bookInterview({
+        await bookInterview({
           round_name: roundTitle,
           slot_id: selectedSlotId,
           jd_id: jdId,

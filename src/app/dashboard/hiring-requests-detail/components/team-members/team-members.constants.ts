@@ -1,0 +1,15 @@
+export const TEAM_MEMBERS_LABELS = {
+  PAGE_TITLE: "Team Members",
+  ADD_MEMBER: "Add Member",
+  ROLE_GUIDE: "Role Guide",
+  EMPTY_TITLE: "No team members yet",
+  EMPTY_SUBTITLE: "Add members to this job to collaborate on hiring.",
+  REMOVE_CONFIRM_TITLE: "Remove Team Member",
+  REMOVE_CONFIRM_MESSAGE: "Are you sure you want to remove {name} from this job's team?",
+  OWNER_BADGE: "Owner",
+  MEMBER_BADGE: "Member",
+  ROLE_TITLE: "ROLE",
+  MEMBER_TITLE: "TEAM MEMBER",
+  LOADING: "Loading team members...",
+  FAILED: "Failed to load team members",
+} as const;
