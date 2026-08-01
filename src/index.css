@@ -102,6 +102,7 @@
   --warning-light: #f97316;
   --warning-bg: rgba(245, 158, 11, 0.1);
   --warning-bg-strong: rgba(245, 158, 11, 0.2);
+  --warning-glow: rgba(245, 158, 11, 0.5);
   --warning-border: rgba(245, 158, 11, 0.25);
   --warning-900: #78350f;
 
@@ -377,6 +378,7 @@
   --warning-light: #b45309;
   --warning-bg: #fef3c7;
   --warning-bg-strong: #fde68a;
+  --warning-glow: rgba(245, 158, 11, 0.35);
   --warning-border: rgba(245, 158, 11, 0.35);
 
   --yellow: #a16207;

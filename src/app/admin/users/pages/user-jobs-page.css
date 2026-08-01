@@ -18,7 +18,7 @@
   height: 44px;
   border-radius: 50%;
   background: var(--avatar-gradient);
-  color: #fff;
+  color: var(--static-white);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -106,24 +106,12 @@
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 100px;
-  background: #ffffff;
-  color: #0a0a0a;
-  border: 1px solid #ffffff;
-}
-
-[data-theme="light"] .ujp-role-badge {
-  background: #0a0a0a;
-  color: #ffffff;
-  border-color: #0a0a0a;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: 1px solid var(--button-primary-bg);
 }
 
 .ujp-role-badge--reviewer {
-  background: transparent;
-  color: var(--text-secondary);
-  border-color: var(--border-strong);
-}
-
-[data-theme="light"] .ujp-role-badge--reviewer {
   background: transparent;
   color: var(--text-secondary);
   border-color: var(--border-strong);

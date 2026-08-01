@@ -107,7 +107,7 @@
 .dt-btn--danger:hover { background: var(--danger-bg-strong); color: var(--danger); }
 .dt-btn--success:hover { background: var(--success-bg-strong); color: var(--success); }
 .dt-btn--warning:hover { background: var(--warning-bg); color: var(--warning); }
-.dt-btn--info:hover { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+.dt-btn--info:hover { background: var(--accent-blue-bg); color: var(--accent-blue); }
 
 .dt-btn-link { padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-subtle); background: transparent; color: var(--danger); font-size: 11px; font-family: var(--font-family); cursor: pointer; }
 .dt-btn-link:hover { background: var(--bg-hover); }
@@ -233,9 +233,9 @@
 }
 
 .dt-pagination-btn--active {
-  background: var(--send-btn-bg, var(--text-white));
-  color: var(--send-btn-color, var(--text-white));
-  border-color: var(--send-btn-bg, var(--text-white));
+  background: var(--send-btn-bg);
+  color: var(--send-btn-color);
+  border-color: var(--send-btn-bg);
 }
 
 .dt-pagination-btn--active:hover {
