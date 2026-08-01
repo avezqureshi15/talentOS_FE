@@ -3,10 +3,12 @@ import { formatDate } from "./applicants.utils";
 import Chip from "@/components/ui/chip/chip";
 import type { ChipVariant } from "@/components/ui/chip/chip.types";
 import { APPLICANT_LABELS } from "@/constants/constants";
+import { usePermissions } from "@/hooks/use-permissions";
 import { useApplicantState } from "./hooks/use-applicant-state";
 import CardExpandedContent from "./card-expanded-content";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
 import type { ApplicantCardProps } from "./applicants.types";
+import { MENU_ACTION_PERMISSIONS } from "./applicants.constants";
 
 const ApplicantCard = ({
   applicant: a,
@@ -29,6 +31,7 @@ const ApplicantCard = ({
   isRemote = false,
 }: ApplicantCardProps) => {
   const stateConfig = useApplicantState(a, isScreening);
+  const { can } = usePermissions();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -61,7 +64,13 @@ const ApplicantCard = ({
 
   const canExpand = readOnly || true;
   const showExpanded = isOpen && (stateConfig.showExpandedContent || readOnly);
-  const showMenu = stateConfig.menuActions.length > 0 && !readOnly;
+  const visibleActions = stateConfig.actions.filter(
+    (action) => !action.permission || can(action.permission),
+  );
+  const visibleMenuActions = stateConfig.menuActions.filter((menuAction) =>
+    can(MENU_ACTION_PERMISSIONS[menuAction]),
+  );
+  const showMenu = visibleMenuActions.length > 0 && !readOnly;
 
   return (
     <div className="accordion-card">
@@ -108,9 +117,9 @@ const ApplicantCard = ({
             </div>
           )}
 
-          {stateConfig.actions.length > 0 && <span className="header-action-divider" />}
+          {visibleActions.length > 0 && <span className="header-action-divider" />}
 
-          {stateConfig.actions.map((action) => (
+          {visibleActions.map((action) => (
             onAction && (
               <button
                 key={action.handler}
@@ -135,17 +144,17 @@ const ApplicantCard = ({
                 </button>
                 {menuOpen && (
                   <div className="three-dots-menu">
-                    {stateConfig.menuActions.includes("select") && (
+                    {visibleMenuActions.includes("select") && (
                       <button className="menu-item menu-item-select" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onMenuAction("select", a.id); }} type="button">
                         {APPLICANT_LABELS.SELECT_CANDIDATE}
                       </button>
                     )}
-                    {stateConfig.menuActions.includes("reject") && (
+                    {visibleMenuActions.includes("reject") && (
                       <button className="menu-item menu-item-reject" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onMenuAction("reject", a.id); }} type="button">
                         {APPLICANT_LABELS.REJECT_CANDIDATE}
                       </button>
                     )}
-                    {stateConfig.menuActions.includes("hold") && (
+                    {visibleMenuActions.includes("hold") && (
                       <button className="menu-item" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onMenuAction("hold", a.id); }} type="button">
                         Hold
                       </button>

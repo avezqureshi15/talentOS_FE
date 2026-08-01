@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect } from "react";import { AnimatePresence, motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
+import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/constants/permissions";
 import "./detail.css";
 
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
@@ -70,6 +72,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   };
   const showBulkSelection = activeStage in BULK_STAGE_ACTIONS;
   const { screening: showBulkScreening, interview: showBulkInterview } = BULK_STAGE_ACTIONS[activeStage] ?? { screening: false, interview: false };
+  const { can } = usePermissions();
+  const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
   const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection);
   const [timelineId, setTimelineId] = useState<number | null>(null);
   const [pendingBulkAction, setPendingBulkAction] = useState<"screening" | "interview" | null>(null);
@@ -186,7 +190,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
             <div className="bulk-action-bar">
               <span className="bulk-action-count">{bulkSelection.selectionCount} candidate{bulkSelection.selectionCount !== 1 ? "s" : ""} selected in <span className="bulk-stage-chip">{stageLabel}</span> stage</span>
               <div className="bulk-action-buttons">
-                {showBulkScreening && (
+                {canWorkflow && showBulkScreening && (
                   <button
                     className="btn screen-btn compact"
                     onClick={() => {
@@ -200,7 +204,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     {" "}Move to AI Screening
                   </button>
                 )}
-                {showBulkInterview && (
+                {canWorkflow && showBulkInterview && (
                   <button
                     className="btn screen-btn compact"
                     onClick={() => {

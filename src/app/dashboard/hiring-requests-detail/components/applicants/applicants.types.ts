@@ -1,3 +1,5 @@
+import type { Permission } from "@/constants/permissions";
+
 export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "resume_shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_scheduled" | "interview_rescheduled" | "interview_cancelled" | "SCREENING_ROUND_SCHEDULED" | "screening_round_scheduled";
 
 export type HiringState =
@@ -20,6 +22,7 @@ export type ActionConfig = {
   icon: string;
   variant: ActionVariant;
   handler: string;
+  permission?: Permission;
 };
 
 export type ChipConfig = {

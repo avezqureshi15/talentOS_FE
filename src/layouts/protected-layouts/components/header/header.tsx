@@ -35,7 +35,12 @@ const HeaderLeft: React.FC<HeaderLeftProps> = () => {
 
 const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   const config = useHeaderStore((s) => s.config);
-  const { title, titleIcon, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
+  const { title, titleIcon, subtitle, meta, search, filters, viewSwitcher, actions, totalCount, badge, badges } = config;
+
+  const headerBadges = useMemo(
+    () => badges ?? (badge ? [badge] : []),
+    [badges, badge],
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));
@@ -71,12 +76,12 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
         {isTabRoute ? (
           <>
             <TabDropdown totalCount={totalCount} />
-            {config.badge && (
-              <span className="header-badge" title={config.badge.tooltip}>
-                {config.badge.icon && <i className={`bx ${config.badge.icon}`} />}
-                <span>{config.badge.label}</span>
+            {headerBadges.map((b) => (
+              <span key={b.label} className="header-badge" title={b.tooltip}>
+                {b.icon && <i className={`bx ${b.icon}`} />}
+                <span>{b.label}</span>
               </span>
-            )}
+            ))}
             {config.hiringRequestName && (
               <span className="hiring-request-chip" onClick={() => setJdModalOpen(true)}><span className="hiring-request-chip-text">{config.hiringRequestName}</span></span>
             )}

@@ -1,6 +1,10 @@
 import httpClient from "@/services/http-client";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
-import type { InterviewDesign, UpdateInterviewDesignPayload } from "./questions.types";
+import type {
+  GenerateDesignQuestionsPayload,
+  InterviewDesign,
+  UpdateInterviewDesignPayload,
+} from "./questions.types";
 
 export const getHiringRequestDesign = async (
   hiringRequestId: string,
@@ -18,6 +22,18 @@ export const updateHiringRequestDesign = async (
   const { data } = await httpClient.put<InterviewDesign>(
     API_ENDPOINTS.AI_QUESTIONS.replace("{hiring_request_id}", hiringRequestId),
     payload,
+  );
+  return data;
+};
+
+export const generateHiringRequestDesignQuestions = async (
+  hiringRequestId: string,
+  payload: GenerateDesignQuestionsPayload,
+): Promise<InterviewDesign> => {
+  const { data } = await httpClient.post<InterviewDesign>(
+    API_ENDPOINTS.AI_QUESTIONS_GENERATE.replace("{hiring_request_id}", hiringRequestId),
+    payload,
+    { toastOnError: false },
   );
   return data;
 };

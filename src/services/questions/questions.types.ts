@@ -11,6 +11,7 @@ export interface InterviewDesignQuestion {
   question: string;
   score: number;
   timeAllocationMinutes: number;
+  expected_points?: string[];
 }
 
 export interface InterviewDesignSection {
@@ -31,6 +32,13 @@ export interface InterviewDesign {
   updated_at: string;
   sync_status: DesignSyncStatus;
   sync_errors: string[];
+}
+
+export type DesignQuestionKind = "screening" | "interview";
+
+export interface GenerateDesignQuestionsPayload {
+  kind: DesignQuestionKind;
+  count?: number;
 }
 
 export interface UpdateInterviewDesignPayload {

@@ -6,6 +6,12 @@ import JobDetail from "@/app/dashboard/hiring-requests-detail/components/detail/
 import { useHiringRequestHeader } from "@/app/dashboard/hiring-requests-detail/pages/use-hiring-request-header";
 import ImportCandidatesModal from "@/app/dashboard/hiring-requests-detail/components/import-candidates/import-candidates-modal";
 import { useJobRoleStrip } from "@/components/shared/job-role-strip/use-job-role-strip";
+import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/constants/permissions";
+import {
+  APPLICATIONS_ACCESS_BADGES,
+  APPLICATIONS_ACCESS_TOOLTIPS,
+} from "@/app/dashboard/hiring-requests-detail/pages/applications-page.constants";
 import { HEADER_DEFAULT_VIEW } from "@/layouts/protected-layouts/components/header/header.constants";
 import type { HiringRequestContext } from "./hiring-request-layout";
 
@@ -14,14 +20,42 @@ const ApplicationsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { label, icon, tooltip, resolved } = useJobRoleStrip(id ?? "");
+<<<<<<< Updated upstream
   const [isImportOpen, setIsImportOpen] = useState(false);
+=======
+  const { can } = usePermissions();
+  const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
+
+  const badges = resolved && label !== null
+    ? [
+        { label, icon: icon || undefined, tooltip: tooltip ?? undefined },
+        ...(canWorkflow
+          ? []
+          : [{
+              label: APPLICATIONS_ACCESS_BADGES.LIMITED,
+              icon: "bx bxs-lock-alt",
+              tooltip: APPLICATIONS_ACCESS_TOOLTIPS.LIMITED,
+            }]),
+      ]
+    : canWorkflow
+      ? []
+      : [{
+          label: APPLICATIONS_ACCESS_BADGES.LIMITED,
+          icon: "bx bxs-lock-alt",
+          tooltip: APPLICATIONS_ACCESS_TOOLTIPS.LIMITED,
+        }];
+>>>>>>> Stashed changes
 
   const headerConfig = useHiringRequestHeader({
     id,
     data,
     activeView: HEADER_DEFAULT_VIEW,
+<<<<<<< Updated upstream
     badge: resolved && label !== null ? { label, icon: icon || undefined, tooltip: tooltip ?? undefined } : undefined,
     onImport: () => setIsImportOpen(true),
+=======
+    badges,
+>>>>>>> Stashed changes
     onViewChange: (key: string) => {
       if (key === "board") navigate(`/hiring-requests/${id}/board`);
     },

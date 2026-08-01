@@ -9,6 +9,10 @@ import { fadeSlideUp } from "@/utils/motion";
 import { useInterviewPlannerStore } from "@/store/interview-planner.store";
 import { useInterviewPlanData } from "@/app/dashboard/hiring-requests-detail/components/interview-design/hooks/use-interview-plan-data";
 import { InterviewDesignPlanner } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/interview-design-planner/interview-design-planner";
+import { GenerateQuestionsButton } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/generate-questions-button/generate-questions-button";
+import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/constants/permissions";
+import type { HeaderActionConfig } from "@/store/header.store";
 import type { HiringRequestContext } from "./hiring-request-layout";
 import "./pages.css";
 
@@ -28,6 +32,8 @@ const contentVariants = {
 const InterviewDesignPage = () => {
   const { id } = useParams<{ id: string }>();
   const { data } = useOutletContext<HiringRequestContext>();
+  const { can } = usePermissions();
+  const canEditPlan = can(PERMISSIONS.INTERVIEW_PLAN_EDIT);
   const [activeTab, setActiveTab] = useState<TabKey>("screening");
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     () => new Set()
@@ -75,42 +81,49 @@ const InterviewDesignPage = () => {
     });
   };
 
+  const headerActions: HeaderActionConfig[] = isEditing
+    ? [
+        {
+          key: "close",
+          label: "Close",
+          icon: "bx-x",
+          variant: "outline",
+          onClick: handleToggleEditing,
+        },
+        {
+          key: "save",
+          label: save.isPending ? "Saving..." : "Save Changes",
+          icon: "bx-save",
+          variant: "primary",
+          onClick: handleSave,
+          disabled: save.isPending,
+        },
+      ]
+    : [
+        { key: "export", label: "Export PDF", icon: "bx-download", variant: "primary" },
+        ...(canEditPlan
+          ? [{
+              key: "edit",
+              label: "Edit",
+              icon: "bx-edit-alt",
+              variant: "outline",
+              onClick: handleToggleEditing,
+            } as HeaderActionConfig]
+          : []),
+      ];
+
   return (
     <>
       <PageHeader
         title="Interview Design"
         hiringRequestName={data.title}
         hiringRequest={data}
-        actions={
-          isEditing
-            ? [
-                {
-                  key: "close",
-                  label: "Close",
-                  icon: "bx-x",
-                  variant: "outline",
-                  onClick: handleToggleEditing,
-                },
-                {
-                  key: "save",
-                  label: save.isPending ? "Saving..." : "Save Changes",
-                  icon: "bx-save",
-                  variant: "primary",
-                  onClick: handleSave,
-                  disabled: save.isPending,
-                },
-              ]
-            : [
-                { key: "export", label: "Export PDF", icon: "bx-download", variant: "primary" },
-                {
-                  key: "edit",
-                  label: "Edit",
-                  icon: "bx-edit-alt",
-                  variant: "outline",
-                  onClick: handleToggleEditing,
-                },
-              ]
-        }
+        badges={canEditPlan ? [] : [{
+          label: "READ ONLY",
+          icon: "bx bxs-lock-alt",
+          tooltip: "Only admins and job owners can edit the interview plan. You can view questions but not modify them.",
+        }]}
+        actions={headerActions}
       />
       <ErrorBoundary>
         {isEditing && id ? (
@@ -122,6 +135,13 @@ const InterviewDesignPage = () => {
               <Clock className="id-meta-pill-icon" />
               {activeTab === "interview" ? "AI INTERVIEW" : "AI SCREENING"} &middot; {totalMinutes} MIN &middot; {sections.length} SECTIONS
             </span>
+            {id && canEditPlan && (
+              <GenerateQuestionsButton
+                hiringRequestId={id}
+                kind={activeTab}
+                onGenerated={() => refetch()}
+              />
+            )}
           </div>
 
           <div className="id-tabs">

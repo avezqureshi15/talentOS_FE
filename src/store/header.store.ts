@@ -63,6 +63,7 @@ export type HeaderConfig = {
   viewSwitcher?: HeaderViewSwitcherConfig | null;
   actions?: HeaderActionConfig[];
   badge?: HeaderBadge;
+  badges?: HeaderBadge[];
   hiringRequestName?: string;
   hiringRequest?: HiringRequest;
 };

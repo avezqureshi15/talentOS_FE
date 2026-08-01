@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import { getOrganization, updateOrganization } from "../services/organization.service";
 import type { Organization, UpdateOrganizationPayload } from "../services/organization.types";
+import { OrganizationProfileView } from "../components/organization-profile-view/organization-profile-view";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
+import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/constants/permissions";
 import "./organization-page.css";
 
 export default function OrganizationPage() {
+  const { can } = usePermissions();
+  const canEdit = can(PERMISSIONS.SETTINGS_EDIT);
+
   const [org, setOrg] = useState<Organization | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -12,7 +18,6 @@ export default function OrganizationPage() {
   const [form, setForm] = useState<UpdateOrganizationPayload>({});
 
   useEffect(() => {
-    setLoading(true);
     getOrganization()
       .then(({ data }) => {
         setOrg(data);
@@ -75,6 +80,7 @@ export default function OrganizationPage() {
     <div className="org-page">
       <PageHeader title="Organization Profile"  />
 
+      {canEdit ? (
       <div className="org-card">
         <div className="org-form-grid">
           <div className="org-field org-field--full">
@@ -218,6 +224,9 @@ export default function OrganizationPage() {
           </button>
         </div>
       </div>
+      ) : org ? (
+        <OrganizationProfileView org={org} />
+      ) : null}
     </div>
   );
 }
