@@ -1215,61 +1215,25 @@
   border-color: var(--accent);
 }
 
-.em-table-shell {
-  border-radius: 12px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-secondary);
-  overflow: hidden;
-}
-
-.em-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.em-table thead tr {
-  background: var(--bg-hover);
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.em-table th {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  padding: 12px 20px;
-}
-
 .em-th-actions {
-  text-align: right;
-}
-
-.em-row {
-  border-bottom: 1px solid var(--border-subtle);
-  transition: background 0.15s;
-}
-
-.em-row:last-child {
-  border-bottom: none;
-}
-
-.em-row:hover {
-  background: var(--bg-hover);
+  display: flex;
+  justify-content: flex-end;
 }
 
 .em-td-template {
-  padding: 14px 20px;
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .em-template-name {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .em-tag {
@@ -1280,17 +1244,12 @@
   border: 1px solid var(--border-subtle);
   padding: 2px 8px;
   border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .em-td-muted {
-  padding: 14px 20px;
   font-size: 12px;
   color: var(--text-muted);
-}
-
-.em-td-actions {
-  padding: 14px 20px;
-  text-align: right;
 }
 
 .em-action-group {
@@ -1376,48 +1335,46 @@
   color: var(--text-faint);
 }
 
-.tm-table-shell {
-  border-radius: 12px;
+.tm-role-badge--job_owner {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.tm-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.tm-action-btn {
+  background: transparent;
   border: 1px solid var(--border-subtle);
-  background: var(--bg-secondary);
-  overflow: hidden;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: border-color 0.15s ease, color 0.15s ease;
 }
 
-.tm-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
+.tm-action-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
-.tm-table thead tr {
-  background: var(--bg-hover);
-  border-bottom: 1px solid var(--border-subtle);
+.tm-action-btn--danger:hover:not(:disabled) {
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
-.tm-table th {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  padding: 14px 24px;
-}
-
-.tm-row {
-  border-bottom: 1px solid var(--border-subtle);
-  transition: background 0.15s;
-}
-
-.tm-row:last-child {
-  border-bottom: none;
-}
-
-.tm-row:hover {
-  background: var(--bg-hover);
-}
-
-.tm-td-member {
-  padding: 14px 24px;
+.tm-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .tm-member-cell {
@@ -1455,10 +1412,6 @@
 .tm-member-email {
   font-size: 12px;
   color: var(--text-muted);
-}
-
-.tm-td-role {
-  padding: 14px 24px;
 }
 
 .tm-role-badge {

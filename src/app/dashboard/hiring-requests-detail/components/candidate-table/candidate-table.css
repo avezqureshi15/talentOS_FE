@@ -1,79 +1,10 @@
-.candidate-table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-
-/* ---------- Applicant Table (shared view) ---------- */
-.applicant-table {
-  width: 100%;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--bg-secondary);
-  overflow: hidden;
-}
-
-.applicant-table-header {
-  display: grid;
-  align-items: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-primary);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-faint);
-}
-
-.applicant-table-row {
-  display: grid;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-  transition: background 0.12s ease;
-  animation: rowFadeIn 0.3s ease both;
-  cursor: pointer;
-}
-
-.applicant-table-row:last-child {
-  border-bottom: none;
-}
-
-.applicant-table-row:hover {
-  background: var(--bg-hover);
-}
-
-.applicant-table-row--disabled {
-  cursor: default;
-}
-
-.applicant-table-row--disabled:hover {
-  background: transparent;
-}
-
-.applicant-table-cell {
-  font-size: 12.5px;
-  color: var(--text-secondary);
-  min-width: 0;
-}
+/* ---------- Candidate cell content (shared with dt shell) ---------- */
 
 .applicant-table-cell--name {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.applicant-table-cell--info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.applicant-table-empty {
-  padding: 32px 16px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 14px;
+  min-width: 0;
 }
 
 /* candidate info */
@@ -206,19 +137,6 @@
 }
 
 .info-icon-btn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 4px;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.12s;
-}
-
-.info-icon-btn {
   background: var(--accent-bg);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
@@ -227,7 +145,6 @@
   font-size: 11px;
   font-weight: 500;
   padding: 4px 10px;
-  margin-right: 12px;
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
@@ -239,25 +156,6 @@
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
-}
-
-.info-text-btn {
-  background: none;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  color: var(--accent);
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 4px 10px;
-  margin-right: 12px;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.info-text-btn:hover {
-  background: var(--accent-bg);
-  border-color: var(--accent);
 }
 
 .cv-link {
@@ -313,55 +211,4 @@
   font-weight: 500;
   color: var(--text-primary);
   white-space: nowrap;
-}
-
-/* ---------- Bulk Selection (table view) ---------- */
-.applicant-table-cell--checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  font-size: 18px;
-}
-
-@keyframes rowFadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes skeletonPulse {
-  0% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-  100% { opacity: 0.4; }
-}
-
-.applicant-table-row--skeleton {
-  cursor: default;
-  pointer-events: none;
-}
-
-.applicant-table-row--skeleton:hover {
-  background: transparent;
-}
-
-.skeleton-pulse {
-  display: block;
-  background: var(--border-subtle);
-  border-radius: 4px;
-  animation: skeletonPulse 1.5s ease-in-out infinite;
-}
-
-.skeleton-box {
-  width: 18px;
-  height: 18px;
-}
-
-.skeleton-text {
-  width: 60%;
-  height: 12px;
-}
-
-.skeleton-name {
-  width: 140px;
-  height: 14px;
 }

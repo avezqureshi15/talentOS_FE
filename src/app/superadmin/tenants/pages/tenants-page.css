@@ -110,38 +110,6 @@
   background: var(--bg-hover);
 }
 
-/* ── Compact table density & typography (scoped to tenants table) ── */
-
-.tenants-table .dt-row {
-  padding: 8px 16px;
-}
-
-.tenants-table .dt-header {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-}
-
-.tenants-table .dt-badge {
-  padding: 2px 8px;
-  font-size: 11px;
-}
-
-.tenants-table .dt-btn {
-  width: 24px;
-  height: 24px;
-  font-size: 14px;
-}
-
-.tenants-table .dt-cell-name {
-  font-size: 14px;
-}
-
-.tenants-table .dt-actions {
-  gap: 2px;
-}
-
 .tenants-invite-token {
   margin-top: 16px;
   padding: 12px;

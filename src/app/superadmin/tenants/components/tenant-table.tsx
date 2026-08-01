@@ -18,7 +18,6 @@ export default function TenantTable({
   onRowClick,
 }: TenantTableProps) {
   return (
-    <div className="tenants-table">
     <DataTable
       columns={[
         { header: "#", className: "dt-cell-num", render: (_, i) => i + 1 },
@@ -48,37 +47,37 @@ export default function TenantTable({
           },
         },
         { header: "Created", className: "dt-cell-date", render: (t: Tenant) => new Date(t.created_at).toLocaleDateString() },
-{
-  header: "",
-  render: (t: Tenant) => (
-    <div className="dt-actions" onClick={(e) => e.stopPropagation()}>
-      {t.verification_status === "pending" && (
-        <>
-          <button className="dt-btn dt-btn--success" onClick={() => onApprove(t)} title="Approve tenant">
-            <span className="bx bx-check-circle" />
-          </button>
-          <button className="dt-btn dt-btn--danger" onClick={() => onReject(t)} title="Reject tenant">
-            <span className="bx bx-x-circle" />
-          </button>
-        </>
-      )}
-      <button className="dt-btn" onClick={() => onEdit(t)} title="Edit tenant">
-        <span className="bx bx-pencil" />
-      </button>
-      <button className="dt-btn dt-btn--danger" onClick={() => onDelete(t)} title="Suspend tenant">
-        <span className="bx bx-x-circle" />
-      </button>
-    </div>
-  ),
-},
+        {
+          header: "Actions",
+          className: "dt-cell-right",
+          render: (t: Tenant) => (
+            <div className="dt-actions" onClick={(e) => e.stopPropagation()}>
+              {t.verification_status === "pending" && (
+                <>
+                  <button className="dt-btn dt-btn--success" onClick={() => onApprove(t)} title="Approve">
+                    <span className="bx bx-check-circle" />
+                  </button>
+                  <button className="dt-btn dt-btn--danger" onClick={() => onReject(t)} title="Reject">
+                    <span className="bx bx-x-circle" />
+                  </button>
+                </>
+              )}
+              <button className="dt-btn dt-btn--info" onClick={() => onEdit(t)} title="Edit">
+                <span className="bx bx-pencil" />
+              </button>
+              <button className="dt-btn dt-btn--warning" onClick={() => onDelete(t)} title="Suspend">
+                <span className="bx bx-trash-x" />
+              </button>
+            </div>
+          ),
+        },
       ]}
       data={tenants}
       loading={loading}
       keyExtractor={(t) => t.id}
       emptyMessage="No tenants found"
-      gridTemplateColumns="40px 2fr 1fr 60px 1fr 1fr 80px"
+      gridTemplateColumns="40px 2fr 1fr 60px 1fr 1fr 128px"
       onRowClick={onRowClick}
     />
-    </div>
   );
 }

@@ -8,6 +8,7 @@ import { useInterviewCount } from "@/app/dashboard/hiring-requests-detail/compon
 import { ApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { DEFAULT_FILTER, SCORE_FILTER_MAP } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
+import JobRoleStrip from "@/components/shared/job-role-strip/job-role-strip";
 
 export type HiringRequestContext = {
   data: NonNullable<ReturnType<typeof useHiringRequest>["data"]>;
@@ -50,7 +51,10 @@ const HiringRequestLayout = () => {
 
   useEffect(() => {
     if (!location.pathname.includes("/applications")) {
-      resetListFilters();
+      // Reset list filters after navigation away from the applications tab;
+      // deferred so the state reset is not synchronous inside the effect.
+      const resetTimer = setTimeout(resetListFilters, 0);
+      return () => clearTimeout(resetTimer);
     }
   }, [location.pathname, resetListFilters]);
 
@@ -82,6 +86,7 @@ const HiringRequestLayout = () => {
 
   return (
     <ApplicationsContext.Provider value={contextValue}>
+      {!location.pathname.includes("/applications") && <JobRoleStrip hiringRequestId={id} />}
       <Outlet context={{ data, id } as HiringRequestContext} />
     </ApplicationsContext.Provider>
   );

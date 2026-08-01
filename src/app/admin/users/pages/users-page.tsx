@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { getUsers, getInvites, type AdminUser, type Invite } from "@/app/admin/users/services/users-admin.service";
 import UserTable from "@/app/admin/users/components/user-table";
 import InvitesTable from "@/app/admin/users/components/invites-table";
@@ -11,6 +12,7 @@ import PageHeader from "@/layouts/protected-layouts/components/header/page-heade
 import "./users-page.css";
 
 export default function UsersPage() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("active");
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
@@ -27,38 +29,71 @@ export default function UsersPage() {
   const [deactivateTarget, setDeactivateTarget] = useState<AdminUser | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const fetchUsers = useCallback(async (p: number, q: string) => {
-    setLoading(true);
-    try {
-      const { data } = await getUsers({ page: p, per_page: 20, q: q || undefined });
-      setUsers(data.data);
-      setTotal(data.total);
-    } catch { /* ignore */ }
-    setLoading(false);
-  }, []);
+  const loadUsers = (p: number, q: string) => {
+    getUsers({ page: p, per_page: 20, q: q || undefined })
+      .then(({ data }) => {
+        setUsers(data.data);
+        setTotal(data.total);
+      })
+      .catch(() => { /* ignore */ })
+      .finally(() => setLoading(false));
+  };
 
-  const fetchInvites = useCallback(async (p: number) => {
-    setInviteLoading(true);
-    try {
-      const { data } = await getInvites({ page: p, per_page: 20 });
-      setInvites(data.data);
-      setInviteTotal(data.total);
-    } catch { /* ignore */ }
-    setInviteLoading(false);
-  }, []);
+  const loadInvites = (p: number) => {
+    getInvites({ page: p, per_page: 20 })
+      .then(({ data }) => {
+        setInvites(data.data);
+        setInviteTotal(data.total);
+      })
+      .catch(() => { /* ignore */ })
+      .finally(() => setInviteLoading(false));
+  };
 
-  useEffect(() => { fetchUsers(page, search); }, [page, search, fetchUsers]);
-  useEffect(() => { fetchInvites(invitePage); }, [invitePage, fetchInvites]);
+  useEffect(() => {
+    let cancelled = false;
+    getUsers({ page, per_page: 20, q: search || undefined })
+      .then(({ data }) => {
+        if (!cancelled) {
+          setUsers(data.data);
+          setTotal(data.total);
+        }
+      })
+      .catch(() => { /* ignore */ })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [page, search]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getInvites({ page: invitePage, per_page: 20 })
+      .then(({ data }) => {
+        if (!cancelled) {
+          setInvites(data.data);
+          setInviteTotal(data.total);
+        }
+      })
+      .catch(() => { /* ignore */ })
+      .finally(() => {
+        if (!cancelled) setInviteLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [invitePage]);
 
   const handleSearch = (q: string) => {
     setSearch(q);
     setPage(1);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => fetchUsers(1, q), 300);
+    debounceRef.current = setTimeout(() => loadUsers(1, q), 300);
   };
 
-  const refreshUsers = () => fetchUsers(page, search);
-  const refreshInvites = () => fetchInvites(invitePage);
+  const refreshUsers = () => loadUsers(page, search);
+  const refreshInvites = () => loadInvites(invitePage);
 
   const totalPages = Math.ceil(total / 20);
   const inviteTotalPages = Math.ceil(inviteTotal / 20);
@@ -119,6 +154,7 @@ export default function UsersPage() {
               loading={loading}
               onEdit={(u) => setEditUser(u)}
               onDeactivate={(u) => setDeactivateTarget(u)}
+              onViewJobs={(u) => navigate(`/admin/users/${u.id}`)}
             />
             {totalPages > 1 && (
               <div className="users-pagination">

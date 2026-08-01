@@ -343,15 +343,14 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 24px;
+  height: 22px;
   padding: 0 10px;
-  border-radius: 6px;
-  background: rgba(250, 204, 21, 0.12);
-  color: #facc15;
+  border-radius: 9999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-weight: 600;
   flex-shrink: 0;
   white-space: nowrap;
 }

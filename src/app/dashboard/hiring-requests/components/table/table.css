@@ -1,47 +1,9 @@
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-
-/* container */
-.table {
-  width: 100%;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--bg-secondary);
-}
-
-/* row */
-.table-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr 1fr;
-  align-items: center;
-
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-subtle);
-
-  transition: background 0.15s ease;
-}
-
-.table-row:last-child {
-  border-bottom: none;
-}
-
-.table-row:hover {
-  background: var(--bg-hover);
-}
-
-/* header */
-.table-header {
-  font-size: 12px;
-  color: var(--text-muted);
-  background: var(--bg-primary);
-}
-
 /* role cell */
 .role-title {
   font-size: 14px;
+  font-weight: 500;
   color: var(--text-primary);
+  line-height: 1.375;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -51,34 +13,12 @@
 .role-meta {
   font-size: 12px;
   color: var(--text-muted);
+  line-height: 1.375;
+  margin-top: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 22ch;
-}
-
-/* applicants */
-.applicants-cell {
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-/* status badge */
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  text-transform: capitalize;
-}
-
-.status-active {
-  background: var(--success-bg-strong);
-  color: var(--success);
-}
-
-.status-closed {
-  background: var(--danger-bg-strong);
-  color: var(--danger);
 }
 
 /* location */
@@ -101,62 +41,33 @@
   max-width: 22ch;
 }
 
-/* created */
-.created-cell {
+/* actions */
+.table-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary);
   font-size: 12px;
-  color: var(--text-muted);
+  font-weight: 500;
+  font-family: var(--font-family, ui-sans-serif, system-ui, sans-serif);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
-/* skeleton loader */
-.skeleton {
-  background: linear-gradient(90deg, var(--surface-card) 25%, var(--input-icon-bg) 50%, var(--surface-card) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 6px;
+.table-action-btn i {
+  font-size: 14px;
+  color: var(--accent);
 }
 
-.skeleton-title {
-  width: 140px;
-  height: 14px;
-  margin-bottom: 6px;
-}
-
-.skeleton-meta {
-  width: 80px;
-  height: 10px;
-}
-
-.skeleton-badge {
-  width: 60px;
-  height: 22px;
-  border-radius: 999px;
-}
-
-.skeleton-date {
-  width: 70px;
-  height: 12px;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* row fade-in */
-.table-row-link {
-  animation: rowFadeIn 0.3s ease both;
-  animation-delay: var(--anim-delay, 0ms);
-}
-
-@keyframes rowFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.table-action-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow, transparent);
 }
 
 /* ── Filter Bar ── */
@@ -238,69 +149,4 @@
 
 .filter-chip-x:hover {
   color: var(--text-primary);
-}
-
-/* ── Table Empty ── */
-.table-empty {
-  padding: 32px 16px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
-/* ── Pagination ── */
-.pagination-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 16px;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.pagination-info {
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.pagination-controls {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.pagination-btn {
-  padding: 4px 10px;
-  font-size: 12px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.pagination-btn:hover:not(:disabled) {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-.pagination-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.pagination-btn-active {
-  background: var(--send-btn-bg, var(--text-white));
-  color: var(--send-btn-color, var(--text-white));
-  border-color: var(--send-btn-bg, var(--text-white));
-}
-
-.pagination-btn-active:hover {
-  opacity: 0.85;
-}
-
-.pagination-per-page {
-  display: flex;
-  align-items: center;
 }

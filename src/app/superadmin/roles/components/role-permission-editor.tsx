@@ -1,4 +1,5 @@
 import Button from "@/components/ui/button/button";
+import { ROLE_DISPLAY } from "@/constants/role-display";
 import type { PermissionInfo } from "../pages/roles-page.types";
 
 type Props = {
@@ -69,7 +70,7 @@ export const RolePermissionEditor = ({
           <div className="rpe-summary-avatar">{roleName.charAt(0)}</div>
           <div className="rpe-summary-info">
             <div className="rpe-summary-top">
-              <h3 className="rpe-summary-name">{roleName}</h3>
+              <h3 className="rpe-summary-name">{ROLE_DISPLAY[roleName]?.label ?? roleName}</h3>
               <span className="rpe-summary-badge">
                 <i className="bx bx-shield" style={{ marginRight: 4, fontSize: 11 }} />
                 {checkedCount === totalCount ? "Full Access" : "Custom"}

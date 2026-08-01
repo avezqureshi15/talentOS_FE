@@ -60,7 +60,7 @@ const HiringRequestDetails = () => {
       viewSwitcher: {
         options: [...HEADER_VIEW_OPTIONS],
         active: HEADER_DEFAULT_VIEW,
-        onChange: (_key: string) => {
+        onChange: () => {
           // future: wire to view logic
         },
       },

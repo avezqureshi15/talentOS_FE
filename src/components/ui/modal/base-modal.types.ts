@@ -10,4 +10,5 @@ export type BaseModalProps = {
   children: ReactNode;
   variant?: BaseModalVariant;
   className?: string;
+  overlayClassName?: string;
 };
