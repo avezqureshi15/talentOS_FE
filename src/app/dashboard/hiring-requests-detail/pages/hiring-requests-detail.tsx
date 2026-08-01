@@ -12,7 +12,6 @@ import { useHeaderStore } from "@/store/header.store";
 import { QUERY_KEYS, EXPORT_LABELS } from "@/constants/constants";
 import {
   HEADER_SEARCH_PLACEHOLDER,
-  HEADER_SEARCH_SHORTCUT,
   HEADER_VIEW_OPTIONS,
   HEADER_DEFAULT_VIEW,
   HEADER_EXPORT_LABEL,
@@ -55,7 +54,6 @@ const HiringRequestDetails = () => {
       totalCount,
       search: {
         placeholder: HEADER_SEARCH_PLACEHOLDER,
-        shortcut: HEADER_SEARCH_SHORTCUT,
       },
       viewSwitcher: {
         options: [...HEADER_VIEW_OPTIONS],

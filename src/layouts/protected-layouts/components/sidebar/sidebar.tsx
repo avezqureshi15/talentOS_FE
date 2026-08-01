@@ -22,7 +22,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   chats,
   activeChatId,
   onSelectChat,
-  onSearch,
   onDeleteChat,
   onRenameChat,
   onLoadMore,
@@ -175,7 +174,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     <SidebarShell open={sidebarOpen}>
       <SidebarNav
         Icon={Icon}
-        onSearch={onSearch}
         onClose={() => setSidebarOpen(false)}
         mainItems={visibleMain}
         adminItems={visibleAdmin}

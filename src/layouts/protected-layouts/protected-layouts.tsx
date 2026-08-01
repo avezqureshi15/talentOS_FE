@@ -145,7 +145,6 @@ export default function ProtectedLayout() {
         chats={chats ?? { today: [], earlier: [] }}
         activeChatId={activeChatId}
         onSelectChat={handleSelectChat}
-        onSearch={cmdOpenPalette}
         onDeleteChat={handleDeleteChat}
         onRenameChat={handleRenameChat}
         onLoadMore={fetchNextPage}
@@ -155,7 +154,7 @@ export default function ProtectedLayout() {
       />
 
       <main className="chat-main">
-        {!location.pathname.startsWith("/chat") && <Header Icon={Icon} sidebarOpen={sidebarOpen} />}
+        {!location.pathname.startsWith("/chat") && <Header Icon={Icon} sidebarOpen={sidebarOpen} onOpenPalette={cmdOpenPalette} />}
         <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
             <AnimatePresence mode="popLayout">

@@ -7,7 +7,6 @@ import type { NavItemConfig } from "@/layouts/protected-layouts/navigation.confi
 
 type SidebarNavProps = {
   Icon: Record<string, ComponentType>;
-  onSearch?: () => void;
   onClose: () => void;
   mainItems: NavItemConfig[];
   adminItems: NavItemConfig[];

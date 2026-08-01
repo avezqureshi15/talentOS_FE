@@ -4,7 +4,7 @@ import { fetchApplicationsPaginated } from "@/services/applications/applications
 import { QUERY_KEYS, EXPORT_LABELS } from "@/constants/constants";
 import { useExportExcel } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-excel";
 import {
-  HEADER_SEARCH_PLACEHOLDER, HEADER_SEARCH_SHORTCUT, HEADER_VIEW_OPTIONS,
+  HEADER_SEARCH_PLACEHOLDER, HEADER_VIEW_OPTIONS,
   HEADER_EXPORT_LABEL, HEADER_EXPORT_ICON,
   HEADER_REFRESH_LABEL, HEADER_REFRESH_ICON, HEADER_EXPORT_FILENAME,
 } from "@/layouts/protected-layouts/components/header/header.constants";
@@ -45,7 +45,7 @@ export function useHiringRequestHeader({
     totalCount,
     hiringRequestName: data.title,
     hiringRequest: data,
-    search: { placeholder: HEADER_SEARCH_PLACEHOLDER, shortcut: HEADER_SEARCH_SHORTCUT },
+    search: { placeholder: HEADER_SEARCH_PLACEHOLDER },
     viewSwitcher: {
       options: [...HEADER_VIEW_OPTIONS],
       active: activeView,

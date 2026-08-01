@@ -1,6 +1,5 @@
 ﻿export const HEADER_TOOLBAR_TITLE = "Applications";
 export const HEADER_SEARCH_PLACEHOLDER = "Search candidates...";
-export const HEADER_SEARCH_SHORTCUT = "Ctrl\u002BK";
 export const HEADER_HAMBURGER_TITLE = "Ctrl+Shift+S";
 
 export const HEADER_VIEW_OPTIONS = [

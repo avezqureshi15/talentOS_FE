@@ -27,12 +27,13 @@ const HeaderLeft: React.FC<HeaderLeftProps> = () => {
 
 /* ───────── JOBS TOOLBAR ───────── */
 
-const JobsToolbar = () => {
+const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   const config = useHeaderStore((s) => s.config);
   const { title, titleIcon, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
   const navigate = useNavigate();
   const location = useLocation();
   const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));
+  const isHiringRoute = isHiringListRoute(location.pathname) || isHiringDetailRoute(location.pathname);
   const [jdModalOpen, setJdModalOpen] = useState(false);
 
   if (meta) {
@@ -87,6 +88,7 @@ const JobsToolbar = () => {
             value={search.value ?? ""}
             onChange={(value) => search.onChange?.(value)}
             shortcut={search.shortcut}
+            onActivate={isHiringRoute && onOpenPalette ? onOpenPalette : undefined}
           />
         )}
         {filters?.map((filter, i) => (
@@ -193,7 +195,7 @@ function isHiringListRoute(pathname: string): boolean {
 
 /* ───────── HEADER ───────── */
 
-const Header: React.FC<HeaderProps> = ({ Icon, sidebarOpen }) => {
+const Header: React.FC<HeaderProps> = ({ Icon, sidebarOpen, onOpenPalette }) => {
   const config = useHeaderStore((s) => s.config);
   const hasConfig = !!config.title;
   const hasMeta = hasConfig && !!config.meta;
@@ -206,7 +208,7 @@ const Header: React.FC<HeaderProps> = ({ Icon, sidebarOpen }) => {
   return (
     <header className={`header${hasMeta ? " header--has-meta" : ""}${sidebarOpen ? " header--sidebar-open" : ""}`}>
       {onHiringTab || onHiringList || (onHiringDetail && hasConfig) || hasConfig ? (
-        <JobsToolbar />
+        <JobsToolbar onOpenPalette={onOpenPalette} />
       ) : (
         <>
           <HeaderLeft />
