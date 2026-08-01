@@ -1,0 +1,46 @@
+.pks-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+}
+
+.pks-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+}
+
+.pks-tab {
+  padding: 6px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.pks-tab:hover {
+  color: var(--text-primary);
+}
+
+.pks-tab--active {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  box-shadow: var(--shadow-sm);
+}
+
+.pks-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}

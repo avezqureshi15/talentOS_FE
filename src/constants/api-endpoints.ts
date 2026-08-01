@@ -46,6 +46,7 @@ export const API_ENDPOINTS = {
   AI_INTERVIEWS: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/interviews",
   AI_MOVE_TO_SCREENING: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-screening",
   AI_MOVE_TO_INTERVIEW: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-interview",
+  AI_QUESTIONS: "/hiring-requests/{hiring_request_id}/ai/questions",
   APPLICATION_ROUND_STATUS: "/applications/{candidate_id}/round-status",
 } as const;
 

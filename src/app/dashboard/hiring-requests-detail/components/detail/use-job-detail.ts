@@ -6,9 +6,9 @@ type UseJobDetailOptions = {
   applicantParam: string | null;
   applicants: Applicant[];
   appsLoading: boolean;
-  isLoadingMore: boolean;
-  hasMore: boolean;
-  fetchNext: () => void;
+  page: number;
+  totalPages: number;
+  goToPage: (page: number) => void;
   jobId: string;
 };
 
@@ -26,9 +26,9 @@ export function useJobDetail({
   applicantParam,
   applicants,
   appsLoading,
-  isLoadingMore,
-  hasMore,
-  fetchNext,
+  page,
+  totalPages,
+  goToPage,
   jobId,
 }: UseJobDetailOptions): UseJobDetailReturn {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -53,7 +53,7 @@ export function useJobDetail({
   useEffect(
     () => {
       if (!applicantParam || scrollAttemptedRef.current) return;
-      if (appsLoading || isLoadingMore) return;
+      if (appsLoading) return;
 
       const found = applicants.some((a) => a.id === applicantParam);
 
@@ -81,9 +81,9 @@ export function useJobDetail({
         };
       }
 
-      if (hasMore) {
+      if (page < totalPages) {
         setIsSearchingForApplicant(true);
-        fetchNext();
+        goToPage(page + 1);
       } else {
         setIsSearchingForApplicant(false);
         scrollAttemptedRef.current = true;
@@ -98,7 +98,7 @@ export function useJobDetail({
       }
     },
     // Scroll to a candidate when applicantParam is present in URL
-    [applicantParam, appsLoading, isLoadingMore, applicants, hasMore, fetchNext, setSearchParams, setOpenId],
+    [applicantParam, appsLoading, applicants, page, totalPages, goToPage, setSearchParams, setOpenId],
   );
 
   const handleRowClick = useCallback(

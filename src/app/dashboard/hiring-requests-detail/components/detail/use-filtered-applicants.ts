@@ -8,7 +8,6 @@ type UseFilteredApplicantsArgs = {
   activeStage: StageKey;
   interviewSubFilter: string;
   evaluatedSubFilter: string;
-  rejectReason?: string;
 };
 
 export function useFilteredApplicants({
@@ -16,17 +15,9 @@ export function useFilteredApplicants({
   activeStage,
   interviewSubFilter,
   evaluatedSubFilter,
-  rejectReason,
 }: UseFilteredApplicantsArgs): Applicant[] {
   return useMemo(() => {
     let filtered = applicants.filter(STAGE_FILTER_MAP[activeStage]);
-
-    if (rejectReason && activeStage === "resume-shortlisting") {
-      const reasons = rejectReason.split(",").filter(Boolean).map((r) => r.toUpperCase());
-      filtered = filtered.filter((a) =>
-        reasons.some((r) => (a.disqualifiedBy ?? []).includes(r)),
-      );
-    }
 
     if (activeStage === "interview") {
       filtered = filtered.filter(INTERVIEW_SUB_FILTER_MAP[interviewSubFilter]);
@@ -37,5 +28,5 @@ export function useFilteredApplicants({
     }
 
     return filtered;
-  }, [applicants, activeStage, interviewSubFilter, evaluatedSubFilter, rejectReason]);
+  }, [applicants, activeStage, interviewSubFilter, evaluatedSubFilter]);
 }

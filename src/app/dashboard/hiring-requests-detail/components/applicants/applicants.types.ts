@@ -115,8 +115,6 @@ export type ApplicantsProps = {
   setOpenId: (id: string | null) => void;
   filter: string;
   onFilterChange: (value: string) => void;
-  hasMore?: boolean;
-  onLoadMore?: () => void;
   scoreFilter?: string;
   onScoreFilterChange?: (value: string) => void;
   rejectReason: string;

@@ -1,0 +1,118 @@
+.idh-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+}
+
+.idh-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.idh-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.idh-time-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.idh-time-pill--ok {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+}
+
+.idh-time-pill--warning {
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 12%, transparent);
+}
+
+.idh-time-pill--danger {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+
+.idh-status {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.idh-status--warning {
+  color: var(--warning);
+}
+
+.idh-status--danger {
+  color: var(--danger);
+}
+
+.idh-question-count {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.idh-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.idh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.idh-btn--ghost {
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-default);
+}
+
+.idh-btn--ghost:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.idh-btn--primary {
+  color: #ffffff;
+  background: var(--accent);
+  border: 1px solid transparent;
+}
+
+.idh-btn--primary:hover {
+  background: var(--accent-hover, var(--accent));
+  filter: brightness(1.1);
+}
+
+.idh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

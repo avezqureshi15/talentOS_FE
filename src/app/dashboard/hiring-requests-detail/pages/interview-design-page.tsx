@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, ChevronDown } from "lucide-react";
+import { useParams } from "react-router-dom";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import { springSnap, fadeSlideUp } from "@/utils/motion";
+import { useInterviewPlannerStore } from "@/store/interview-planner.store";
+import { InterviewDesignPlanner } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/interview-design-planner/interview-design-planner";
 import "./pages.css";
 
 interface Topic {
@@ -232,6 +235,7 @@ const contentVariants = {
 };
 
 const InterviewDesignPage = () => {
+  const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     () => new Set()
@@ -242,6 +246,19 @@ const InterviewDesignPage = () => {
   const [expandedCrits, setExpandedCrits] = useState<Set<string>>(
     () => new Set()
   );
+
+  const isEditing = useInterviewPlannerStore((s) => s.isEditing);
+  const setEditing = useInterviewPlannerStore((s) => s.setEditing);
+
+  const handleToggleEditing = () => {
+    setEditing(!isEditing);
+  };
+
+  useEffect(() => {
+    return () => {
+      setEditing(false);
+    };
+  }, [setEditing]);
 
   const toggleSection = (id: string) => {
     setExpandedSections((prev) => {
@@ -274,12 +291,21 @@ const InterviewDesignPage = () => {
     <>
       <PageHeader
         title="Interview Design"
-        badge={{ label: "Read-only", icon: "bx-lock-alt" }}
         actions={[
           { key: "export", label: "Export PDF", icon: "bx-download", variant: "primary" },
+          {
+            key: "edit",
+            label: isEditing ? "Close" : "Edit",
+            icon: isEditing ? "bx-x" : "bx-edit-alt",
+            variant: "outline",
+            onClick: handleToggleEditing,
+          },
         ]}
       />
       <ErrorBoundary>
+        {isEditing && id ? (
+          <InterviewDesignPlanner hiringRequestId={id} />
+        ) : (
         <div className="id-page">
           <div className="id-meta-row">
             <span className="id-meta-pill">
@@ -606,6 +632,7 @@ const InterviewDesignPage = () => {
             </AnimatePresence>
           </div>
         </div>
+        )}
       </ErrorBoundary>
     </>
   );

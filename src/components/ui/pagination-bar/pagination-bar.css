@@ -1,0 +1,53 @@
+.pb-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pb-info {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.pb-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.pb-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pb-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.pb-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pb-btn-active,
+.pb-btn-active:hover {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.pb-per-page {
+  display: flex;
+  align-items: center;
+}

@@ -1,0 +1,35 @@
+.pdb-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  background: var(--warning-bg);
+  border-bottom: 1px solid var(--warning-border, rgba(245, 158, 11, 0.25));
+}
+
+.pdb-icon {
+  color: var(--warning);
+  margin-top: 1px;
+}
+
+.pdb-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pdb-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--warning);
+}
+
+.pdb-body {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.pdb-errors {
+  font-size: 11px;
+  color: var(--text-muted);
+}

@@ -42,8 +42,6 @@ const DecisionBoard = ({ jobId }: Props) => {
   );
 
   const { applicants, isLoading: appsLoading, refresh } = useFinalizedData(jobId, true);
-  const hasMore = false;
-  const fetchNext = () => {};
 
   const stagesWithCounts = useMemo(() =>
     DECISION_STAGES.map((s) => ({
@@ -110,8 +108,6 @@ const DecisionBoard = ({ jobId }: Props) => {
                     setOpenId={setOpenId}
                     filter={DEFAULT_FILTER}
                     onFilterChange={() => {}}
-                    hasMore={hasMore}
-                    onLoadMore={fetchNext}
                     rejectReason=""
                     onRejectReasonChange={() => {}}
                     onRefresh={refresh}

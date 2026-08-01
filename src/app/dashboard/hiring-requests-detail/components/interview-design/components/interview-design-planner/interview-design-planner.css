@@ -1,0 +1,46 @@
+.idp-planner {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+  background: var(--bg-primary);
+}
+
+.idp-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.idp-body-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.idp-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  font-size: 13px;
+  color: var(--danger-light);
+}
+
+.idp-retry-btn {
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--danger-border);
+  background: var(--danger-bg);
+  color: var(--danger-light);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.idp-retry-btn:hover {
+  background: var(--danger-bg-strong);
+}

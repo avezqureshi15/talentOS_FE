@@ -1,5 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState, useMemo, useEffect } from "react";import { AnimatePresence, motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import "./detail.css";
 
@@ -7,7 +6,7 @@ import Applicants from "@/app/dashboard/hiring-requests-detail/components/applic
 import ApplicantFilters from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-filters";
 import PipelineStages from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages";
 import { PIPELINE_STAGES, NAME_SCORE_STATUS, SUFFIX_COLUMNS } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.constants";
-import type { StageColumn, StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
+import type { StageColumn } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 
@@ -23,6 +22,7 @@ import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATED_SUB_FILTER_MAP, U
 import ViewToggle from "@/app/dashboard/hiring-requests-detail/components/detail/view-toggle";
 import InterviewFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
 import EvaluatedFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
+import PaginationBar from "@/components/ui/pagination-bar/pagination-bar";
 import { fadeSlideUp, staggerContainer } from "@/utils/motion";
 import type { JobDetailProps } from "./detail.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
@@ -30,7 +30,6 @@ import type { Applicant } from "@/app/dashboard/hiring-requests-detail/component
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [searchParams] = useSearchParams();
   const applicantParam = searchParams.get("applicant");
-  const [activeStage, setActiveStage] = useState<StageKey>("resume-shortlisting");
   const [interviewSubFilter, setInterviewSubFilter] = useState<"ai-incoming" | "regular-incoming" | "no-show">("ai-incoming");
   const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
 
@@ -39,9 +38,12 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const {
     applicants,
     isLoading: appsLoading,
-    isLoadingMore,
-    hasMore,
-    fetchNext,
+    total,
+    page,
+    totalPages,
+    pageSize,
+    goToPage,
+    setPageSize,
     refresh,
     filter,
     scoreFilter,
@@ -49,14 +51,17 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     setFilter,
     setScoreFilter,
     setRejectReason,
+    activeStage,
+    setActiveStage,
+    stageCounts,
   } = useApplicationsContext();
 
   const { viewMode, setViewMode, openId, setOpenId, handleRowClick, handleInfoClick, isSearchingForApplicant } = useJobDetail({
-    applicantParam, applicants, appsLoading, isLoadingMore, hasMore, fetchNext, jobId,
+    applicantParam, applicants, appsLoading, page, totalPages, goToPage, jobId,
   });
 
   const filteredApplicants = useFilteredApplicants({
-    applicants, activeStage, interviewSubFilter, evaluatedSubFilter, rejectReason,
+    applicants, activeStage, interviewSubFilter, evaluatedSubFilter,
   });
 
   const BULK_STAGE_ACTIONS: Record<string, { screening: boolean; interview: boolean }> = {
@@ -78,6 +83,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
       setSelectionStage(null);
     }
   }, [showBulkSelection, bulkSelection.selectionCount, activeStage, selectionStage]);
+
+  useEffect(() => {
+    if (page > 1) window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
 
   const stageLabel = selectionStage ? (PIPELINE_STAGES.find((s) => s.key === selectionStage)?.label ?? selectionStage) : "";
 
@@ -101,9 +110,9 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const stagesWithCounts = useMemo(() =>
     PIPELINE_STAGES.map((s) => ({
       ...s,
-      count: applicants.filter(STAGE_FILTER_MAP[s.key]).length,
+      count: stageCounts[s.key] ?? 0,
     })),
-    [applicants],
+    [stageCounts],
   );
 
   const interviewSubCounts = useMemo(() => ({
@@ -270,7 +279,6 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                   <Applicants
                     data={filteredApplicants} openId={openId} setOpenId={setOpenId}
                     filter={filter} onFilterChange={setFilter}
-                    hasMore={hasMore} onLoadMore={fetchNext}
                     scoreFilter={scoreFilter} onScoreFilterChange={setScoreFilter}
                     rejectReason={rejectReason} onRejectReasonChange={setRejectReason}
                     applicantParam={applicantParam} onRefresh={refresh}
@@ -286,6 +294,14 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                   />
                 </motion.div>
               )}
+              <PaginationBar
+                page={page}
+                totalPages={totalPages}
+                total={total}
+                pageSize={pageSize}
+                onPageChange={goToPage}
+                onPageSizeChange={setPageSize}
+              />
             </>
           ) : (
             <motion.div variants={fadeSlideUp}>
@@ -302,6 +318,14 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 allSelected={bulkSelection.allSelected}
                 activeStage={activeStage}
                 loading={appsLoading}
+              />
+              <PaginationBar
+                page={page}
+                totalPages={totalPages}
+                total={total}
+                pageSize={pageSize}
+                onPageChange={goToPage}
+                onPageSizeChange={setPageSize}
               />
             </motion.div>
           )}

@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchApplicationsPaginated, fetchFinalVerdicts } from "@/services/applications/applications";
 import { PAGINATION } from "@/constants/api-endpoints";
 import { QUERY_KEYS } from "@/constants/constants";
@@ -8,29 +8,41 @@ import type { Applicant } from "@/app/dashboard/hiring-requests-detail/component
 type UseApplicationsDataResult = {
   applicants: Applicant[];
   total: number;
+  page: number;
+  totalPages: number;
+  pageSize: number;
   isLoading: boolean;
-  isLoadingMore: boolean;
-  hasMore: boolean;
-  fetchNext: () => void;
+  goToPage: (page: number) => void;
+  setPageSize: (size: number) => void;
   refresh: () => void;
+  stageCounts: Record<string, number>;
 };
-
-const LIMIT = PAGINATION.APPLICATIONS_PER_PAGE;
 
 export const useApplicationsData = (
   jobId?: string,
   filter: string = "all",
   enabled: boolean = true,
-  pageSize?: number,
   minScore?: number,
   maxScore?: number,
+  stage?: string,
+  rejectReason?: string,
 ): UseApplicationsDataResult => {
-  const limit = pageSize ?? LIMIT;
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSizeState] = useState<number>(PAGINATION.APPLICATIONS_PER_PAGE);
   const roundVerdict = filter === "all" ? undefined : filter;
 
-  const query = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, roundVerdict, minScore, maxScore, pageSize],
-    queryFn: ({ pageParam }) =>
+  const depsKey = `${jobId}|${roundVerdict}|${minScore}|${maxScore}|${stage}|${pageSize}|${rejectReason}`;
+  const [prevDepsKey, setPrevDepsKey] = useState(depsKey);
+  if (depsKey !== prevDepsKey) {
+    setPrevDepsKey(depsKey);
+    setPage(1);
+  }
+
+  const offset = (page - 1) * pageSize;
+
+  const query = useQuery({
+    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, roundVerdict, minScore, maxScore, page, pageSize, stage, rejectReason],
+    queryFn: () =>
       fetchApplicationsPaginated(
         jobId,
         undefined,
@@ -38,42 +50,50 @@ export const useApplicationsData = (
         maxScore,
         undefined,
         undefined,
-        limit,
-        pageParam as number,
+        pageSize,
+        offset,
         undefined,
         undefined,
         "false",
         roundVerdict,
+        rejectReason,
+        stage,
       ),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
-      const nextOffset = (lastPageParam as number) + limit;
-      return nextOffset < lastPage.total ? nextOffset : undefined;
-    },
     enabled,
     staleTime: 30_000,
     refetchOnWindowFocus: false,
-    select: (data) => ({
-      pages: data.pages,
-      pageParams: data.pageParams,
-      total: data.pages[data.pages.length - 1]?.total ?? 0,
-    }),
   });
 
+  const total = query.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const goToPage = useCallback(
+    (nextPage: number) => {
+      setPage(Math.min(Math.max(1, nextPage), totalPages));
+    },
+    [totalPages],
+  );
+
+  const setPageSize = useCallback((size: number) => {
+    setPageSizeState(size);
+  }, []);
+
   const applicants = useMemo<Applicant[]>(
-    () =>
-      query.data?.pages.flatMap((page) => page.data.map(mapCandidate)) ?? [],
+    () => query.data?.data.map(mapCandidate) ?? [],
     [query.data],
   );
 
   return {
     applicants,
-    total: query.data?.total ?? 0,
-    isLoading: query.isFetching && !query.isFetchingNextPage,
-    isLoadingMore: query.isFetchingNextPage,
-    hasMore: query.hasNextPage,
-    fetchNext: query.fetchNextPage,
+    total,
+    page,
+    totalPages,
+    pageSize,
+    isLoading: query.isFetching,
+    goToPage,
+    setPageSize,
     refresh: query.refetch,
+    stageCounts: query.data?.stage_counts ?? {},
   };
 };
 

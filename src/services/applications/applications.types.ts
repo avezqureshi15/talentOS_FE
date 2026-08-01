@@ -81,9 +81,12 @@ export type EvaluatedCandidatesResponse = {
   data: EvaluatedCandidate[];
 };
 
+export type StageCounts = Record<string, number>;
+
 export type PaginatedEvaluatedCandidatesResponse = {
   data: EvaluatedCandidate[];
   total: number;
   limit: number;
   offset: number;
+  stage_counts?: StageCounts | null;
 };

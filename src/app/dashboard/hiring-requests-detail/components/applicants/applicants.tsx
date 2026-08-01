@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useCallback } from "react";
 import ApplicantCard from "./applicant-card";
 import ApplicantActionModals from "./applicant-action-modals";
 import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
@@ -21,7 +21,7 @@ type LocalOverride = {
   finalVerdict?: string;
 };
 
-function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, applicantParam, onRefresh, jdId, isRemote, showBulkSelection = false, selectedIds, onToggleSelect, onToggleSelectAll, allSelected, selectionCount = 0, onTimeline }: ApplicantsProps) {
+function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefresh, jdId, isRemote, showBulkSelection = false, selectedIds, onToggleSelect, onToggleSelectAll, allSelected, selectionCount = 0, onTimeline }: ApplicantsProps) {
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
@@ -54,24 +54,6 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
   const [cancelTarget, setCancelTarget] = useState<{ id: string; name: string; interviewId: string } | null>(null);
 
   const data = propData ?? [];
-
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const [entry] = entries;
-      if (entry.isIntersecting && hasMore && onLoadMore) onLoadMore();
-    },
-    [hasMore, onLoadMore],
-  );
-
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(handleObserver, { rootMargin: "200px" });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [handleObserver]);
 
   const overrideStatus = (id: string, status: ApplicantStatus) => {
     setLocalOverrides((prev) => ({ ...prev, [id]: { ...prev[id], status } }));
@@ -358,7 +340,6 @@ function Applicants({ data: propData, openId, setOpenId, hasMore, onLoadMore, ap
           </div>
         );
       })}
-      {hasMore && <div ref={sentinelRef} className="scroll-sentinel" />}
 
       <ApplicantActionModals
         data={data}
