@@ -209,12 +209,12 @@
 }
 
 .recruiter-option-checkbox--checked {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
 }
 
 .recruiter-option-checkbox--checked i {
-  color: var(--text-white);
+  color: var(--button-primary-text);
   font-size: 12px;
   font-weight: 700;
 }

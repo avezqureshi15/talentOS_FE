@@ -111,13 +111,13 @@
 }
 
 .it-action-btn--reschedule {
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
 .it-action-btn--reschedule:hover {
-  background: var(--accent);
-  color: var(--text-white);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
 
 .it-action-btn--cancel {

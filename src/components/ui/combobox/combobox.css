@@ -81,8 +81,8 @@
 
 .combobox-option:hover,
 .combobox-option--highlighted {
-  background: var(--accent);
-  color: var(--static-white);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
 
 .combobox-empty {

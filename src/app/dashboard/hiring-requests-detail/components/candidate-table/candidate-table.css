@@ -219,10 +219,10 @@
 }
 
 .info-icon-btn {
-  background: var(--accent-bg);
+  background: var(--bg-tertiary);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  color: var(--accent);
+  color: var(--text-secondary);
   cursor: pointer;
   font-size: 11px;
   font-weight: 500;
@@ -236,9 +236,9 @@
 }
 
 .info-icon-btn:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--static-white);
+  background: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
 
 .info-text-btn {

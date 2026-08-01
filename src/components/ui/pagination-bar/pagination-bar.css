@@ -42,9 +42,9 @@
 
 .pb-btn-active,
 .pb-btn-active:hover {
-  background: var(--accent);
-  color: var(--static-white);
-  border-color: var(--accent);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-color: var(--button-primary-bg);
 }
 
 .pb-per-page {

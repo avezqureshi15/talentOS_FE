@@ -180,12 +180,12 @@
 }
 
 .sidebar-collapsed-btn--active {
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .sidebar-collapsed-btn--active:hover {
-  background: var(--accent-bg);
+  background: var(--bg-hover);
 }
 
 .sidebar-collapsed-indicator {

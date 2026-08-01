@@ -102,13 +102,13 @@
 }
 
 .idh-btn--primary {
-  color: var(--static-white);
-  background: var(--accent);
+  color: var(--button-primary-text);
+  background: var(--button-primary-bg);
   border: 1px solid transparent;
 }
 
 .idh-btn--primary:hover {
-  background: var(--accent-hover);
+  background: var(--button-primary-hover);
   filter: brightness(1.1);
 }
 

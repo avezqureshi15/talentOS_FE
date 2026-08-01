@@ -178,9 +178,8 @@
 }
 
 .create-hr-btn--primary {
-  background: var(--accent);
-  color: var(--static-white);
-  box-shadow: 0 0 0 1px var(--accent-glow, transparent);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
 
 @media (max-width: 640px) {

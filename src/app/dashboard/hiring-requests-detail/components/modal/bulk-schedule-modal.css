@@ -98,8 +98,8 @@
 
 .bsm-btn--confirm {
   border: none;
-  background: var(--accent);
-  color: var(--static-white);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
   font-weight: 600;
 }
 
