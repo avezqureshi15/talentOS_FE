@@ -240,8 +240,10 @@ export const SETTINGS_MODAL = {
   TITLE: "Settings",
   ICON: "bx bx-cog",
   THEME_LABEL: "Theme",
+  THEME_SYSTEM: "System",
   THEME_DARK: "Dark",
   THEME_LIGHT: "Light",
+  THEME_FOLLOWING_SYSTEM: "Following system preference",
 } as const;
 
 export const KEYBOARD_SHORTCUTS_MODAL = {

@@ -2,14 +2,25 @@ import { create } from "zustand";
 import { storage } from "@/utils/storage";
 import { STORAGE_KEYS } from "@/constants/constants";
 
-function getInitialTheme(): "dark" | "light" {
+export type ThemeMode = "system" | "dark" | "light";
+
+const SYSTEM_DARK_QUERY = "(prefers-color-scheme: dark)";
+
+function getInitialTheme(): ThemeMode {
   const stored = storage.get(STORAGE_KEYS.THEME);
-  if (stored === "dark" || stored === "light") return stored;
+  if (stored === "system" || stored === "dark" || stored === "light") return stored;
   return "dark";
 }
 
-function applyTheme(theme: "dark" | "light") {
-  if (theme === "light") {
+function resolveMode(mode: ThemeMode): "dark" | "light" {
+  if (mode === "system") {
+    return window.matchMedia(SYSTEM_DARK_QUERY).matches ? "dark" : "light";
+  }
+  return mode;
+}
+
+function applyTheme(mode: ThemeMode) {
+  if (resolveMode(mode) === "light") {
     document.documentElement.setAttribute("data-theme", "light");
   } else {
     document.documentElement.removeAttribute("data-theme");
@@ -17,22 +28,39 @@ function applyTheme(theme: "dark" | "light") {
 }
 
 type ThemeState = {
-  theme: "dark" | "light";
+  theme: ThemeMode;
+  resolvedTheme: "dark" | "light";
+  setTheme: (mode: ThemeMode) => void;
   toggleTheme: () => void;
 };
 
 export const useThemeStore = create<ThemeState>((set) => {
   const initial = getInitialTheme();
-  applyTheme(initial);
 
   return {
     theme: initial,
-    toggleTheme: () =>
-      set((state) => {
-        const next = state.theme === "dark" ? "light" : "dark";
-        storage.set(STORAGE_KEYS.THEME, next);
-        applyTheme(next);
-        return { theme: next };
-      }),
+    resolvedTheme: resolveMode(initial),
+    setTheme: (mode) => {
+      storage.set(STORAGE_KEYS.THEME, mode);
+      applyTheme(mode);
+      set({ theme: mode, resolvedTheme: resolveMode(mode) });
+    },
+    toggleTheme: () => {
+      const next = useThemeStore.getState().theme === "dark" ? "light" : "dark";
+      useThemeStore.getState().setTheme(next);
+    },
   };
 });
+
+applyTheme(getInitialTheme());
+
+if (typeof window !== "undefined" && window.matchMedia) {
+  const mediaQuery = window.matchMedia(SYSTEM_DARK_QUERY);
+  mediaQuery.addEventListener("change", (e) => {
+    const { theme } = useThemeStore.getState();
+    if (theme === "system") {
+      applyTheme("system");
+      useThemeStore.setState({ resolvedTheme: e.matches ? "dark" : "light" });
+    }
+  });
+}

@@ -317,17 +317,17 @@
   color-scheme: light;
 
   /* surfaces */
-  --surface-glass: rgba(0, 0, 0, 0.04);
-  --surface-glass-hover: rgba(0, 0, 0, 0.07);
-  --surface-elevated: rgba(0, 0, 0, 0.025);
-  --surface-card: rgba(0, 0, 0, 0.03);
-  --surface-card-hover: rgba(0, 0, 0, 0.05);
-  --surface-disabled: rgba(0, 0, 0, 0.015);
-  --surface-mist: rgba(255, 255, 255, 0.6);
+  --surface-glass: #f7f7f9;
+  --surface-glass-hover: #eef0f2;
+  --surface-elevated: #fafafa;
+  --surface-card: #f7f7f9;
+  --surface-card-hover: #efeff1;
+  --surface-disabled: #f1f1f2;
+  --surface-mist: #ffffff;
 
   /* chips */
-  --chip-bg: rgba(0, 0, 0, 0.05);
-  --chip-hover: rgba(0, 0, 0, 0.08);
+  --chip-bg: #ececee;
+  --chip-hover: #e4e4e7;
 
   /* background */
   --bg-primary: #ffffff;
@@ -358,62 +358,67 @@
   --accent-violet: #7c3aed;
 
   /* semantic colors */
-  --danger-bg: rgba(239, 68, 68, 0.08);
-  --danger-bg-strong: rgba(239, 68, 68, 0.12);
+  --danger: #dc2626;
+  --danger-light: #dc2626;
+  --danger-bg: #fee2e2;
+  --danger-bg-strong: #fecaca;
   --danger-400: #e53935;
-  --danger-400-bg: rgba(229, 57, 53, 0.08);
+  --danger-400-bg: #fee2e2;
   --danger-glow: rgba(239, 68, 68, 0.35);
 
-  --success-bg: rgba(34, 197, 94, 0.08);
-  --success-bg-strong: rgba(34, 197, 94, 0.12);
+  --success-light: #059669;
+  --success-bg: #dcfce7;
+  --success-bg-strong: #bbf7d0;
 
-  --warning-bg: rgba(245, 158, 11, 0.08);
-  --warning-bg-strong: rgba(245, 158, 11, 0.12);
+  --warning-light: #b45309;
+  --warning-bg: #fef3c7;
+  --warning-bg-strong: #fde68a;
   --warning-border: rgba(245, 158, 11, 0.35);
 
-  --yellow-bg: rgba(234, 179, 8, 0.1);
-  --yellow-bg-strong: rgba(234, 179, 8, 0.15);
+  --yellow: #a16207;
+  --yellow-bg: #fef9c3;
+  --yellow-bg-strong: #fef08a;
   --yellow-border: rgba(234, 179, 8, 0.35);
   --yellow-border-strong: rgba(234, 179, 8, 0.5);
 
   /* info / neutral / primary chip families */
-  --info-bg: rgba(59, 130, 246, 0.1);
-  --info-bg-soft: rgba(59, 130, 246, 0.08);
+  --info-bg: #dbeafe;
+  --info-bg-soft: #dbeafe;
   --info-light: #2563eb;
-  --neutral-bg: rgba(107, 114, 128, 0.1);
+  --neutral-bg: #e5e7eb;
   --neutral-light: #4b5563;
-  --primary-bg: rgba(99, 102, 241, 0.1);
+  --primary-bg: #e0e7ff;
   --primary-light: #4f46e5;
 
   /* role badge families */
-  --accent-violet-bg: rgba(124, 58, 237, 0.08);
-  --accent-violet-bg-strong: rgba(124, 58, 237, 0.15);
-  --accent-blue-bg-soft: rgba(37, 99, 235, 0.08);
-  --accent-blue-bg-soft-strong: rgba(37, 99, 235, 0.15);
-  --tag-zinc-bg: rgba(0, 0, 0, 0.06);
+  --accent-violet-bg: #ede9fe;
+  --accent-violet-bg-strong: #ddd6fe;
+  --accent-blue-bg-soft: #dbeafe;
+  --accent-blue-bg-soft-strong: #bfdbfe;
+  --tag-zinc-bg: #f4f4f5;
   --tag-zinc-border: rgba(0, 0, 0, 0.12);
   --tag-zinc-text: #3f3f46;
   --tag-zinc-muted: #71717a;
 
   /* status pills */
-  --status-pill-success-bg: rgba(34, 197, 94, 0.12);
+  --status-pill-success-bg: #dcfce7;
   --status-pill-success-border: rgba(34, 197, 94, 0.3);
   --status-pill-success-text: #059669;
-  --status-pill-success-bg-soft: rgba(34, 197, 94, 0.08);
+  --status-pill-success-bg-soft: #dcfce7;
   --status-pill-success-border-soft: rgba(34, 197, 94, 0.25);
-  --status-pill-warning-bg: rgba(245, 158, 11, 0.12);
+  --status-pill-warning-bg: #fef3c7;
   --status-pill-warning-border: rgba(245, 158, 11, 0.3);
   --status-pill-warning-text: #b45309;
-  --status-pill-warning-bg-soft: rgba(245, 158, 11, 0.08);
+  --status-pill-warning-bg-soft: #fef3c7;
   --status-pill-warning-border-soft: rgba(245, 158, 11, 0.25);
-  --status-pill-danger-bg: rgba(239, 68, 68, 0.12);
+  --status-pill-danger-bg: #fee2e2;
   --status-pill-danger-border: rgba(239, 68, 68, 0.3);
   --status-pill-danger-text: #dc2626;
-  --status-pill-danger-bg-soft: rgba(239, 68, 68, 0.08);
+  --status-pill-danger-bg-soft: #fee2e2;
   --status-pill-danger-border-soft: rgba(239, 68, 68, 0.25);
 
   /* avatar badge */
-  --avatar-badge-bg: rgba(245, 158, 11, 0.12);
+  --avatar-badge-bg: #fef3c7;
   --avatar-badge-border: rgba(245, 158, 11, 0.3);
   --avatar-badge-text: #b45309;
 
@@ -426,7 +431,7 @@
   --verdict-hold-text: #b45309;
 
   /* quote / inset panels */
-  --quote-bg: rgba(0, 0, 0, 0.04);
+  --quote-bg: #f4f4f5;
 
   /* scrollbar */
   --scrollbar-thumb: #c8c8c8;
@@ -458,10 +463,10 @@
   --overlay: rgba(0, 0, 0, 0.4);
   --overlay-subtle: rgba(0, 0, 0, 0.2);
   --overlay-faint: rgba(0, 0, 0, 0.12);
-  --sheet-bg: rgba(240, 240, 240, 0.95);
+  --sheet-bg: #ffffff;
 
   /* AI message specific */
-  --ai-thought-bg: rgba(0, 0, 0, 0.03);
+  --ai-thought-bg: #f6f6f7;
   --ai-thought-text: rgba(0, 0, 0, 0.55);
   --ai-action-icon: rgba(0, 0, 0, 0.4);
 
@@ -472,13 +477,13 @@
   --chat-input-focus-shadow: rgba(0, 0, 0, 0.1);
 
   /* icon buttons inside input */
-  --input-icon-bg: rgba(0, 0, 0, 0.06);
+  --input-icon-bg: #ececee;
   --input-icon-color: rgba(0, 0, 0, 0.5);
 
   /* CTA / primary action surface */
-  --cta-bg: rgba(0, 0, 0, 0.04);
+  --cta-bg: #f5f5f6;
   --cta-border: rgba(0, 0, 0, 0.15);
-  --cta-hover: rgba(0, 0, 0, 0.08);
+  --cta-hover: #ececee;
   --cta-border-hover: rgba(0, 0, 0, 0.25);
 
   /* send button */
@@ -495,37 +500,45 @@
   /* semantic backgrounds */
   --danger-banner-bg: #fecaca;
   --danger-banner-text: #b91c1c;
-  --danger-bg-subtle: rgba(239, 68, 68, 0.04);
+  --danger-bg-subtle: #fef2f2;
   --danger-border: rgba(239, 68, 68, 0.3);
-  --danger-light-bg-subtle: rgba(248, 113, 113, 0.1);
+  --danger-light-bg-subtle: #fee2e2;
   --danger-light-border: rgba(248, 113, 113, 0.35);
   --danger-light-muted: rgba(248, 113, 113, 0.6);
   --danger-light-strong: rgba(248, 113, 113, 0.9);
 
   --success-glow: rgba(34, 197, 94, 0.35);
   --success-border: rgba(34, 197, 94, 0.3);
-  --success-light-bg: rgba(74, 222, 128, 0.15);
-  --success-light-bg-subtle: rgba(74, 222, 128, 0.15);
+  --success-light-bg: #dcfce7;
+  --success-light-bg-subtle: #dcfce7;
   --success-light-border: rgba(74, 222, 128, 0.4);
 
   --warning-light-glow: rgba(249, 115, 22, 0.35);
 
   /* score / rating colors */
-  --score-mid-bg: rgba(250, 204, 21, 0.12);
+  --score-mid-bg: #fef9c3;
   --score-mid-border: rgba(250, 204, 21, 0.4);
 
   /* cancelled */
   --cancelled: #b91c1c;
-  --cancelled-bg: rgba(185, 28, 28, 0.08);
+  --cancelled-bg: #fee2e2;
   --cancelled-border: rgba(185, 28, 28, 0.3);
   --cancelled-text: #7f1d1d;
 
   /* accent background variants */
-  --accent-bg: rgba(37, 99, 235, 0.1);
+  --accent-bg: #dbeafe;
   --accent-border: rgba(37, 99, 235, 0.35);
-  --accent-indigo-bg: rgba(99, 102, 241, 0.1);
+  --accent-indigo-bg: #e0e7ff;
   --accent-indigo-border: rgba(99, 102, 241, 0.45);
-  --accent-blue-bg: rgba(37, 99, 235, 0.08);
+  --accent-blue-bg: #dbeafe;
+
+  /* glass overlays (video player chrome) — dark in light mode for visibility */
+  --glass-weak: rgba(0, 0, 0, 0.35);
+  --glass-soft: rgba(0, 0, 0, 0.45);
+  --glass-mid: rgba(0, 0, 0, 0.55);
+  --glass-strong: rgba(0, 0, 0, 0.6);
+  --glass-stronger: rgba(0, 0, 0, 0.65);
+  --glass-xstrong: rgba(0, 0, 0, 0.7);
 
   /* timeline */
   --timeline-line: #d1d5db;

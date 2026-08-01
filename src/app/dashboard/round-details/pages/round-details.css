@@ -509,6 +509,10 @@
   z-index: 2;
 }
 
+[data-theme="light"] .rd-stamp-shine {
+  background: radial-gradient(circle at 32% 28%, var(--surface-mist), transparent 55%);
+}
+
 /* ─── Info icon ─── */
 
 .rd-score-info {

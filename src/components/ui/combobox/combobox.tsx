@@ -22,13 +22,20 @@ export default function Combobox({
 }: ComboboxProps) {
   const [open, setOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(-1);
+  const [query, setQuery] = useState(value);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setQuery(value);
+  }, [value]);
+
   const filtered = useMemo(() => {
-    const q = value.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
     if (!q) return options;
+    const isExactOption = options.some((o) => o.toLowerCase() === q);
+    if (isExactOption) return options;
     return options.filter((o) => o.toLowerCase().includes(q));
-  }, [options, value]);
+  }, [options, query]);
 
   useEffect(() => {
     if (!open) return;
@@ -65,6 +72,7 @@ export default function Combobox({
         if (open && highlighted >= 0 && filtered[highlighted]) {
           e.preventDefault();
           onChange(filtered[highlighted]);
+          setQuery(filtered[highlighted]);
           setOpen(false);
         }
         break;
@@ -78,15 +86,19 @@ export default function Combobox({
     <div ref={containerRef} className={`combobox ${className}`.trim()}>
       <input
         className={`combobox-input${error ? " combobox-input--error" : ""}`}
-        value={value}
+        value={query}
         placeholder={placeholder}
         disabled={disabled}
         onChange={(e) => {
+          setQuery(e.target.value);
           onChange(e.target.value);
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
+        onBlur={() => {
+          setQuery(value);
+          setOpen(false);
+        }}
         onKeyDown={handleKeyDown}
       />
       <span className="combobox-caret">▾</span>
@@ -100,6 +112,7 @@ export default function Combobox({
                 onMouseDown={(e) => {
                   e.preventDefault();
                   onChange(opt);
+                  setQuery(opt);
                   setOpen(false);
                 }}
                 onMouseEnter={() => setHighlighted(i)}

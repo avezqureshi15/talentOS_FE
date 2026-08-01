@@ -28,6 +28,11 @@
   overflow: hidden;
 }
 
+[data-theme="light"] .base-modal {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .base-modal.centered {
   width: 600px;
 }
