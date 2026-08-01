@@ -6,6 +6,7 @@ import { RolePermissionEditor } from "../components/role-permission-editor";
 import CreateRoleModal from "../components/create-role-modal";
 import type { PermissionInfo } from "./roles-page.types";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
+import { ROLE_DISPLAY } from "@/constants/role-display";
 import "./roles-page.css";
 
 export default function RolesPage() {
@@ -99,7 +100,7 @@ export default function RolesPage() {
                     onClick={() => handleSelectRole(role.role_name)}
                   >
                     <div className="rp-role-card-body">
-                      <span className="rp-role-card-name">{role.role_name}</span>
+                      <span className="rp-role-card-name">{ROLE_DISPLAY[role.role_name]?.label ?? role.role_name}</span>
                       <div className="rp-role-card-stats">
                         <span className="rp-role-badge">
                           <i className="bx bx-lock" />

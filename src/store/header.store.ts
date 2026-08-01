@@ -47,6 +47,7 @@ export type HeaderMetaItem = {
 export type HeaderBadge = {
   label: string;
   icon?: string;
+  tooltip?: string;
 };
 
 export type HeaderConfig = {

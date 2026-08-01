@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import DataTable from "@/components/ui/data-table/data-table";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/interviews/cancel-interview-modal";
 import { useInterviewsByHr } from "./use-interviews-by-hr";
+import { PAGINATION } from "@/constants/api-endpoints";
 import "./interviews-table.css";
 
 type Props = {
@@ -16,9 +17,11 @@ const SUB_FILTER_MAP: Record<string, "incoming" | "cancelled"> = {
   "no-show": "cancelled",
 };
 
+const PER_PAGE = PAGINATION.INTERVIEWS_PER_PAGE;
+
 const InterviewsTable = ({ hiringRequestId, subTab, onInfoClick }: Props) => {
   const statusFilter = SUB_FILTER_MAP[subTab] ?? "incoming";
-  const { interviews, isLoading, hasMore, page, setPage, refresh } = useInterviewsByHr(hiringRequestId, statusFilter);
+  const { interviews, total, isLoading, page, setPage, refresh } = useInterviewsByHr(hiringRequestId, statusFilter);
 
   const [rescheduleTarget, setRescheduleTarget] = useState<{
     interviewId: string;
@@ -63,68 +66,76 @@ const InterviewsTable = ({ hiringRequestId, subTab, onInfoClick }: Props) => {
 
   return (
     <div className="interviews-table-wrapper">
-      <div className="applicant-table">
-        <div className={`applicant-table-header it-header${isCancelled ? " it-header--cancelled" : ""}`}>
-          <span className="applicant-table-cell">Round Name</span>
-          <span className="applicant-table-cell">Candidate Name</span>
-          <span className="applicant-table-cell">Interviewer</span>
-          <span className="applicant-table-cell">Timing</span>
-          <span className="applicant-table-cell applicant-table-cell--info" />
-          {!isCancelled && <span className="applicant-table-cell it-actions-header">Actions</span>}
-        </div>
-
-        {isLoading ? (
-          <div className="applicant-table-empty">Loading interviews...</div>
-        ) : interviews.length === 0 ? (
-          <div className="applicant-table-empty">No {subTab === "yet-to-start" ? "upcoming" : "cancelled"} interviews found.</div>
-        ) : (
-          interviews.map((row, idx) => (
-            <motion.div
-              key={row.id}
-              className={`applicant-table-row${isCancelled ? " it-row--cancelled" : ""}`}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.03, duration: 0.2 }}
-            >
-              <div className="applicant-table-cell">{row.roundName}</div>
-              <div className="applicant-table-cell it-candidate-cell">{row.candidateName}</div>
-              <div className="applicant-table-cell">{row.interviewerName}</div>
-              <div className="applicant-table-cell it-timing-cell">
+      <DataTable
+        columns={[
+          { header: "Round Name", render: (row) => row.roundName },
+          {
+            header: "Candidate Name",
+            className: "it-candidate-cell",
+            render: (row) => row.candidateName,
+          },
+          { header: "Interviewer", render: (row) => row.interviewerName },
+          {
+            header: "Timing",
+            render: (row) => (
+              <div className="it-timing-cell">
                 <span className="it-date">{row.slotDate}</span>
                 <span className="it-time">{row.slotTime}</span>
               </div>
-              <div className="applicant-table-cell applicant-table-cell--info">
-                <button
-                  className="info-icon-btn"
-                  onClick={(e) => { e.stopPropagation(); onInfoClick?.(row.candidateId); }}
-                  title="Candidate Info"
-                  type="button"
-                >
-                  <i className="bx bx-info-circle" />
-                </button>
-              </div>
-              {!isCancelled && (
-                <div className="applicant-table-cell it-actions-cell">
-                  <button className="it-action-btn it-action-btn--reschedule" onClick={() => handleReschedule(row)} type="button">
-                    <i className="bx bx-calendar" /> Reschedule
-                  </button>
-                  <button className="it-action-btn it-action-btn--cancel" onClick={() => handleCancel(row)} type="button">
-                    <i className="bx bx-x" /> Cancel
-                  </button>
-                </div>
-              )}
-            </motion.div>
-          ))
-        )}
-      </div>
-
-      {hasMore && (
-        <div className="it-pagination">
-          <button className="it-page-btn" disabled={page <= 1} onClick={() => setPage(page - 1)} type="button">Previous</button>
-          <span className="it-page-info">Page {page}</span>
-          <button className="it-page-btn" disabled={!hasMore} onClick={() => setPage(page + 1)} type="button">Next</button>
-        </div>
-      )}
+            ),
+          },
+          {
+            header: "",
+            className: "dt-cell-center",
+            render: (row) => (
+              <button
+                className="info-icon-btn"
+                onClick={(e) => { e.stopPropagation(); onInfoClick?.(row.candidateId); }}
+                title="Candidate Info"
+                type="button"
+              >
+                <i className="bx bx-info-circle" />
+              </button>
+            ),
+          },
+          ...(!isCancelled
+            ? [
+                {
+                  header: "Actions",
+                  className: "it-actions-cell",
+                  render: (row: typeof interviews[number]) => (
+                    <div className="it-actions-cell">
+                      <button className="it-action-btn it-action-btn--reschedule" onClick={() => handleReschedule(row)} type="button">
+                        <i className="bx bx-calendar" /> Reschedule
+                      </button>
+                      <button className="it-action-btn it-action-btn--cancel" onClick={() => handleCancel(row)} type="button">
+                        <i className="bx bx-x" /> Cancel
+                      </button>
+                    </div>
+                  ),
+                },
+              ]
+            : []),
+        ]}
+        data={interviews}
+        loading={isLoading}
+        keyExtractor={(row) => row.id}
+        emptyMessage={
+          subTab === "yet-to-start"
+            ? "No upcoming interviews found."
+            : "No cancelled interviews found."
+        }
+        gridTemplateColumns={isCancelled ? "1.5fr 1.5fr 1.2fr 1.2fr 32px" : "1.5fr 1.5fr 1.2fr 1.2fr 32px 1fr"}
+        rowClassName={() => (isCancelled ? "it-row--cancelled" : "")}
+        pagination={{
+          page,
+          perPage: PER_PAGE,
+          total,
+          totalPages: Math.max(Math.ceil(total / PER_PAGE), page),
+          onPageChange: setPage,
+        }}
+        animated
+      />
 
       {rescheduleTarget && (
         <ScheduleRoundModal

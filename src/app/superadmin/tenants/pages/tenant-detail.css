@@ -609,40 +609,6 @@
   margin-top: 0;
 }
 
-/* ── Compact table density & typography (scoped to tenant detail) ── */
-
-.td-page .dt-row {
-  padding: 8px 16px;
-}
-
-.td-page .dt-header {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-}
-
-.td-page .dt-badge,
-.td-page .dt-chip {
-  padding: 2px 8px;
-  font-size: 11px;
-}
-
-.td-page .dt-btn {
-  width: 24px;
-  height: 24px;
-  font-size: 14px;
-}
-
-.td-page .dt-btn-link {
-  padding: 2px 8px;
-  font-size: 11px;
-}
-
-.td-page .dt-actions {
-  gap: 2px;
-}
-
 @media (max-width: 768px) {
   .td-page {
     padding: 16px;

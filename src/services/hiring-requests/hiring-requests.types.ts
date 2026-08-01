@@ -1,5 +1,6 @@
 export type HiringRequest = {
   id: string;
+  tenant_id: number | null;
   title: string;
   department: string;
   location: string;
@@ -25,6 +26,7 @@ export type HiringRequestCreatePayload = {
   benefits?: string[] | null;
   is_active?: boolean;
   custom_evaluation_criteria?: string | null;
+  tenant_id?: number | null;
 };
 
 export type HiringRequestsListResponse = {
@@ -35,6 +37,7 @@ export type HiringRequestsListResponse = {
   total_pages: number;
   total: number;
   has_more: boolean;
+  can_create: boolean;
 };
 
 export type HiringRequestsFilters = {

@@ -17,6 +17,7 @@ export const ROUTES = {
   ROUND_DETAILS: "/hiring-requests/:id/round-details/:roundId",
   ROLES: "/roles",
   ADMIN_USERS: "/admin/users",
+  ADMIN_USER_DETAIL: "/admin/users/:userId",
   ADMIN_SETTINGS: "/admin/settings",
   SUPERADMIN_APPS: "/superadmin/apps",
   SUPERADMIN_APP_DETAIL: "/superadmin/apps/:appId",

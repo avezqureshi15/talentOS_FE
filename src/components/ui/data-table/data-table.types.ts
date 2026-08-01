@@ -8,6 +8,22 @@ export type Column<T> = {
   width?: string;
 };
 
+export type DataTablePagination = {
+  page: number;
+  total: number;
+  totalPages: number;
+  perPage?: number;
+  onPerPageChange?: (perPage: number) => void;
+  onPageChange: (page: number) => void;
+};
+
+export type DataTableSelection = {
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
+  onToggleSelectAll: () => void;
+  allSelected: boolean;
+};
+
 export type DataTableProps<T> = {
   columns: Column<T>[];
   data: T[];
@@ -16,4 +32,11 @@ export type DataTableProps<T> = {
   emptyMessage?: string;
   gridTemplateColumns: string;
   onRowClick?: (row: T) => void;
+  toolbar?: ReactNode;
+  pagination?: DataTablePagination;
+  selection?: DataTableSelection;
+  error?: string | null;
+  onRetry?: () => void;
+  rowClassName?: (row: T, index: number) => string;
+  animated?: boolean;
 };

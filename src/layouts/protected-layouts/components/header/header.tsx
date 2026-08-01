@@ -72,8 +72,8 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
           <>
             <TabDropdown totalCount={totalCount} />
             {config.badge && (
-              <span className="header-badge">
-                {config.badge.icon && <i className={config.badge.icon} />}
+              <span className="header-badge" title={config.badge.tooltip}>
+                {config.badge.icon && <i className={`bx ${config.badge.icon}`} />}
                 <span>{config.badge.label}</span>
               </span>
             )}

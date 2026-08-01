@@ -101,20 +101,6 @@
   color: var(--text-muted);
 }
 
-.atm-checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-  cursor: pointer;
-}
-
-.atm-checkbox {
-  accent-color: var(--accent);
-}
-
 .atm-error {
   font-size: 13px;
   color: var(--danger);

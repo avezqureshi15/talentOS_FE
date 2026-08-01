@@ -19,6 +19,7 @@ import SlotBooking from "@/app/slot-booking/pages/slot-booking";
 import AiInterviewTest from "@/app/dev/ai-interview-test/ai-interview-test";
 import RateCandidate from "@/app/rate-candidate/pages/rate-candidate";
 import UsersPage from "@/app/admin/users/pages/users-page";
+import UserJobsPage from "@/app/admin/users/pages/user-jobs-page";
 import RolesPage from "@/app/superadmin/roles/pages/roles-page";
 import OrganizationPage from "@/app/admin/organization/pages/organization-page";
 import AppDetailPage from "@/app/superadmin/apps/pages/app-detail-page";
@@ -95,6 +96,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to={ROUTES.ADMIN_USERS} replace /> },
           { path: "users", element: <RequirePermission permission="user.invite"><UsersPage /></RequirePermission> },
+          { path: "users/:userId", element: <RequirePermission permission="user.manage" allowedRoles={["account_admin"]}><UserJobsPage /></RequirePermission> },
           { path: "organization", element: <RequirePermission permission="settings.view"><OrganizationPage /></RequirePermission> },
           { path: "apps", element: <RequirePermission permission="api_key.manage"><AppsPage scope="admin" /></RequirePermission> },
           { path: "apps/:appId", element: <RequirePermission permission="api_key.manage"><AppDetailPage scope="admin" /></RequirePermission> },

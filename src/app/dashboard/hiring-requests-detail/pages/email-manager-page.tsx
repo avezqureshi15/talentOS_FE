@@ -3,6 +3,7 @@ import { Eye, Send } from "lucide-react";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import SearchInput from "@/components/ui/search-input/search-input";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import DataTable from "@/components/ui/data-table/data-table";
 import "./pages.css";
 
 interface EmailTemplate {
@@ -66,42 +67,41 @@ const EmailManagerPage = () => {
             />
           </div>
 
-          <div className="em-table-shell">
-            <table className="em-table">
-              <thead>
-                <tr>
-                  <th>Template</th>
-                  <th>Updated</th>
-                  <th>Updated by</th>
-                  <th className="em-th-actions">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTemplates.map((template) => (
-                  <tr key={template.id} className="em-row">
-                    <td className="em-td-template">
-                      <span className="em-template-name">{template.name}</span>
-                      {template.tag && <span className="em-tag">{template.tag}</span>}
-                    </td>
-                    <td className="em-td-muted">{template.updatedAt}</td>
-                    <td className="em-td-muted">{template.updatedBy}</td>
-                    <td className="em-td-actions">
-                      <div className="em-action-group">
-                        <button className="em-action-btn">
-                          <Eye className="em-action-icon" />
-                          <span>Preview</span>
-                        </button>
-                        <button className="em-action-btn">
-                          <Send className="em-action-icon" />
-                          <span>Test</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            columns={[
+              {
+                header: "Template",
+                render: (t: EmailTemplate) => (
+                  <div className="em-td-template">
+                    <span className="em-template-name">{t.name}</span>
+                    {t.tag && <span className="em-tag">{t.tag}</span>}
+                  </div>
+                ),
+              },
+              { header: "Updated", className: "em-td-muted", render: (t: EmailTemplate) => t.updatedAt },
+              { header: "Updated by", className: "em-td-muted", render: (t: EmailTemplate) => t.updatedBy },
+              {
+                header: "Actions",
+                className: "em-th-actions",
+                render: () => (
+                  <div className="em-action-group">
+                    <button className="em-action-btn">
+                      <Eye className="em-action-icon" />
+                      <span>Preview</span>
+                    </button>
+                    <button className="em-action-btn">
+                      <Send className="em-action-icon" />
+                      <span>Test</span>
+                    </button>
+                  </div>
+                ),
+              },
+            ]}
+            data={filteredTemplates}
+            keyExtractor={(t) => t.id}
+            emptyMessage="No templates found"
+            gridTemplateColumns="2fr 1.2fr 1fr 170px"
+          />
         </div>
       </ErrorBoundary>
     </>

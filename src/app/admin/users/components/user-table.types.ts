@@ -5,4 +5,5 @@ export type UserTableProps = {
   loading: boolean;
   onEdit: (user: AdminUser) => void;
   onDeactivate: (user: AdminUser) => void;
+  onViewJobs?: (user: AdminUser) => void;
 };

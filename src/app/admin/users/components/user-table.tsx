@@ -3,7 +3,7 @@ import type { AdminUser } from "@/app/admin/users/services/users-admin.service";
 import { ROLE_DISPLAY } from "@/constants/role-display";
 import type { UserTableProps } from "./user-table.types";
 
-export default function UserTable({ users, loading, onEdit, onDeactivate }: UserTableProps) {
+export default function UserTable({ users, loading, onEdit, onDeactivate, onViewJobs }: UserTableProps) {
   return (
     <DataTable
       columns={[
@@ -30,11 +30,19 @@ export default function UserTable({ users, loading, onEdit, onDeactivate }: User
           header: "",
           render: (u: AdminUser) => (
             <div className="dt-actions">
-              <button className="dt-btn" onClick={() => onEdit(u)} title="Edit user">
+              <button
+                className="dt-btn"
+                onClick={(e) => { e.stopPropagation(); onEdit(u); }}
+                title="Edit user"
+              >
                 <span className="bx bx-pencil" />
               </button>
               {u.is_active && (
-                <button className="dt-btn dt-btn--danger" onClick={() => onDeactivate(u)} title="Deactivate user">
+                <button
+                  className="dt-btn dt-btn--danger"
+                  onClick={(e) => { e.stopPropagation(); onDeactivate(u); }}
+                  title="Deactivate user"
+                >
                   <span className="bx bx-x-circle" />
                 </button>
               )}
@@ -44,6 +52,7 @@ export default function UserTable({ users, loading, onEdit, onDeactivate }: User
       ]}
       data={users}
       loading={loading}
+      onRowClick={onViewJobs}
       keyExtractor={(u) => u.id}
       emptyMessage="No users found"
       gridTemplateColumns="40px 1.5fr 2fr 1fr 1fr 1fr 80px"

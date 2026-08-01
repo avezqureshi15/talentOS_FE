@@ -6,6 +6,7 @@ export type UserItem = {
   emp_id: string;
   email: string;
   name: string;
+  role: string;
   designation: string;
   department: string;
   slots_count?: number;

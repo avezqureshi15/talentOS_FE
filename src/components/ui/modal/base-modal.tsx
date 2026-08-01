@@ -12,6 +12,7 @@ export default function BaseModal({
   children,
   variant = "centered",
   className = "",
+  overlayClassName = "",
 }: BaseModalProps) {
 
   // Explanation: closes the modal when the Escape key is pressed
@@ -36,7 +37,7 @@ export default function BaseModal({
     <AnimatePresence>
       {open && (
         <motion.div
-          className={`base-overlay ${variant}`}
+          className={`base-overlay ${variant} ${overlayClassName}`.trim()}
           onClick={onClose}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

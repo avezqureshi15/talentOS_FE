@@ -1,0 +1,189 @@
+.ujp-page {
+  padding: 32px;
+}
+
+.ujp-user-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.ujp-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--avatar-gradient);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.ujp-user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ujp-user-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ujp-user-email {
+  font-size: 13px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ujp-user-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ujp-meta-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ujp-content {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ujp-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ujp-job-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ujp-job-link:hover {
+  text-decoration: underline;
+}
+
+.ujp-role-badge {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: #ffffff;
+  color: #0a0a0a;
+  border: 1px solid #ffffff;
+}
+
+[data-theme="light"] .ujp-role-badge {
+  background: #0a0a0a;
+  color: #ffffff;
+  border-color: #0a0a0a;
+}
+
+.ujp-role-badge--reviewer {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-strong);
+}
+
+[data-theme="light"] .ujp-role-badge--reviewer {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-strong);
+}
+
+.ujp-date {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.ujp-role-select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: var(--font-family);
+  cursor: pointer;
+  outline: none;
+}
+
+.ujp-role-select:focus {
+  border-color: var(--text-primary);
+}
+
+.ujp-role-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ujp-hint {
+  padding: 32px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.ujp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 32px;
+}
+
+.ujp-empty i {
+  font-size: 40px;
+  color: var(--text-faint);
+}
+
+.ujp-empty-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.ujp-empty-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}

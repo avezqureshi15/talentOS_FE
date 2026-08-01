@@ -2,7 +2,7 @@
 .sidebar__top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding: 4px 8px 16px 16px;
 }
 
@@ -11,6 +11,38 @@
   padding: 8px;
   border-radius: 8px;
   flex-shrink: 0;
+}
+
+/* ─── Brand row (logo + persona subtitle) ─── */
+.sidebar__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+
+.sidebar-persona-sub {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  background: linear-gradient(135deg, #b0b5c0, #8a8f9a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="light"] .sidebar-persona-sub {
+  background: linear-gradient(135deg, #6b7280, #3f3f46);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ─── Nav grouping ─── */
