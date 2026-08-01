@@ -19,6 +19,12 @@
   transition: transform 0.15s ease, background 0.2s ease, opacity 0.2s ease, box-shadow 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+[data-theme="light"] .send-btn {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
 /* hover */
 .send-btn:hover:not(:disabled) {
   transform: scale(1.08);

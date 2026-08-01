@@ -1,3 +1,5 @@
+import SearchInput from "@/components/ui/search-input/search-input";
+
 type MentionPopupSearchProps = {
   search: string;
   onSearch: (v: string) => void;
@@ -9,12 +11,11 @@ type MentionPopupSearchProps = {
 
 const MentionPopupSearch = ({ search, onSearch, onKeyDown, placeholder, showSidebar, onToggleSidebar }: MentionPopupSearchProps) => (
   <div className="mp-search-wrapper">
-    <i className="bx bx-search mp-search-icon" />
-    <input
-      className="mp-search"
+    <SearchInput
+      variant="ghost"
       placeholder={placeholder}
       value={search}
-      onChange={(e) => onSearch(e.target.value)}
+      onChange={onSearch}
       onKeyDown={onKeyDown}
       autoFocus
     />

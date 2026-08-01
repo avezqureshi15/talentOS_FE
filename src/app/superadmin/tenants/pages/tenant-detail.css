@@ -221,38 +221,8 @@
 
 /* ── User Search ── */
 .td-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  background: var(--surface-glass);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-sm);
   margin-bottom: 16px;
   max-width: 420px;
-  transition: border-color 0.15s ease;
-}
-
-.td-search:focus-within {
-  border-color: var(--border-strong);
-}
-
-.td-search-icon {
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-.td-search input {
-  flex: 1;
-  background: none;
-  border: none;
-  color: var(--text-white);
-  font-size: 13px;
-  outline: none;
-}
-
-.td-search input::placeholder {
-  color: var(--text-faint);
 }
 
 /* ── Table Card Wrapper ── */

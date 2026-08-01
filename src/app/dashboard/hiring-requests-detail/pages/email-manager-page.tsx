@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Search, Eye, Send } from "lucide-react";
+import { Eye, Send } from "lucide-react";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
+import SearchInput from "@/components/ui/search-input/search-input";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import "./pages.css";
 
@@ -56,16 +57,13 @@ const EmailManagerPage = () => {
               </button>
             </div>
 
-            <div className="em-search">
-              <Search className="em-search-icon" />
-              <input
-                type="text"
-                placeholder="Search templates..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="em-search-input"
-              />
-            </div>
+            <SearchInput
+              className="em-search"
+              size="sm"
+              placeholder="Search templates..."
+              value={searchQuery}
+              onChange={setSearchQuery}
+            />
           </div>
 
           <div className="em-table-shell">

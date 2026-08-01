@@ -4,6 +4,7 @@ import "./recruiter-filter.css";
 import { MOCK_RECRUITERS, RECRUITER_COLORS } from "./recruiter-filter.constants";
 import type { RecruiterFilterProps } from "./recruiter-filter.types";
 import { getInitials } from "@/utils/user";
+import SearchInput from "@/components/ui/search-input/search-input";
 
 const RecruiterFilter = ({}: RecruiterFilterProps) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -122,12 +123,11 @@ const RecruiterFilter = ({}: RecruiterFilterProps) => {
                 transition={{ duration: 0.15, ease: "easeOut" }}
               >
                 <div className="recruiter-popover-header">
-                  <i className="bx bx-search" />
-                  <input
-                    className="recruiter-search-input"
+                  <SearchInput
+                    variant="ghost"
                     placeholder="Search recruiters..."
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={setSearch}
                     autoFocus
                   />
                 </div>

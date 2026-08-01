@@ -1182,37 +1182,7 @@
 }
 
 .em-search {
-  position: relative;
-}
-
-.em-search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 14px;
-  height: 14px;
-  color: var(--text-faint);
-}
-
-.em-search-input {
-  width: 256px;
-  padding: 6px 12px 6px 32px;
-  border-radius: 8px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-tertiary);
-  font-size: 12px;
-  color: var(--text-primary);
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-.em-search-input::placeholder {
-  color: var(--text-faint);
-}
-
-.em-search-input:focus {
-  border-color: var(--accent);
+  flex: 0 0 256px;
 }
 
 .em-table-shell {

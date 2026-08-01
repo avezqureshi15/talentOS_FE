@@ -29,37 +29,6 @@
   align-items: center;
 }
 
-.tenants-search-bar {
-  position: relative;
-  flex: 1;
-  max-width: 360px;
-}
-
-.tenants-search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-faint);
-  font-size: 16px;
-}
-
-.tenants-search-input {
-  width: 100%;
-  padding: 8px 12px 8px 36px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  font-size: 13px;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  outline: none;
-  font-family: var(--font-family);
-}
-
-.tenants-search-input:focus {
-  border-color: var(--accent);
-}
-
 .tenants-status-select {
   padding: 8px 12px;
   border: 1px solid var(--border-subtle);

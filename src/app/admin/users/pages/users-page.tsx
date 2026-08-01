@@ -8,6 +8,7 @@ import EditUserModal from "@/app/admin/users/components/edit-user-modal";
 import DeactivateDialog from "@/app/admin/users/components/deactivate-dialog";
 import type { Tab } from "./users-page.types";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
+import SearchInput from "@/components/ui/search-input/search-input";
 import "./users-page.css";
 
 export default function UsersPage() {
@@ -99,16 +100,12 @@ export default function UsersPage() {
       </div>
 
       {tab === "active" && (
-        <div className="users-search-bar">
-          <span className="bx bx-search users-search-icon" />
-          <input
-            type="text"
-            className="users-search-input"
-            placeholder="Search users by name or email"
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-        </div>
+        <SearchInput
+          className="users-search"
+          placeholder="Search users by name or email"
+          value={search}
+          onChange={handleSearch}
+        />
       )}
 
       <div className="users-content">

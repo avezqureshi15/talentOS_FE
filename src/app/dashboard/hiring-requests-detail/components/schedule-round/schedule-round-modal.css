@@ -248,42 +248,9 @@
   min-height: 0;
 }
 
-.sr-interviewer-search {
-  position: relative;
+.sr-search {
   margin-bottom: 10px;
   flex-shrink: 0;
-}
-
-.sr-search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--ai-action-icon);
-  font-size: 16px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.sr-search-input {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  background: var(--surface-card);
-  border: 1px solid var(--input-icon-bg);
-  border-radius: 10px;
-  color: var(--text-primary);
-  font-size: 13.5px;
-  outline: none;
-  transition: border-color 0.15s;
-  box-sizing: border-box;
-}
-
-.sr-search-input::placeholder {
-  color: var(--ai-action-icon);
-}
-
-.sr-search-input:focus {
-  border-color: var(--text-faint);
 }
 
 .sr-interviewer-list {

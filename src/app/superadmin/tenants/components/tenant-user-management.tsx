@@ -11,6 +11,7 @@ import { useTenantUsers } from "../hooks/use-tenant-users";
 import { useTenantInvites } from "../hooks/use-tenant-invites";
 import { useRevokeInvite } from "../hooks/use-revoke-invite";
 import { QUERY_KEYS } from "@/constants/constants";
+import SearchInput from "@/components/ui/search-input/search-input";
 import type { AdminUser } from "@/app/admin/users/services/users-admin.service";
 
 type Props = {
@@ -82,15 +83,12 @@ export default function TenantUserManagement({ tenantId }: Props) {
       </div>
 
       {tab === "active" && (
-        <div className="td-search">
-          <span className="bx bx-search td-search-icon" />
-          <input
-            type="text"
-            placeholder="Search users by name or email"
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-        </div>
+        <SearchInput
+          className="td-search"
+          placeholder="Search users by name or email"
+          value={search}
+          onChange={handleSearch}
+        />
       )}
 
       <div className="td-users-content">

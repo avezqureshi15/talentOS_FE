@@ -5,6 +5,7 @@ import { askSlotsForEmployee } from "@/components/shared/mentions/services/ask-s
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
+import SearchInput from "@/components/ui/search-input/search-input";
 import type { Interviewer, SlotTab } from "./schedule-round-modal.types";
 import type { CommandItem } from "@/components/shared/mentions/types";
 
@@ -115,10 +116,12 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
   return (
     <div className="sr-two-col">
       {!hideSearch && <div className="sr-left-col">
-        <div className="sr-interviewer-search">
-          <i className="bx bx-search sr-search-icon" />
-          <input className="sr-search-input" placeholder={SR_LABELS.INTERVIEWER_PLACEHOLDER} value={search} onChange={(e) => onSearchChange(e.target.value)} />
-        </div>
+        <SearchInput
+          className="sr-search"
+          placeholder={SR_LABELS.INTERVIEWER_PLACEHOLDER}
+          value={search}
+          onChange={onSearchChange}
+        />
         <div className="sr-interviewer-list">
           {isSearching ? (
             <div className="sr-empty-slots">{SR_LABELS.SEARCH_LOADING}</div>

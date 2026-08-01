@@ -91,35 +91,9 @@
   margin-left: 6px;
 }
 
-.users-search-bar {
-  position: relative;
+.users-search {
   margin-bottom: 16px;
-}
-
-.users-search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-faint);
-  font-size: 16px;
-}
-
-.users-search-input {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  background: var(--bg-primary);
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  color: var(--text-primary);
-  font-size: 14px;
-  font-family: var(--font-family);
-  outline: none;
-  box-sizing: border-box;
-}
-
-.users-search-input:focus {
-  border-color: var(--accent);
+  max-width: 420px;
 }
 
 .users-content {

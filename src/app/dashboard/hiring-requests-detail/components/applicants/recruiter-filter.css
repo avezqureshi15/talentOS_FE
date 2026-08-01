@@ -176,26 +176,6 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.recruiter-popover-header i {
-  font-size: 16px;
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-.recruiter-search-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-size: 13px;
-  color: var(--text-primary);
-  font-family: inherit;
-}
-
-.recruiter-search-input::placeholder {
-  color: var(--text-muted);
-}
-
 .recruiter-popover-list {
   max-height: 240px;
   overflow-y: auto;

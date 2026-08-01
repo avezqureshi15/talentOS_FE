@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Button from "@/components/ui/button/button";
 import IconButton from "@/components/ui/icon-button/icon-button";
 import Select from "@/components/ui/select/select";
+import SearchInput from "@/components/ui/search-input/search-input";
 import { useHeaderStore } from "@/store/header.store";
 import { HIRING_TABS } from "@/constants/routes";
 import { springSnap } from "@/utils/motion";
@@ -26,7 +27,7 @@ const HeaderLeft: React.FC<HeaderLeftProps> = () => {
 
 /* ───────── JOBS TOOLBAR ───────── */
 
-const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ className?: string }>> }) => {
+const JobsToolbar = () => {
   const config = useHeaderStore((s) => s.config);
   const { title, titleIcon, subtitle, meta, search, filters, viewSwitcher, actions, totalCount } = config;
   const navigate = useNavigate();
@@ -80,18 +81,13 @@ const JobsToolbar = ({ Icon }: { Icon: Record<string, React.ComponentType<{ clas
 
       <div className="jobs-toolbar-right">
         {search && (
-          <div className="jobs-search">
-            <Icon.Search />
-            <input
-              type="text"
-              placeholder={search.placeholder ?? "Search..."}
-              value={search.value}
-              onChange={(e) => search.onChange?.(e.target.value)}
-            />
-            {search.shortcut && (
-              <span className="jobs-search-shortcut">{search.shortcut}</span>
-            )}
-          </div>
+          <SearchInput
+            className="jobs-search"
+            placeholder={search.placeholder ?? "Search..."}
+            value={search.value ?? ""}
+            onChange={(value) => search.onChange?.(value)}
+            shortcut={search.shortcut}
+          />
         )}
         {filters?.map((filter, i) => (
           <Select
@@ -210,7 +206,7 @@ const Header: React.FC<HeaderProps> = ({ Icon, sidebarOpen }) => {
   return (
     <header className={`header${hasMeta ? " header--has-meta" : ""}${sidebarOpen ? " header--sidebar-open" : ""}`}>
       {onHiringTab || onHiringList || (onHiringDetail && hasConfig) || hasConfig ? (
-        <JobsToolbar Icon={Icon} />
+        <JobsToolbar />
       ) : (
         <>
           <HeaderLeft />

@@ -1338,41 +1338,6 @@
 }
 
 /* =========================
-   ARCHIVED SEARCH BAR
-========================= */
-.archived-search-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  max-width: 280px;
-  padding: 6px 10px;
-  margin-bottom: 8px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-subtle);
-  background: var(--surface-glass);
-}
-
-.archived-search-bar i {
-  font-size: 14px;
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-.archived-search-input {
-  border: none;
-  background: transparent;
-  color: var(--text-primary);
-  font-size: 12.5px;
-  font-family: inherit;
-  outline: none;
-  width: 100%;
-}
-
-.archived-search-input::placeholder {
-  color: var(--text-faint);
-}
-
-/* =========================
    EVALUATED SUB-FILTERS
 ========================= */
 .evaluated-sub-filters {
