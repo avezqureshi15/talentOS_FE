@@ -36,7 +36,7 @@ export const fetchHiringRequests = async (filters?: HiringRequestsFilters): Prom
     page: filters?.page ?? PAGINATION.DEFAULT_PAGE,
     per_page: filters?.per_page ?? PAGINATION.DEFAULT_PER_PAGE,
   };
-  const clean = Object.fromEntries(Object.entries(params).filter(([_, v]) => v !== undefined && v !== ""));
+  const clean = Object.fromEntries(Object.entries(params).filter((entry) => entry[1] !== undefined && entry[1] !== ""));
   const { data } = await httpClient.get<HiringRequestsListResponse>(API_ENDPOINTS.HIRING_REQUESTS, { params: clean });
   return data;
 };
@@ -83,5 +83,40 @@ export const exportHiringRequestExcel = async (id: string): Promise<ExportHiring
   });
   const filename =
     filenameFromContentDisposition(response.headers["content-disposition"]) ?? FALLBACK_EXPORT_FILENAME;
+  return { blob: response.data, filename };
+};
+
+export type ImportRowError = {
+  row: number;
+  error: string;
+};
+
+export type ImportSummary = {
+  total: number;
+  imported: number;
+  skipped_duplicates: number;
+  failed: ImportRowError[];
+};
+
+export const importCandidatesFromExcel = async (id: string, file: File): Promise<ImportSummary> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const { data } = await httpClient.post<ImportSummary>(
+    API_ENDPOINTS.HIRING_REQUEST_IMPORT_CANDIDATES.replace("{hiring_request_id}", id),
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } },
+  );
+  return data;
+};
+
+const FALLBACK_TEMPLATE_FILENAME = "candidates_template.xlsx";
+
+export const downloadImportTemplate = async (id: string): Promise<ExportHiringRequestResult> => {
+  const response = await httpClient.get<Blob>(
+    API_ENDPOINTS.HIRING_REQUEST_IMPORT_TEMPLATE.replace("{hiring_request_id}", id),
+    { responseType: "blob" },
+  );
+  const filename =
+    filenameFromContentDisposition(response.headers["content-disposition"]) ?? FALLBACK_TEMPLATE_FILENAME;
   return { blob: response.data, filename };
 };

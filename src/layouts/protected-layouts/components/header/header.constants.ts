@@ -12,6 +12,10 @@ export const HEADER_DEFAULT_VIEW = "pipeline";
 export const HEADER_EXPORT_LABEL = "Export";
 export const HEADER_EXPORT_ICON = "bx-archive-arrow-down";
 
+export const HEADER_IMPORT_LABEL = "Import";
+export const HEADER_IMPORT_ICON = "bx bx-upload";
+export const HEADER_IMPORT_FILENAME = "candidates_template.xlsx";
+
 export const HEADER_REFRESH_LABEL = "Refresh";
 export const HEADER_REFRESH_ICON = "bx bx-refresh-cw-alt";
 

@@ -2,10 +2,13 @@ import { useMemo, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchApplicationsPaginated } from "@/services/applications/applications";
 import { QUERY_KEYS, EXPORT_LABELS } from "@/constants/constants";
+import { PERMISSIONS } from "@/constants/permissions";
+import { usePermissions } from "@/hooks/use-permissions";
 import { useExportExcel } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-excel";
 import {
   HEADER_VIEW_OPTIONS,
   HEADER_EXPORT_LABEL, HEADER_EXPORT_ICON,
+  HEADER_IMPORT_LABEL, HEADER_IMPORT_ICON,
   HEADER_REFRESH_LABEL, HEADER_REFRESH_ICON, HEADER_EXPORT_FILENAME,
 } from "@/layouts/protected-layouts/components/header/header.constants";
 import type { HeaderBadge, HeaderConfig } from "@/store/header.store";
@@ -17,6 +20,7 @@ type UseHiringRequestHeaderOptions = {
   activeView: string;
   onViewChange: (key: string) => void;
   badge?: HeaderBadge;
+  onImport?: () => void;
 };
 
 export function useHiringRequestHeader({
@@ -25,7 +29,10 @@ export function useHiringRequestHeader({
   activeView,
   onViewChange,
   badge,
+  onImport,
 }: UseHiringRequestHeaderOptions): HeaderConfig {
+  const { can } = usePermissions();
+  const canImport = can(PERMISSIONS.APPLICATION_WORKFLOW);
   const { data: totalCount } = useQuery({
     queryKey: [QUERY_KEYS.APPLICATIONS, "count", id],
     queryFn: () => fetchApplicationsPaginated(id!, undefined, undefined, undefined, undefined, undefined, 1, 0),
@@ -63,8 +70,11 @@ export function useHiringRequestHeader({
         loadingText: EXPORT_LABELS.DOWNLOADING,
         error: exportError,
       },
+      ...(canImport && onImport
+        ? [{ key: "import", label: HEADER_IMPORT_LABEL, icon: HEADER_IMPORT_ICON, variant: "primary" as const, onClick: onImport }]
+        : []),
       { key: "refresh", label: HEADER_REFRESH_LABEL, icon: HEADER_REFRESH_ICON, variant: "primary", onClick: handleRefresh },
     ],
     badge,
-  }), [totalCount, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge]);
+  }), [totalCount, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, canImport, onImport]);
 }

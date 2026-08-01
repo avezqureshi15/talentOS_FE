@@ -50,6 +50,8 @@ export const API_ENDPOINTS = {
   AI_QUESTIONS: "/hiring-requests/{hiring_request_id}/ai/questions",
   APPLICATION_ROUND_STATUS: "/applications/{candidate_id}/round-status",
   HIRING_REQUEST_EXPORT: "/hiring-requests/{hiring_request_id}/export",
+  HIRING_REQUEST_IMPORT_CANDIDATES: "/hiring-requests/{hiring_request_id}/import-candidates",
+  HIRING_REQUEST_IMPORT_TEMPLATE: "/hiring-requests/{hiring_request_id}/import-template",
   JOB_TEAM: "/hiring-requests/{hiring_request_id}/team",
   JOB_TEAM_MEMBER: "/hiring-requests/{hiring_request_id}/team/{user_id}",
   ADMIN_ROLES: "/admin/roles",
