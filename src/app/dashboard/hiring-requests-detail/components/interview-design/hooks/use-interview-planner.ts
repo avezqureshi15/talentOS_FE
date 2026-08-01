@@ -1,17 +1,11 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useInterviewPlannerStore } from "@/store/interview-planner.store";
-import {
-  MAX_QUESTION_MINUTES,
-  SCREENING_MAX_QUESTION_MINUTES,
-  SCREENING_TARGET_MINUTES,
-  TARGET_INTERVIEW_MINUTES,
-  WARNING_THRESHOLD_FACTOR,
-} from "../interview-design.constants";
+import { MAX_QUESTION_MINUTES, SCREENING_MAX_QUESTION_MINUTES } from "../interview-design.constants";
 import { createQuestion, createSection } from "../interview-design.mappers";
+import { computeInterviewPlanStats } from "../interview-design.stats";
 import type {
   InterviewPlanQuestion,
   InterviewPlanSection,
-  InterviewTimeStatus,
   PlannerSection,
 } from "../interview-design.types";
 import { useInterviewPlanData } from "./use-interview-plan-data";
@@ -61,31 +55,17 @@ export const useInterviewPlanner = (hiringRequestId: string) => {
     [plan.sections],
   );
 
-  const targetMinutes =
-    activeKind === "interview" ? TARGET_INTERVIEW_MINUTES : SCREENING_TARGET_MINUTES;
-
   const maxQuestionMinutes =
     activeKind === "interview" ? MAX_QUESTION_MINUTES : SCREENING_MAX_QUESTION_MINUTES;
 
-  const totalMinutes = useMemo(
-    () => sections.reduce((sum, section) => sum + section.minutes, 0),
-    [sections],
+  const { totalMinutes, targetMinutes, timeStatus, questionCount } = computeInterviewPlanStats(
+    activeKind,
+    plan,
   );
-
-  const timeStatus = useMemo<InterviewTimeStatus>(() => {
-    if (totalMinutes > targetMinutes) return "danger";
-    if (totalMinutes >= targetMinutes * WARNING_THRESHOLD_FACTOR) return "warning";
-    return "ok";
-  }, [totalMinutes, targetMinutes]);
 
   const selectedSection = useMemo(
     () => plan.sections.find((section) => section.id === selectedSectionId) ?? null,
     [plan.sections, selectedSectionId],
-  );
-
-  const questionCount = useMemo(
-    () => plan.sections.reduce((sum, section) => sum + section.questions.length, 0),
-    [plan.sections],
   );
 
   const handleAddSection = () => {

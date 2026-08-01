@@ -1,6 +1,5 @@
 import { AlertTriangle } from "lucide-react";
 import { useInterviewPlanner } from "../../hooks/use-interview-planner";
-import { InterviewDesignHeader } from "../interview-design-header/interview-design-header";
 import { PlannerDraftBanner } from "../planner-draft-banner/planner-draft-banner";
 import { PlannerKindSwitcher } from "../planner-kind-switcher/planner-kind-switcher";
 import { SectionDetailEditor } from "../section-detail-editor/section-detail-editor";
@@ -31,15 +30,6 @@ export const InterviewDesignPlanner = ({ hiringRequestId }: InterviewDesignPlann
 
   return (
     <div className="idp-planner">
-      <InterviewDesignHeader
-        totalMinutes={planner.totalMinutes}
-        targetMinutes={planner.targetMinutes}
-        timeStatus={planner.timeStatus}
-        questionCount={planner.questionCount}
-        isSaving={planner.isSaving}
-        onSave={planner.handleSave}
-        onClose={() => planner.setEditing(false)}
-      />
       <PlannerKindSwitcher activeKind={planner.activeKind} onKindChange={planner.setActiveKind} />
       {isDraft && <PlannerDraftBanner errors={planner.saveResult?.sync_errors ?? []} />}
       <div className="idp-body">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Button from "@/components/ui/button/button";
@@ -6,8 +6,13 @@ import IconButton from "@/components/ui/icon-button/icon-button";
 import Select from "@/components/ui/select/select";
 import SearchInput from "@/components/ui/search-input/search-input";
 import { useHeaderStore } from "@/store/header.store";
+import { useInterviewPlannerStore } from "@/store/interview-planner.store";
 import { HIRING_TABS } from "@/constants/routes";
 import { isCommandPaletteRoute } from "@/layouts/protected-layouts/components/command-palette/command-palette.registry";
+import {
+  INTERVIEW_TIME_STATUS_LABEL,
+  computeInterviewPlanStats,
+} from "@/app/dashboard/hiring-requests-detail/components/interview-design/interview-design.stats";
 import { springSnap } from "@/utils/motion";
 import CandidateHeader from "./candidate-header";
 import TabDropdown from "./tab-dropdown";
@@ -37,6 +42,25 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   const isPaletteRoute = isCommandPaletteRoute(location.pathname);
   const [jdModalOpen, setJdModalOpen] = useState(false);
 
+  const isInterviewDesignRoute = location.pathname.endsWith("/interview-design");
+  const isPlannerEditing = useInterviewPlannerStore((s) => s.isEditing);
+  const plannerActiveKind = useInterviewPlannerStore((s) => s.activeKind);
+  const plannerInterviewPlan = useInterviewPlannerStore((s) => s.interviewPlan);
+  const plannerScreeningPlan = useInterviewPlannerStore((s) => s.screeningPlan);
+
+  const interviewStats = useMemo(() => {
+    if (!isInterviewDesignRoute || !isPlannerEditing) return null;
+    const plan =
+      plannerActiveKind === "interview" ? plannerInterviewPlan : plannerScreeningPlan;
+    return computeInterviewPlanStats(plannerActiveKind, plan);
+  }, [
+    isInterviewDesignRoute,
+    isPlannerEditing,
+    plannerActiveKind,
+    plannerInterviewPlan,
+    plannerScreeningPlan,
+  ]);
+
   if (meta) {
     return <CandidateHeader title={title} avatarLabel={config.avatarLabel} meta={meta} actions={actions} />;
   }
@@ -55,6 +79,17 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
             )}
             {config.hiringRequestName && (
               <span className="hiring-request-chip" onClick={() => setJdModalOpen(true)}><span className="hiring-request-chip-text">{config.hiringRequestName}</span></span>
+            )}
+            {interviewStats && (
+              <div className="header-interview-stats">
+                <span className={`header-interview-pill header-interview-pill--${interviewStats.timeStatus}`}>
+                  {interviewStats.totalMinutes} / {interviewStats.targetMinutes} min
+                </span>
+                <span className={`header-interview-status header-interview-status--${interviewStats.timeStatus}`}>
+                  {INTERVIEW_TIME_STATUS_LABEL[interviewStats.timeStatus]}
+                </span>
+                <span className="header-interview-count">{interviewStats.questionCount} questions</span>
+              </div>
             )}
           </>
         ) : (

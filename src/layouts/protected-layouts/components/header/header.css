@@ -453,8 +453,60 @@
   opacity: 0.85;
 }
 
-.header--sidebar-open .hiring-request-chip {
-  display: none;
+/* ── Interview Design Stats ── */
+
+.header-interview-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.header-interview-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.header-interview-pill--ok {
+  color: var(--success-light);
+  background: var(--success-bg);
+}
+
+.header-interview-pill--warning {
+  color: var(--warning-light);
+  background: var(--warning-bg);
+}
+
+.header-interview-pill--danger {
+  color: var(--danger-light);
+  background: var(--danger-bg);
+}
+
+.header-interview-status {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.header-interview-status--warning {
+  color: var(--warning-light);
+}
+
+.header-interview-status--danger {
+  color: var(--danger-light);
+}
+
+.header-interview-count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 /* ── Export Button ── */

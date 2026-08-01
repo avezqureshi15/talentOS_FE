@@ -329,6 +329,10 @@
   --chip-bg: #ececee;
   --chip-hover: #e4e4e7;
 
+  /* solid chips (dark pill on any bg) */
+  --chip-dark-bg: #ffffff;
+  --chip-dark-text: #000000;
+
   /* background */
   --bg-primary: #ffffff;
   --bg-secondary: #f6f6f6;
