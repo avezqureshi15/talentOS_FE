@@ -102,7 +102,7 @@
 
 .select-wrapper--danger .select:focus {
   border-color: var(--danger);
-  box-shadow: 0 0 0 1px var(--danger-glow, rgba(255, 77, 79, 0.3));
+  box-shadow: 0 0 0 1px var(--danger-glow);
 }
 
 .select-wrapper--ghost .select {
@@ -145,7 +145,7 @@
 
 .select-wrapper--error .select:focus {
   border-color: var(--danger);
-  box-shadow: 0 0 0 1px var(--danger-glow, rgba(255, 77, 79, 0.3));
+  box-shadow: 0 0 0 1px var(--danger-glow);
 }
 
 /* ---- DISABLED STATE ---- */

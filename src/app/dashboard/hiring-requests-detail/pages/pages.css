@@ -1478,34 +1478,34 @@
 }
 
 .tm-role-badge--recruiter {
-  background: rgba(168, 85, 247, 0.1);
-  color: #a78bfa;
-  border: 1px solid rgba(168, 85, 247, 0.2);
+  background: var(--accent-violet-bg);
+  color: var(--accent-violet);
+  border: 1px solid var(--accent-violet-bg-strong);
 }
 
 .tm-role-badge-icon--recruiter {
-  color: #a78bfa;
+  color: var(--accent-violet);
 }
 
 .tm-role-badge--reviewer {
-  background: rgba(59, 130, 246, 0.1);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: var(--accent-blue-bg-soft);
+  color: var(--accent-blue-soft);
+  border: 1px solid var(--accent-blue-bg-soft-strong);
 }
 
 .tm-role-badge-icon--reviewer {
-  color: #60a5fa;
+  color: var(--accent-blue-soft);
 }
 
 .tm-role-badge--admin {
-  background: rgba(39, 39, 42, 0.8);
-  color: #d4d4d8;
-  border: 1px solid rgba(63, 63, 70, 0.6);
+  background: var(--tag-zinc-bg);
+  color: var(--tag-zinc-text);
+  border: 1px solid var(--tag-zinc-border);
   font-family: monospace;
 }
 
 .tm-role-badge-icon--admin {
-  color: #a1a1aa;
+  color: var(--tag-zinc-muted);
 }
 
 .tm-hint {

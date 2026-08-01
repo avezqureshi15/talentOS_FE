@@ -71,5 +71,5 @@
 
 .settings-toggle-track--active .settings-toggle-thumb {
   transform: translateX(22px);
-  background: #fff;
+  background: var(--static-white);
 }

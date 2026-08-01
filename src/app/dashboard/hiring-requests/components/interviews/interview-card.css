@@ -145,7 +145,7 @@
 }
 
 .info-toggle--active {
-  background: var(--accent-glow, rgba(79, 142, 247, 0.12));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
   border-color: var(--accent);
   color: var(--accent);
 }

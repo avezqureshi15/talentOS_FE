@@ -1,6 +1,6 @@
 import BaseModal from "@/components/ui/modal/base-modal";
 import { SETTINGS_MODAL } from "@/constants/constants";
-// import { useThemeStore } from "@/store/theme.store";
+import { useThemeStore } from "@/store/theme.store";
 import "./settings-modal.css";
 
 type SettingsModalProps = {
@@ -9,13 +9,12 @@ type SettingsModalProps = {
 };
 
 const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
-  // const theme = useThemeStore((s) => s.theme);
-  // const toggleTheme = useThemeStore((s) => s.toggleTheme);
+  const theme = useThemeStore((s) => s.theme);
+  const toggleTheme = useThemeStore((s) => s.toggleTheme);
 
   return (
     <BaseModal open={open} onClose={onClose} title={SETTINGS_MODAL.TITLE} icon={SETTINGS_MODAL.ICON} className="settings-modal">
       <div className="settings-modal__body">
-        {/*
         <div className="settings-theme-row">
           <div className="settings-theme-label">
             <span className={theme === "dark" ? "bx bx-moon" : "bx bx-sun"} />
@@ -33,7 +32,6 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
             {theme === "dark" ? SETTINGS_MODAL.THEME_DARK : SETTINGS_MODAL.THEME_LIGHT}
           </span>
         </div>
-        */}
       </div>
     </BaseModal>
   );

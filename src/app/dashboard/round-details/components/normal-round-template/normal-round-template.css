@@ -236,7 +236,7 @@
 .nrt-score-bar-fill {
   height: 100%;
   border-radius: 2px;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.6), rgba(99, 102, 241, 0.8));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent-blue) 60%, transparent), color-mix(in srgb, var(--accent-indigo) 80%, transparent));
   transition: width 0.3s ease;
 }
 
@@ -395,7 +395,7 @@
 }
 
 .nrt-bullet-list--danger li {
-  color: #f87171;
+  color: var(--danger-light);
 }
 
 /** ─── Responsive ─── */

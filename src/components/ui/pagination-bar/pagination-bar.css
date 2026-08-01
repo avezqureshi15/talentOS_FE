@@ -43,7 +43,7 @@
 .pb-btn-active,
 .pb-btn-active:hover {
   background: var(--accent);
-  color: #ffffff;
+  color: var(--static-white);
   border-color: var(--accent);
 }
 

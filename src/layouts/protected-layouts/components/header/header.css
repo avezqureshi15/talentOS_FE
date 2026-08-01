@@ -42,7 +42,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 2px 4px var(--shadow-color-deep);
 }
 
 .jobs-candidate-info {
@@ -98,33 +98,33 @@
 }
 
 .jobs-status-chip--success {
-  background: rgba(6, 78, 59, 0.4);
-  color: #6ee7b7;
-  border: 1px solid rgba(6, 95, 70, 0.4);
+  background: var(--status-pill-success-bg-soft);
+  color: var(--status-pill-success-text);
+  border: 1px solid var(--status-pill-success-border-soft);
 }
 
 .jobs-status-chip--success .jobs-status-dot {
-  background: #6ee7b7;
+  background: var(--status-pill-success-text);
 }
 
 .jobs-status-chip--warning {
-  background: rgba(120, 53, 15, 0.4);
-  color: #fcd34d;
-  border: 1px solid rgba(146, 64, 14, 0.4);
+  background: var(--status-pill-warning-bg-soft);
+  color: var(--status-pill-warning-text);
+  border: 1px solid var(--status-pill-warning-border-soft);
 }
 
 .jobs-status-chip--warning .jobs-status-dot {
-  background: #fcd34d;
+  background: var(--status-pill-warning-text);
 }
 
 .jobs-status-chip--danger {
-  background: rgba(127, 29, 29, 0.4);
-  color: #fca5a5;
-  border: 1px solid rgba(153, 27, 27, 0.4);
+  background: var(--status-pill-danger-bg-soft);
+  color: var(--danger-banner-text);
+  border: 1px solid var(--status-pill-danger-border-soft);
 }
 
 .jobs-status-chip--danger .jobs-status-dot {
-  background: #fca5a5;
+  background: var(--danger-banner-text);
 }
 
 .jobs-job-title-text {
@@ -168,7 +168,7 @@
   transition: background 0.2s ease, border-color 0.2s ease;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px var(--shadow-color-faint);
 }
 
 .jobs-glass-btn i {
@@ -346,8 +346,8 @@
   height: 24px;
   padding: 0 10px;
   border-radius: 6px;
-  background: rgba(250, 204, 21, 0.12);
-  color: #facc15;
+  background: var(--yellow-bg);
+  color: var(--yellow-light);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -468,7 +468,7 @@
   background: var(--bg-primary);
   color: var(--text-primary);
   font-weight: 500;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 1px 3px var(--shadow-color-mid);
 }
 
 .jobs-view-btn i {
@@ -483,8 +483,8 @@
   height: 28px;
   padding: 0 12px;
   border-radius: 6px;
-  background: #1a1a1a;
-  color: #ffffff;
+  background: var(--chip-dark-bg);
+  color: var(--chip-dark-text);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -546,9 +546,9 @@
   height: 32px;
   padding: 0 14px;
   border-radius: 8px;
-  border: 1px solid #ffffff;
-  background: #ffffff;
-  color: #000000;
+  border: 1px solid var(--button-primary-bg);
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
   font-size: 13px;
   font-weight: 500;
   font-family: var(--font-family);
@@ -559,19 +559,19 @@
 }
 
 .jobs-add-btn:hover {
-  background: #f0f0f0;
+  background: var(--button-primary-hover);
 }
 
 .jobs-add-btn--disabled,
 .jobs-add-btn--disabled:hover {
   opacity: 0.4;
   cursor: not-allowed;
-  background: #ffffff;
+  background: var(--button-primary-bg);
 }
 
 .jobs-add-btn i {
   font-size: 16px;
-  color: #000000;
+  color: var(--button-primary-text);
 }
 
 /* ── Default header states (chat etc.) ── */
@@ -604,7 +604,7 @@
 
 @keyframes hamburger-glow {
   0%, 100% { box-shadow: 0 0 0 0 transparent; }
-  50% { box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.08); }
+  50% { box-shadow: 0 0 10px 2px var(--glass-soft); }
 }
 
 /* ── Responsive: collapse button text to icons ── */

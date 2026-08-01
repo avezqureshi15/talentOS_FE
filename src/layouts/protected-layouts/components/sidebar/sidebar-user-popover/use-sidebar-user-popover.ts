@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-type ActiveModal = "profile" | "logout" | null;
+type ActiveModal = "profile" | "settings" | "logout" | null;
 
 export const useSidebarUserPopover = () => {
   const [isOpen, setIsOpen] = useState(false);

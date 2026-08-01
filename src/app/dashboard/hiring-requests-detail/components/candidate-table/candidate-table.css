@@ -238,7 +238,7 @@
 .info-icon-btn:hover {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--static-white);
 }
 
 .info-text-btn {
@@ -278,10 +278,10 @@
 }
 
 .timeline-btn {
-  background: rgba(234, 179, 8, 0.12);
+  background: var(--yellow-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(234, 179, 8, 0.25);
+  border: 1px solid var(--yellow-border);
   border-radius: var(--radius-sm);
   color: var(--yellow);
   cursor: pointer;
@@ -297,8 +297,8 @@
 }
 
 .timeline-btn:hover {
-  background: rgba(234, 179, 8, 0.2);
-  border-color: rgba(234, 179, 8, 0.4);
+  background: var(--yellow-bg-strong);
+  border-color: var(--yellow-border-strong);
 }
 
 /* ---------- Interview date/time cells ---------- */

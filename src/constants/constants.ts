@@ -214,6 +214,7 @@ export const ALERTS_DESCRIPTION =
 
 export const PROFILE_MENU_ITEMS = [
   { id: "profile", label: "Profile", icon: "bx bx-user" },
+  { id: "settings", label: "Settings", icon: "bx bx-cog" },
   { id: "keyboard-shortcuts", label: "Keyboard shortcuts", icon: "bx bx-keyboard" },
 ] as const;
 

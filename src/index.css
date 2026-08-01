@@ -1,16 +1,24 @@
 :root {
+  color-scheme: dark;
+
+  /* typography */
+  --font-family: "Sora", sans-serif;
+
   /* surfaces */
   --surface-glass: rgba(255, 255, 255, 0.06);
   --surface-glass-hover: rgba(255, 255, 255, 0.09);
   --surface-elevated: rgba(255, 255, 255, 0.035);
   --surface-card: rgba(255, 255, 255, 0.04);
   --surface-card-hover: rgba(255, 255, 255, 0.07);
+  --surface-disabled: rgba(255, 255, 255, 0.02);
+  --surface-mist: rgba(255, 255, 255, 0.03);
 
   /* radius system */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
+  --radius-full: 50%;
 
   /* spacing */
   --space-1: 4px;
@@ -26,13 +34,17 @@
   --input-placeholder: var(--text-muted);
   --input-caret: var(--text-primary);
 
-    /* mode button / toggle chip */
+  /* mode button / toggle chip */
   --chip-text: var(--text-secondary);
   --chip-text-active: var(--text-primary);
 
   /* suggestion pills */
   --chip-bg: rgba(255, 255, 255, 0.06);
   --chip-hover: rgba(255, 255, 255, 0.09);
+
+  /* solid chips (dark pill on any bg) */
+  --chip-dark-bg: #1a1a1a;
+  --chip-dark-text: #ffffff;
 
   /* background */
   --bg-primary: #0a0a0a;
@@ -48,36 +60,134 @@
   --text-faint: rgba(255, 255, 255, 0.25);
   --text-white: #ffffff;
 
+  /* constant white / black (on colored or always-dark surfaces) */
+  --static-white: #ffffff;
+  --static-black: #000000;
+
   /* borders */
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-default: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.15);
+  --border-white-muted: rgba(255, 255, 255, 0.22);
 
   /* accents */
   --accent: #4f8ef7;
   --accent-glow: rgba(79, 142, 247, 0.6);
+  --accent-hover: color-mix(in srgb, var(--accent) 85%, #ffffff);
   --accent-indigo: #6366f1;
   --accent-indigo-light: #818cf8;
+  --accent-indigo-subtle: rgba(99, 102, 241, 0.12);
   --accent-blue: #3b82f6;
+  --accent-blue-soft: #60a5fa;
+  --accent-violet: #a78bfa;
 
   /* semantic colors */
   --danger: #ef4444;
   --danger-light: #f87171;
   --danger-bg: rgba(239, 68, 68, 0.1);
   --danger-bg-strong: rgba(239, 68, 68, 0.15);
+  --danger-400: #ef5350;
+  --danger-400-bg: rgba(239, 83, 80, 0.1);
+  --danger-500: #e53e3e;
+  --danger-900: #7f1d1d;
+  --danger-glow: rgba(255, 77, 79, 0.3);
 
   --success: #22c55e;
   --success-light: #4ade80;
   --success-bg: rgba(34, 197, 94, 0.1);
   --success-bg-strong: rgba(34, 197, 94, 0.15);
+  --success-900: #064e3a;
 
   --warning: #f59e0b;
   --warning-light: #f97316;
   --warning-bg: rgba(245, 158, 11, 0.1);
+  --warning-bg-strong: rgba(245, 158, 11, 0.2);
+  --warning-border: rgba(245, 158, 11, 0.25);
+  --warning-900: #78350f;
 
   --yellow: #eab308;
   --yellow-light: #facc15;
   --yellow-bg: rgba(234, 179, 8, 0.12);
+  --yellow-bg-strong: rgba(234, 179, 8, 0.2);
+  --yellow-border: rgba(234, 179, 8, 0.25);
+  --yellow-border-strong: rgba(234, 179, 8, 0.4);
+
+  --green: #22c55e;
+
+  /* info / neutral / primary chip families */
+  --info-bg: rgba(59, 130, 246, 0.12);
+  --info-bg-soft: rgba(59, 130, 246, 0.1);
+  --info-light: #3b82f6;
+  --neutral-bg: rgba(107, 114, 128, 0.12);
+  --neutral-light: #6b7280;
+  --primary-bg: rgba(99, 102, 241, 0.12);
+  --primary-light: #6366f1;
+
+  /* status chip families (data tables) */
+  --status-orange: #ffb74d;
+  --status-orange-bg: rgba(255, 183, 77, 0.15);
+  --status-blue: #64b5f6;
+  --status-blue-bg: rgba(100, 181, 246, 0.15);
+  --status-grey: #9e9e9e;
+  --status-grey-bg: rgba(158, 158, 158, 0.15);
+
+  /* role badge families */
+  --accent-violet-bg: rgba(168, 85, 247, 0.1);
+  --accent-violet-bg-strong: rgba(168, 85, 247, 0.2);
+  --accent-blue-bg-soft: rgba(59, 130, 246, 0.1);
+  --accent-blue-bg-soft-strong: rgba(59, 130, 246, 0.2);
+  --tag-zinc-bg: rgba(39, 39, 42, 0.8);
+  --tag-zinc-border: rgba(63, 63, 70, 0.6);
+  --tag-zinc-text: #d4d4d8;
+  --tag-zinc-muted: #a1a1aa;
+
+  /* status pills (interview status chips) */
+  --status-pill-success-bg: rgba(6, 78, 59, 0.6);
+  --status-pill-success-border: rgba(6, 95, 70, 0.6);
+  --status-pill-success-text: #6ee7b7;
+  --status-pill-success-bg-soft: rgba(6, 78, 59, 0.4);
+  --status-pill-success-border-soft: rgba(6, 95, 70, 0.4);
+  --status-pill-warning-bg: rgba(120, 53, 15, 0.6);
+  --status-pill-warning-border: rgba(146, 64, 14, 0.6);
+  --status-pill-warning-text: #fcd34d;
+  --status-pill-warning-bg-soft: rgba(120, 53, 15, 0.4);
+  --status-pill-warning-border-soft: rgba(146, 64, 14, 0.4);
+  --status-pill-danger-bg: rgba(127, 29, 29, 0.6);
+  --status-pill-danger-border: rgba(153, 27, 27, 0.6);
+  --status-pill-danger-text: #f87171;
+  --status-pill-danger-bg-soft: rgba(127, 29, 29, 0.4);
+  --status-pill-danger-border-soft: rgba(153, 27, 27, 0.4);
+
+  /* avatar badge (orange-ish) */
+  --avatar-badge-bg: rgba(245, 158, 11, 0.2);
+  --avatar-badge-border: rgba(245, 158, 11, 0.4);
+  --avatar-badge-text: #fcd34d;
+
+  /* verdict (round-details stamps) */
+  --verdict-reject: #f87171;
+  --verdict-advance: #34d399;
+  --verdict-hold: #fbbf24;
+  --verdict-reject-text: #fca5a5;
+  --verdict-advance-text: #6ee7b7;
+  --verdict-hold-text: #fcd34d;
+
+  /* video */
+  --video-bg: #000000;
+  --glass-weak: rgba(255, 255, 255, 0.06);
+  --glass-soft: rgba(255, 255, 255, 0.08);
+  --glass-mid: rgba(255, 255, 255, 0.1);
+  --glass-strong: rgba(255, 255, 255, 0.12);
+  --glass-stronger: rgba(255, 255, 255, 0.14);
+  --glass-xstrong: rgba(255, 255, 255, 0.15);
+  --glass-faint: rgba(255, 255, 255, 0.55);
+  --glass-bright: rgba(255, 255, 255, 0.7);
+  --glass-controls-bg: rgba(12, 12, 12, 0.72);
+  --video-seeking: #f5a623;
+  --record-red: #ff4d4d;
+  --record-red-bg: rgba(255, 77, 77, 0.1);
+
+  /* quote / inset panels */
+  --quote-bg: rgba(0, 0, 0, 0.2);
 
   /* scrollbar */
   --scrollbar-thumb: #2a2a2a;
@@ -85,6 +195,7 @@
   /* gradients */
   --avatar-gradient: linear-gradient(135deg, #6b7280, #374151);
   --logo-gradient: linear-gradient(135deg, #e0e0e0, #888);
+  --logo-brand-gradient: linear-gradient(135deg, #b0b5c0, #8a8f9a);
 
   /* shadows */
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -92,8 +203,23 @@
   --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
   --shadow-xl: 0 24px 80px rgba(0, 0, 0, 0.6);
 
+  /* shadow color components (for multi-part box-shadows) */
+  --shadow-color-strong: rgba(0, 0, 0, 0.4);
+  --shadow-color-mid: rgba(0, 0, 0, 0.12);
+  --shadow-color-light: rgba(0, 0, 0, 0.08);
+  --shadow-color-faint: rgba(0, 0, 0, 0.05);
+  --shadow-color-raised: rgba(0, 0, 0, 0.15);
+  --shadow-color-dense: rgba(0, 0, 0, 0.18);
+  --shadow-color-deep: rgba(0, 0, 0, 0.2);
+  --shadow-color-emphasis: rgba(0, 0, 0, 0.3);
+  --shadow-color-stronger: rgba(0, 0, 0, 0.5);
+  --shadow-color-heaviest: rgba(0, 0, 0, 0.6);
+
   /* overlay */
   --overlay: rgba(0, 0, 0, 0.55);
+  --overlay-subtle: rgba(0, 0, 0, 0.35);
+  --overlay-faint: rgba(0, 0, 0, 0.2);
+  --sheet-bg: rgba(18, 18, 18, 0.75);
 
   /* AI message specific */
   --ai-text: var(--text-primary);
@@ -116,11 +242,13 @@
   --input-icon-bg: rgba(255, 255, 255, 0.08);
   --input-icon-color: rgba(255, 255, 255, 0.5);
 
-    /* CTA / primary action surface */
+  /* CTA / primary action surface */
   --cta-bg: rgba(255, 255, 255, 0.06);
   --cta-border: rgba(255, 255, 255, 0.15);
   --cta-text: var(--text-primary);
   --cta-hover: rgba(255, 255, 255, 0.09);
+  --cta-border-hover: rgba(255, 255, 255, 0.25);
+  --cta-text-hover: var(--text-primary);
 
   /* send button */
   --send-btn-bg: #ffffff;
@@ -128,8 +256,13 @@
   --send-btn-glow: rgba(255, 255, 255, 0.3);
   --send-btn-glow-dim: rgba(128, 128, 128, 0.2);
 
+  /* button primary (white bg, dark text) */
+  --button-primary-bg: #ffffff;
+  --button-primary-text: #000000;
+  --button-primary-hover: #f0f0f0;
+
   /* brand-specific */
-  --brand-silver: #B0B5C0;
+  --brand-silver: #b0b5c0;
 
   /* aurora animation colors */
   --aurora-purple: #a855f7;
@@ -172,55 +305,229 @@
   --accent-indigo-border: rgba(99, 102, 241, 0.4);
   --accent-blue-bg: rgba(59, 130, 246, 0.12);
 
-  /* overlay variants */
-  --overlay-subtle: rgba(0, 0, 0, 0.35);
-  --sheet-bg: rgba(18, 18, 18, 0.75);
-
-  /* surface disabled */
-  --surface-disabled: rgba(255, 255, 255, 0.02);
-
-  /* button */
-  --button-primary-hover: #e6e6e6;
-
   /* timeline */
   --timeline-line: gray;
   --timeline-active: #4f46e5;
 
-  /* border white muted */
-  --border-white-muted: rgba(255, 255, 255, 0.22);
-
-  /* shadow color components (for multi-part box-shadows) */
-  --shadow-color-strong: rgba(0, 0, 0, 0.4);
-  --shadow-color-mid: rgba(0, 0, 0, 0.12);
-  --shadow-color-light: rgba(0, 0, 0, 0.08);
+  /* waveform */
+  --waveform-color: var(--bg-secondary);
 }
 
 [data-theme="light"] {
+  color-scheme: light;
+
+  /* surfaces */
+  --surface-glass: rgba(0, 0, 0, 0.04);
+  --surface-glass-hover: rgba(0, 0, 0, 0.07);
+  --surface-elevated: rgba(0, 0, 0, 0.025);
+  --surface-card: rgba(0, 0, 0, 0.03);
+  --surface-card-hover: rgba(0, 0, 0, 0.05);
+  --surface-disabled: rgba(0, 0, 0, 0.015);
+  --surface-mist: rgba(255, 255, 255, 0.6);
+
+  /* chips */
+  --chip-bg: rgba(0, 0, 0, 0.05);
+  --chip-hover: rgba(0, 0, 0, 0.08);
+
+  /* background */
   --bg-primary: #ffffff;
   --bg-secondary: #f6f6f6;
   --bg-tertiary: #e8e8ea;
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  --bg-active: rgba(0, 0, 0, 0.08);
 
+  /* text */
   --text-primary: rgba(0, 0, 0, 0.85);
   --text-secondary: rgba(0, 0, 0, 0.6);
   --text-muted: rgba(0, 0, 0, 0.45);
   --text-faint: rgba(0, 0, 0, 0.25);
   --text-white: #000000;
 
+  /* borders */
   --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-default: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.18);
+  --border-white-muted: rgba(0, 0, 0, 0.25);
 
+  /* accents */
   --accent: #2563eb;
   --accent-glow: rgba(37, 99, 235, 0.4);
+  --accent-hover: color-mix(in srgb, var(--accent) 85%, #000000);
+  --accent-indigo-light: #6366f1;
+  --accent-blue-soft: #2563eb;
+  --accent-violet: #7c3aed;
 
+  /* semantic colors */
+  --danger-bg: rgba(239, 68, 68, 0.08);
+  --danger-bg-strong: rgba(239, 68, 68, 0.12);
+  --danger-400: #e53935;
+  --danger-400-bg: rgba(229, 57, 53, 0.08);
+  --danger-glow: rgba(239, 68, 68, 0.35);
+
+  --success-bg: rgba(34, 197, 94, 0.08);
+  --success-bg-strong: rgba(34, 197, 94, 0.12);
+
+  --warning-bg: rgba(245, 158, 11, 0.08);
+  --warning-bg-strong: rgba(245, 158, 11, 0.12);
+  --warning-border: rgba(245, 158, 11, 0.35);
+
+  --yellow-bg: rgba(234, 179, 8, 0.1);
+  --yellow-bg-strong: rgba(234, 179, 8, 0.15);
+  --yellow-border: rgba(234, 179, 8, 0.35);
+  --yellow-border-strong: rgba(234, 179, 8, 0.5);
+
+  /* info / neutral / primary chip families */
+  --info-bg: rgba(59, 130, 246, 0.1);
+  --info-bg-soft: rgba(59, 130, 246, 0.08);
+  --info-light: #2563eb;
+  --neutral-bg: rgba(107, 114, 128, 0.1);
+  --neutral-light: #4b5563;
+  --primary-bg: rgba(99, 102, 241, 0.1);
+  --primary-light: #4f46e5;
+
+  /* role badge families */
+  --accent-violet-bg: rgba(124, 58, 237, 0.08);
+  --accent-violet-bg-strong: rgba(124, 58, 237, 0.15);
+  --accent-blue-bg-soft: rgba(37, 99, 235, 0.08);
+  --accent-blue-bg-soft-strong: rgba(37, 99, 235, 0.15);
+  --tag-zinc-bg: rgba(0, 0, 0, 0.06);
+  --tag-zinc-border: rgba(0, 0, 0, 0.12);
+  --tag-zinc-text: #3f3f46;
+  --tag-zinc-muted: #71717a;
+
+  /* status pills */
+  --status-pill-success-bg: rgba(34, 197, 94, 0.12);
+  --status-pill-success-border: rgba(34, 197, 94, 0.3);
+  --status-pill-success-text: #059669;
+  --status-pill-success-bg-soft: rgba(34, 197, 94, 0.08);
+  --status-pill-success-border-soft: rgba(34, 197, 94, 0.25);
+  --status-pill-warning-bg: rgba(245, 158, 11, 0.12);
+  --status-pill-warning-border: rgba(245, 158, 11, 0.3);
+  --status-pill-warning-text: #b45309;
+  --status-pill-warning-bg-soft: rgba(245, 158, 11, 0.08);
+  --status-pill-warning-border-soft: rgba(245, 158, 11, 0.25);
+  --status-pill-danger-bg: rgba(239, 68, 68, 0.12);
+  --status-pill-danger-border: rgba(239, 68, 68, 0.3);
+  --status-pill-danger-text: #dc2626;
+  --status-pill-danger-bg-soft: rgba(239, 68, 68, 0.08);
+  --status-pill-danger-border-soft: rgba(239, 68, 68, 0.25);
+
+  /* avatar badge */
+  --avatar-badge-bg: rgba(245, 158, 11, 0.12);
+  --avatar-badge-border: rgba(245, 158, 11, 0.3);
+  --avatar-badge-text: #b45309;
+
+  /* verdict */
+  --verdict-reject: #dc2626;
+  --verdict-advance: #059669;
+  --verdict-hold: #d97706;
+  --verdict-reject-text: #dc2626;
+  --verdict-advance-text: #059669;
+  --verdict-hold-text: #b45309;
+
+  /* quote / inset panels */
+  --quote-bg: rgba(0, 0, 0, 0.04);
+
+  /* scrollbar */
+  --scrollbar-thumb: #c8c8c8;
+
+  /* gradients */
   --avatar-gradient: linear-gradient(135deg, #d1d5db, #9ca3af);
   --logo-gradient: linear-gradient(135deg, #333, #777);
+  --logo-brand-gradient: linear-gradient(135deg, #333333, #777777);
 
+  /* shadows */
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
   --shadow-xl: 0 24px 80px rgba(0, 0, 0, 0.18);
 
+  /* shadow color components */
+  --shadow-color-strong: rgba(0, 0, 0, 0.25);
+  --shadow-color-mid: rgba(0, 0, 0, 0.1);
+  --shadow-color-light: rgba(0, 0, 0, 0.08);
+  --shadow-color-faint: rgba(0, 0, 0, 0.05);
+  --shadow-color-raised: rgba(0, 0, 0, 0.1);
+  --shadow-color-dense: rgba(0, 0, 0, 0.12);
+  --shadow-color-deep: rgba(0, 0, 0, 0.14);
+  --shadow-color-emphasis: rgba(0, 0, 0, 0.18);
+  --shadow-color-stronger: rgba(0, 0, 0, 0.3);
+  --shadow-color-heaviest: rgba(0, 0, 0, 0.35);
+
+  /* overlay */
+  --overlay: rgba(0, 0, 0, 0.4);
+  --overlay-subtle: rgba(0, 0, 0, 0.2);
+  --overlay-faint: rgba(0, 0, 0, 0.12);
   --sheet-bg: rgba(240, 240, 240, 0.95);
-  --button-primary-hover: #1a1a1a;
+
+  /* AI message specific */
+  --ai-thought-bg: rgba(0, 0, 0, 0.03);
+  --ai-thought-text: rgba(0, 0, 0, 0.55);
+  --ai-action-icon: rgba(0, 0, 0, 0.4);
+
+  /* chat input container */
+  --chat-input-bg: #ffffff;
+  --chat-input-border: rgba(0, 0, 0, 0.1);
+  --chat-input-border-focus: rgba(0, 0, 0, 0.25);
+  --chat-input-focus-shadow: rgba(0, 0, 0, 0.1);
+
+  /* icon buttons inside input */
+  --input-icon-bg: rgba(0, 0, 0, 0.06);
+  --input-icon-color: rgba(0, 0, 0, 0.5);
+
+  /* CTA / primary action surface */
+  --cta-bg: rgba(0, 0, 0, 0.04);
+  --cta-border: rgba(0, 0, 0, 0.15);
+  --cta-hover: rgba(0, 0, 0, 0.08);
+  --cta-border-hover: rgba(0, 0, 0, 0.25);
+
+  /* send button */
+  --send-btn-bg: #1a1a1a;
+  --send-btn-color: #ffffff;
+  --send-btn-glow: rgba(0, 0, 0, 0.15);
+  --send-btn-glow-dim: rgba(0, 0, 0, 0.1);
+
+  /* button primary */
+  --button-primary-bg: #1a1a1a;
+  --button-primary-text: #ffffff;
+  --button-primary-hover: #2d2d2d;
+
+  /* semantic backgrounds */
+  --danger-banner-bg: #fecaca;
+  --danger-banner-text: #b91c1c;
+  --danger-bg-subtle: rgba(239, 68, 68, 0.04);
+  --danger-border: rgba(239, 68, 68, 0.3);
+  --danger-light-bg-subtle: rgba(248, 113, 113, 0.1);
+  --danger-light-border: rgba(248, 113, 113, 0.35);
+  --danger-light-muted: rgba(248, 113, 113, 0.6);
+  --danger-light-strong: rgba(248, 113, 113, 0.9);
+
+  --success-glow: rgba(34, 197, 94, 0.35);
+  --success-border: rgba(34, 197, 94, 0.3);
+  --success-light-bg: rgba(74, 222, 128, 0.15);
+  --success-light-bg-subtle: rgba(74, 222, 128, 0.15);
+  --success-light-border: rgba(74, 222, 128, 0.4);
+
+  --warning-light-glow: rgba(249, 115, 22, 0.35);
+
+  /* score / rating colors */
+  --score-mid-bg: rgba(250, 204, 21, 0.12);
+  --score-mid-border: rgba(250, 204, 21, 0.4);
+
+  /* cancelled */
+  --cancelled: #b91c1c;
+  --cancelled-bg: rgba(185, 28, 28, 0.08);
+  --cancelled-border: rgba(185, 28, 28, 0.3);
+  --cancelled-text: #7f1d1d;
+
+  /* accent background variants */
+  --accent-bg: rgba(37, 99, 235, 0.1);
+  --accent-border: rgba(37, 99, 235, 0.35);
+  --accent-indigo-bg: rgba(99, 102, 241, 0.1);
+  --accent-indigo-border: rgba(99, 102, 241, 0.45);
+  --accent-blue-bg: rgba(37, 99, 235, 0.08);
+
+  /* timeline */
   --timeline-line: #d1d5db;
   --timeline-active: #4f46e5;
 }

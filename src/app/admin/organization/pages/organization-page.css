@@ -64,7 +64,7 @@
 }
 
 .org-input:focus {
-  border-color: #ffffff;
+  border-color: var(--text-white);
 }
 
 .org-textarea {
@@ -94,12 +94,12 @@
 }
 
 .org-btn--primary {
-  background: #ffffff;
-  color: #000000;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
 
 .org-btn--primary:hover {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--button-primary-hover);
 }
 
 .org-btn--primary:disabled {

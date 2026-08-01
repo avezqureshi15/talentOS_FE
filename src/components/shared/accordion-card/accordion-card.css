@@ -95,9 +95,9 @@
 }
 
 .notify-btn--error {
-  background: var(--danger-bg, rgba(239, 68, 68, 0.1));
-  border-color: var(--danger, #ef4444);
-  color: var(--danger, #ef4444);
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 .notify-wrapper {
@@ -113,8 +113,8 @@
   white-space: nowrap;
   font-size: 11px;
   padding: 4px 8px;
-  background: var(--danger, #ef4444);
-  color: #fff;
+  background: var(--danger);
+  color: var(--static-white);
   border-radius: 6px;
   pointer-events: none;
   z-index: 10;

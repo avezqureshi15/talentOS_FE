@@ -80,44 +80,44 @@
 
 /* Variants */
 .chip--success {
-  background: var(--success-bg, rgba(34, 197, 94, 0.12));
-  color: var(--success-light, #22c55e);
+  background: var(--success-bg);
+  color: var(--success-light);
   border-color: transparent;
 }
 
 .chip--danger {
-  background: var(--danger-bg-strong, rgba(239, 68, 68, 0.15));
-  color: var(--danger, #ef4444);
+  background: var(--danger-bg-strong);
+  color: var(--danger);
   border-color: transparent;
 }
 
 .chip--warning {
-  background: var(--warning-bg, rgba(245, 158, 11, 0.12));
-  color: var(--warning-light, #f59e0b);
+  background: var(--warning-bg);
+  color: var(--warning-light);
   border-color: transparent;
 }
 
 .chip--info {
-  background: var(--info-bg, rgba(59, 130, 246, 0.12));
-  color: var(--info-light, #3b82f6);
+  background: var(--info-bg);
+  color: var(--info-light);
   border-color: transparent;
 }
 
 .chip--neutral {
-  background: var(--neutral-bg, rgba(107, 114, 128, 0.12));
-  color: var(--neutral-light, #6b7280);
+  background: var(--neutral-bg);
+  color: var(--neutral-light);
   border-color: transparent;
 }
 
 .chip--yellow {
-  background: var(--yellow-bg, rgba(234, 179, 8, 0.12));
-  color: var(--yellow, #eab308);
+  background: var(--yellow-bg);
+  color: var(--yellow);
   border-color: transparent;
 }
 
 .chip--primary {
-  background: var(--primary-bg, rgba(99, 102, 241, 0.12));
-  color: var(--primary-light, #6366f1);
+  background: var(--primary-bg);
+  color: var(--primary-light);
   border-color: transparent;
 }
 

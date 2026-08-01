@@ -46,7 +46,7 @@
   width: 600px;
   height: 600px;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%);
+  background: radial-gradient(circle, var(--surface-mist) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -346,7 +346,7 @@
 
 .auth-input:focus {
   border-color: var(--border-strong);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px var(--surface-glass);
 }
 
 .auth-input--error {

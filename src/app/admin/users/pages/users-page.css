@@ -43,8 +43,8 @@
 }
 
 .users-btn--primary {
-  background: #ffffff;
-  color: #000000;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
 
 .users-btn--secondary {

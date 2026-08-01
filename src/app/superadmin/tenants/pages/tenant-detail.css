@@ -92,7 +92,7 @@
 .td-badge--pending {
   background: var(--warning-bg);
   color: var(--warning);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  border: 1px solid var(--warning-border);
 }
 
 .td-badge--approved {
@@ -581,8 +581,8 @@
 }
 
 .td-users-btn--primary {
-  background: #ffffff;
-  color: #000000;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
 
 .td-users-btn--secondary {

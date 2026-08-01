@@ -67,11 +67,11 @@
   font-size: 12px;
   text-transform: capitalize;
 }
-.dt-chip--warning { background: rgba(255, 183, 77, 0.15); color: #ffb74d; }
-.dt-chip--info    { background: rgba(100, 181, 246, 0.15); color: #64b5f6; }
+.dt-chip--warning { background: var(--status-orange-bg); color: var(--status-orange); }
+.dt-chip--info    { background: var(--status-blue-bg); color: var(--status-blue); }
 .dt-chip--success { background: var(--success-bg-strong); color: var(--success); }
 .dt-chip--danger  { background: var(--danger-bg-strong);  color: var(--danger); }
-.dt-chip--neutral { background: rgba(158, 158, 158, 0.15); color: #9e9e9e; }
+.dt-chip--neutral { background: var(--status-grey-bg); color: var(--status-grey); }
 
 .dt-badge {
   display: inline-block;
@@ -82,8 +82,8 @@
 }
 .dt-badge--active   { background: var(--success-bg-strong); color: var(--success); }
 .dt-badge--inactive { background: var(--danger-bg-strong);  color: var(--danger); }
-.dt-badge--pending  { background: rgba(255, 183, 77, 0.15); color: #ffb74d; }
-.dt-badge--neutral  { background: rgba(158, 158, 158, 0.15); color: #9e9e9e; }
+.dt-badge--pending  { background: var(--status-orange-bg); color: var(--status-orange); }
+.dt-badge--neutral  { background: var(--status-grey-bg); color: var(--status-grey); }
 
 .dt-actions { display: flex; gap: 4px; }
 .dt-btn { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: none; background: transparent; color: var(--text-muted); border-radius: 6px; cursor: pointer; font-size: 16px; }

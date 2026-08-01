@@ -54,8 +54,8 @@
    ───────────────────── */
 
 .rp-sidebar {
-  background: var(--bg-secondary, #141417);
-  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -69,22 +69,22 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 16px 12px;
-  border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  border-bottom: 1px solid var(--border-subtle);
   flex-shrink: 0;
 }
 
 .rp-sidebar-title {
   font-size: 11px;
   font-weight: 600;
-  color: var(--text-muted, rgba(255,255,255,0.35));
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.6px;
 }
 
 .rp-sidebar-count {
   font-size: 11px;
-  color: var(--text-muted, rgba(255,255,255,0.35));
-  background: var(--bg-primary, #0d0d10);
+  color: var(--text-muted);
+  background: var(--bg-primary);
   padding: 2px 8px;
   border-radius: 10px;
   font-weight: 500;
@@ -120,17 +120,17 @@
 }
 
 .rp-role-card:hover {
-  background: var(--bg-hover, rgba(255,255,255,0.04));
+  background: var(--bg-hover);
 }
 
 .rp-role-card:focus-visible {
-  box-shadow: 0 0 0 2px var(--accent, #4f8ef7);
+  box-shadow: 0 0 0 2px var(--accent);
 }
 
 /* Active state — left accent bar */
 .rp-role-card--active {
-  background: color-mix(in srgb, var(--accent, #4f8ef7) 6%, var(--bg-secondary, #141417));
-  border-color: color-mix(in srgb, var(--accent, #4f8ef7) 20%, transparent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg-secondary));
+  border-color: color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .rp-role-card--active::before {
@@ -141,7 +141,7 @@
   bottom: 20%;
   width: 2px;
   border-radius: 0 2px 2px 0;
-  background: var(--accent, #4f8ef7);
+  background: var(--accent);
 }
 
 .rp-role-card-body {
@@ -161,7 +161,7 @@
 }
 
 .rp-role-card--active .rp-role-card-name {
-  color: #fff;
+  color: var(--text-white);
 }
 
 .rp-role-card-stats {
@@ -179,9 +179,9 @@
   font-size: 10.5px;
   font-weight: 500;
   line-height: 1.3;
-  background: var(--bg-primary, #0d0d10);
-  color: var(--text-muted, rgba(255,255,255,0.35));
-  border: 1px solid var(--border-subtle, rgba(255,255,255,0.04));
+  background: var(--bg-primary);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
 }
 
 .rp-role-badge i {
@@ -203,7 +203,7 @@
   width: 24px;
   height: 24px;
   border: none;
-  background: var(--bg-hover, rgba(255,255,255,0.06));
+  background: var(--bg-hover);
   color: var(--text-muted);
   border-radius: 6px;
   cursor: pointer;
@@ -215,7 +215,7 @@
 }
 
 .rp-role-menu:hover {
-  background: var(--bg-active, rgba(255,255,255,0.1));
+  background: var(--bg-active);
   color: var(--text-primary);
 }
 
@@ -240,8 +240,8 @@
   min-height: 300px;
   color: var(--text-muted);
   gap: 12px;
-  background: var(--bg-secondary, #141417);
-  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
 }
 
@@ -276,8 +276,8 @@
   justify-content: space-between;
   gap: 16px;
   padding: 16px 20px;
-  background: var(--bg-secondary, #141417);
-  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
   border-radius: 10px;
   flex-shrink: 0;
 }
@@ -293,8 +293,8 @@
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--accent, #4f8ef7) 15%, transparent);
-  color: var(--accent, #4f8ef7);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -320,7 +320,7 @@
 .rpe-summary-name {
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-white);
   text-transform: capitalize;
   margin: 0;
   line-height: 1.2;
@@ -333,15 +333,15 @@
   border-radius: 6px;
   font-size: 10.5px;
   font-weight: 500;
-  background: color-mix(in srgb, var(--accent, #4f8ef7) 12%, transparent);
-  color: var(--accent, #4f8ef7);
-  border: 1px solid color-mix(in srgb, var(--accent, #4f8ef7) 20%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
   white-space: nowrap;
 }
 
 .rpe-summary-meta {
   font-size: 12px;
-  color: var(--text-muted, rgba(255,255,255,0.35));
+  color: var(--text-muted);
 }
 
 /* ── Progress Bar ── */
@@ -357,14 +357,14 @@
 .rpe-progress-text {
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-secondary, rgba(255,255,255,0.55));
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
 .rpe-progress-track {
   width: 160px;
   height: 4px;
-  background: var(--bg-primary, #0d0d10);
+  background: var(--bg-primary);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -372,7 +372,7 @@
 .rpe-progress-fill {
   height: 100%;
   border-radius: 99px;
-  background: var(--accent, #4f8ef7);
+  background: var(--accent);
   transition: width 0.3s ease;
 }
 
@@ -397,8 +397,8 @@
 /* ── Permission Group Card ── */
 
 .rpe-group {
-  background: var(--bg-secondary, #141417);
-  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -409,8 +409,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: var(--bg-hover, rgba(255,255,255,0.02));
-  border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,0.04));
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .rpe-group-label {
@@ -419,21 +419,21 @@
   gap: 8px;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary, rgba(255,255,255,0.55));
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
 
 .rpe-group-label i {
   font-size: 14px;
-  color: var(--text-muted, rgba(255,255,255,0.3));
+  color: var(--text-muted);
 }
 
 .rpe-group-count {
   font-size: 10.5px;
   font-weight: 600;
-  color: var(--text-muted, rgba(255,255,255,0.35));
-  background: var(--bg-primary, #0d0d10);
+  color: var(--text-muted);
+  background: var(--bg-primary);
   padding: 2px 7px;
   border-radius: 6px;
   line-height: 1.3;
@@ -460,27 +460,27 @@
   cursor: pointer;
   font-family: inherit;
   font-size: 12.5px;
-  color: var(--text-muted, rgba(255,255,255,0.35));
+  color: var(--text-muted);
   text-align: left;
   transition: background 0.12s, color 0.12s;
   outline: none;
 }
 
 .rpe-toggle:hover {
-  background: var(--bg-hover, rgba(255,255,255,0.04));
-  color: var(--text-secondary, rgba(255,255,255,0.55));
+  background: var(--bg-hover);
+  color: var(--text-secondary);
 }
 
 .rpe-toggle:focus-visible {
-  box-shadow: inset 0 0 0 1.5px var(--accent, #4f8ef7);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
 }
 
 .rpe-toggle--on {
-  color: var(--text-primary, #fff);
+  color: var(--text-primary);
 }
 
 .rpe-toggle--on:hover {
-  color: #fff;
+  color: var(--text-white);
 }
 
 /* Switch track */
@@ -489,15 +489,15 @@
   width: 30px;
   height: 18px;
   border-radius: 99px;
-  background: var(--bg-primary, #0d0d10);
-  border: 1px solid var(--border-subtle, rgba(255,255,255,0.08));
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
   flex-shrink: 0;
   transition: background 0.15s, border-color 0.15s;
 }
 
 .rpe-toggle--on .rpe-toggle-track {
-  background: var(--accent, #4f8ef7);
-  border-color: var(--accent, #4f8ef7);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 /* Switch thumb */
@@ -508,13 +508,13 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--text-muted, rgba(255,255,255,0.4));
+  background: var(--text-muted);
   transition: transform 0.15s ease, background 0.15s;
 }
 
 .rpe-toggle--on .rpe-toggle-thumb {
   transform: translateX(12px);
-  background: #fff;
+  background: var(--static-white);
 }
 
 .rpe-toggle-label {
@@ -531,8 +531,8 @@
   align-items: center;
   gap: 10px;
   padding: 14px 20px;
-  background: var(--bg-secondary, #141417);
-  border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
   border-radius: 10px;
   flex-shrink: 0;
 }

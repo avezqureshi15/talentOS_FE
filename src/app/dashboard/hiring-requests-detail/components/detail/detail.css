@@ -545,33 +545,33 @@
 }
 
 .state-chip--success {
-  background: var(--success-bg, rgba(34, 197, 94, 0.12));
-  color: var(--success-light, #22c55e);
+  background: var(--success-bg);
+  color: var(--success-light);
 }
 
 .state-chip--danger {
-  background: var(--danger-bg, rgba(239, 68, 68, 0.12));
-  color: var(--danger-light, #ef4444);
+  background: var(--danger-bg);
+  color: var(--danger-light);
 }
 
 .state-chip--warning {
-  background: var(--warning-bg, rgba(245, 158, 11, 0.12));
-  color: var(--warning-light, #f59e0b);
+  background: var(--warning-bg);
+  color: var(--warning-light);
 }
 
 .state-chip--info {
-  background: var(--info-bg, rgba(59, 130, 246, 0.12));
-  color: var(--info-light, #3b82f6);
+  background: var(--info-bg);
+  color: var(--info-light);
 }
 
 .state-chip--neutral {
-  background: var(--neutral-bg, rgba(107, 114, 128, 0.12));
-  color: var(--neutral-light, #6b7280);
+  background: var(--neutral-bg);
+  color: var(--neutral-light);
 }
 
 .state-chip--yellow {
-  background: var(--yellow-bg, rgba(234, 179, 8, 0.12));
-  color: var(--yellow, #eab308);
+  background: var(--yellow-bg);
+  color: var(--yellow);
 }
 
 
@@ -660,7 +660,7 @@
 
 .cancel.compact:hover {
   background: var(--danger-light);
-  color: #fff;
+  color: var(--static-white);
 }
 
 .job-header {
@@ -1119,9 +1119,9 @@
 }
 
 .confirm-proceed {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border-color: var(--button-primary-bg);
 }
 
 .confirm-proceed:hover:not(:disabled) {
@@ -1482,7 +1482,7 @@
 .persistent-view-toggle .segmented-control .view-toggle-icon--active {
   color: var(--accent);
   background: var(--bg-secondary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px var(--shadow-color-light);
 }
 
 /* =========================
@@ -1547,11 +1547,11 @@
   gap: 12px;
   padding: 10px 16px;
   margin: 8px 0;
-  background: #1a1a1a;
+  background: var(--bg-tertiary);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   z-index: 50;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--shadow-color-light);
 }
 
 .bulk-action-count {

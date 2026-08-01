@@ -39,7 +39,7 @@
 }
 
 .create-hr-required {
-  color: var(--danger, #ef4444);
+  color: var(--danger);
   margin-left: 2px;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .create-hr-select.select-wrapper--error .select {
-  border-color: var(--danger, #ef4444);
+  border-color: var(--danger);
 }
 
 .create-hr-select .select-error {
@@ -87,7 +87,7 @@
 
 .create-hr-input.create-hr-input--error,
 .create-hr-textarea.create-hr-textarea--error {
-  border-color: var(--danger, #ef4444);
+  border-color: var(--danger);
 }
 
 .create-hr-textarea {
@@ -105,7 +105,7 @@
 
 .create-hr-error {
   font-size: 11px;
-  color: var(--danger, #ef4444);
+  color: var(--danger);
 }
 
 .create-hr-active {
@@ -179,7 +179,7 @@
 
 .create-hr-btn--primary {
   background: var(--accent);
-  color: var(--text-white, #fff);
+  color: var(--static-white);
   box-shadow: 0 0 0 1px var(--accent-glow, transparent);
 }
 

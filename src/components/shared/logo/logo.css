@@ -16,7 +16,7 @@
 }
 
 .talent-logo-os {
-  background: linear-gradient(135deg, #b0b5c0, #8a8f9a);
+  background: var(--logo-brand-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

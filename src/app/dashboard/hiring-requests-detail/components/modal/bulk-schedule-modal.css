@@ -99,7 +99,7 @@
 .bsm-btn--confirm {
   border: none;
   background: var(--accent);
-  color: #fff;
+  color: var(--static-white);
   font-weight: 600;
 }
 

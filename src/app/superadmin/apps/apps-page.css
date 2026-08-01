@@ -100,8 +100,8 @@
 
 .ap-error {
   padding: 10px 12px;
-  background: rgba(239, 83, 80, 0.1);
-  color: #ef5350;
+  background: var(--danger-400-bg);
+  color: var(--danger-400);
   border-radius: 6px;
   font-size: 13px;
   margin-bottom: 16px;
@@ -262,7 +262,7 @@
   gap: 10px;
   padding: 12px 14px;
   background: var(--warning-bg);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  border: 1px solid var(--warning-bg-strong);
   border-radius: 8px;
   color: var(--warning);
   font-size: 13px;

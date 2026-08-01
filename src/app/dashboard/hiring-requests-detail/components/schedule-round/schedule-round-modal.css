@@ -326,7 +326,7 @@
   /* background: var(--surface-glass);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid color-mix(in srgb, var(--accent-indigo) 20%, transparent);
   padding: 8px 14px;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; */
 }
@@ -339,35 +339,35 @@
   background: var(--accent-indigo-light);
   flex-shrink: 0;
   align-self: center;
-  box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-indigo) 50%, transparent);
   animation: sr-ai-pulse 2s ease-in-out infinite;
 }
 
 .sr-interviewer-item--ai:hover {
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 0 16px rgba(99, 102, 241, 0.12);
+  border-color: color-mix(in srgb, var(--accent-indigo) 50%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent-indigo) 12%, transparent);
   background: var(--surface-glass-hover);
 }
 
 .sr-interviewer-item--ai.sr-interviewer-item--selected {
   background: var(--surface-glass);
   border-color: var(--accent-indigo-border);
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent-indigo) 15%, transparent);
 }
 
 .sr-interviewer-item--ai.sr-interviewer-item--selected::before {
   background: var(--accent-indigo);
-  box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.8);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-indigo) 80%, transparent);
 }
 
 .sr-interviewer-item--ai .sr-interviewer-name {
-  color: #fff;
+  color: var(--text-white);
   font-weight: 600;
 }
 
 @keyframes sr-ai-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5); }
-  50% { box-shadow: 0 0 0 4px rgba(99, 102, 241, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-indigo) 50%, transparent); }
+  50% { box-shadow: 0 0 0 4px transparent; }
 }
 
 .sr-interviewer-avatar {
@@ -388,7 +388,7 @@
   background: var(--accent-indigo-bg);
   color: var(--accent-indigo-light);
   font-size: 16px;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.2);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-indigo) 20%, transparent);
 }
 
 .sr-interviewer-info {
@@ -723,7 +723,7 @@
   background: var(--surface-glass);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid color-mix(in srgb, var(--accent-indigo) 20%, transparent);
   border-radius: 12px;
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
@@ -731,15 +731,15 @@
 }
 
 .sr-ai-screening-card:hover {
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+  border-color: color-mix(in srgb, var(--accent-indigo) 50%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent-indigo) 10%, transparent);
   background: var(--surface-glass-hover);
 }
 
 .sr-ai-screening-card.sr-template-card--selected {
   border-color: var(--accent-indigo-border);
-  box-shadow: 0 0 24px rgba(99, 102, 241, 0.15);
-  background: rgba(99, 102, 241, 0.06);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent-indigo) 15%, transparent);
+  background: color-mix(in srgb, var(--accent-indigo) 6%, transparent);
 }
 
 .sr-ai-screening-icon {
@@ -750,7 +750,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.2);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-indigo) 20%, transparent);
 }
 
 .sr-ai-screening-icon i {
@@ -1272,7 +1272,7 @@
   background: var(--surface-glass);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  border: 1px solid color-mix(in srgb, var(--accent-indigo) 20%, transparent);
   border-radius: 10px;
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
@@ -1280,8 +1280,8 @@
 }
 
 .sr-config-action:hover {
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 0 16px rgba(99, 102, 241, 0.12);
+  border-color: color-mix(in srgb, var(--accent-indigo) 50%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent-indigo) 12%, transparent);
   background: var(--surface-glass-hover);
 }
 
@@ -1328,8 +1328,8 @@
 
 .sr-config-action--selected {
   border-color: var(--accent-indigo-border);
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
-  background: rgba(99, 102, 241, 0.06);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--accent-indigo) 15%, transparent);
+  background: color-mix(in srgb, var(--accent-indigo) 6%, transparent);
 }
 
 .sr-config-empty {
@@ -1608,7 +1608,7 @@
 
 .sr-ai-time-slot--selected {
   border-color: var(--accent-indigo-border);
-  background: rgba(99, 102, 241, 0.08);
+  background: color-mix(in srgb, var(--accent-indigo) 8%, transparent);
   color: var(--accent-indigo-light);
   font-weight: 600;
 }
