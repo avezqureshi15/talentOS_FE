@@ -39,6 +39,7 @@ export const API_ENDPOINTS = {
   ADMIN_USERS_INVITES: "/admin/users/invites",
   ADMIN_USER_JOB_ASSIGNMENTS: "/admin/users/{user_id}/job-assignments",
   SETTINGS: "/settings",
+  SETTINGS_API_KEYS: "/settings/api-keys",
   SUPERADMIN_APPS: "/superadmin/apps",
   ADMIN_APPS: "/admin/apps",
   SUPERADMIN_TENANTS: "/superadmin/tenants",

@@ -1,7 +1,62 @@
 .base-modal.settings-modal {
-  width: 460px;
-  height: 260px;
-  overflow: visible;
+  width: min(900px, calc(100vw - 48px));
+  height: min(620px, calc(100vh - 96px));
+}
+
+.settings-modal__layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.settings-modal__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 200px;
+  flex-shrink: 0;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+}
+
+.settings-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.settings-sidebar-item i {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.settings-sidebar-item:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.settings-sidebar-item--active {
+  background: var(--primary-bg);
+  color: var(--primary-light);
+  font-weight: 600;
+}
+
+.settings-modal__content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
 }
 
 .settings-modal__body {
@@ -9,7 +64,10 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  flex: 1;
+}
+
+.settings-modal__body--api-keys {
+  gap: 0;
 }
 
 .settings-theme-row {
