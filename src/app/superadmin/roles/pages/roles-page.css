@@ -453,34 +453,74 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 7px 10px;
-  border: none;
+  padding: 5px 10px;
   border-radius: 6px;
+  transition: background 0.12s;
+  outline: none;
+}
+
+.rpe-toggle:hover {
+  background: var(--bg-hover);
+}
+
+.rpe-toggle:focus-within {
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+/* Switch button */
+.rpe-toggle-switch {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  padding: 2px;
+  cursor: pointer;
+  border-radius: 99px;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.rpe-toggle-switch:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Label + info button */
+.rpe-toggle-label-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  border: none;
   background: transparent;
   cursor: pointer;
   font-family: inherit;
   font-size: 12.5px;
   color: var(--text-muted);
   text-align: left;
-  transition: background 0.12s, color 0.12s;
+  transition: color 0.12s;
   outline: none;
+  padding: 2px 0;
 }
 
-.rpe-toggle:hover {
-  background: var(--bg-hover);
-  color: var(--text-secondary);
-}
-
-.rpe-toggle:focus-visible {
-  box-shadow: inset 0 0 0 1.5px var(--accent);
-}
-
-.rpe-toggle--on {
+.rpe-toggle--on .rpe-toggle-label-btn {
   color: var(--text-primary);
 }
 
-.rpe-toggle--on:hover {
+.rpe-toggle-label-btn:hover {
   color: var(--text-white);
+}
+
+.rpe-toggle-label-btn i {
+  font-size: 13px;
+  opacity: 0.45;
+  flex-shrink: 0;
+  transition: opacity 0.12s, color 0.12s;
+}
+
+.rpe-toggle-label-btn:hover i {
+  opacity: 1;
+  color: var(--accent);
 }
 
 /* Switch track */

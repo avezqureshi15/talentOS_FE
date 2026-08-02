@@ -1,5 +1,7 @@
+import { useState } from "react";
 import Button from "@/components/ui/button/button";
 import { ROLE_DISPLAY } from "@/constants/role-display";
+import PermissionDetailsPanel from "../permission-effects/permission-details-panel";
 import type { PermissionInfo } from "../pages/roles-page.types";
 
 type Props = {
@@ -40,6 +42,10 @@ export const RolePermissionEditor = ({
   saving,
   userCount,
 }: Props) => {
+  const [activeCode, setActiveCode] = useState<string | null>(null);
+
+  const activePermission =
+    permissions.find((p) => p.code === activeCode) ?? null;
   const permissionGroups = permissions.reduce<Record<string, PermissionInfo[]>>((acc, p) => {
     (acc[p.group] ??= []).push(p);
     return acc;
@@ -108,17 +114,31 @@ export const RolePermissionEditor = ({
               </div>
               <div className="rpe-group-items">
                 {items.map((p) => (
-                  <button
+                  <div
                     key={p.code}
-                    type="button"
                     className={`rpe-toggle${p.assigned ? " rpe-toggle--on" : ""}`}
-                    onClick={() => onToggle(p.code)}
                   >
-                    <span className="rpe-toggle-track">
-                      <span className="rpe-toggle-thumb" />
-                    </span>
-                    <span className="rpe-toggle-label">{p.name}</span>
-                  </button>
+                    <button
+                      type="button"
+                      className="rpe-toggle-switch"
+                      onClick={() => onToggle(p.code)}
+                      aria-pressed={p.assigned}
+                      title={p.assigned ? "Disable permission" : "Enable permission"}
+                    >
+                      <span className="rpe-toggle-track">
+                        <span className="rpe-toggle-thumb" />
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      className="rpe-toggle-label-btn"
+                      onClick={() => setActiveCode(p.code)}
+                      title={`What happens when "${p.name}" is disabled`}
+                    >
+                      <span className="rpe-toggle-label">{p.name}</span>
+                      <i className="bx bx-info-circle" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -135,6 +155,13 @@ export const RolePermissionEditor = ({
           {saving ? "Saving..." : "Save Changes"}
         </Button>
       </div>
+
+      <PermissionDetailsPanel
+        permission={activePermission}
+        assigned={activePermission?.assigned ?? false}
+        onClose={() => setActiveCode(null)}
+        onNavigate={(code) => setActiveCode(code)}
+      />
     </div>
   );
 };

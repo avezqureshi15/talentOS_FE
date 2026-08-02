@@ -13,6 +13,13 @@ const MODULES = [
   { group: "user", label: "Users", icon: "bx bx-group" },
 ];
 
+const ENDPOINT_MAX_CHARS = 45;
+
+const truncateEndpoint = (endpoint: string): string =>
+  endpoint.length > ENDPOINT_MAX_CHARS
+    ? `${endpoint.slice(0, ENDPOINT_MAX_CHARS)}...`
+    : endpoint;
+
 export default function AppPermissionEditor({
   appName,
   permissions,
@@ -86,7 +93,11 @@ export default function AppPermissionEditor({
                     </span>
                     <span className="rpe-toggle-label">
                       {p.name}
-                      {p.endpoint && <span className="rpe-toggle-endpoint">{p.endpoint}</span>}
+                      {p.endpoint && (
+                        <span className="rpe-toggle-endpoint" title={p.endpoint}>
+                          {truncateEndpoint(p.endpoint)}
+                        </span>
+                      )}
                     </span>
                   </button>
                 ))}
