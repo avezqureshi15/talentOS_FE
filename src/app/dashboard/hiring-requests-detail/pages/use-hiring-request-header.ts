@@ -7,8 +7,8 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { useExportExcel } from "@/app/dashboard/hiring-requests-detail/components/detail/use-export-excel";
 import {
   HEADER_VIEW_OPTIONS,
-  HEADER_EXPORT_LABEL, HEADER_EXPORT_ICON,
-  HEADER_IMPORT_LABEL, HEADER_IMPORT_ICON,
+  HEADER_EXPORT_LABEL, HEADER_EXPORT_ICON, HEADER_EXPORT_TOOLTIP,
+  HEADER_IMPORT_LABEL, HEADER_IMPORT_ICON, HEADER_IMPORT_TOOLTIP,
   HEADER_REFRESH_LABEL, HEADER_REFRESH_ICON, HEADER_EXPORT_FILENAME,
 } from "@/layouts/protected-layouts/components/header/header.constants";
 import type { HeaderBadge, HeaderConfig } from "@/store/header.store";
@@ -67,13 +67,14 @@ export function useHiringRequestHeader({
         label: HEADER_EXPORT_LABEL,
         icon: HEADER_EXPORT_ICON,
         iconPosition: "right",
+        tooltipLines: HEADER_EXPORT_TOOLTIP,
         onClick: handleExport,
         loading: isExporting,
         loadingText: EXPORT_LABELS.DOWNLOADING,
         error: exportError,
       },
       ...(canImport && onImport
-        ? [{ key: "import", label: HEADER_IMPORT_LABEL, icon: HEADER_IMPORT_ICON, variant: "primary" as const, onClick: onImport }]
+        ? [{ key: "import", label: HEADER_IMPORT_LABEL, icon: HEADER_IMPORT_ICON, variant: "primary" as const, tooltipLines: HEADER_IMPORT_TOOLTIP, onClick: onImport }]
         : []),
       { key: "refresh", label: HEADER_REFRESH_LABEL, icon: HEADER_REFRESH_ICON, variant: "primary", onClick: handleRefresh },
     ],

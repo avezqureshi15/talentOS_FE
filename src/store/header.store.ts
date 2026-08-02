@@ -37,6 +37,8 @@ export type HeaderActionConfig = {
   loading?: boolean;
   loadingText?: string;
   className?: string;
+  tooltipLines?: string[];
+  error?: string | null;
 };
 
 export type HeaderMetaItem = {

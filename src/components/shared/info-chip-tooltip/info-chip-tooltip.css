@@ -17,6 +17,26 @@
   width: 200px;
 }
 
+.info-chip-tooltip--below {
+  white-space: nowrap;
+  width: auto;
+  transform: translateX(-50%);
+}
+
+.info-chip-tooltip--below::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--border-default);
+}
+
+.info-chip-tooltip--below::before {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--bg-tertiary);
+}
+
 .info-chip-tip-title {
   font-weight: 600;
   margin-bottom: 4px;

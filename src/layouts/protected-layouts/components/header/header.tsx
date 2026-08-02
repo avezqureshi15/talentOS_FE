@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Button from "@/components/ui/button/button";
@@ -17,6 +17,7 @@ import { springSnap } from "@/utils/motion";
 import CandidateHeader from "./candidate-header";
 import TabDropdown from "./tab-dropdown";
 import JdDetailModal from "@/app/dashboard/hiring-requests-detail/components/modal/jd-detail-modal/jd-detail-modal";
+import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
 
 import "./header.css";
 import type {
@@ -36,6 +37,22 @@ const HeaderLeft: React.FC<HeaderLeftProps> = () => {
 const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   const config = useHeaderStore((s) => s.config);
   const { title, titleIcon, subtitle, meta, search, filters, viewSwitcher, actions, totalCount, badge, badges } = config;
+
+  const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect; className?: string } | null>(null);
+  const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showTooltip = useCallback((e: React.MouseEvent<HTMLElement>, lines: string[]) => {
+    if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current);
+    setTooltip({ lines, rect: e.currentTarget.getBoundingClientRect(), className: "info-chip-tooltip--below" });
+  }, []);
+
+  const hideTooltip = useCallback(() => {
+    tooltipTimerRef.current = setTimeout(() => setTooltip(null), 80);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current); };
+  }, []);
 
   const headerBadges = useMemo(
     () => badges ?? (badge ? [badge] : []),
@@ -165,20 +182,25 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
           <React.Fragment key={action.key}>
             {action.variant === "primary" ? (
               <motion.button
-                className={`jobs-add-btn${action.className ? ` ${action.className}` : ""}${action.disabled ? " jobs-add-btn--disabled" : ""}`}
+                className={`jobs-add-btn${action.className ? ` ${action.className}` : ""}${action.disabled ? " jobs-add-btn--disabled" : ""}${action.tooltipLines ? " jobs-add-btn--icon-only" : ""}`}
                 onClick={action.onClick}
                 disabled={action.disabled}
+                onMouseEnter={action.tooltipLines ? (e) => showTooltip(e, action.tooltipLines!) : undefined}
+                onMouseLeave={action.tooltipLines ? hideTooltip : undefined}
                 whileHover={action.disabled ? {} : { scale: 1.02 }}
                 whileTap={action.disabled ? {} : { scale: 0.97 }}
                 transition={springSnap}
               >
                 {action.icon && <i className={action.icon} />}
-                <span className="btn-label">{action.label}</span>
+                {!action.tooltipLines && <span className="btn-label">{action.label}</span>}
               </motion.button>
             ) : (
-              <div>
+              <div
+                onMouseEnter={action.tooltipLines ? (e) => showTooltip(e, action.tooltipLines!) : undefined}
+                onMouseLeave={action.tooltipLines ? hideTooltip : undefined}
+              >
               <Button
-                className={`jobs-export-btn${action.className ? ` ${action.className}` : ""}`}
+                className={`jobs-export-btn${action.className ? ` ${action.className}` : ""}${action.tooltipLines ? " jobs-export-btn--icon-only" : ""}`}
                 onClick={action.onClick}
                 disabled={action.disabled}
                 loading={action.loading}
@@ -186,7 +208,7 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
                 icon={action.icon}
                 iconPosition={action.iconPosition ?? "right"}
               >
-                <span className="btn-label">{action.label}</span>
+                {!action.tooltipLines && <span className="btn-label">{action.label}</span>}
               </Button>
               </div>
             )}
@@ -197,6 +219,8 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
       {config.hiringRequest && (
         <JdDetailModal open={jdModalOpen} onClose={() => setJdModalOpen(false)} hiringRequest={config.hiringRequest} />
       )}
+
+      {tooltip && <InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} className={tooltip.className} position="bottom" />}
     </div>
   );
 };

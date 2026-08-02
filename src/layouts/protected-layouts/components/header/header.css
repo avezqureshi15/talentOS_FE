@@ -538,6 +538,15 @@
   font-size: 15px !important;
 }
 
+/* icon-only header actions (export / import) with hover tooltip */
+.jobs-export-btn--icon-only {
+  padding: 0 9px !important;
+}
+
+.jobs-add-btn--icon-only {
+  padding: 0 9px;
+}
+
 /* ── Header Primary Action ── */
 
 .jobs-add-btn {
