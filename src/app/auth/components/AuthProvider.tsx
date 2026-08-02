@@ -99,21 +99,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(meData.user);
   }, []);
 
-  const signup = useCallback(async (email: string, password: string, fullName: string, orgName: string) => {
-    const { data } = await publicClient.post<{
-      access_token: string;
-      refresh_token: string;
-      expires_in: number;
-    }>(API_ENDPOINTS.AUTH_SIGNUP, { email, password, full_name: fullName, org_name: orgName });
-
-    storage.set(ACCESS_TOKEN_KEY, data.access_token);
-
-    const { data: meData } = await httpClient.get<{ user: User }>(API_ENDPOINTS.AUTH_ME);
-
-    storeAuth(data.access_token, data.refresh_token, meData.user);
-    setUser(meData.user);
-  }, []);
-
   const logout = useCallback(async () => {
     const refresh = storage.get(REFRESH_TOKEN_KEY);
     try {
@@ -124,7 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, loginWithEmail, signup, logout, getAccessToken }}>
+    <AuthContext.Provider value={{ user, isLoading, login, loginWithEmail, logout, getAccessToken }}>
       {children}
     </AuthContext.Provider>
   );

@@ -177,6 +177,7 @@ export const QUERY_KEYS = {
   AI_INTERVIEWS: "ai-interviews",
   AI_SCREENING: "ai-screening",
   AI_QUESTIONS: "ai-questions",
+  CALL_WINDOW: "call-window",
   JOB_TEAM: "job-team",
 } as const;
 

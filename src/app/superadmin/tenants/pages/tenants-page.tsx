@@ -17,6 +17,7 @@ export default function TenantsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
+  const [busyTenantId, setBusyTenantId] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editTenant, setEditTenant] = useState<Tenant | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Tenant | null>(null);
@@ -59,6 +60,7 @@ export default function TenantsPage() {
   const refresh = () => fetchTenants(page, search, statusFilter);
 
   const handleApprove = async (tenant: Tenant) => {
+    setBusyTenantId(tenant.id);
     try {
       await updateTenant(tenant.id, {
         verification_status: "approved",
@@ -66,10 +68,13 @@ export default function TenantsPage() {
       refresh();
     } catch {
       /* ignore */
+    } finally {
+      setBusyTenantId(null);
     }
   };
 
   const handleReject = async (tenant: Tenant) => {
+    setBusyTenantId(tenant.id);
     try {
       await updateTenant(tenant.id, {
         verification_status: "rejected",
@@ -77,6 +82,22 @@ export default function TenantsPage() {
       refresh();
     } catch {
       /* ignore */
+    } finally {
+      setBusyTenantId(null);
+    }
+  };
+
+  const handleReactivate = async (tenant: Tenant) => {
+    setBusyTenantId(tenant.id);
+    try {
+      await updateTenant(tenant.id, {
+        is_active: true,
+      });
+      refresh();
+    } catch {
+      /* ignore */
+    } finally {
+      setBusyTenantId(null);
     }
   };
 
@@ -146,10 +167,12 @@ export default function TenantsPage() {
         <TenantTable
           tenants={tenants}
           loading={loading}
+          busyTenantId={busyTenantId}
           onEdit={(t) => setEditTenant(t)}
-          onDelete={(t) => setDeleteTarget(t)}
+          onSuspend={(t) => setDeleteTarget(t)}
           onApprove={handleApprove}
           onReject={handleReject}
+          onReactivate={handleReactivate}
           onRowClick={(t) => navigate(`/superadmin/tenants/${t.id}`)}
         />
 

@@ -6,7 +6,6 @@ import { fetchRoundDetail } from "@/services/applications/applications";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import { toISTDisplay } from "@/utils/date";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
-import JobRoleStrip from "@/components/shared/job-role-strip/job-role-strip";
 import AiInterviewTemplate from "../components/ai-interview-template/ai-interview-template";
 import NormalRoundTemplate from "../components/normal-round-template/normal-round-template";
 import type { RoundDetailsParams, RoundDetailsMode } from "./round-details.types";
@@ -76,7 +75,6 @@ const RoundDetails = () => {
 
   return (
     <div className="rd-root">
-      {id && <JobRoleStrip hiringRequestId={id} />}
       <PageHeader {...headerConfig} />
 
       {isLoading && (

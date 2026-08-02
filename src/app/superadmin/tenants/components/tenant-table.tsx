@@ -1,4 +1,5 @@
 import DataTable from "@/components/ui/data-table/data-table";
+import TenantActionsMenu from "./tenant-actions-menu";
 import type { Tenant } from "@/app/superadmin/tenants/services/tenants.service";
 import type { TenantTableProps } from "./tenant-table.types";
 
@@ -11,10 +12,12 @@ const STATUS_CONFIG: Record<string, { badge: string; label: string }> = {
 export default function TenantTable({
   tenants,
   loading,
+  busyTenantId,
   onEdit,
-  onDelete,
+  onSuspend,
   onApprove,
   onReject,
+  onReactivate,
   onRowClick,
 }: TenantTableProps) {
   return (
@@ -51,23 +54,16 @@ export default function TenantTable({
           header: "Actions",
           className: "dt-cell-right",
           render: (t: Tenant) => (
-            <div className="dt-actions" onClick={(e) => e.stopPropagation()}>
-              {t.verification_status === "pending" && (
-                <>
-                  <button className="dt-btn dt-btn--success" onClick={() => onApprove(t)} title="Approve">
-                    <span className="bx bx-check-circle" />
-                  </button>
-                  <button className="dt-btn dt-btn--danger" onClick={() => onReject(t)} title="Reject">
-                    <span className="bx bx-x-circle" />
-                  </button>
-                </>
-              )}
-              <button className="dt-btn dt-btn--info" onClick={() => onEdit(t)} title="Edit">
-                <span className="bx bx-pencil" />
-              </button>
-              <button className="dt-btn dt-btn--warning" onClick={() => onDelete(t)} title="Suspend">
-                <span className="bx bx-trash-x" />
-              </button>
+            <div onClick={(e) => e.stopPropagation()}>
+              <TenantActionsMenu
+                tenant={t}
+                busy={busyTenantId === t.id}
+                onEdit={() => onEdit(t)}
+                onSuspend={() => onSuspend(t)}
+                onApprove={() => onApprove(t)}
+                onReject={() => onReject(t)}
+                onReactivate={() => onReactivate(t)}
+              />
             </div>
           ),
         },
@@ -76,7 +72,7 @@ export default function TenantTable({
       loading={loading}
       keyExtractor={(t) => t.id}
       emptyMessage="No tenants found"
-      gridTemplateColumns="40px 2fr 1fr 60px 1fr 1fr 128px"
+      gridTemplateColumns="40px 2fr 1fr 60px 1fr 1fr 60px"
       onRowClick={onRowClick}
     />
   );

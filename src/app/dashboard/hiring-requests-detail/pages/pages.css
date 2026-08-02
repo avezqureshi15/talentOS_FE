@@ -447,6 +447,40 @@
   padding: 0 24px;
 }
 
+.id-meta-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.id-meta-actions .gqb-wrap {
+  margin-top: 0;
+}
+
+.cw-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--button-primary-bg);
+  border-radius: 6px;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.cw-trigger-btn:hover {
+  background: var(--button-primary-hover);
+}
+
+.cw-trigger-btn i {
+  font-size: 14px;
+  color: var(--button-primary-text);
+}
+
 .id-meta-pill {
   display: inline-flex;
   align-items: center;

@@ -53,6 +53,7 @@ export const API_ENDPOINTS = {
   AI_MOVE_TO_INTERVIEW: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-interview",
   AI_QUESTIONS: "/hiring-requests/{hiring_request_id}/ai/questions",
   AI_QUESTIONS_GENERATE: "/hiring-requests/{hiring_request_id}/ai/questions/generate",
+  CALL_WINDOW: "/hiring-requests/{hiring_request_id}/call-window",
   AI_GENERATE: "/ai/generate",
   APPLICATION_ROUND_STATUS: "/applications/{candidate_id}/round-status",
   HIRING_REQUEST_EXPORT: "/hiring-requests/{hiring_request_id}/export",

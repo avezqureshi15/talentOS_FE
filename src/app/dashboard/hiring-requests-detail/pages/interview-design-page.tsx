@@ -10,6 +10,7 @@ import { useInterviewPlannerStore } from "@/store/interview-planner.store";
 import { useInterviewPlanData } from "@/app/dashboard/hiring-requests-detail/components/interview-design/hooks/use-interview-plan-data";
 import { InterviewDesignPlanner } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/interview-design-planner/interview-design-planner";
 import { GenerateQuestionsButton } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/generate-questions-button/generate-questions-button";
+import CallWindowModal from "@/app/dashboard/hiring-requests-detail/components/call-window/call-window-modal";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/constants/permissions";
 import type { HeaderActionConfig } from "@/store/header.store";
@@ -38,6 +39,7 @@ const InterviewDesignPage = () => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     () => new Set()
   );
+  const [callWindowOpen, setCallWindowOpen] = useState(false);
 
   const isEditing = useInterviewPlannerStore((s) => s.isEditing);
   const setEditing = useInterviewPlannerStore((s) => s.setEditing);
@@ -135,12 +137,24 @@ const InterviewDesignPage = () => {
               <Clock className="id-meta-pill-icon" />
               {activeTab === "interview" ? "AI INTERVIEW" : "AI SCREENING"} &middot; {totalMinutes} MIN &middot; {sections.length} SECTIONS
             </span>
-            {id && canEditPlan && (
-              <GenerateQuestionsButton
-                hiringRequestId={id}
-                kind={activeTab}
-                onGenerated={() => refetch()}
-              />
+            {id && (
+              <div className="id-meta-actions">
+                {canEditPlan && (
+                  <GenerateQuestionsButton
+                    hiringRequestId={id}
+                    kind={activeTab}
+                    onGenerated={() => refetch()}
+                  />
+                )}
+                <button
+                  type="button"
+                  className="cw-trigger-btn"
+                  onClick={() => setCallWindowOpen(true)}
+                >
+                  <i className="bx bx-alarm-alt" />
+                  <span>Call Window</span>
+                </button>
+              </div>
             )}
           </div>
 
@@ -287,6 +301,14 @@ const InterviewDesignPage = () => {
         </div>
         )}
       </ErrorBoundary>
+      {id && callWindowOpen && (
+        <CallWindowModal
+          open
+          onClose={() => setCallWindowOpen(false)}
+          hiringRequestId={id}
+          canEdit={canEditPlan}
+        />
+      )}
     </>
   );
 };

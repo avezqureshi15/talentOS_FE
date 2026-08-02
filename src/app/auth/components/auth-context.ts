@@ -18,7 +18,6 @@ export type AuthContextValue = {
   isLoading: boolean;
   login: (credential: string) => Promise<void>;
   loginWithEmail: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, fullName: string, orgName: string) => Promise<void>;
   logout: () => Promise<void>;
   getAccessToken: () => string | null;
 };
