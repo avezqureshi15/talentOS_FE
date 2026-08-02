@@ -62,11 +62,13 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   );
   const navigate = useNavigate();
   const location = useLocation();
-  const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));
+  const isTabRoute =
+    HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`)) ||
+    location.pathname.endsWith("/archived");
   const isPaletteRoute = isCommandPaletteRoute(location.pathname);
   const [jdModalOpen, setJdModalOpen] = useState(false);
 
-  const MORE_MENU_KEYS = ["import", "export"];
+  const MORE_MENU_KEYS = ["import", "export", "archive"];
   const overflowActions = actions?.filter((a) => MORE_MENU_KEYS.includes(a.key)) ?? [];
   const inlineActions = actions?.filter((a) => !MORE_MENU_KEYS.includes(a.key)) ?? [];
 

@@ -16,6 +16,7 @@ import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import BulkScheduleModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-schedule-modal";
 import BulkRemarksModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-remarks-modal";
+import BulkArchiveModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-archive-modal";
 import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
@@ -70,14 +71,15 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     "resume-shortlisting": { screening: true, interview: true },
     "screening": { screening: false, interview: true },
   };
-  const showBulkSelection = activeStage in BULK_STAGE_ACTIONS;
-  const { screening: showBulkScreening, interview: showBulkInterview } = BULK_STAGE_ACTIONS[activeStage] ?? { screening: false, interview: false };
   const { can } = usePermissions();
   const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
+  const showBulkSelection = canWorkflow;
+  const { screening: showBulkScreening, interview: showBulkInterview } = BULK_STAGE_ACTIONS[activeStage] ?? { screening: false, interview: false };
   const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection);
   const [timelineId, setTimelineId] = useState<number | null>(null);
   const [pendingBulkAction, setPendingBulkAction] = useState<"screening" | "interview" | null>(null);
   const [pendingBulkRemarks, setPendingBulkRemarks] = useState<"screening" | "interview" | null>(null);
+  const [pendingArchive, setPendingArchive] = useState(false);
   const [selectionStage, setSelectionStage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -218,6 +220,17 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     {" "}Move to AI Interview
                   </button>
                 )}
+                {canWorkflow && (
+                  <button
+                    className="btn screen-btn compact bulk-archive-btn"
+                    onClick={() => setPendingArchive(true)}
+                    disabled={bulkSelection.isBulkProcessing}
+                    type="button"
+                  >
+                    {bulkSelection.isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-archive" />}
+                    {" "}Archive
+                  </button>
+                )}
                 <button
                   className="bulk-action-clear"
                   onClick={bulkSelection.clearSelection}
@@ -340,6 +353,15 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           onClose={() => setPendingBulkRemarks(null)}
           onConfirm={handleBulkRemarksConfirm}
           title={pendingBulkRemarks === "screening" ? "HR Remarks — Move to AI Screening" : "HR Remarks — Move to AI Interview"}
+        />
+        <BulkArchiveModal
+          open={pendingArchive}
+          count={bulkSelection.selectionCount}
+          onClose={() => setPendingArchive(false)}
+          onConfirm={() => {
+            setPendingArchive(false);
+            bulkSelection.handleBulkArchive(true);
+          }}
         />
         <BulkScheduleModal
           open={pendingBulkAction !== null}

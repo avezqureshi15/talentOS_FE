@@ -1,0 +1,46 @@
+.bam-body {
+  padding: 20px;
+  min-width: 360px;
+  max-width: 420px;
+}
+
+.bam-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--text-primary, #1f2937);
+}
+
+.bam-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary, #6b7280);
+  margin: 0 0 20px;
+}
+
+.bam-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.bam-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s ease;
+}
+
+.bam-btn--cancel {
+  background: transparent;
+  border-color: var(--border-color, #e5e7eb);
+  color: var(--text-secondary, #6b7280);
+}
+
+.bam-btn--confirm {
+  background: var(--accent-danger, #ef4444);
+  color: #fff;
+}

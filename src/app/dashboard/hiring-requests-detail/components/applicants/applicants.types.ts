@@ -99,6 +99,7 @@ export type Applicant = {
   howDidYouHear?: string;
   scheduled?: boolean;
   willingToRelocate?: boolean;
+  archived?: boolean;
   currentRoundId?: string;
   finalVerdict?: string;
   reviews?: Record<string, unknown>;

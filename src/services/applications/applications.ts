@@ -47,6 +47,7 @@ export const fetchApplicationsPaginated = async (
   rejectReason?: string,
   stage?: string,
   candidateType?: string,
+  archived?: boolean,
 ): Promise<PaginatedEvaluatedCandidatesResponse> => {
   const params: Record<string, string> = {};
   if (jobId) params.job_id = jobId;
@@ -64,6 +65,7 @@ export const fetchApplicationsPaginated = async (
   if (rejectReason) params.reject_reason = rejectReason;
   if (stage) params.stage = stage;
   if (candidateType) params.candidate_type = candidateType;
+  if (archived !== undefined) params.archived = String(archived);
   const { data } = await httpClient.get<PaginatedEvaluatedCandidatesResponse>(
     API_ENDPOINTS.APPLICATIONS,
     { params },
@@ -106,6 +108,26 @@ export const updateCandidateRoundStatus = async (
 ): Promise<UpdateCandidateRoundStatusResponse> => {
   const { data } = await httpClient.patch<UpdateCandidateRoundStatusResponse>(
     API_ENDPOINTS.APPLICATION_ROUND_STATUS.replace("{candidate_id}", String(candidateId)),
+    payload,
+  );
+  return data;
+};
+
+export type UpdateCandidateArchivePayload = {
+  archived: boolean;
+};
+
+export type UpdateCandidateArchiveResponse = {
+  success: boolean;
+  archived: boolean;
+};
+
+export const updateCandidateArchive = async (
+  candidateId: number,
+  payload: UpdateCandidateArchivePayload,
+): Promise<UpdateCandidateArchiveResponse> => {
+  const { data } = await httpClient.patch<UpdateCandidateArchiveResponse>(
+    API_ENDPOINTS.APPLICATION_ARCHIVE.replace("{candidate_id}", String(candidateId)),
     payload,
   );
   return data;

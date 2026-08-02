@@ -21,4 +21,8 @@ export const HEADER_IMPORT_FILENAME = "candidates_template.xlsx";
 export const HEADER_REFRESH_LABEL = "Refresh";
 export const HEADER_REFRESH_ICON = "bx bx-refresh-cw-alt";
 
+export const HEADER_ARCHIVE_LABEL = "Archived Candidates";
+export const HEADER_ARCHIVE_ICON = "bx bx-trash-x";
+export const HEADER_ARCHIVE_TOOLTIP = ["Archived candidates", "View candidates archived from any stage and restore them if needed."];
+
 export const HEADER_EXPORT_FILENAME = "Hiring Request";

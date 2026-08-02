@@ -14,6 +14,7 @@ import ProctoringPage from "@/app/dashboard/hiring-requests-detail/pages/proctor
 import EmailManagerPage from "@/app/dashboard/hiring-requests-detail/pages/email-manager-page";
 import TeamMembersPage from "@/app/dashboard/hiring-requests-detail/pages/team-members-page";
 import DecisionBoardPage from "@/app/dashboard/hiring-requests-detail/pages/decision-board-page";
+import ArchivedCandidatesPage from "@/app/dashboard/hiring-requests-detail/pages/archived-candidates-page";
 import RoundDetails from "@/app/dashboard/round-details/pages/round-details";
 import SlotBooking from "@/app/slot-booking/pages/slot-booking";
 import AiInterviewTest from "@/app/dev/ai-interview-test/ai-interview-test";
@@ -75,6 +76,7 @@ export const router = createBrowserRouter([
               { path: "email-manager", element: <EmailManagerPage /> },
               { path: "team-members", element: <TeamMembersPage /> },
               { path: "board", element: <DecisionBoardPage /> },
+              { path: "archived", element: <ArchivedCandidatesPage /> },
             ],
           },
         ],

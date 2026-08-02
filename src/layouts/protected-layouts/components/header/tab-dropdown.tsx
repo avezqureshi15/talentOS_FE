@@ -17,7 +17,9 @@ const TabDropdown = ({ totalCount }: TabDropdownProps) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  const currentTab = HIRING_TABS.find((t) => location.pathname.endsWith(`/${t}`));
+  const currentTab =
+    HIRING_TABS.find((t) => location.pathname.endsWith(`/${t}`)) ??
+    (location.pathname.endsWith("/archived") ? "applications" : undefined);
   const currentIndex = currentTab !== undefined ? HIRING_TABS.indexOf(currentTab) : -1;
 
   // justification: closes the dropdown when clicking outside

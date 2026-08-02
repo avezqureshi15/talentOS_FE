@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useMoveToScreening } from "@/hooks/use-move-to-screening";
 import { useMoveToInterview } from "@/hooks/use-move-to-interview";
 import { updateReviewByRound } from "@/services/reviews/reviews";
+import { updateCandidateArchive } from "@/services/applications/applications";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
@@ -126,6 +127,31 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
     );
   }, [data, selectedIds]);
 
+  const handleBulkArchive = useCallback(async (archived: boolean) => {
+    const candidates = data.filter((a) => selectedIds.has(a.id));
+    if (candidates.length === 0) return;
+    setIsBulkProcessing(true);
+    const verb = archived ? "archived" : "restored";
+    const results = await Promise.allSettled(
+      candidates.map(async (a) => {
+        try {
+          await updateCandidateArchive(a.candidateId, { archived });
+          useToastStore.getState().addToast(`${a.name} ${verb}`, ToastType.SUCCESS);
+        } catch {
+          useToastStore.getState().addToast(`Failed to ${verb} ${a.name}`, ToastType.ERROR);
+        }
+      }),
+    );
+    const succeeded = results.filter((r) => r.status === "fulfilled").length;
+    const failed = results.filter((r) => r.status === "rejected").length;
+    if (failed > 0) {
+      useToastStore.getState().addToast(`${succeeded} ${verb}, ${failed} failed`, ToastType.WARNING);
+    }
+    setSelectedIds(new Set());
+    setIsBulkProcessing(false);
+    onRefresh?.();
+  }, [data, selectedIds, onRefresh]);
+
   return {
     selectedIds,
     isBulkProcessing,
@@ -138,5 +164,6 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
     handleSubmitRemarks,
     handleBulkMoveToScreening,
     handleBulkMoveToInterview,
+    handleBulkArchive,
   };
 }

@@ -26,13 +26,15 @@ export const useApplicationsData = (
   maxScore?: number,
   stage?: string,
   rejectReason?: string,
+  archived?: boolean,
+  excludeFinalized: boolean = true,
 ): UseApplicationsDataResult => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSizeState] = useState<number>(PAGINATION.APPLICATIONS_PER_PAGE);
   const roundVerdict = filter === "all" || filter === "referral" ? undefined : filter;
   const candidateType = filter === "referral" ? "REFERRAL" : undefined;
 
-  const depsKey = `${jobId}|${roundVerdict}|${candidateType}|${minScore}|${maxScore}|${stage}|${pageSize}|${rejectReason}`;
+  const depsKey = `${jobId}|${roundVerdict}|${candidateType}|${minScore}|${maxScore}|${stage}|${pageSize}|${rejectReason}|${archived}|${excludeFinalized}`;
   const [prevDepsKey, setPrevDepsKey] = useState(depsKey);
   if (depsKey !== prevDepsKey) {
     setPrevDepsKey(depsKey);
@@ -42,7 +44,7 @@ export const useApplicationsData = (
   const offset = (page - 1) * pageSize;
 
   const query = useQuery({
-    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, roundVerdict, candidateType, minScore, maxScore, page, pageSize, stage, rejectReason],
+    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, roundVerdict, candidateType, minScore, maxScore, page, pageSize, stage, rejectReason, archived, excludeFinalized],
     queryFn: () =>
       fetchApplicationsPaginated(
         jobId,
@@ -55,11 +57,12 @@ export const useApplicationsData = (
         offset,
         undefined,
         undefined,
-        "false",
+        excludeFinalized ? "false" : undefined,
         roundVerdict,
         rejectReason,
         stage,
         candidateType,
+        archived,
       ),
     enabled,
     staleTime: 30_000,
@@ -150,6 +153,7 @@ function mapCandidate(app: {
   linkedin_url: string | null;
   scheduled?: boolean;
   willing_to_relocate?: boolean;
+  archived?: boolean;
   current_round_id?: string;
   final_verdict?: string;
   status?: string | null;
@@ -178,6 +182,7 @@ function mapCandidate(app: {
     currentCompany: "",
     linkedinUrl: app.linkedin_url ?? "",
     scheduled: app.scheduled ?? false,
+    archived: app.archived ?? false,
     cvUrl: app.resume_url ?? "",
     status: (app.status?.toLowerCase() as Applicant["status"]) ?? "new",
     stage: app.stage ?? undefined,

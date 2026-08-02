@@ -10,6 +10,7 @@ import {
   HEADER_EXPORT_LABEL, HEADER_EXPORT_ICON, HEADER_EXPORT_TOOLTIP,
   HEADER_IMPORT_LABEL, HEADER_IMPORT_ICON, HEADER_IMPORT_TOOLTIP,
   HEADER_REFRESH_LABEL, HEADER_REFRESH_ICON, HEADER_EXPORT_FILENAME,
+  HEADER_ARCHIVE_LABEL, HEADER_ARCHIVE_ICON, HEADER_ARCHIVE_TOOLTIP,
 } from "@/layouts/protected-layouts/components/header/header.constants";
 import type { HeaderBadge, HeaderConfig } from "@/store/header.store";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
@@ -22,6 +23,7 @@ type UseHiringRequestHeaderOptions = {
   badge?: HeaderBadge;
   badges?: HeaderBadge[];
   onImport?: () => void;
+  onArchived?: () => void;
 };
 
 export function useHiringRequestHeader({
@@ -32,6 +34,7 @@ export function useHiringRequestHeader({
   badge,
   badges,
   onImport,
+  onArchived,
 }: UseHiringRequestHeaderOptions): HeaderConfig {
   const { can } = usePermissions();
   const canImport = can(PERMISSIONS.APPLICATION_WORKFLOW);
@@ -76,9 +79,12 @@ export function useHiringRequestHeader({
       ...(canImport && onImport
         ? [{ key: "import", label: HEADER_IMPORT_LABEL, icon: HEADER_IMPORT_ICON, variant: "primary" as const, tooltipLines: HEADER_IMPORT_TOOLTIP, onClick: onImport }]
         : []),
+      ...(canImport && onArchived
+        ? [{ key: "archive", label: HEADER_ARCHIVE_LABEL, icon: HEADER_ARCHIVE_ICON, variant: "primary" as const, tooltipLines: HEADER_ARCHIVE_TOOLTIP, onClick: onArchived }]
+        : []),
       { key: "refresh", label: HEADER_REFRESH_LABEL, icon: HEADER_REFRESH_ICON, variant: "primary", onClick: handleRefresh },
     ],
     badge,
     badges,
-  }), [totalCount, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, badges, canImport, onImport]);
+  }), [totalCount, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, badges, canImport, onImport, onArchived]);
 }

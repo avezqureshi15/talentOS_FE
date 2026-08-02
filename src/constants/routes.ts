@@ -10,6 +10,7 @@ export const ROUTES = {
   HIRING_EMAIL_MANAGER: "/hiring-requests/:id/email-manager",
   HIRING_TEAM_MEMBERS: "/hiring-requests/:id/team-members",
   HIRING_BOARD: "/hiring-requests/:id/board",
+  HIRING_ARCHIVED: "/hiring-requests/:id/archived",
   BOOK_SLOT: "/book-slot",
   BOOK_SLOT_ID: "/book-slot/:formId",
   RATE_CANDIDATE: "/rate-candidate",

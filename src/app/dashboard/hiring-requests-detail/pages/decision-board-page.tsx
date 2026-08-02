@@ -14,6 +14,7 @@ const DecisionBoardPage = () => {
     id,
     data,
     activeView: "board",
+    onArchived: () => navigate(`/hiring-requests/${id}/archived`),
     onViewChange: (key: string) => {
       if (key === "pipeline") navigate(`/hiring-requests/${id}/applications`);
     },
