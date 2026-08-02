@@ -183,14 +183,9 @@
   flex-shrink: 0;
 }
 
-.am-role--job_owner {
-  background: var(--success-glow);
-  color: var(--success);
-}
-
-.am-role--reviewer {
-  background: var(--warning-glow);
-  color: var(--warning);
+.am-role--member {
+  background: var(--accent-glow);
+  color: var(--accent);
 }
 
 .am-role--none {

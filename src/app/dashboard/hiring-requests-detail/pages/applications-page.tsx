@@ -20,9 +20,7 @@ const ApplicationsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { label, icon, tooltip, resolved } = useJobRoleStrip(id ?? "");
-<<<<<<< Updated upstream
   const [isImportOpen, setIsImportOpen] = useState(false);
-=======
   const { can } = usePermissions();
   const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
 
@@ -44,18 +42,13 @@ const ApplicationsPage = () => {
           icon: "bx bxs-lock-alt",
           tooltip: APPLICATIONS_ACCESS_TOOLTIPS.LIMITED,
         }];
->>>>>>> Stashed changes
 
   const headerConfig = useHiringRequestHeader({
     id,
     data,
     activeView: HEADER_DEFAULT_VIEW,
-<<<<<<< Updated upstream
-    badge: resolved && label !== null ? { label, icon: icon || undefined, tooltip: tooltip ?? undefined } : undefined,
-    onImport: () => setIsImportOpen(true),
-=======
     badges,
->>>>>>> Stashed changes
+    onImport: () => setIsImportOpen(true),
     onViewChange: (key: string) => {
       if (key === "board") navigate(`/hiring-requests/${id}/board`);
     },

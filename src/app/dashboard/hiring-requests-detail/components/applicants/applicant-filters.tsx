@@ -15,7 +15,7 @@ const ApplicantFilters = ({ filter, onFilterChange, scoreFilter, onScoreFilterCh
 
   const handleStatusFilterChange = (value: string) => {
     onFilterChange(value);
-    if (value === "selected") {
+    if (value === "selected" || value === "referral") {
       onRejectReasonChange("");
     }
   };

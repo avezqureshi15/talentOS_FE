@@ -14,9 +14,17 @@ import {
 import AddTeamMemberModal from "@/app/dashboard/hiring-requests-detail/components/team-members/add-team-member-modal";
 import DataTable from "@/components/ui/data-table/data-table";
 import { TEAM_MEMBERS_LABELS } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.constants";
-import { JOB_ROLE_LABELS } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.types";
+import { ROLE_DISPLAY } from "@/constants/role-display";
 import type { JobTeamMember } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.types";
 import "./pages.css";
+
+const TEAM_MEMBERS_ROLE_VARIANTS: Record<string, string> = {
+  job_owner: "job_owner",
+  recruiter: "recruiter",
+  reviewer: "reviewer",
+  account_admin: "admin",
+  superadmin: "admin",
+};
 
 const TeamMembersPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,8 +40,7 @@ const TeamMembersPage = () => {
 
   const members = team?.data ?? [];
   const busy = updateMutation.isPending || removeMutation.isPending;
-  const isJobOwner = members.some((m) => m.user_id === user?.id && m.role === "job_owner");
-  const manageable = can(PERMISSIONS.JOB_TEAM_MANAGE) || isJobOwner;
+  const manageable = can(PERMISSIONS.JOB_TEAM_MANAGE);
   const canAssignOwners = user?.role === "account_admin" || user?.role === "superadmin";
 
   const teamGridTemplate = manageable ? "2fr 1fr 110px" : "2fr 1fr";
@@ -54,8 +61,8 @@ const TeamMembersPage = () => {
     {
       header: TEAM_MEMBERS_LABELS.ROLE_TITLE,
       render: (m: JobTeamMember) => (
-        <span className={`tm-role-badge tm-role-badge--${m.role}`}>
-          {JOB_ROLE_LABELS[m.role]}
+        <span className={`tm-role-badge tm-role-badge--${TEAM_MEMBERS_ROLE_VARIANTS[m.role] ?? ""}`}>
+          {ROLE_DISPLAY[m.role]?.label ?? m.role}
         </span>
       ),
     },

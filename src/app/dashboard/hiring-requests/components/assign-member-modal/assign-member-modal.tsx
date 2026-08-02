@@ -10,11 +10,6 @@ import {
   useAddTeamMember,
   useJobTeam,
 } from "@/app/dashboard/hiring-requests-detail/components/team-members/use-team-members";
-import {
-  JOB_ROLES,
-  JOB_ROLE_LABELS,
-  type JobRole,
-} from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.types";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
 import { ASSIGN_MEMBER_MODAL } from "./assign-member-modal.constants";
 import "./assign-member-modal.css";
@@ -33,19 +28,12 @@ export default function AssignMemberModal({ job, onClose }: Props) {
   const [users, setUsers] = useState<UserItem[]>([]);
   const [usersStatus, setUsersStatus] = useState<"idle" | "loading" | "ready">("idle");
   const [selected, setSelected] = useState<number[]>([]);
-  const [role, setRole] = useState<JobRole>("recruiter");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  const canAssignOwners = user?.role === "account_admin" || user?.role === "superadmin";
-  const roleOptions = canAssignOwners ? JOB_ROLES : JOB_ROLES.filter((r) => r !== "job_owner");
   const loadingUsers = usersStatus === "loading";
 
-  const roleByUser = useMemo(() => {
-    const map = new Map<number, JobRole>();
-    for (const m of team?.data ?? []) map.set(m.user_id, m.role);
-    return map;
-  }, [team]);
+  const memberIds = useMemo(() => new Set(team?.data.map((m) => m.user_id) ?? []), [team]);
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
@@ -89,8 +77,7 @@ export default function AssignMemberModal({ job, onClose }: Props) {
       try {
         await addMutation.mutateAsync({
           user_id: userId,
-          role,
-          is_owner: role === "job_owner",
+          is_owner: false,
         });
       } catch {
         failed += 1;
@@ -134,20 +121,6 @@ export default function AssignMemberModal({ job, onClose }: Props) {
               placeholder={ASSIGN_MEMBER_MODAL.SEARCH_PLACEHOLDER}
             />
           </div>
-          <div className="am-field">
-            <label className="am-label">{ASSIGN_MEMBER_MODAL.ROLE_LABEL}</label>
-            <select
-              className="am-input"
-              value={role}
-              onChange={(e) => setRole(e.target.value as JobRole)}
-            >
-              {roleOptions.map((r) => (
-                <option key={r} value={r}>
-                  {JOB_ROLE_LABELS[r]}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
         {loadingUsers && <p className="am-hint">{ASSIGN_MEMBER_MODAL.LOADING}</p>}
@@ -157,8 +130,8 @@ export default function AssignMemberModal({ job, onClose }: Props) {
 
         <div className="am-list">
           {candidates.map((u) => {
-            const currentRole = roleByUser.get(u.id);
-            const disabled = !!currentRole;
+            const isMember = memberIds.has(u.id);
+            const disabled = isMember;
             return (
               <div
                 key={u.id}
@@ -181,10 +154,8 @@ export default function AssignMemberModal({ job, onClose }: Props) {
                   </span>
                   <span className="am-email">{u.email}</span>
                 </span>
-                {currentRole ? (
-                  <span className={`am-role am-role--${currentRole}`}>
-                    {JOB_ROLE_LABELS[currentRole]}
-                  </span>
+                {isMember ? (
+                  <span className="am-role am-role--member">{ASSIGN_MEMBER_MODAL.ON_TEAM}</span>
                 ) : (
                   <span className="am-role am-role--none">{ASSIGN_MEMBER_MODAL.NOT_ASSIGNED}</span>
                 )}

@@ -309,51 +309,6 @@
   width: 100%;
 }
 
-.create-hr-assign-seg {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 4px;
-}
-
-.create-hr-assign-seg-label {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.create-hr-seg {
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  border-radius: 999px;
-  background: var(--chr-seg-track);
-  border: 1px solid var(--chr-border);
-}
-
-.create-hr-seg-pill {
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 6px 16px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.create-hr-seg-pill:hover {
-  color: var(--text-primary);
-}
-
-.create-hr-seg-pill--active {
-  background: var(--chr-seg-active-bg);
-  color: var(--chr-seg-active-text);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
-}
-
 .create-hr-user-row {
   display: flex;
   align-items: center;
@@ -513,12 +468,6 @@
   background: var(--chr-badge-bg);
   color: var(--chr-badge-text);
   white-space: nowrap;
-}
-
-.create-hr-role-badge--reviewer {
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--chr-border-strong);
 }
 
 .create-hr-assign-remove {

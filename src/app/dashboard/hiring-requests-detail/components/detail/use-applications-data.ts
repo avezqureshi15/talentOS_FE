@@ -29,9 +29,10 @@ export const useApplicationsData = (
 ): UseApplicationsDataResult => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSizeState] = useState<number>(PAGINATION.APPLICATIONS_PER_PAGE);
-  const roundVerdict = filter === "all" ? undefined : filter;
+  const roundVerdict = filter === "all" || filter === "referral" ? undefined : filter;
+  const candidateType = filter === "referral" ? "REFERRAL" : undefined;
 
-  const depsKey = `${jobId}|${roundVerdict}|${minScore}|${maxScore}|${stage}|${pageSize}|${rejectReason}`;
+  const depsKey = `${jobId}|${roundVerdict}|${candidateType}|${minScore}|${maxScore}|${stage}|${pageSize}|${rejectReason}`;
   const [prevDepsKey, setPrevDepsKey] = useState(depsKey);
   if (depsKey !== prevDepsKey) {
     setPrevDepsKey(depsKey);
@@ -41,7 +42,7 @@ export const useApplicationsData = (
   const offset = (page - 1) * pageSize;
 
   const query = useQuery({
-    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, roundVerdict, minScore, maxScore, page, pageSize, stage, rejectReason],
+    queryKey: [QUERY_KEYS.APPLICATIONS, jobId, roundVerdict, candidateType, minScore, maxScore, page, pageSize, stage, rejectReason],
     queryFn: () =>
       fetchApplicationsPaginated(
         jobId,
@@ -58,6 +59,7 @@ export const useApplicationsData = (
         roundVerdict,
         rejectReason,
         stage,
+        candidateType,
       ),
     enabled,
     staleTime: 30_000,
@@ -134,6 +136,7 @@ function mapCandidate(app: {
   name: string | null;
   email: string | null;
   phone: string | null;
+  candidate_type: string | null;
   cover_letter: string | null;
   resume_url: string | null;
   summary_md: string | null;
@@ -167,6 +170,7 @@ function mapCandidate(app: {
     name: app.name ?? "",
     email: app.email ?? "",
     phone: app.phone ?? "",
+    candidateType: app.candidate_type ?? undefined,
     coverLetter: app.cover_letter ?? "",
     aiSummary: app.summary_md ?? undefined,
     experienceYears: 0,

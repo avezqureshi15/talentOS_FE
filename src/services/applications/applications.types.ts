@@ -5,6 +5,7 @@ export type EvaluatedCandidate = {
   name: string | null;
   email: string | null;
   phone: string | null;
+  candidate_type: string | null;
   cover_letter: string | null;
   resume_url: string | null;
   status: string | null;

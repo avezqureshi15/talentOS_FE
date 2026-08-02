@@ -1,5 +1,3 @@
-import type { JobRole } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.types";
-
 export const JOB_ROLE_STRIP_LABELS = {
   ACCESS_TEXT: (role: string) => `You have ${role} access on this Job`,
   FULL_ACCESS_TEXT: "You have full access to this Job",
@@ -11,10 +9,10 @@ export const ACCESS_BADGE_LABELS = {
   ROLE_ACCESS: (role: string) => `${role} Access`,
 } as const;
 
-export const ROLE_ACCESS_TOOLTIPS: Record<JobRole, string> = {
-  reviewer: "You have view & review permissions for this job listing.",
-  recruiter: "You have manage & shortlist permissions for this job listing.",
-  job_owner: "You own this job listing and can manage its team.",
+export const ROLE_ACCESS_TOOLTIPS: Record<string, string> = {
+  reviewer: "You have view & review permissions across your jobs.",
+  recruiter: "You have manage & shortlist permissions across your jobs.",
+  job_owner: "You can manage jobs and their teams.",
 };
 
 export const FULL_ACCESS_TOOLTIP = "You have full access to this job listing.";

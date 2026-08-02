@@ -2,17 +2,9 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import DataTable from "@/components/ui/data-table/data-table";
-import { useToastStore } from "@/store/toast.store";
-import { ToastType } from "@/components/ui/toast/toast.types";
 import { ROLE_DISPLAY } from "@/constants/role-display";
 import {
-  JOB_ROLE_LABELS,
-  JOB_ROLES,
-  type JobRole,
-} from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.types";
-import {
   getUserJobAssignments,
-  updateUserJobRole,
   type UserJobAssignment,
   type UserJobAssignments,
 } from "@/app/admin/users/services/users-admin.service";
@@ -25,17 +17,13 @@ const USER_JOBS_LABELS = {
   STATUS: "Status",
   JOB_ASSIGNMENTS: "Job Assignments",
   JOB_TITLE: "Job",
-  ROLE_TITLE: "Current Role",
   ASSIGNED_ON: "Assigned On",
-  ASSIGNED_ACTION: "Change Role",
   EMPTY_TITLE: "Not assigned to any job",
   EMPTY_SUBTITLE: "This user is not part of any hiring request team yet.",
   LOAD_FAILED: "Failed to load job assignments. Please try again.",
-  UPDATE_SUCCESS: (role: string) => `Role updated to ${role}`,
-  UPDATE_FAILED: "Failed to update role",
 } as const;
 
-const USER_JOBS_GRID = "40px 2fr 1fr 1fr 1fr";
+const USER_JOBS_GRID = "40px 2fr 1fr";
 
 export default function UserJobsPage() {
   const { userId } = useParams<{ userId: string }>();
@@ -46,18 +34,6 @@ export default function UserJobsPage() {
   const [data, setData] = useState<UserJobAssignments | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-  const [saving, setSaving] = useState<string | null>(null);
-
-  const loadAssignments = () => {
-    if (!userId) return;
-    getUserJobAssignments(Number(userId), tenantId)
-      .then(({ data: res }) => {
-        setData(res);
-        setLoadError(false);
-      })
-      .catch(() => setLoadError(true))
-      .finally(() => setLoading(false));
-  };
 
   useEffect(() => {
     if (!userId) return;
@@ -80,22 +56,6 @@ export default function UserJobsPage() {
     };
   }, [userId, tenantId]);
 
-  const handleRoleChange = async (assignment: UserJobAssignment, role: string) => {
-    if (role === assignment.role || !userId) return;
-    setSaving(assignment.hiring_request_id);
-    try {
-      await updateUserJobRole(assignment.hiring_request_id, Number(userId), { role });
-      useToastStore.getState().addToast(
-        USER_JOBS_LABELS.UPDATE_SUCCESS(JOB_ROLE_LABELS[role as JobRole]),
-        ToastType.SUCCESS
-      );
-      loadAssignments();
-    } catch {
-      useToastStore.getState().addToast(USER_JOBS_LABELS.UPDATE_FAILED, ToastType.ERROR);
-    }
-    setSaving(null);
-  };
-
   const assignments = data?.data ?? [];
   const globalRole = data ? ROLE_DISPLAY[data.role] : undefined;
 
@@ -115,34 +75,9 @@ export default function UserJobsPage() {
       ),
     },
     {
-      header: USER_JOBS_LABELS.ROLE_TITLE,
-      render: (a: UserJobAssignment) => (
-        <span className={`ujp-role-badge ujp-role-badge--${a.role}`}>
-          {JOB_ROLE_LABELS[a.role as JobRole]}
-        </span>
-      ),
-    },
-    {
       header: USER_JOBS_LABELS.ASSIGNED_ON,
       render: (a: UserJobAssignment) => (
         <span className="ujp-date">{new Date(a.created_at).toLocaleDateString()}</span>
-      ),
-    },
-    {
-      header: USER_JOBS_LABELS.ASSIGNED_ACTION,
-      render: (a: UserJobAssignment) => (
-        <select
-          className="ujp-role-select"
-          value={a.role}
-          disabled={saving === a.hiring_request_id}
-          onChange={(e) => handleRoleChange(a, e.target.value)}
-        >
-          {JOB_ROLES.map((r) => (
-            <option key={r} value={r}>
-              {JOB_ROLE_LABELS[r]}
-            </option>
-          ))}
-        </select>
       ),
     },
   ];

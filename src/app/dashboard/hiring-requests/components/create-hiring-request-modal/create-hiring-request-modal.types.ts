@@ -1,6 +1,5 @@
 import type { HiringRequestCreatePayload } from "@/services/hiring-requests/hiring-requests.types";
 import type { UserItem } from "@/services/users/users";
-import type { JobRole } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.types";
 
 export type CreateHiringRequestFormValues = {
   title: string;
@@ -30,7 +29,6 @@ export type AssignMode = "assign" | "skip" | null;
 
 export type TeamAssignment = {
   user: UserItem;
-  role: JobRole;
 };
 
 export type { HiringRequestCreatePayload };

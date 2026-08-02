@@ -19,6 +19,7 @@ export const SCORE_FILTERS = [
 export const ROUND_VERDICT_FILTERS = [
   { value: "all", label: "All Candidates" },
   { value: "selected", label: "Shortlisted" },
+  { value: "referral", label: "Referral" },
 ] as const;
 
 export const REJECT_FILTER_OPTIONS = [

@@ -1100,6 +1100,12 @@
   color: var(--accent-blue-soft);
 }
 
+.tm-role-badge--job_owner {
+  background: var(--status-orange-bg);
+  color: var(--status-orange);
+  border: 1px solid var(--status-orange-bg);
+}
+
 .tm-role-badge--admin {
   background: var(--tag-zinc-bg);
   color: var(--tag-zinc-text);

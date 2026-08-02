@@ -20,11 +20,8 @@ type UseHiringRequestHeaderOptions = {
   activeView: string;
   onViewChange: (key: string) => void;
   badge?: HeaderBadge;
-<<<<<<< Updated upstream
-  onImport?: () => void;
-=======
   badges?: HeaderBadge[];
->>>>>>> Stashed changes
+  onImport?: () => void;
 };
 
 export function useHiringRequestHeader({
@@ -33,11 +30,8 @@ export function useHiringRequestHeader({
   activeView,
   onViewChange,
   badge,
-<<<<<<< Updated upstream
-  onImport,
-=======
   badges,
->>>>>>> Stashed changes
+  onImport,
 }: UseHiringRequestHeaderOptions): HeaderConfig {
   const { can } = usePermissions();
   const canImport = can(PERMISSIONS.APPLICATION_WORKFLOW);
@@ -84,10 +78,6 @@ export function useHiringRequestHeader({
       { key: "refresh", label: HEADER_REFRESH_LABEL, icon: HEADER_REFRESH_ICON, variant: "primary", onClick: handleRefresh },
     ],
     badge,
-<<<<<<< Updated upstream
-  }), [totalCount, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, canImport, onImport]);
-=======
     badges,
-  }), [totalCount, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, badges]);
->>>>>>> Stashed changes
+  }), [totalCount, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, badges, canImport, onImport]);
 }

@@ -82,7 +82,10 @@ const ApplicantCard = ({
               onClick={(e) => { e.stopPropagation(); onToggleSelect?.(a.id); }}
             />
           )}
-          <span className="name">{a.name}</span>
+          <span className="name">
+            {a.name}
+            {a.candidateType === "REFERRAL" && <span className="candidate-type-tag">Referral</span>}
+          </span>
           {a.email && <span className="header-meta-item"><i className="bx bx-envelope"></i> {a.email}</span>}
           {a.currentRoundId && jdId && (
             <button

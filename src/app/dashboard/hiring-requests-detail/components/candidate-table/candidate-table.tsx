@@ -82,7 +82,10 @@ const CandidateTable = ({
       <div className="applicant-table-cell--name">
         <div className="candidate-avatar">{getInitials(c.name)}</div>
         <div>
-          <div className="candidate-name">{c.name}</div>
+          <div className="candidate-name">
+            {c.name}
+            {c.candidateType === "REFERRAL" && <span className="candidate-type-tag">Referral</span>}
+          </div>
           {c.email && <div className="candidate-email">{c.email}</div>}
         </div>
       </div>

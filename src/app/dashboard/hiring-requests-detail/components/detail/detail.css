@@ -140,6 +140,25 @@
   white-space: nowrap;
 }
 
+/* referral tag next to candidate name (table + card views) */
+.candidate-type-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.5;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+  vertical-align: 1px;
+}
+
+.candidate-name .candidate-type-tag {
+  margin-left: 5px;
+}
+
 /* header meta items */
 .header-meta-item {
   display: inline-flex;

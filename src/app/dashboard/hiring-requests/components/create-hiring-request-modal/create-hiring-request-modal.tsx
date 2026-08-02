@@ -11,11 +11,8 @@ import { ToastType } from "@/components/ui/toast/toast.types";
 import { fetchUsers, type UserItem } from "@/services/users/users";
 import { useAuth } from "@/app/auth/hooks/use-auth";
 import { addJobTeamMember } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.service";
-import {
-  JOB_ROLE_LABELS,
-  type JobRole,
-} from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.types";
 import { FILTER_OPTIONS } from "@/constants/constants";
+import { ROLE_DISPLAY } from "@/constants/role-display";
 import {
   CREATE_HR_FIELDS,
   CREATE_HR_LOCATION_PRESETS,
@@ -49,12 +46,8 @@ export default function CreateHiringRequestModal({
   const [users, setUsers] = useState<UserItem[]>([]);
   const [usersStatus, setUsersStatus] = useState<"idle" | "loading" | "ready">("idle");
   const [selected, setSelected] = useState<UserItem | null>(null);
-  const [role, setRole] = useState<JobRole>("recruiter");
   const [stepError, setStepError] = useState("");
 
-  const canAssignOwners = user?.role === "account_admin" || user?.role === "superadmin";
-  const segOrder: JobRole[] = ["recruiter", "job_owner", "reviewer"];
-  const roleOptions = segOrder.filter((r) => canAssignOwners || r !== "job_owner");
   const loadingUsers = usersStatus === "loading";
 
   const typeOptions = useMemo(
@@ -71,7 +64,6 @@ export default function CreateHiringRequestModal({
     setUsers([]);
     setUsersStatus("idle");
     setSelected(null);
-    setRole("recruiter");
     setStepError("");
   }, [reset]);
 
@@ -139,9 +131,8 @@ export default function CreateHiringRequestModal({
       setStepError(CREATE_HR_MODAL.ASSIGN_ALREADY_ADDED);
       return;
     }
-    setAssignments((prev) => [...prev, { user, role }]);
+    setAssignments((prev) => [...prev, { user }]);
     setSelected((prev) => (prev?.id === user.id ? null : prev));
-    setRole("recruiter");
     handleSearchChange("");
     setStepError("");
   };
@@ -161,8 +152,7 @@ export default function CreateHiringRequestModal({
           try {
             await addJobTeamMember(created.id, {
               user_id: a.user.id,
-              role: a.role,
-              is_owner: a.role === "job_owner",
+              is_owner: false,
             });
           } catch {
             failed += 1;
@@ -353,7 +343,7 @@ export default function CreateHiringRequestModal({
                 <span>
                   <span className="create-hr-assign-option-title">{CREATE_HR_MODAL.ASSIGN_NOW}</span>
                   <span className="create-hr-assign-option-desc">
-                    Add a recruiter, reviewer, or another owner
+                    Add team members who should see this job
                   </span>
                 </span>
               </button>
@@ -394,28 +384,6 @@ export default function CreateHiringRequestModal({
                       placeholder={CREATE_HR_MODAL.ASSIGN_SEARCH_PLACEHOLDER}
                     />
                   </Field>
-                </div>
-
-                <div className="create-hr-assign-seg">
-                  <span className="create-hr-assign-seg-label">
-                    {CREATE_HR_MODAL.ASSIGN_ROLE_LABEL}
-                  </span>
-                  <div className="create-hr-seg" role="tablist">
-                    {roleOptions.map((r) => (
-                      <button
-                        key={r}
-                        type="button"
-                        role="tab"
-                        aria-selected={role === r}
-                        className={`create-hr-seg-pill${
-                          role === r ? " create-hr-seg-pill--active" : ""
-                        }`}
-                        onClick={() => setRole(r)}
-                      >
-                        {JOB_ROLE_LABELS[r]}
-                      </button>
-                    ))}
-                  </div>
                 </div>
 
                 {loadingUsers && <p className="create-hr-error">{CREATE_HR_MODAL.ASSIGN_LOADING}</p>}
@@ -481,12 +449,8 @@ export default function CreateHiringRequestModal({
                           <span className="create-hr-assign-chip-name">{a.user.name}</span>
                           <span className="create-hr-assign-chip-email">{a.user.email}</span>
                         </span>
-                        <span
-                          className={`create-hr-role-badge${
-                            a.role === "reviewer" ? " create-hr-role-badge--reviewer" : ""
-                          }`}
-                        >
-                          {JOB_ROLE_LABELS[a.role]}
+                        <span className="create-hr-role-badge">
+                          {ROLE_DISPLAY[a.user.role]?.label ?? a.user.role}
                         </span>
                         <button
                           type="button"

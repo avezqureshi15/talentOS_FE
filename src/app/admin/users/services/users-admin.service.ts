@@ -63,8 +63,6 @@ export type CreateInvitePayload = {
 export type UserJobAssignment = {
   hiring_request_id: string;
   job_title: string;
-  role: string;
-  is_owner: boolean;
   created_at: string;
 };
 
@@ -85,16 +83,6 @@ export const getUserJobAssignments = (userId: number, tenantId?: number) =>
   httpClient.get<UserJobAssignments>(API_ENDPOINTS.ADMIN_USER_JOB_ASSIGNMENTS.replace("{user_id}", String(userId)), {
     params: tenantId ? { tenant_id: tenantId } : undefined,
   });
-
-export const updateUserJobRole = (
-  hiringRequestId: string,
-  userId: number,
-  payload: { role: string }
-) =>
-  httpClient.patch(
-    API_ENDPOINTS.JOB_TEAM_MEMBER.replace("{hiring_request_id}", hiringRequestId).replace("{user_id}", String(userId)),
-    payload
-  );
 
 export const createUser = (payload: CreateUserPayload) =>
   httpClient.post<AdminUser>(API_ENDPOINTS.ADMIN_USERS, payload);

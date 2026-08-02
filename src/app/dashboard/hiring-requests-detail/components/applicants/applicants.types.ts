@@ -79,6 +79,7 @@ export type Applicant = {
   name: string;
   email?: string;
   phone?: string;
+  candidateType?: string;
   coverLetter?: string;
   aiSummary?: string;
   experienceYears: number;
