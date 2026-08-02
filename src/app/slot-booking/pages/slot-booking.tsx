@@ -128,7 +128,6 @@ const SlotBooking = () => {
             </div>
 
             <div className="action-slots-wrap">
-              <h3 className="action-slots-title">Available Slots</h3>
               <SlotPicker
                 slots={slots}
                 selectedSlots={selectedSlots}
