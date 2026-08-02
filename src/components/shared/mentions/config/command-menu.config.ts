@@ -42,7 +42,7 @@ export const ROOT_MENU: CommandEntry[] = [
   },
   {
     id: "alerts",
-    label: "Alerts",
+    label: "Notifications",
     icon: "bx bx-bell",
     isWizardAction: true,
   },

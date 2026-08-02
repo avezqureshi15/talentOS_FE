@@ -10,6 +10,7 @@ import { useChatHistory } from "@/layouts/protected-layouts/components/sidebar/h
 import { useDeleteChat } from "@/layouts/protected-layouts/components/sidebar/hooks/use-delete-chat";
 import { useRenameChat } from "@/layouts/protected-layouts/components/sidebar/hooks/use-rename-chat";
 import { useChatStore } from "@/store/chat.store";
+import { useNotificationStore } from "@/store/notification.store";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import CommandPalette from "@/layouts/protected-layouts/components/command-palette/command-palette";
 import { useCommandPalette } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette";
@@ -85,9 +86,14 @@ export default function ProtectedLayout() {
     });
   }, []);
 
-  const handleAlerts = useCallback(() => {
-    navigate("/alerts");
+  const handleNotifications = useCallback(() => {
+    navigate(ROUTES.NOTIFICATIONS);
   }, [navigate]);
+
+  useEffect(() => {
+    useNotificationStore.getState().startPolling();
+    return () => useNotificationStore.getState().stopPolling();
+  }, []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -106,7 +112,7 @@ export default function ProtectedLayout() {
       }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.ALERTS.code) {
         e.preventDefault();
-        handleAlerts();
+        handleNotifications();
       }
       if (e.altKey && e.code === k.SHORTCUTS.code) {
         e.preventDefault();
@@ -115,7 +121,7 @@ export default function ProtectedLayout() {
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [handleNewChat, handleHome, handleToggleSidebar, handleAlerts]);
+  }, [handleNewChat, handleHome, handleToggleSidebar, handleNotifications]);
 
   const layoutKey = useMemo(() => {
     const p = location.pathname;

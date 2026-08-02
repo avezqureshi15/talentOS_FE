@@ -48,7 +48,7 @@ export const INTENT_LABELS: Record<string, string> = {
   "ask slots availability": "Slot Booking Request",
   "SEND_MAIL": "Send Mail",
   "interviews": "Interviews",
-  "alerts": "Alerts",
+  "alerts": "Notifications",
   "rounds": "Rounds",
   "send-mail": "Send Mail",
   // "Hiring Requests" renamed to "Job Listings"

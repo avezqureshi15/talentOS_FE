@@ -171,14 +171,14 @@ export const WIZARD_ACTIONS: Record<string, WizardActionConfig> = {
   },
   "alerts": {
     id: "alerts",
-    label: "Alerts",
+    label: "Notifications",
     icon: "bx bx-bell",
     totalTokens: 2,
-    executionCue: "Press Enter to ask about this alert",
+    executionCue: "Press Enter to ask about this notification",
     stages: [
       {
         stage: 1,
-        header: "Select Alert...",
+        header: "Select Notification...",
         fetcher: async () => [],
         tokenType: "alert",
         isFinal: true,

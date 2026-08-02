@@ -160,7 +160,7 @@ export const QUERY_KEYS = {
   APPLICATIONS: "applications",
   FINAL_VERDICTS: "final-verdicts",
   INTERVIEWS: "interviews",
-  ALERTS: "alerts",
+  NOTIFICATIONS: "notifications",
   ROUNDS: "rounds",
   ROUND_DETAIL: "round-detail",
   SLOT_FORM: "slot-form",
@@ -201,13 +201,6 @@ export const HR_TABS = [
   // { key: "interviews", label: "Interviews", icon: "bx bx-calendar-check" },
   // { key: "alerts", label: "Alerts", icon: "bx bx-bell" },
 ] as const;
-
-export const ALERTS_TABS = [
-  { key: "slots", label: "Slots", icon: "bx bx-stopwatch" },
-  { key: "reviews", label: "Reviews", icon: "bx bx-check-shield" },
-] as const;
-
-export const ALERTS_CHIP_LABEL = "Info";
 
 export const ALERTS_DESCRIPTION =
   "This section lists employees who missed the slot submission or candidate review deadline after a reminder.";
@@ -255,7 +248,7 @@ export const KEYBOARD_SHORTCUTS_LIST = [
   { label: "New Chat", keys: "Ctrl+Shift+C" },
   // "Hiring Requests" renamed to "Job Listings"
   { label: "Job Listings", keys: "Ctrl+Shift+H" },
-  { label: "Alerts", keys: "Ctrl+Shift+A" },
+  { label: "Notifications", keys: "Ctrl+Shift+A" },
   { label: "Search", keys: "Ctrl+K" },
   { label: "Toggle Sidebar", keys: "Ctrl+Shift+S" },
   { label: "Shortcuts Menu", keys: "Alt+K" },

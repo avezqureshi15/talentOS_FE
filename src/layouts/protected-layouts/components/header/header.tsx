@@ -16,6 +16,7 @@ import {
 import { springSnap } from "@/utils/motion";
 import CandidateHeader from "./candidate-header";
 import TabDropdown from "./tab-dropdown";
+import NotificationBell from "./notification-bell/notification-bell";
 import JdDetailModal from "@/app/dashboard/hiring-requests-detail/components/modal/jd-detail-modal/jd-detail-modal";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
 
@@ -214,6 +215,7 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
             )}
           </React.Fragment>
         ))}
+        <NotificationBell />
       </div>
 
       {config.hiringRequest && (
@@ -233,10 +235,17 @@ const HeaderRight: React.FC<HeaderRightProps> = ({ Icon }) => {
 
   const isChat = location.pathname === "/chat" || location.pathname.startsWith("/chat/");
 
-  if (!isChat) return <div className="header-right" />;
+  if (!isChat) {
+    return (
+      <div className="header-right">
+        <NotificationBell />
+      </div>
+    );
+  }
 
   return (
     <div className="header-right">
+      <NotificationBell />
       <IconButton onClick={() => navigate("/chat")}>
         <Icon.Edit />
       </IconButton>

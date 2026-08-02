@@ -6,7 +6,7 @@ import RequirePermission from "@/router/require-permission";
 import ProtectedLayout from "@/layouts/protected-layouts/protected-layouts";
 import Chat from "@/app/chat/pages/chat";
 import HiringRequests from "@/app/dashboard/hiring-requests/pages/hiring-requests";
-import Alerts from "@/app/dashboard/alerts/pages/alerts";
+import Notifications from "@/app/dashboard/notifications/pages/notifications";
 import HiringRequestLayout from "@/app/dashboard/hiring-requests-detail/pages/hiring-request-layout";
 import ApplicationsPage from "@/app/dashboard/hiring-requests-detail/pages/applications-page";
 import InterviewDesignPage from "@/app/dashboard/hiring-requests-detail/pages/interview-design-page";
@@ -60,7 +60,8 @@ export const router = createBrowserRouter([
           { path: ROUTES.CHAT, element: <Chat />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
           { path: ROUTES.CHAT_ID, element: <Chat />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
           { path: ROUTES.HIRING_REQUESTS, element: <HiringRequests />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
-          { path: ROUTES.ALERTS, element: <Alerts />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+          { path: ROUTES.NOTIFICATIONS, element: <Notifications />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
+          { path: ROUTES.ALERTS, element: <Navigate to={ROUTES.NOTIFICATIONS} replace /> },
           { path: ROUTES.ROUND_DETAILS, element: <RoundDetails />, errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.PAGE_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.PAGE_ERROR_MESSAGE} /> },
           {
             path: ROUTES.HIRING_REQUESTS_ID,

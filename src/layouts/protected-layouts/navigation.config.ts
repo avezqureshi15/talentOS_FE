@@ -19,8 +19,8 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
     permissions: ["hiring_request.view"],
   },
   {
-    label: "Alerts",
-    href: "/alerts",
+    label: "Notifications",
+    href: "/notifications",
     icon: "bx bx-bell",
     shortcut: "Ctrl+Shift+A",
     permissions: ["application.view"],

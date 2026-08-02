@@ -25,6 +25,7 @@ export const ROUTES = {
   SUPERADMIN_TENANT_DETAIL: "/superadmin/tenants/:tenantId",
   AUTH_INVITE: "/auth/invite/:token",
   ALERTS: "/alerts",
+  NOTIFICATIONS: "/notifications",
   AI_INTERVIEW_TEST: "/ai-interview-test",
 } as const;
 
