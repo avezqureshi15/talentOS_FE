@@ -39,7 +39,7 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
   const selectionCount = selectedIds.size;
   const hasCandidatesWithRound = data.some((a) => selectedIds.has(a.id) && a.currentRoundId);
 
-  const handleBulkMoveToScreening = useCallback(async (scheduledDate?: string, scheduledTime?: string) => {
+  const handleBulkMoveToScreening = useCallback(async () => {
     const candidates = data.filter((a) => selectedIds.has(a.id));
     if (candidates.length === 0) return;
     setIsBulkProcessing(true);
@@ -55,8 +55,6 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
             resume_url: a.cvUrl,
             round_name: "AI Screening Round",
             round_type: "AI_SCREENING_ROUND",
-            scheduled_date: scheduledDate || undefined,
-            scheduled_time: scheduledTime || undefined,
           });
           useToastStore.getState().addToast(`${a.name} moved to AI Screening`, ToastType.SUCCESS);
         } catch {
@@ -74,7 +72,7 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
     onRefresh?.();
   }, [data, selectedIds, jdId, moveToScreeningMut, onRefresh]);
 
-  const handleBulkMoveToInterview = useCallback(async (scheduledDate?: string, scheduledTime?: string, scheduledEndDate?: string, scheduledEndTime?: string) => {
+  const handleBulkMoveToInterview = useCallback(async () => {
     const candidates = data.filter((a) => selectedIds.has(a.id));
     if (candidates.length === 0) return;
     setIsBulkProcessing(true);
@@ -87,10 +85,6 @@ export function useBulkSelection(jdId: string, data: Applicant[], onRefresh?: ()
             round_name: "AI Interview Round",
             interview_type: "AI_INTERVIEW",
             round_type: "AI_INTERVIEW_ROUND",
-            scheduled_date: scheduledDate || undefined,
-            scheduled_time: scheduledTime || undefined,
-            scheduled_end_date: scheduledEndDate || undefined,
-            scheduled_end_time: scheduledEndTime || undefined,
           });
           useToastStore.getState().addToast(`${a.name} moved to AI Interview`, ToastType.SUCCESS);
         } catch {

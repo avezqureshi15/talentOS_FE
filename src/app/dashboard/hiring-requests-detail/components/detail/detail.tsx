@@ -14,7 +14,6 @@ import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/compo
 
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
-import BulkScheduleModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-schedule-modal";
 import BulkRemarksModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-remarks-modal";
 import BulkArchiveModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-archive-modal";
 import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
@@ -77,7 +76,6 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const { screening: showBulkScreening, interview: showBulkInterview } = BULK_STAGE_ACTIONS[activeStage] ?? { screening: false, interview: false };
   const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection);
   const [timelineId, setTimelineId] = useState<number | null>(null);
-  const [pendingBulkAction, setPendingBulkAction] = useState<"screening" | "interview" | null>(null);
   const [pendingBulkRemarks, setPendingBulkRemarks] = useState<"screening" | "interview" | null>(null);
   const [pendingArchive, setPendingArchive] = useState(false);
   const [selectionStage, setSelectionStage] = useState<string | null>(null);
@@ -100,18 +98,9 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     if (remarks) bulkSelection.handleSubmitRemarks(remarks);
     const action = pendingBulkRemarks;
     setPendingBulkRemarks(null);
-    if (action) setPendingBulkAction(action);
+    if (action === "screening") bulkSelection.handleBulkMoveToScreening();
+    else if (action === "interview") bulkSelection.handleBulkMoveToInterview();
   };
-
-  const handleBulkScheduleConfirm = ({ scheduledDate, scheduledTime, scheduledEndDate, scheduledEndTime }: { scheduledDate: string; scheduledTime: string; scheduledEndDate?: string; scheduledEndTime?: string }) => {
-    if (pendingBulkAction === "screening") bulkSelection.handleBulkMoveToScreening(scheduledDate, scheduledTime);
-    else if (pendingBulkAction === "interview") bulkSelection.handleBulkMoveToInterview(scheduledDate, scheduledTime, scheduledEndDate, scheduledEndTime);
-    setPendingBulkAction(null);
-  };
-
-  const bulkModalTitle = pendingBulkAction === "screening" ? "Schedule AI Screening" : "Schedule AI Interview";
-  const bulkModalLabel = pendingBulkAction === "screening" ? "From when should we start screening calls?" : "Select when the candidate can give the AI interview";
-  const bulkModalIncludeEnd = pendingBulkAction === "interview";
 
   const stagesWithCounts = useMemo(() =>
     PIPELINE_STAGES.map((s) => ({
@@ -197,7 +186,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     className="btn screen-btn compact"
                     onClick={() => {
                       if (bulkSelection.hasCandidatesWithRound) setPendingBulkRemarks("screening");
-                      else setPendingBulkAction("screening");
+                      else bulkSelection.handleBulkMoveToScreening();
                     }}
                     disabled={bulkSelection.isBulkProcessing}
                     type="button"
@@ -211,7 +200,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     className="btn screen-btn compact"
                     onClick={() => {
                       if (bulkSelection.hasCandidatesWithRound) setPendingBulkRemarks("interview");
-                      else setPendingBulkAction("interview");
+                      else bulkSelection.handleBulkMoveToInterview();
                     }}
                     disabled={bulkSelection.isBulkProcessing}
                     type="button"
@@ -362,14 +351,6 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
             setPendingArchive(false);
             bulkSelection.handleBulkArchive(true);
           }}
-        />
-        <BulkScheduleModal
-          open={pendingBulkAction !== null}
-          onClose={() => setPendingBulkAction(null)}
-          onConfirm={handleBulkScheduleConfirm}
-          title={bulkModalTitle}
-          dateLabel={bulkModalLabel}
-          includeEnd={bulkModalIncludeEnd}
         />
 
         <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />

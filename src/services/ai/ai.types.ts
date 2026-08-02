@@ -65,10 +65,6 @@ export type MoveToScreeningPayload = {
   force?: boolean;
   round_name?: string;
   round_type?: string;
-  scheduled_date?: string;
-  scheduled_time?: string;
-  scheduled_end_date?: string;
-  scheduled_end_time?: string;
 };
 
 export type MoveToInterviewPayload = {
@@ -76,10 +72,6 @@ export type MoveToInterviewPayload = {
   interview_type?: string;
   round_name?: string;
   round_type?: string;
-  scheduled_date?: string;
-  scheduled_time?: string;
-  scheduled_end_date?: string;
-  scheduled_end_time?: string;
 };
 
 export type MoveToInterviewResponse = {

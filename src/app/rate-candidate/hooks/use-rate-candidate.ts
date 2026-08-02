@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchRoundDetail } from "@/services/applications/applications";
-import { validateForm, submitReview, submitForm } from "@/app/rate-candidate/services/rate-candidate";
+import { validateForm, submitReview, submitForm, fetchRoundDetailPublic } from "@/app/rate-candidate/services/rate-candidate";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import type {
   AnswerMap,
@@ -102,7 +101,7 @@ export function useRateCandidate(): UseRateCandidateResult {
 
   const roundQuery = useQuery<RoundDetailApiResponse>({
     queryKey: [QUERY_KEYS.ROUND_DETAIL, roundId],
-    queryFn: () => fetchRoundDetail(roundId!),
+    queryFn: () => fetchRoundDetailPublic(roundId!),
     enabled: formValid && !!roundId,
     staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
     retry: QUERY_CONFIG.DEFAULT_RETRY_COUNT,

@@ -40,7 +40,7 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     scenario:
       "Anita is a reviewer. If this switch is turned off, the moment she opens a job the candidate list never loads and every applicant option shows an error. She can still chat, but she can no longer see who applied.",
     technical:
-      "Backend: GET/POST /applications, /rounds, /interviews, /email/send, /ai/questions and /call-window all require application.view (403 \"Missing required permission\"). Frontend does not hide these screens yet.",
+      "Backend: GET/POST /applications, most /rounds endpoints, /interviews, /email/send, /ai/questions and /call-window all require application.view (403 \"Missing required permission\"). Exception: GET /rounds/{round_id} is public so the Rate Candidate link works for logged-out reviewers. Frontend does not hide these screens yet.",
     related: ["application.evaluate", "application.reject", "application.workflow"],
   },
 
@@ -379,24 +379,26 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
 
   "slot.submit": {
     code: "slot.submit",
-    summary: "Lets the role submit availability slots for interviews.",
+    summary:
+      "Intended to control slot submission, but today the booking page runs on public email links — this switch does not gate anything.",
     whatTheyCanDo: [
-      "Submit a candidate's available time slots for scheduling",
+      "Submit a candidate's available time slots for scheduling (via the public booking link)",
     ],
     disabled: {
       blurb:
-        "Part of the upcoming slot-booking workflow. Today the booking page is public link-based and no button is tied to this switch; backend enforcement is pending.",
+        "The slot-booking page is public link-based: candidates/faculty who open the link can submit availability even while logged out, with no permission check. This switch is not enforced anywhere today.",
       lostActions: [
-        "No immediate UI change (enforcement pending)",
+        "No immediate UI change (the switch is not wired to any endpoint)",
       ],
       stillWorks: [
+        "Public slot booking via email link (unauthenticated)",
         "Everything else (chat, jobs, applications)",
       ],
     },
     scenario:
-      "Reserved for the future slot scheduling module — when that ships, this switch will control who can submit slots.",
+      "Since booking is public link-based, toggling this switch changes nothing for end users yet. It is reserved for a future flow where only certain roles can submit slots.",
     technical:
-      "Backend: POST /slots is currently gated by slot.view_all; slot.submit is not enforced yet.",
+      "Backend: POST /slots is now unauthenticated — it requires no token and no permission (only a valid emp_id). slot.submit is not enforced.",
     related: ["slot.view_all"],
   },
 
@@ -417,32 +419,34 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
       ],
     },
     scenario:
-      "Turned off, no one in the role can fetch or submit any availability — scheduling data is fully locked for them.",
+      "Turned off, no one in the role can fetch availability — the admin views freeze. Public booking links keep working because they submit without any permission.",
     technical:
-      "Backend: the /slots router (GET and POST) requires slot.view_all.",
+      "Backend: only the admin reads require slot.view_all — GET /slots/by-employee/{employee_id} and GET /slots/employee. POST /slots (the public booking form) is unauthenticated and unaffected.",
     related: ["slot.submit"],
   },
 
   "review.submit": {
     code: "review.submit",
-    summary: "Lets the role submit interview feedback and reviews for candidates.",
+    summary:
+      "Intended to control review submission, but the Rate Candidate form runs on public email links — this switch does not gate anything.",
     whatTheyCanDo: [
-      "Submit a candidate review / feedback after an interview round",
+      "Submit a candidate review / feedback after an interview round (via the public Rate Candidate link)",
     ],
     disabled: {
       blurb:
-        "The review submission flow is currently public link-based (Rate Candidate page) and backend enforcement is pending, so no button is hidden yet.",
+        "The Rate Candidate page is public link-based: anyone with the link can submit feedback while logged out, with no permission check. This switch is not enforced anywhere today.",
       lostActions: [
-        "No immediate UI change (enforcement pending)",
+        "No immediate UI change (the switch is not wired to any endpoint)",
       ],
       stillWorks: [
+        "Public review submission via email link (unauthenticated)",
         "Everything else (chat, jobs, applications)",
       ],
     },
     scenario:
-      "Reserved for the feedback workflow — once wired end-to-end, this switch will decide who can submit reviews.",
+      "Since feedback is collected through public links, toggling this switch changes nothing for end users yet. It is reserved for a future in-app feedback flow.",
     technical:
-      "Backend: POST /reviews currently has no auth check; enforcement pending.",
+      "Backend: PUT /reviews/round/{round_id} and POST /forms/{form_id}/submit are unauthenticated. review.submit is not enforced.",
     related: ["review.view_all"],
   },
 
