@@ -1584,3 +1584,13 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+.ai-retry-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 12px 0;
+}
+
+.ai-retry-row .action-link:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

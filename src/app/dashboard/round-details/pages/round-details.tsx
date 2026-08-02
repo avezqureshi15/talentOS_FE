@@ -90,7 +90,11 @@ const RoundDetails = () => {
       )}
 
       {!isLoading && mode === "ai-interview" && (
-        <AiInterviewTemplate data={MOCK_EVALUATION} />
+        <AiInterviewTemplate
+          data={MOCK_EVALUATION}
+          hiringRequestId={id}
+          candidateId={candidateId ? Number(candidateId) : undefined}
+        />
       )}
 
       {!isLoading && mode === "normal-round" && apiData && (

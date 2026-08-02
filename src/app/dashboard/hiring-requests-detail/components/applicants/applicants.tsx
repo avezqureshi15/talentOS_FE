@@ -8,6 +8,7 @@ import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/component
 import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/interviews/cancel-interview-modal";
 import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
 import { useMoveToScreening } from "@/hooks/use-move-to-screening";
+import { useAiRetryScreening } from "@/hooks/use-ai-retry";
 import { useUpdateCandidateRoundStatus } from "@/hooks/use-update-candidate-round-status";
 import { useCancelInterview } from "@/hooks/use-cancel-interview";
 import { useToastStore } from "@/store/toast.store";
@@ -184,8 +185,24 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
   };
 
   const { mutateAsync: moveToScreeningMut } = useMoveToScreening();
+  const { mutateAsync: retryScreeningMut } = useAiRetryScreening();
   const { mutateAsync: updateCandidateRoundStatusMut } = useUpdateCandidateRoundStatus();
   const { mutateAsync: cancelInterviewMut } = useCancelInterview();
+  const [retryingScreeningId, setRetryingScreeningId] = useState<string | null>(null);
+
+  const handleRetryAiScreening = useCallback(async (id: string) => {
+    const applicant = data.find((a) => a.id === id);
+    if (!applicant) return;
+    setRetryingScreeningId(id);
+    try {
+      await retryScreeningMut({ hiringRequestId: jdId, candidateId: applicant.candidateId });
+      onRefresh?.();
+    } catch {
+      // error toast is handled by the hook
+    } finally {
+      setRetryingScreeningId(null);
+    }
+  }, [data, jdId, retryScreeningMut, onRefresh]);
 
   const handleCancelInterview = useCallback(async (id: string) => {
     const applicant = data.find((a) => a.id === id);
@@ -239,7 +256,7 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
     }
   }, [data]);
 
-  const handleRescheduleScheduled = useCallback((_candidateId: string) => {
+  const handleRescheduleScheduled = useCallback(() => {
     setRescheduleTarget(null);
     onRefresh?.();
   }, [onRefresh]);
@@ -316,6 +333,17 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
         const merged = getLocalApplicant(a);
         return (
           <div key={a.id} data-applicant-id={a.id} data-highlight={applicantParam === a.id ? "true" : undefined}>
+            {merged.stage === "AI_SCREENING" && (
+              <div className="ai-retry-row">
+                <button
+                  className="action-link action-link-btn"
+                  onClick={(e) => { e.stopPropagation(); handleRetryAiScreening(a.id); }}
+                  disabled={retryingScreeningId === a.id}
+                >
+                  {retryingScreeningId === a.id ? "Re-running AI screening..." : "Re-run AI screening"}
+                </button>
+              </div>
+            )}
             <ApplicantCard
               applicant={merged}
               isOpen={isOpen}

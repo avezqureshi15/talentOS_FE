@@ -1,8 +1,10 @@
-import { useRef } from "react";
-import { Sparkles, Play, Info, Check, X, AlertTriangle, FileCode, ShieldAlert } from "lucide-react";
+import { useRef, useState } from "react";
+import { Sparkles, Play, Info, Check, X, AlertTriangle, FileCode, ShieldAlert, RotateCw, Video } from "lucide-react";
 import Chip from "@/components/ui/chip/chip";
 import TranscriptPanel from "../transcript-panel/transcript-panel";
 import CustomVideo from "@/components/shared/custom-video/custom-video";
+import { useAiRetryInterview, useAiInterviewRecording } from "@/hooks/use-ai-retry";
+import { useAiInterviews } from "@/hooks/use-ai-interviews";
 import type { CandidateEvaluationData } from "../../pages/round-details.types";
 import type { CustomVideoHandle } from "@/components/shared/custom-video/custom-video.types";
 import "./ai-interview-template.css";
@@ -45,10 +47,36 @@ const EVIDENCE_COLOR: Record<string, string> = {
 
 type Props = {
   data: CandidateEvaluationData;
+  hiringRequestId?: string;
+  candidateId?: number;
 };
 
-const AiInterviewTemplate = ({ data }: Props) => {
+const AiInterviewTemplate = ({ data, hiringRequestId, candidateId }: Props) => {
   const videoRef = useRef<CustomVideoHandle>(null);
+  const [retrying, setRetrying] = useState(false);
+  const retryInterview = useAiRetryInterview();
+  const recording = useAiInterviewRecording();
+  const { data: interviews } = useAiInterviews(
+    hiringRequestId && candidateId ? hiringRequestId : undefined,
+    candidateId,
+  );
+  const interviewId = interviews && interviews.length > 0 ? interviews[0].id : undefined;
+
+  const handleRetry = async () => {
+    if (!hiringRequestId || !candidateId) return;
+    setRetrying(true);
+    try {
+      await retryInterview.mutateAsync({ hiringRequestId, candidateId });
+    } finally {
+      setRetrying(false);
+    }
+  };
+
+  const handleRecording = async () => {
+    if (!hiringRequestId || !candidateId || !interviewId) return;
+    await recording.mutateAsync({ hiringRequestId, candidateId, interviewId });
+  };
+
   const handleSeek = (time: number) => {
     videoRef.current?.seek(time);
   };
@@ -152,6 +180,21 @@ const AiInterviewTemplate = ({ data }: Props) => {
             <p className="rd-proctoring-text">No proctoring flags surfaced during analysis. We still recommend reviewing the recording yourself before finalizing your decision.</p>
           </div>
         </div>
+
+        {hiringRequestId && candidateId && (
+          <div className="rd-ai-actions">
+            <button
+              className="rd-ai-action"
+              onClick={handleRecording}
+              disabled={recording.isPending || !interviewId}
+            >
+              <Video className="rd-ai-action-icon" /> View recording
+            </button>
+            <button className="rd-ai-action" onClick={handleRetry} disabled={retrying}>
+              <RotateCw className={`rd-ai-action-icon${retrying ? " rd-ai-action-icon--spin" : ""}`} /> Re-run assessment
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="rd-right">

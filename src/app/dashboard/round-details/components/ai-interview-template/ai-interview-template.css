@@ -9,3 +9,48 @@
   width: 100%;
   height: 100%;
 }
+
+.rd-ai-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.rd-ai-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--rd-border, #d1d5db);
+  border-radius: 8px;
+  background: var(--rd-surface, #fff);
+  color: var(--rd-text, #1f2937);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.rd-ai-action:hover:not(:disabled) {
+  background: var(--rd-surface-hover, #f3f4f6);
+  border-color: var(--rd-primary, #6366f1);
+}
+
+.rd-ai-action:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.rd-ai-action-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.rd-ai-action-icon--spin {
+  animation: rd-ai-spin 1s linear infinite;
+}
+
+@keyframes rd-ai-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

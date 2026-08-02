@@ -98,3 +98,15 @@ export type MoveToInterviewResponse = {
   };
   status: string;
 };
+
+export type AiRetryResponse = {
+  status: string;
+  round_id: string;
+  entity_type: "ai_screening" | "ai_interview";
+  result_found: boolean;
+  missing_fields: string[];
+};
+
+export type AiInterviewRecordingResponse = {
+  recording_url: string | null;
+};
