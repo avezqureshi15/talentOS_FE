@@ -10,7 +10,7 @@ export const HEADER_VIEW_OPTIONS = [
 export const HEADER_DEFAULT_VIEW = "pipeline";
 
 export const HEADER_EXPORT_LABEL = "Export";
-export const HEADER_EXPORT_ICON = "bx-archive-arrow-down";
+export const HEADER_EXPORT_ICON = "bx bx-archive-arrow-down";
 export const HEADER_EXPORT_TOOLTIP = ["Export candidates", "Download the candidate list for this job as an Excel file."];
 
 export const HEADER_IMPORT_LABEL = "Import";

@@ -24,6 +24,9 @@ export const SIDEBAR_LABELS = {
   DELETE_CHAT_CONFIRM: "This will permanently delete this chat and its messages.",
   CANCEL: "Cancel",
   DELETE_CONFIRM: "Delete",
+  GROUP_WORKSPACE: "Workspace",
+  GROUP_MANAGEMENT: "Management",
+  GROUP_PLATFORM: "Platform",
 } as const;
 
 export const SIDEBAR_USER = {
@@ -237,6 +240,10 @@ export const SETTINGS_MODAL = {
   THEME_DARK: "Dark",
   THEME_LIGHT: "Light",
   THEME_FOLLOWING_SYSTEM: "Following system preference",
+  APPS_TAB: "Apps",
+  APPS_TITLE: "Apps",
+  APPS_DESCRIPTION: "Manage your connected apps, API keys, and integrations.",
+  MANAGE_APPS: "Manage apps",
 } as const;
 
 export const KEYBOARD_SHORTCUTS_MODAL = {

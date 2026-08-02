@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
 import { SETTINGS_MODAL } from "@/constants/constants";
 import { useThemeStore, type ThemeMode } from "@/store/theme.store";
 import { useRole } from "@/app/auth/hooks/use-auth";
+import { usePermissions } from "@/hooks/use-permissions";
+import { ROUTES } from "@/constants/routes";
 import ApiKeysSection from "@/app/superadmin/api-keys/components/api-keys-section";
 import "./settings-modal.css";
 
@@ -11,7 +15,7 @@ type SettingsModalProps = {
   onClose: () => void;
 };
 
-type SettingsTab = "theme" | "api-keys";
+type SettingsTab = "theme" | "api-keys" | "apps";
 
 const THEME_OPTIONS: { value: ThemeMode; label: string; icon: string }[] = [
   { value: "light", label: SETTINGS_MODAL.THEME_LIGHT, icon: "bx bx-sun" },
@@ -22,16 +26,27 @@ const THEME_OPTIONS: { value: ThemeMode; label: string; icon: string }[] = [
 const SETTINGS_TABS: { value: SettingsTab; label: string; icon: string }[] = [
   { value: "theme", label: "Theme", icon: "bx bx-palette" },
   { value: "api-keys", label: "API Keys", icon: "bx bx-key" },
+  { value: "apps", label: SETTINGS_MODAL.APPS_TAB, icon: "bx bx-code-alt" },
 ];
 
 const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
   const { hasRole } = useRole();
   const isSuperAdmin = hasRole("superadmin");
+  const { can } = usePermissions();
+  const canManageApps = can("api_key.manage");
+  const navigate = useNavigate();
   const [tab, setTab] = useState<SettingsTab>("theme");
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
 
-  const visibleTabs = SETTINGS_TABS.filter((t) => t.value !== "api-keys" || isSuperAdmin);
+  const visibleTabs = SETTINGS_TABS.filter(
+    (t) => t.value === "theme" || (t.value === "api-keys" && isSuperAdmin) || (t.value === "apps" && canManageApps),
+  );
+
+  const handleManageApps = () => {
+    onClose();
+    navigate(isSuperAdmin ? ROUTES.SUPERADMIN_APPS : "/admin/apps");
+  };
 
   return (
     <BaseModal open={open} onClose={onClose} title={SETTINGS_MODAL.TITLE} icon={SETTINGS_MODAL.ICON} className="settings-modal">
@@ -83,6 +98,21 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
           {tab === "api-keys" && isSuperAdmin && (
             <div className="settings-modal__body settings-modal__body--api-keys">
               <ApiKeysSection />
+            </div>
+          )}
+
+          {tab === "apps" && canManageApps && (
+            <div className="settings-modal__body">
+              <div className="settings-apps-card">
+                <div className="settings-apps-info">
+                  <span className="settings-apps-title">{SETTINGS_MODAL.APPS_TITLE}</span>
+                  <span className="settings-apps-desc">{SETTINGS_MODAL.APPS_DESCRIPTION}</span>
+                </div>
+                <Button variant="primary" size="md" onClick={handleManageApps}>
+                  <i className="bx bx-code-alt" />
+                  {SETTINGS_MODAL.MANAGE_APPS}
+                </Button>
+              </div>
             </div>
           )}
         </div>

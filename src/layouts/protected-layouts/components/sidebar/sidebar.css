@@ -23,26 +23,38 @@
 }
 
 .sidebar-persona-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 150px;
-  background: linear-gradient(135deg, #b0b5c0, #8a8f9a);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.sidebar-persona-sub::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--primary-light);
+  box-shadow: 0 0 6px var(--primary-light);
 }
 
 [data-theme="light"] .sidebar-persona-sub {
-  background: linear-gradient(135deg, #6b7280, #3f3f46);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background: var(--bg-secondary);
+  border-color: var(--border-default);
 }
 
 /* ─── Nav grouping ─── */

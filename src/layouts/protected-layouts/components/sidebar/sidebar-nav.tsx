@@ -1,34 +1,31 @@
 import type { ComponentType, ReactNode } from "react";
 import { motion } from "framer-motion";
-import { staggerContainer, slideInLeft, springSoft } from "@/utils/motion";
-import { SidebarItem } from "@/components/ui/sidebar";
-import SidebarGroup from "@/layouts/protected-layouts/components/sidebar/sidebar-group";
+import { staggerContainer, springSoft } from "@/utils/motion";
+import { SidebarItem, SidebarSection } from "@/components/ui/sidebar";
 import { useAuth } from "@/app/auth/hooks/use-auth";
-import type { NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
-
-const PERSONA_LABELS: Record<string, string> = {
-  superadmin: "Super Admin",
-  account_admin: "Account Admin",
-  job_owner: "Job Owner",
-  recruiter: "Recruiter",
-  reviewer: "Reviewer",
-};
+import type { NavGroupConfig } from "@/layouts/protected-layouts/navigation.config";
+import { getPersonaLabel } from "@/constants/personas";
+import { useDocumentTitle } from "@/hooks/use-document-title";
 
 type SidebarNavProps = {
   Icon: Record<string, ComponentType>;
   onClose: () => void;
-  mainItems: NavItemConfig[];
-  adminItems: NavItemConfig[];
-  superadminItems: NavItemConfig[];
+  groups: NavGroupConfig[];
   hideExtras?: boolean;
 };
 
-export default function SidebarNav({ Icon, onClose, mainItems, adminItems, superadminItems }: SidebarNavProps) {
+export default function SidebarNav({ Icon, onClose, groups }: SidebarNavProps) {
   const { user } = useAuth();
-  const personaLabel = user?.role ? (PERSONA_LABELS[user.role] ?? user.role) : null;
+  const personaLabel = getPersonaLabel(user?.role);
+  useDocumentTitle(personaLabel ? `TalentOS | ${personaLabel}` : undefined);
 
-  const renderNavItem = (item: NavItemConfig): ReactNode => (
-    <motion.div key={item.href} variants={slideInLeft} transition={springSoft}>
+  const renderNavItem = (item: NavGroupConfig["items"][number]): ReactNode => (
+    <motion.div
+      key={item.href}
+      initial={{ opacity: 0, x: -12 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={springSoft}
+    >
       <SidebarItem
         icon={<span className={`${item.icon} text-lg`} />}
         label={item.label}
@@ -60,23 +57,17 @@ export default function SidebarNav({ Icon, onClose, mainItems, adminItems, super
         initial="hidden"
         animate="visible"
       >
-        {mainItems.map(renderNavItem)}
-
-        {adminItems.length > 0 && <div className="sidebar-nav-divider" />}
-        {adminItems.map(renderNavItem)}
-
-        {superadminItems.length > 0 && <div className="sidebar-nav-divider" />}
-        {superadminItems.map((item) => (
-          item.label === "Apps" ? (
-            <SidebarGroup key="developers" title="Developers">
-              {renderNavItem(item)}
-            </SidebarGroup>
-          ) : (
-            renderNavItem(item)
-          )
+        {groups.map((group) => (
+          <SidebarSection
+            key={group.label}
+            title={group.label}
+            collapsible
+            defaultOpen
+            titleClassName="sidebar-group-title"
+          >
+            {group.items.map(renderNavItem)}
+          </SidebarSection>
         ))}
-
-
       </motion.div>
     </>
   );

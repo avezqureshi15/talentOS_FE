@@ -17,6 +17,7 @@ import { springSnap } from "@/utils/motion";
 import CandidateHeader from "./candidate-header";
 import TabDropdown from "./tab-dropdown";
 import NotificationBell from "./notification-bell/notification-bell";
+import HeaderMoreMenu from "./header-more-menu";
 import JdDetailModal from "@/app/dashboard/hiring-requests-detail/components/modal/jd-detail-modal/jd-detail-modal";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
 
@@ -64,6 +65,10 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   const isTabRoute = HIRING_TABS.some((t) => location.pathname.endsWith(`/${t}`));
   const isPaletteRoute = isCommandPaletteRoute(location.pathname);
   const [jdModalOpen, setJdModalOpen] = useState(false);
+
+  const MORE_MENU_KEYS = ["import", "export"];
+  const overflowActions = actions?.filter((a) => MORE_MENU_KEYS.includes(a.key)) ?? [];
+  const inlineActions = actions?.filter((a) => !MORE_MENU_KEYS.includes(a.key)) ?? [];
 
   const isInterviewDesignRoute = location.pathname.endsWith("/interview-design");
   const isPlannerEditing = useInterviewPlannerStore((s) => s.isEditing);
@@ -179,7 +184,7 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
           </div>
         )}
 
-        {actions?.map((action) => (
+        {inlineActions?.map((action) => (
           <React.Fragment key={action.key}>
             {action.variant === "primary" ? (
               <motion.button
@@ -215,6 +220,7 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
             )}
           </React.Fragment>
         ))}
+        {overflowActions.length > 0 && <HeaderMoreMenu actions={overflowActions} />}
         <NotificationBell />
       </div>
 

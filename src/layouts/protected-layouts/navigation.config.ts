@@ -10,6 +10,11 @@ export type NavItemConfig = {
   permissions: Permission[];
 };
 
+export type NavGroupConfig = {
+  label: string;
+  items: NavItemConfig[];
+};
+
 export const MAIN_NAV_ITEMS: NavItemConfig[] = [
   {
     label: SIDEBAR_LABELS.HIRING_REQUESTS,
@@ -17,13 +22,6 @@ export const MAIN_NAV_ITEMS: NavItemConfig[] = [
     icon: "bx bx-briefcase",
     shortcut: "Ctrl+Shift+H",
     permissions: ["hiring_request.view"],
-  },
-  {
-    label: "Notifications",
-    href: "/notifications",
-    icon: "bx bx-bell",
-    shortcut: "Ctrl+Shift+A",
-    permissions: ["application.view"],
   },
   {
     label: SIDEBAR_LABELS.NEW_CHAT,
@@ -47,12 +45,6 @@ export const ADMIN_NAV_ITEMS: NavItemConfig[] = [
     icon: "bx bx-building",
     permissions: ["settings.view"],
   },
-  {
-    label: "Apps",
-    href: "/admin/apps",
-    icon: "bx bx-code-alt",
-    permissions: ["api_key.manage"],
-  },
 ];
 
 export const SUPERADMIN_NAV_ITEMS: NavItemConfig[] = [
@@ -67,11 +59,5 @@ export const SUPERADMIN_NAV_ITEMS: NavItemConfig[] = [
     href: ROUTES.ROLES,
     icon: "bx bx-lock",
     permissions: ["user.manage"],
-  },
-  {
-    label: "Apps",
-    href: "/superadmin/apps",
-    icon: "bx bx-code-alt",
-    permissions: ["tenant.view"],
   },
 ];

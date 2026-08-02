@@ -9,6 +9,7 @@ export type SidebarSectionProps = {
   collapsible?: boolean;
   defaultOpen?: boolean;
   onToggle?: (open: boolean) => void;
+  titleClassName?: string;
   children: ReactNode;
   className?: string;
 };
@@ -18,6 +19,7 @@ export default function SidebarSection({
   collapsible = false,
   defaultOpen = true,
   onToggle,
+  titleClassName,
   children,
   className,
 }: SidebarSectionProps) {
@@ -36,7 +38,7 @@ export default function SidebarSection({
     <div className={className ?? ""}>
       {collapsible ? (
         <motion.div
-          className="sidebar-section-header"
+          className={`sidebar-section-header ${titleClassName ?? ""}`}
           onClick={handleToggle}
           whileHover={{ x: 2 }}
           transition={spring}

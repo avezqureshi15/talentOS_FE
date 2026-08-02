@@ -144,3 +144,36 @@
   font-size: 13px;
   color: var(--text-muted);
 }
+
+.settings-apps-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+
+.settings-apps-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.settings-apps-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settings-apps-desc {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.settings-apps-card .btn i {
+  font-size: 16px;
+}

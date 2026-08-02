@@ -14,7 +14,7 @@ import ChatItem from "./chat-item";
 import SidebarNav from "./sidebar-nav";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
 import { Sidebar as SidebarShell, SidebarSection } from "@/components/ui/sidebar";
-import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS, type NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
+import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS, type NavGroupConfig, type NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
 
 const Sidebar: React.FC<SidebarProps> = ({
   sidebarOpen,
@@ -50,6 +50,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   const visibleMain = !isSuperAdmin ? MAIN_NAV_ITEMS.filter(canSeeItem) : [];
   const visibleAdmin = !isSuperAdmin ? ADMIN_NAV_ITEMS.filter(canSeeItem) : [];
   const visibleSuperadmin = isSuperAdmin ? SUPERADMIN_NAV_ITEMS.filter(canSeeItem) : [];
+
+  const navGroups: NavGroupConfig[] = [
+    { label: SIDEBAR_LABELS.GROUP_WORKSPACE, items: visibleMain },
+    { label: SIDEBAR_LABELS.GROUP_MANAGEMENT, items: visibleAdmin },
+    { label: SIDEBAR_LABELS.GROUP_PLATFORM, items: visibleSuperadmin },
+  ].filter((group) => group.items.length > 0);
 
   const sentinelRef = useIntersectionObserver(
     useCallback(() => {
@@ -175,9 +181,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <SidebarNav
         Icon={Icon}
         onClose={() => setSidebarOpen(false)}
-        mainItems={visibleMain}
-        adminItems={visibleAdmin}
-        superadminItems={visibleSuperadmin}
+        groups={navGroups}
         hideExtras={isSuperAdmin}
       />
 
