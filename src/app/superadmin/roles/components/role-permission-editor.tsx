@@ -135,6 +135,9 @@ export const RolePermissionEditor = ({
                       onClick={() => setActiveCode(p.code)}
                       title={`What happens when "${p.name}" is disabled`}
                     >
+                      {!p.enforced && (
+                        <span className="rpe-toggle-dot" title="Not enforced yet — toggling this has no effect" />
+                      )}
                       <span className="rpe-toggle-label">{p.name}</span>
                       <i className="bx bx-info-circle" />
                     </button>

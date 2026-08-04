@@ -1,5 +1,5 @@
 .base-modal.settings-modal {
-  width: min(900px, calc(100vw - 48px));
+  width: min(1040px, calc(100vw - 48px));
   height: min(620px, calc(100vh - 96px));
 }
 
@@ -54,6 +54,8 @@
 }
 
 .settings-modal__content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-width: 0;
   overflow-y: auto;
@@ -68,6 +70,13 @@
 
 .settings-modal__body--api-keys {
   gap: 0;
+}
+
+.settings-modal__body--role-docs {
+  gap: 0;
+  min-height: 0;
+  flex: 1;
+  padding-bottom: 16px;
 }
 
 .settings-theme-row {

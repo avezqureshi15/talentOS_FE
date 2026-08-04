@@ -1,5 +1,7 @@
+import { useCallback, useState } from "react";
 import BookingCalendar from "@/app/slot-booking/components/booking-calendar/booking-calendar";
 import SlotPicker from "@/app/slot-booking/components/slot-picker/slot-picker";
+import { SLOT_PICKER_LABELS } from "@/app/slot-booking/components/slot-picker/slot-picker.constants";
 import Button from "@/components/ui/button/button";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
@@ -28,6 +30,16 @@ const SlotBooking = () => {
     handleRemoveCustomSlot,
     handleConfirm,
   } = useSlotBooking();
+
+  const [customStart, setCustomStart] = useState("09:00");
+  const [customEnd, setCustomEnd] = useState("10:00");
+
+  const handleAddCustom = useCallback(() => {
+    const value = `${customStart}-${customEnd}`;
+    if (!customSlots.includes(value)) {
+      handleAddCustomSlot(value);
+    }
+  }, [customStart, customEnd, customSlots, handleAddCustomSlot]);
 
   if (!formId) {
     return (
@@ -133,25 +145,54 @@ const SlotBooking = () => {
                 selectedSlots={selectedSlots}
                 onToggleSlot={handleToggleSlot}
                 customSlots={customSlots}
-                onAddCustomSlot={handleAddCustomSlot}
                 onRemoveCustomSlot={handleRemoveCustomSlot}
               />
             </div>
           </div>
-
-          <div className="action-bottom">
-            {totalSlotsCount > 0 && (
-              <Button className="booking-confirm-btn" onClick={handleConfirm} loading={isSubmitting} loadingText="Submitting..." icon="bx-calendar-check">
-                {BOOKING_LABELS.CONFIRM} ({totalSlotsCount})
-              </Button>
-            )}
-
-            {totalSlotsCount === 0 && (
-              <p className="booking-hint">{BOOKING_LABELS.NO_SLOTS}</p>
-            )}
-          </div>
         </main>
       </div>
+
+      <footer className="booking-bar">
+        <div className="booking-bar-quickadd">
+          <span className="booking-quickadd-title">
+            <i className="bx bx-plus-circle" />
+            <span>{SLOT_PICKER_LABELS.CUSTOM_TITLE}</span>
+          </span>
+          <label className="booking-field">
+            <span className="booking-field-label">{SLOT_PICKER_LABELS.START_LABEL}</span>
+            <input
+              type="time"
+              className="booking-time"
+              value={customStart}
+              onChange={(e) => setCustomStart(e.target.value)}
+            />
+          </label>
+          <label className="booking-field">
+            <span className="booking-field-label">{SLOT_PICKER_LABELS.END_LABEL}</span>
+            <input
+              type="time"
+              className="booking-time"
+              value={customEnd}
+              onChange={(e) => setCustomEnd(e.target.value)}
+            />
+          </label>
+          <button className="booking-quick-btn" onClick={handleAddCustom} type="button">
+            {SLOT_PICKER_LABELS.ADD}
+          </button>
+        </div>
+
+        <div className="booking-bar-actions">
+          {totalSlotsCount > 0 && (
+            <Button className="booking-confirm-btn" onClick={handleConfirm} loading={isSubmitting} loadingText="Submitting..." icon="bx-calendar-check">
+              {BOOKING_LABELS.CONFIRM} ({totalSlotsCount})
+            </Button>
+          )}
+
+          {totalSlotsCount === 0 && (
+            <p className="booking-hint">{BOOKING_LABELS.NO_SLOTS}</p>
+          )}
+        </div>
+      </footer>
     </div>
   );
 };

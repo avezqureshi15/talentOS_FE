@@ -32,6 +32,7 @@ export const API_ENDPOINTS = {
   NOTIFICATIONS_READ: "/notifications/{notification_id}/read",
   NOTIFICATIONS_READ_ALL: "/notifications/read-all",
   FORMS_NOTIFY: "/forms/notify",
+  FORMS_REMIND: "/forms/{form_id}/remind",
   EVENTS_BY_CANDIDATE: "/events/by-candidate/",
   AUTH_LOGIN: "/auth/login",
   AUTH_SIGNUP: "/auth/signup",

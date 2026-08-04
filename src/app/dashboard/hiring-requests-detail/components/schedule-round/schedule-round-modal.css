@@ -250,7 +250,7 @@
 
 .sr-search {
   margin-bottom: 10px;
-  flex-shrink: 0;
+  flex: 0 0 auto;
 }
 
 .sr-interviewer-list {
@@ -994,7 +994,7 @@
 
 .sr-actions {
   display: flex;
-  justify-content: stretch;
+  justify-content: flex-end;
   gap: 10px;
   padding-top: 16px;
   margin-top: auto;
@@ -1002,8 +1002,9 @@
   flex-shrink: 0;
 }
 
-.sr-actions > * {
-  flex: 1;
+.sr-actions-inner {
+  display: flex;
+  gap: 10px;
 }
 
 .sr-btn {

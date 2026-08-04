@@ -1,4 +1,3 @@
-import { useState, useCallback } from "react";
 import { SLOT_PICKER_LABELS } from "./slot-picker.constants";
 import type { SlotPickerProps } from "./slot-picker.types";
 import "./slot-picker.css";
@@ -19,19 +18,9 @@ const SlotPicker = ({
   selectedSlots,
   onToggleSlot,
   customSlots,
-  onAddCustomSlot,
   onRemoveCustomSlot,
 }: SlotPickerProps) => {
-  const [customStart, setCustomStart] = useState("09:00");
-  const [customEnd, setCustomEnd] = useState("10:00");
   const available = slots.filter((s) => s.available);
-
-  const handleAddCustom = useCallback(() => {
-    const value = `${customStart}-${customEnd}`;
-    if (!customSlots.includes(value)) {
-      onAddCustomSlot(value);
-    }
-  }, [customStart, customEnd, customSlots, onAddCustomSlot]);
 
   return (
     <div className="slot-picker">
@@ -88,40 +77,7 @@ const SlotPicker = ({
         </div>
       )}
 
-      <div className="slot-custom-inputs">
-        <div className="slot-custom-header">
-          <i className="bx bx-plus-circle" />
-          <span>{SLOT_PICKER_LABELS.CUSTOM_TITLE}</span>
-        </div>
-        <div className="slot-custom-fields">
-          <label className="slot-custom-field">
-            <span className="slot-custom-label">{SLOT_PICKER_LABELS.START_LABEL}</span>
-            <input
-              type="time"
-              className="slot-custom-time"
-              value={customStart}
-              onChange={(e) => setCustomStart(e.target.value)}
-            />
-          </label>
-          <label className="slot-custom-field">
-            <span className="slot-custom-label">{SLOT_PICKER_LABELS.END_LABEL}</span>
-            <input
-              type="time"
-              className="slot-custom-time"
-              value={customEnd}
-              onChange={(e) => setCustomEnd(e.target.value)}
-            />
-          </label>
-          <button
-            className="slot-custom-add"
-            onClick={handleAddCustom}
-            type="button"
-          >
-            {SLOT_PICKER_LABELS.ADD}
-          </button>
-        </div>
       </div>
-    </div>
   );
 };
 

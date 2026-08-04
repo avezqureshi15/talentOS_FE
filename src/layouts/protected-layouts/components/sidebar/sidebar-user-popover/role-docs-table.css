@@ -1,0 +1,94 @@
+.role-docs {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.role-docs-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.role-docs-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12.5px;
+}
+
+.role-docs-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 11px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.role-docs-table .role-docs-table__persona {
+  text-align: center;
+}
+
+.role-docs-table thead .role-docs-table__feature {
+  width: 42%;
+}
+
+.role-docs-table tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.role-docs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.role-docs-table tbody tr:nth-child(even) {
+  background: var(--bg-secondary);
+}
+
+.role-docs-table tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+.role-docs-table .role-docs-table__feature {
+  min-width: 220px;
+}
+
+.role-docs-feature-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.role-docs-feature-desc {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.role-docs-icon {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.role-docs-icon--yes {
+  color: var(--status-pill-success-text);
+}
+
+.role-docs-icon--no {
+  color: var(--text-faint);
+}

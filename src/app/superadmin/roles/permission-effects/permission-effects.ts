@@ -8,7 +8,6 @@ export type PermissionEffect = {
     stillWorks: string[];
   };
   scenario: string;
-  technical?: string;
   related?: string[];
 };
 
@@ -39,8 +38,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "Anita is a reviewer. If this switch is turned off, the moment she opens a job the candidate list never loads and every applicant option shows an error. She can still chat, but she can no longer see who applied.",
-    technical:
-      "Backend: GET/POST /applications, most /rounds endpoints, /interviews, /email/send, /ai/questions and /call-window all require application.view (403 \"Missing required permission\"). Exception: GET /rounds/{round_id} is public so the Rate Candidate link works for logged-out reviewers. Frontend does not hide these screens yet.",
     related: ["application.evaluate", "application.reject", "application.workflow"],
   },
 
@@ -69,8 +66,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "Rahul is a recruiter. Without Evaluate Applications he can read every profile, but the Shortlist button simply doesn't exist for him — so his team lead has to do the shortlisting.",
-    technical:
-      "Backend: GET /jobs/{job_id}/candidates and /candidates/shortlisted require application.evaluate. The AI evaluation webhook (/evaluations/evaluate-async) is key-based and not affected.",
     related: ["application.view", "application.reject", "application.workflow"],
   },
 
@@ -94,8 +89,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "If a recruiter loses Reject Applications, they can see every profile and shortlist, but they have to leave rejection notes for an account admin to process.",
-    technical:
-      "Frontend hides the buttons today. Backend enforcement is pending — the reject endpoint currently only checks application.view, so the API still works if called directly.",
     related: ["application.view", "application.evaluate"],
   },
 
@@ -120,8 +113,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "The job_owner posts jobs. If Create Hiring Requests is switched off, they can still manage jobs that already exist, but the Create button is gone — no new openings can be published.",
-    technical:
-      "Backend: POST /hiring-requests requires hiring_request.create (superadmin and account_admin pass automatically by role).",
     related: ["hiring_request.edit", "hiring_request.view", "hiring_request.delete"],
   },
 
@@ -143,8 +134,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "Fine-grained editing control is on the roadmap. Once backend enforcement lands, this switch will decide exactly who can edit a job; for now it is a placeholder.",
-    technical:
-      "Backend: PUT /hiring-requests/{id} is not permission-gated yet (it uses role rank >= recruiter). Enforcement pending.",
     related: ["hiring_request.create", "hiring_request.view", "hiring_request.delete"],
   },
 
@@ -168,8 +157,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "A viewer without View Hiring Requests simply won't see Job Listings in their menu anymore — their workspace becomes chat-first.",
-    technical:
-      "Backend: GET /jobs and /jobs/{id} require hiring_request.view; the /hiring-requests list itself is scoped by team access and not permission-gated yet.",
     related: ["hiring_request.create", "hiring_request.edit", "hiring_request.delete"],
   },
 
@@ -191,8 +178,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "A safety net: with Delete Hiring Requests off, jobs can be created and edited but never removed by that role — protecting against accidental loss of hiring data.",
-    technical:
-      "Backend: DELETE /hiring-requests/{id} requires role >= job_owner plus hiring_request.delete.",
     related: ["hiring_request.create", "hiring_request.edit"],
   },
 
@@ -218,8 +203,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "You want only the account admin to bring people in. Switch off Invite Users for recruiter roles — their User Management entry simply vanishes, so no one can bypass the invite process.",
-    technical:
-      "Backend: invite endpoints currently require user.manage only; enforcing user.invite on them is the pending change that makes this switch truly dynamic.",
     related: ["user.manage"],
   },
 
@@ -245,8 +228,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "Rarely turned off. This is the control that keeps user administration in the hands of account admins and superadmins only.",
-    technical:
-      "Backend: /admin/users and /admin/roles routers require user.manage.",
     related: ["user.invite"],
   },
 
@@ -270,8 +251,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "A superadmin without View Tenant Settings cannot see the list of organizations on the platform at all — it is the master visibility switch for the superadmin area.",
-    technical:
-      "Backend: /superadmin/tenants router requires tenant.view.",
     related: ["tenant.edit"],
   },
 
@@ -296,8 +275,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "If you want a superadmin who can only inspect organizations, keep View Tenant Settings on and turn Edit Tenant Settings off — they can look but not change anything.",
-    technical:
-      "Backend: POST /superadmin/tenants requires tenant.view + tenant.edit; the /superadmin/apps router requires tenant.edit.",
     related: ["tenant.view"],
   },
 
@@ -322,8 +299,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "API keys let other systems talk to talentOS as this role. Switch this off and the role can't create new integrations or rotate existing keys.",
-    technical:
-      "Backend: /admin/apps router requires api_key.manage.",
     related: ["settings.view", "settings.edit"],
   },
 
@@ -347,8 +322,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "A clean way to keep lower roles away from organization-level information — without View Settings they never see the Organization page at all.",
-    technical:
-      "Backend: GET /settings and GET /admin/organization require settings.view.",
     related: ["settings.edit", "api_key.manage"],
   },
 
@@ -372,8 +345,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "The perfect read-only pattern: the account admin can still open the Organization page, but every field is display-only and Save is gone.",
-    technical:
-      "Backend: PATCH /settings and PATCH /admin/organization require settings.edit.",
     related: ["settings.view"],
   },
 
@@ -397,8 +368,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "Since booking is public link-based, toggling this switch changes nothing for end users yet. It is reserved for a future flow where only certain roles can submit slots.",
-    technical:
-      "Backend: POST /slots is now unauthenticated — it requires no token and no permission (only a valid emp_id). slot.submit is not enforced.",
     related: ["slot.view_all"],
   },
 
@@ -420,8 +389,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "Turned off, no one in the role can fetch availability — the admin views freeze. Public booking links keep working because they submit without any permission.",
-    technical:
-      "Backend: only the admin reads require slot.view_all — GET /slots/by-employee/{employee_id} and GET /slots/employee. POST /slots (the public booking form) is unauthenticated and unaffected.",
     related: ["slot.submit"],
   },
 
@@ -445,8 +412,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "Since feedback is collected through public links, toggling this switch changes nothing for end users yet. It is reserved for a future in-app feedback flow.",
-    technical:
-      "Backend: PUT /reviews/round/{round_id} and POST /forms/{form_id}/submit are unauthenticated. review.submit is not enforced.",
     related: ["review.view_all"],
   },
 
@@ -468,8 +433,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "If you want reviewers to be able to write feedback but only the account admin to read it, turn this off for reviewers.",
-    technical:
-      "Backend: GET /reviews/round/{round_id} requires review.view_all.",
     related: ["review.submit"],
   },
 
@@ -494,8 +457,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "The harshest switch. Use it to deactivate a persona from the workspace: they keep their account, but the app becomes unusable for them.",
-    technical:
-      "Frontend enforces this at the app level (ProtectedRoute); backend chat endpoints accept any authenticated user.",
     related: [],
   },
 
@@ -517,8 +478,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "The next step for this switch is to hide the Export button for roles without it — backend enforcement is on the roadmap.",
-    technical:
-      "Backend: GET /hiring-requests/{id}/export currently checks role rank (>= reviewer), not this permission; enforcement pending.",
     related: ["application.view"],
   },
 
@@ -547,8 +506,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "Give a reviewer only viewing and evaluation: without Application Workflow they can't accidentally move or reschedule anyone — the buttons simply don't render.",
-    technical:
-      "Backend: PATCH round-status, move-to-next-round and the import endpoints require application.workflow (plus application.view).",
     related: ["application.view", "application.evaluate"],
   },
 
@@ -575,8 +532,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "Perfect for reviewers: they see the plan the job owner built, but with a READ ONLY badge — no accidental edits.",
-    technical:
-      "Backend: PUT /ai/questions, POST /ai/questions/generate and PUT /call-window require interview.plan_edit (plus application.view).",
     related: ["application.view"],
   },
 
@@ -603,8 +558,6 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     },
     scenario:
       "The job owner builds the team. Everyone else can see who's on it, but only the owner's role (with this switch on) can add or remove people.",
-    technical:
-      "Backend: POST / PATCH / DELETE /hiring-requests/{id}/team require job.team_manage (via job access context).",
     related: [],
   },
 };

@@ -53,6 +53,18 @@ export default function PermissionDetailsPanel({
           <span className="pdp-group">{GROUP_LABELS[permission.group] ?? permission.group}</span>
         </div>
 
+        <div className={`pdp-enforcement${permission.enforced ? " pdp-enforcement--on" : ""}`}>
+          <i className={`bx ${permission.enforced ? "bx-check-shield" : "bx-error-circle"}`} />
+          <div>
+            <strong>{permission.enforced ? "Enforced server-side" : "Not enforced yet"}</strong>
+            <p>
+              {permission.enforced
+                ? "Backend endpoints check this permission — toggling it off truly blocks the action."
+                : "No server endpoint checks this permission today — toggling this switch has no effect yet."}
+            </p>
+          </div>
+        </div>
+
         <section className="pdp-section">
           <h4 className="pdp-section-title">What it does</h4>
           <p className="pdp-summary">{effect.summary}</p>
@@ -112,18 +124,6 @@ export default function PermissionDetailsPanel({
                 </button>
               ))}
             </div>
-          </section>
-        )}
-
-        {effect.technical && (
-          <section className="pdp-section">
-            <details className="pdp-tech">
-              <summary>
-                <i className="bx bx-code-alt" />
-                Technical details (how it's enforced)
-              </summary>
-              <p>{effect.technical}</p>
-            </details>
           </section>
         )}
       </div>

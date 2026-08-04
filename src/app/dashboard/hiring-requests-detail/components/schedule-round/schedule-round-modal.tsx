@@ -283,20 +283,22 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
         </div>
 
         <div className="sr-actions">
-          {!showNameConfirm && step === 2 && !rescheduleMode && <button className="sr-btn sr-btn--back" onClick={() => setStep(1)} type="button">{SR_LABELS.BACK}</button>}
-          {!showNameConfirm && step === 1 && (rescheduleMode ? (
-            <Button className="sr-btn sr-btn--primary" disabled={!canProceedTo2} onClick={handleSendInvite} loading={isPending} loadingText={SR_LABELS.RESCHEDULING_LABEL}>
-              {SR_LABELS.RESCHEDULE_CONFIRM}
-            </Button>
-          ) : (
-            <button className="sr-btn sr-btn--primary" disabled={!canProceedTo2} onClick={nextStep} type="button">{SR_LABELS.NEXT}</button>
-          ))}
-          {!showNameConfirm && step === 2 && !rescheduleMode && (
-            <Button className="sr-btn sr-btn--primary" disabled={!canProceedTo3} onClick={handleSendInvite} loading={isPending} loadingText="Sending...">
-              {SR_LABELS.SEND_INVITE}
-            </Button>
-          )}
-          {!showNameConfirm && step === 3 && <button className="sr-btn sr-btn--done" onClick={handleDone} type="button"><i className="bx bx-check" /> {SR_LABELS.DONE}</button>}
+          <div className="sr-actions-inner">
+            {!showNameConfirm && step === 2 && !rescheduleMode && <button className="sr-btn sr-btn--back" onClick={() => setStep(1)} type="button">{SR_LABELS.BACK}</button>}
+            {!showNameConfirm && step === 1 && (rescheduleMode ? (
+              <Button className="sr-btn sr-btn--primary" disabled={!canProceedTo2} onClick={handleSendInvite} loading={isPending} loadingText={SR_LABELS.RESCHEDULING_LABEL}>
+                {SR_LABELS.RESCHEDULE_CONFIRM}
+              </Button>
+            ) : (
+              <button className="sr-btn sr-btn--primary" disabled={!canProceedTo2} onClick={nextStep} type="button">{SR_LABELS.NEXT}</button>
+            ))}
+            {!showNameConfirm && step === 2 && !rescheduleMode && (
+              <Button className="sr-btn sr-btn--primary" disabled={!canProceedTo3} onClick={handleSendInvite} loading={isPending} loadingText="Sending...">
+                {SR_LABELS.SEND_INVITE}
+              </Button>
+            )}
+            {!showNameConfirm && step === 3 && <button className="sr-btn sr-btn--done" onClick={handleDone} type="button"><i className="bx bx-check" /> {SR_LABELS.DONE}</button>}
+          </div>
         </div>
       </div>
     </BaseModal>

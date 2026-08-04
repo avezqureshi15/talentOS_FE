@@ -167,39 +167,47 @@
   color: var(--accent);
 }
 
-/* ── Technical details (collapsible) ── */
+/* ── Enforcement status (computed from backend wiring) ── */
 
-.pdp-tech {
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  background: var(--bg-primary);
-}
-
-.pdp-tech summary {
+.pdp-enforcement {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 12px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  list-style: none;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, transparent);
+  background: color-mix(in srgb, var(--warning) 9%, var(--bg-primary));
 }
 
-.pdp-tech summary::-webkit-details-marker {
-  display: none;
+.pdp-enforcement--on {
+  border-color: color-mix(in srgb, var(--success) 30%, transparent);
+  background: color-mix(in srgb, var(--success) 10%, var(--bg-primary));
 }
 
-.pdp-tech summary i {
-  font-size: 14px;
+.pdp-enforcement > i {
+  font-size: 18px;
+  margin-top: 1px;
+  flex-shrink: 0;
+  color: var(--warning);
 }
 
-.pdp-tech p {
+.pdp-enforcement--on > i {
+  color: var(--success);
+}
+
+.pdp-enforcement strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.pdp-enforcement p {
   margin: 0;
-  padding: 0 12px 12px;
   font-size: 12px;
-  line-height: 1.55;
-  color: var(--text-muted);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
+
+/* ── Related chips ── */

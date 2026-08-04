@@ -58,7 +58,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     stageCounts,
   } = useApplicationsContext();
 
-  const { viewMode, setViewMode, openId, setOpenId, handleRowClick, handleInfoClick, isSearchingForApplicant } = useJobDetail({
+  const { viewMode, setViewMode, openId, setOpenId, handleRowClick, handleInfoClick, isSearchingForApplicant, applicantNotFound } = useJobDetail({
     applicantParam, applicants, appsLoading, page, totalPages, goToPage, jobId,
   });
 
@@ -265,7 +265,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     <span>{UI_SEARCHING_APPLICANT}</span>
                   </motion.div>
                 )}
-                {!isSearchingForApplicant && applicantParam && !applicants.some((a) => a.id === applicantParam) && (
+                {applicantParam && applicantNotFound && (
                   <motion.div
                     className="applicant-search-indicator applicant-search-indicator--not-found"
                     initial={{ opacity: 0, y: -8 }}

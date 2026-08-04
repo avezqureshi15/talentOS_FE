@@ -20,6 +20,7 @@ type UseJobDetailReturn = {
   handleRowClick: (candidate: Applicant) => void;
   handleInfoClick: (candidate: Applicant) => void;
   isSearchingForApplicant: boolean;
+  applicantNotFound: boolean;
 };
 
 export function useJobDetail({
@@ -37,7 +38,14 @@ export function useJobDetail({
   );
   const [openId, setOpenId] = useState<string | null>(applicantParam ?? null);
   const scrollAttemptedRef = useRef(false);
-  const [isSearchingForApplicant, setIsSearchingForApplicant] = useState(false);
+  const [searchStatus, setSearchStatus] = useState<"idle" | "searching" | "not-found">(
+    applicantParam ? "searching" : "idle",
+  );
+  const [prevApplicantParam, setPrevApplicantParam] = useState<string | null>(applicantParam);
+  if (applicantParam !== prevApplicantParam) {
+    setPrevApplicantParam(applicantParam);
+    setSearchStatus(applicantParam ? "searching" : "idle");
+  }
 
   useEffect(
     () => {
@@ -59,7 +67,7 @@ export function useJobDetail({
 
       if (found) {
         scrollAttemptedRef.current = true;
-        setIsSearchingForApplicant(false);
+        setSearchStatus("idle");
         setOpenId(applicantParam);
 
         const scrollTimer = setTimeout(() => {
@@ -82,10 +90,10 @@ export function useJobDetail({
       }
 
       if (page < totalPages) {
-        setIsSearchingForApplicant(true);
+        setSearchStatus("searching");
         goToPage(page + 1);
       } else {
-        setIsSearchingForApplicant(false);
+        setSearchStatus("not-found");
         scrollAttemptedRef.current = true;
         const clearTimer = setTimeout(() => {
           setSearchParams((prev) => {
@@ -113,6 +121,7 @@ export function useJobDetail({
   const handleInfoClick = useCallback(
     (candidate: Applicant) => {
       scrollAttemptedRef.current = false;
+      setSearchStatus("searching");
       setSearchParams({ applicant: candidate.id, view: "card" });
     },
     [setSearchParams],
@@ -125,6 +134,7 @@ export function useJobDetail({
     setOpenId,
     handleRowClick,
     handleInfoClick,
-    isSearchingForApplicant,
+    isSearchingForApplicant: searchStatus === "searching",
+    applicantNotFound: searchStatus === "not-found",
   };
 }

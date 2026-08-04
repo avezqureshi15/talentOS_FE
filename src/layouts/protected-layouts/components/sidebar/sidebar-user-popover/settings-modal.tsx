@@ -8,6 +8,7 @@ import { useRole } from "@/app/auth/hooks/use-auth";
 import { usePermissions } from "@/hooks/use-permissions";
 import { ROUTES } from "@/constants/routes";
 import ApiKeysSection from "@/app/superadmin/api-keys/components/api-keys-section";
+import RoleDocsTable from "./role-docs-table";
 import "./settings-modal.css";
 
 type SettingsModalProps = {
@@ -15,7 +16,7 @@ type SettingsModalProps = {
   onClose: () => void;
 };
 
-type SettingsTab = "theme" | "api-keys" | "apps";
+type SettingsTab = "theme" | "api-keys" | "apps" | "role-docs";
 
 const THEME_OPTIONS: { value: ThemeMode; label: string; icon: string }[] = [
   { value: "light", label: SETTINGS_MODAL.THEME_LIGHT, icon: "bx bx-sun" },
@@ -27,6 +28,7 @@ const SETTINGS_TABS: { value: SettingsTab; label: string; icon: string }[] = [
   { value: "theme", label: "Theme", icon: "bx bx-palette" },
   { value: "api-keys", label: "API Keys", icon: "bx bx-key" },
   { value: "apps", label: SETTINGS_MODAL.APPS_TAB, icon: "bx bx-code-alt" },
+  { value: "role-docs", label: "Role Docs", icon: "bx bx-book-open" },
 ];
 
 const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
@@ -40,7 +42,11 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
   const setTheme = useThemeStore((s) => s.setTheme);
 
   const visibleTabs = SETTINGS_TABS.filter(
-    (t) => t.value === "theme" || (t.value === "api-keys" && isSuperAdmin) || (t.value === "apps" && canManageApps),
+    (t) =>
+      t.value === "theme" ||
+      t.value === "role-docs" ||
+      (t.value === "api-keys" && isSuperAdmin) ||
+      (t.value === "apps" && canManageApps),
   );
 
   const handleManageApps = () => {
@@ -113,6 +119,12 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
                   {SETTINGS_MODAL.MANAGE_APPS}
                 </Button>
               </div>
+            </div>
+          )}
+
+          {tab === "role-docs" && (
+            <div className="settings-modal__body settings-modal__body--role-docs">
+              <RoleDocsTable />
             </div>
           )}
         </div>

@@ -563,6 +563,16 @@
   text-overflow: ellipsis;
 }
 
+/* Not-yet-enforced dot (permission not gated in backend) */
+.rpe-toggle-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--warning);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warning) 22%, transparent);
+}
+
 /* ── Sticky Footer ── */
 
 .rpe-sticky-footer {

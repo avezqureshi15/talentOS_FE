@@ -5,12 +5,11 @@ import PageHeader from "@/layouts/protected-layouts/components/header/page-heade
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import Button from "@/components/ui/button/button";
 import Skeleton from "@/components/ui/skeleton/skeleton";
-import BaseModal from "@/components/ui/modal/base-modal";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import { useNotificationsData } from "../hooks/use-notifications-data";
 import { NOTIFICATION_TABS, getNotificationMeta } from "@/services/notifications/notification.meta";
-import { sendReminder } from "@/services/notifications/notifications";
+import { sendReminderByForm } from "@/services/notifications/notifications";
 import { useNotificationStore } from "@/store/notification.store";
 import { formatRelativeTime, formatFullTime, groupNotifications } from "./notifications.utils";
 import { spring, fadeSlideUp } from "@/utils/motion";
@@ -21,9 +20,8 @@ import "./notifications.css";
 const Notifications = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [remindTarget, setRemindTarget] = useState<NotificationApiItem | null>(null);
-  const [isSendingReminder, setIsSendingReminder] = useState(false);
   const [markingId, setMarkingId] = useState<string | null>(null);
+  const [remindingId, setRemindingId] = useState<string | null>(null);
 
   const sub = (searchParams.get("sub") as NotificationTab | null) ?? "all";
   const {
@@ -53,17 +51,16 @@ const Notifications = () => {
     [markRead],
   );
 
-  const handleRemind = async () => {
-    if (!remindTarget) return;
-    setIsSendingReminder(true);
+  const handleRemind = async (n: NotificationApiItem) => {
+    if (!n.form_id) return;
+    setRemindingId(n.id);
     try {
-      await sendReminder(remindTarget.employee_id, remindTarget.type.toUpperCase(), true);
+      await sendReminderByForm(n.form_id);
       addToast("Reminder sent", ToastType.SUCCESS);
     } catch (err) {
       addToast(err instanceof Error ? err.message : "Reminder failed", ToastType.ERROR);
     } finally {
-      setIsSendingReminder(false);
-      setRemindTarget(null);
+      setRemindingId(null);
     }
   };
 
@@ -192,15 +189,42 @@ const Notifications = () => {
                             </div>
                             <div className="notifications-item__side">
                               <div className="notifications-item__actions">
-                                {n.action_url && n.action_label && (
-                                  <Button
-                                    className="notifications-item__action"
-                                    variant={unread ? "primary" : "secondary"}
-                                    size="sm"
-                                    onClick={() => handleAction(n)}
-                                  >
-                                    {n.action_label}
-                                  </Button>
+                                {(n.type === "REVIEW" || n.type === "SLOTS") && n.form_id ? (
+                                  <>
+                                    <Button
+                                      className="notifications-item__action"
+                                      variant={unread ? "primary" : "secondary"}
+                                      size="sm"
+                                      icon="bx bx-bell-ring"
+                                      loading={remindingId === n.id}
+                                      loadingText="Sending..."
+                                      onClick={() => void handleRemind(n)}
+                                    >
+                                      Send reminder
+                                    </Button>
+                                    {n.action_url && (
+                                      <Button
+                                        className="notifications-item__action notifications-item__open"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleAction(n)}
+                                      >
+                                        Open form
+                                      </Button>
+                                    )}
+                                  </>
+                                ) : (
+                                  n.action_url &&
+                                  n.action_label && (
+                                    <Button
+                                      className="notifications-item__action"
+                                      variant={unread ? "primary" : "secondary"}
+                                      size="sm"
+                                      onClick={() => handleAction(n)}
+                                    >
+                                      {n.action_label}
+                                    </Button>
+                                  )
                                 )}
                               </div>
                               <div className="notifications-item__quick" role="group" aria-label="Quick actions">
@@ -219,16 +243,6 @@ const Notifications = () => {
                                           : "bx bx-check"
                                       }
                                     />
-                                  </button>
-                                )}
-                                {n.type === "REVIEW" && unread && (
-                                  <button
-                                    type="button"
-                                    className="notifications-item__quick-btn"
-                                    title="Remind reviewer"
-                                    onClick={() => setRemindTarget(n)}
-                                  >
-                                    <i className="bx bx-bell-ring" />
                                   </button>
                                 )}
                               </div>
@@ -259,29 +273,6 @@ const Notifications = () => {
           </div>
         </motion.div>
       </ErrorBoundary>
-
-      <BaseModal open={!!remindTarget} onClose={() => setRemindTarget(null)} title="Send reminder" icon="bx bx-bell-ring">
-        <div className="remind-modal-body">
-          <p className="remind-modal-text">
-            {remindTarget
-              ? `Send a reminder for "${remindTarget.title}"? The reviewer will receive a fresh notification.`
-              : "Send a reminder? The reviewer will receive a fresh notification."}
-          </p>
-          <div className="remind-modal-actions">
-            <Button className="remind-modal-btn remind-modal-btn--cancel" onClick={() => setRemindTarget(null)}>
-              Cancel
-            </Button>
-            <Button
-              className="remind-modal-btn remind-modal-btn--confirm"
-              onClick={() => void handleRemind()}
-              loading={isSendingReminder}
-              loadingText="Sending..."
-            >
-              Send reminder
-            </Button>
-          </div>
-        </div>
-      </BaseModal>
     </>
   );
 };

@@ -2,7 +2,7 @@ import httpClient from "@/services/http-client";
 import type { RoleData, RoleListItem } from "../pages/roles-page.types";
 
 export type PermissionsListResponse = {
-  permissions: { code: string; name: string; group: string }[];
+  permissions: { code: string; name: string; group: string; enforced: boolean }[];
 };
 
 export type RoleListResponse = {

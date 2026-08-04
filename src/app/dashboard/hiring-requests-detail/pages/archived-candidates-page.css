@@ -75,7 +75,7 @@
   gap: 14px;
   padding: 16px 18px;
   background: var(--surface-card, #ffffff);
-  border: 1px solid var(--border-color, #ececec);
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
 }
 

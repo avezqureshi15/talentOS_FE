@@ -83,3 +83,22 @@ export const sendReminder = async (
     throw new Error(msg, { cause: err });
   }
 };
+
+export const sendReminderByForm = async (formId: string): Promise<NotifyFormResponse> => {
+  try {
+    const { data } = await httpClient.post<NotifyFormResponse>(
+      API_ENDPOINTS.FORMS_REMIND.replace("{form_id}", formId),
+      undefined,
+      { toastOnError: false },
+    );
+    return data;
+  } catch (err: unknown) {
+    const axiosErr = err as { response?: { data?: { detail?: string; error?: string; message?: string } } };
+    const msg =
+      axiosErr.response?.data?.detail ||
+      axiosErr.response?.data?.error ||
+      axiosErr.response?.data?.message ||
+      "Reminder failed";
+    throw new Error(msg, { cause: err });
+  }
+};
