@@ -28,7 +28,7 @@ export const fetchNotifications = async (
   if (params.search) query.search = params.search;
   const { data } = await httpClient.get<NotificationsApiResponse>(
     API_ENDPOINTS.NOTIFICATIONS,
-    { params: query },
+    { params: query, toastOnError: false },
   );
   return data;
 };
@@ -36,6 +36,7 @@ export const fetchNotifications = async (
 export const fetchUnreadCount = async (): Promise<number> => {
   const { data } = await httpClient.get<UnreadCountApiResponse>(
     API_ENDPOINTS.NOTIFICATIONS_UNREAD_COUNT,
+    { toastOnError: false },
   );
   return data.data.unread_count;
 };
