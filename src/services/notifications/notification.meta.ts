@@ -7,15 +7,15 @@ export type NotificationMeta = {
 };
 
 export const NOTIFICATION_META: Record<string, NotificationMeta> = {
-  SLOTS: { label: "Slot request", icon: "bx bx-stopwatch", tab: "slots" },
-  REVIEW: { label: "Review pending", icon: "bx bx-check-shield", tab: "reviews" },
-  REVIEW_SUBMITTED: { label: "Review submitted", icon: "bx bx-check-circle", tab: "reviews" },
-  JOB_ASSIGNED: { label: "Job assigned", icon: "bx bx-briefcase", tab: "assignments" },
-  ROLE_ASSIGNED: { label: "Role assigned", icon: "bx bx-user-check", tab: "assignments" },
-  EVALUATION_COMPLETED: { label: "Evaluation completed", icon: "bx bx-check-double", tab: "process" },
-  EVALUATION_FAILED: { label: "Evaluation failed", icon: "bx bx-x-circle", tab: "process" },
-  INTERVIEW_SCHEDULED: { label: "Interview scheduled", icon: "bx bx-calendar-check", tab: "process" },
-  FINAL_VERDICT: { label: "Final verdict", icon: "bx bx-flag", tab: "process" },
+  SLOTS: { label: "Slot Request", icon: "bx bx-calendar-plus", tab: "slots" },
+  REVIEW: { label: "Review Pending", icon: "bx bx-clipboard", tab: "reviews" },
+  REVIEW_SUBMITTED: { label: "Review Submitted", icon: "bx bx-check-circle", tab: "reviews" },
+  JOB_ASSIGNED: { label: "Job Allocated", icon: "bx bx-briefcase-alt-2", tab: "assignments" },
+  ROLE_ASSIGNED: { label: "Role Changed", icon: "bx bx-user-pin", tab: "assignments" },
+  EVALUATION_COMPLETED: { label: "Evaluation Completed", icon: "bx bx-badge-check", tab: "process" },
+  EVALUATION_FAILED: { label: "Evaluation Failed", icon: "bx bx-error-circle", tab: "process" },
+  INTERVIEW_SCHEDULED: { label: "Interview Scheduled", icon: "bx bx-calendar-event", tab: "process" },
+  FINAL_VERDICT: { label: "Final Verdict", icon: "bx bx-trophy", tab: "process" },
 };
 
 export const NOTIFICATION_META_FALLBACK: NotificationMeta = {

@@ -105,9 +105,14 @@ const NotificationBell = () => {
                       <i className={meta.icon} />
                     </span>
                     <span className="notification-bell__item-content">
+                      <span className="notification-bell__item-top">
+                        <span className={`notification-bell__item-chip notification-bell__item-chip--${meta.tab}`}>
+                          {meta.label}
+                        </span>
+                        <span className="notification-bell__item-time">{formatRelativeTime(n.created_at)}</span>
+                      </span>
                       <span className="notification-bell__item-title">{n.title}</span>
                       {n.body && <span className="notification-bell__item-body">{n.body}</span>}
-                      <span className="notification-bell__item-time">{formatRelativeTime(n.created_at)}</span>
                     </span>
                   </button>
                 );
