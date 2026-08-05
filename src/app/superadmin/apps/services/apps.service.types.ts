@@ -1,4 +1,10 @@
-export type ApiKeyResponse = {
+export type CreatedByBrief = {
+  id: number;
+  name: string | null;
+  email: string | null;
+};
+
+export type AppResponse = {
   id: number;
   name: string;
   description: string | null;
@@ -9,14 +15,15 @@ export type ApiKeyResponse = {
   created_at: string;
   tenant_id: number | null;
   tenant_name: string | null;
+  created_by: CreatedByBrief | null;
 };
 
-export type ApiKeyCreatedResponse = ApiKeyResponse & {
+export type AppCreatedResponse = AppResponse & {
   full_key: string;
 };
 
-export type ApiKeyListResponse = {
-  data: ApiKeyResponse[];
+export type AppListResponse = {
+  data: AppResponse[];
   total: number;
   page: number;
   per_page: number;
@@ -31,7 +38,7 @@ export type PermissionInfo = {
   endpoint: string;
 };
 
-export type ApiKeyDetailResponse = ApiKeyResponse & {
+export type AppDetailResponse = AppResponse & {
   permissions: PermissionInfo[];
 };
 
@@ -39,11 +46,13 @@ export type CreateAppRequest = {
   name: string;
   description?: string;
   tenant_id?: number | null;
+  expires_at?: string | null;
 };
 
 export type UpdateAppRequest = {
   name?: string;
   description?: string;
+  expires_at?: string | null;
 };
 
 export type UpdatePermissionsRequest = {

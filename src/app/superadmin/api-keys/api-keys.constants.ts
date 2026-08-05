@@ -1,39 +1,7 @@
 export const API_KEYS_QUERY_KEYS = {
   LIST: "api-keys-list",
+  MANAGEABLE: "api-keys-manageable",
 } as const;
-
-export const API_KEYS_CONFIG = [
-  {
-    key: "RH_API_KEY",
-    label: "Recruitment hub",
-    icon: "bx bx-code-alt",
-    hint: "Bearer key used for the Recruitment hub service (jobs, candidates, screening, interviews).",
-  },
-  {
-    key: "SERVICE_API_KEY",
-    label: "Incoming service callbacks",
-    icon: "bx bx-shield-quarter",
-    hint: "Shared secret the ai-recruitment-poc uses to call talentOS internal endpoints.",
-  },
-  {
-    key: "MEETMIND_API_TOKEN",
-    label: "MeetMind",
-    icon: "bx bx-code-alt",
-    hint: "X-API-Key used when registering Google Meet interview schedules with MeetMind.",
-  },
-  {
-    key: "SUPABASE_SERVICE_ROLE_KEY",
-    label: "Supabase Storage",
-    icon: "bx bx-code-alt",
-    hint: "Service-role key for downloading resumes from private Supabase Storage buckets.",
-  },
-  {
-    key: "RESEND_API_KEY",
-    label: "Resend (email)",
-    icon: "bx bx-envelope",
-    hint: "API key used for transactional emails.",
-  },
-] as const;
 
 export const API_KEYS_SAVE_LABEL = "Save changes";
 export const API_KEYS_CLEAR_LABEL = "Clear override";

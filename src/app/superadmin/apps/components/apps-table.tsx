@@ -1,5 +1,5 @@
 import DataTable from "@/components/ui/data-table/data-table";
-import type { ApiKeyResponse } from "@/app/superadmin/apps/services/apps.service.types";
+import type { AppResponse } from "@/app/superadmin/apps/services/apps.service.types";
 import type { AppsTableProps } from "./apps-table.types";
 
 const STATUS_LABELS: Record<string, { badge: string; label: string }> = {
@@ -12,6 +12,7 @@ export default function AppsTable({
   loading,
   onRevoke,
   onRotate,
+  onEdit,
   onRowClick,
   showTenant = false,
 }: AppsTableProps) {
@@ -25,7 +26,7 @@ export default function AppsTable({
           render: (app) => <code className="ap-key-prefix">{app.key_prefix}...</code>,
         },
         ...(showTenant
-          ? [{ header: "Tenant", render: (app: ApiKeyResponse) => app.tenant_name ?? "—" }]
+          ? [{ header: "Tenant", render: (app: AppResponse) => app.tenant_name ?? "—" }]
           : []),
         {
           header: "Status",
@@ -38,6 +39,10 @@ export default function AppsTable({
         },
         { header: "Created", render: (app) => new Date(app.created_at).toLocaleDateString() },
         {
+          header: "Created By",
+          render: (app) => app.created_by?.name ?? app.created_by?.email ?? "—",
+        },
+        {
           header: "Last Used",
           render: (app) =>
             app.last_used_at
@@ -48,6 +53,9 @@ export default function AppsTable({
           header: "Action",
           render: (app) => (
             <div className="dt-actions" onClick={(e) => e.stopPropagation()}>
+              <button className="dt-btn" onClick={() => onEdit(app)} title="Edit app">
+                <span className="bx bx-pencil" />
+              </button>
               <button className="dt-btn" onClick={() => onRotate(app)} title="Rotate key">
                 <span className="bx bx-rotate-cw" />
               </button>
@@ -64,7 +72,7 @@ export default function AppsTable({
       loading={loading}
       keyExtractor={(app) => app.id}
       emptyMessage="No apps found"
-      gridTemplateColumns={showTenant ? "40px 1.6fr 1.2fr 1.2fr 1fr 1fr 1fr 80px" : "40px 2fr 1.5fr 1fr 1fr 1fr 80px"}
+      gridTemplateColumns={showTenant ? "40px 1.4fr 1.1fr 1.1fr 0.9fr 0.9fr 1.1fr 0.9fr 80px" : "40px 1.6fr 1.3fr 0.9fr 0.9fr 1.1fr 0.9fr 80px"}
       onRowClick={onRowClick}
     />
   );

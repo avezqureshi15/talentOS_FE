@@ -7,16 +7,18 @@ import { useAppsList } from "@/app/superadmin/apps/hooks/use-apps-list";
 import { useCreateApp } from "@/app/superadmin/apps/hooks/use-create-app";
 import { useRevokeApp } from "@/app/superadmin/apps/hooks/use-revoke-app";
 import { useRotateKey } from "@/app/superadmin/apps/hooks/use-rotate-key";
+import { useUpdateApp } from "@/app/superadmin/apps/hooks/use-update-app";
 import AppsTable from "@/app/superadmin/apps/components/apps-table";
 import CreateAppModal from "@/app/superadmin/apps/components/create-app-modal";
+import EditAppModal from "@/app/superadmin/apps/components/edit-app-modal";
 import RevokeAppDialog from "@/app/superadmin/apps/components/revoke-app-dialog";
 import RotateKeyDialog from "@/app/superadmin/apps/components/rotate-key-dialog";
 import { getTenants } from "@/app/superadmin/tenants/services/tenants.service";
 import type { AppsScope } from "@/app/superadmin/apps/services/apps.service";
-import type { ApiKeyResponse } from "@/app/superadmin/apps/services/apps.service.types";
+import type { AppResponse, UpdateAppRequest } from "@/app/superadmin/apps/services/apps.service.types";
 import type { TenantOption } from "@/app/superadmin/apps/components/create-app-modal.types";
 
-type ModalState = "none" | "create" | "revoke" | "rotate";
+type ModalState = "none" | "create" | "revoke" | "rotate" | "edit";
 
 export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }) {
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
   const [search, setSearch] = useState("");
   const [tenantId, setTenantId] = useState<number | null>(null);
   const [modal, setModal] = useState<ModalState>("none");
-  const [selectedApp, setSelectedApp] = useState<ApiKeyResponse | null>(null);
+  const [selectedApp, setSelectedApp] = useState<AppResponse | null>(null);
 
   const { data: tenantsData } = useQuery({
     queryKey: ["superadmin-tenants-options"],
@@ -45,6 +47,7 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
   const { mutateAsync: createAppAsync } = useCreateApp(scope);
   const { mutateAsync: revokeAppAsync } = useRevokeApp(scope);
   const { mutateAsync: rotateKeyAsync } = useRotateKey(scope);
+  const { mutateAsync: updateAppAsync } = useUpdateApp(scope);
 
   const apps = data?.data ?? [];
   const total = data?.total ?? 0;
@@ -60,7 +63,7 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
     setPage(1);
   }, []);
 
-  const openModal = useCallback((state: ModalState, app?: ApiKeyResponse) => {
+  const openModal = useCallback((state: ModalState, app?: AppResponse) => {
     setSelectedApp(app ?? null);
     setModal(state);
   }, []);
@@ -70,9 +73,14 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
     setSelectedApp(null);
   }, []);
 
-  const handleCreate = useCallback(async (body: { name: string; description?: string; tenant_id?: number | null }) => {
+  const handleCreate = useCallback(async (body: Parameters<typeof createAppAsync>[0]) => {
     return await createAppAsync(body);
   }, [createAppAsync]);
+
+  const handleEditSubmit = useCallback(async (body: UpdateAppRequest) => {
+    if (!selectedApp) return;
+    await updateAppAsync({ appId: selectedApp.id, body });
+  }, [selectedApp, updateAppAsync]);
 
   const handleRevoke = useCallback(async () => {
     if (!selectedApp) return;
@@ -85,7 +93,7 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
     return await rotateKeyAsync(selectedApp.id);
   }, [selectedApp, rotateKeyAsync]);
 
-  const handleRowClick = useCallback((app: ApiKeyResponse) => {
+  const handleRowClick = useCallback((app: AppResponse) => {
     navigate(`${scope === "admin" ? "/admin" : "/superadmin"}/apps/${app.id}`);
   }, [navigate, scope]);
 
@@ -127,6 +135,7 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
           showTenant={isSuperadmin}
           onRevoke={(app) => openModal("revoke", app)}
           onRotate={(app) => openModal("rotate", app)}
+          onEdit={(app) => openModal("edit", app)}
           onRowClick={handleRowClick}
         />
 
@@ -160,6 +169,13 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
             appName={selectedApp.name}
             onClose={closeModal}
             onConfirm={handleRotate}
+          />
+
+          <EditAppModal
+            open={modal === "edit"}
+            app={selectedApp}
+            onClose={closeModal}
+            onSubmit={handleEditSubmit}
           />
         </>
       )}

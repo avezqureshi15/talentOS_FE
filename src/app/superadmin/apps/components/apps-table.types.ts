@@ -1,10 +1,11 @@
-import type { ApiKeyResponse } from "@/app/superadmin/apps/services/apps.service.types";
+import type { AppResponse } from "@/app/superadmin/apps/services/apps.service.types";
 
 export type AppsTableProps = {
-  apps: ApiKeyResponse[];
+  apps: AppResponse[];
   loading: boolean;
-  onRevoke: (app: ApiKeyResponse) => void;
-  onRotate: (app: ApiKeyResponse) => void;
-  onRowClick: (app: ApiKeyResponse) => void;
+  onRevoke: (app: AppResponse) => void;
+  onRotate: (app: AppResponse) => void;
+  onEdit: (app: AppResponse) => void;
+  onRowClick: (app: AppResponse) => void;
   showTenant?: boolean;
 };

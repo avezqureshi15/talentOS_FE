@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { listApps, type AppsScope } from "@/app/superadmin/apps/services/apps.service";
 import { APPS_QUERY_KEYS } from "@/app/superadmin/apps/apps.constants";
-import type { ApiKeyListResponse } from "@/app/superadmin/apps/services/apps.service.types";
+import type { AppListResponse } from "@/app/superadmin/apps/services/apps.service.types";
 
 export const useAppsList = (
   page: number,
@@ -9,7 +9,7 @@ export const useAppsList = (
   tenantId?: number | null,
   scope: AppsScope = "superadmin",
 ) => {
-  return useQuery<ApiKeyListResponse>({
+  return useQuery<AppListResponse>({
     queryKey: [APPS_QUERY_KEYS.APPS_LIST, scope, tenantId ?? "all", page, search],
     queryFn: async () => {
       const { data } = await listApps(

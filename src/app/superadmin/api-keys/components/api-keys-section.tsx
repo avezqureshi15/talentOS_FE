@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Button from "@/components/ui/button/button";
 import { useAuth } from "@/app/auth/hooks/use-auth";
-import { useApiKeys, useUpdateApiKeys } from "../hooks/use-api-keys";
+import { useApiKeys, useManageableApiKeys, useUpdateApiKeys } from "../hooks/use-api-keys";
 import {
-  API_KEYS_CONFIG,
   API_KEYS_CLEAR_LABEL,
   API_KEYS_EMPTY_PLACEHOLDER,
   API_KEYS_ERROR_MESSAGE,
@@ -21,6 +20,7 @@ const ApiKeysSection = () => {
   const { user } = useAuth();
   const tenantId = user?.tenant_id ?? undefined;
   const { data, isLoading } = useApiKeys(tenantId);
+  const { data: manageableKeys, isLoading: isManageableLoading } = useManageableApiKeys();
   const updateMutation = useUpdateApiKeys(tenantId);
 
   const [values, setValues] = useState<Record<string, string>>({});
@@ -61,11 +61,11 @@ const ApiKeysSection = () => {
         <span className="api-keys-section__subtitle">{API_KEYS_PAGE_SUBTITLE}</span>
       </div>
 
-      {isLoading && <div className="api-keys-section__loading">Loading...</div>}
+      {(isLoading || isManageableLoading) && <div className="api-keys-section__loading">Loading...</div>}
 
-      {!isLoading && (
+      {!isLoading && !isManageableLoading && (
         <div className="api-keys-section__list">
-          {API_KEYS_CONFIG.map((cfg) => {
+          {(manageableKeys ?? []).map((cfg) => {
             const entry = current[cfg.key];
             const hasOverride = entry?.hasOverride ?? false;
             const shownValue = values[cfg.key] ?? "";

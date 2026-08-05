@@ -3,13 +3,13 @@ import { updateAppPermissions, type AppsScope } from "@/app/superadmin/apps/serv
 import { APPS_QUERY_KEYS } from "@/app/superadmin/apps/apps.constants";
 import type {
   UpdatePermissionsRequest,
-  ApiKeyDetailResponse,
+  AppDetailResponse,
 } from "@/app/superadmin/apps/services/apps.service.types";
 
 export const useUpdatePermissions = (scope: AppsScope = "superadmin") => {
   const queryClient = useQueryClient();
 
-  return useMutation<ApiKeyDetailResponse, Error, { appId: number; body: UpdatePermissionsRequest }>({
+  return useMutation<AppDetailResponse, Error, { appId: number; body: UpdatePermissionsRequest }>({
     mutationFn: async ({ appId, body }) => {
       const { data } = await updateAppPermissions(appId, body, scope);
       return data;

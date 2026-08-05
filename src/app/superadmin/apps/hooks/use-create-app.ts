@@ -3,13 +3,13 @@ import { createApp, type AppsScope } from "@/app/superadmin/apps/services/apps.s
 import { APPS_QUERY_KEYS } from "@/app/superadmin/apps/apps.constants";
 import type {
   CreateAppRequest,
-  ApiKeyCreatedResponse,
+  AppCreatedResponse,
 } from "@/app/superadmin/apps/services/apps.service.types";
 
 export const useCreateApp = (scope: AppsScope = "superadmin") => {
   const queryClient = useQueryClient();
 
-  return useMutation<ApiKeyCreatedResponse, Error, CreateAppRequest>({
+  return useMutation<AppCreatedResponse, Error, CreateAppRequest>({
     mutationFn: async (body) => {
       const { data } = await createApp(body, scope);
       return data;

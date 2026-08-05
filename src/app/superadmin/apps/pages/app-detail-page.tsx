@@ -4,15 +4,17 @@ import { ChevronLeft } from "lucide-react";
 import { useAppDetail } from "@/app/superadmin/apps/hooks/use-app-detail";
 import { useRevokeApp } from "@/app/superadmin/apps/hooks/use-revoke-app";
 import { useRotateKey } from "@/app/superadmin/apps/hooks/use-rotate-key";
+import { useUpdateApp } from "@/app/superadmin/apps/hooks/use-update-app";
 import { useUpdatePermissions } from "@/app/superadmin/apps/hooks/use-update-permissions";
 import AppPermissionEditor from "@/app/superadmin/apps/components/app-permission-editor";
+import EditAppModal from "@/app/superadmin/apps/components/edit-app-modal";
 import RevokeAppDialog from "@/app/superadmin/apps/components/revoke-app-dialog";
 import RotateKeyDialog from "@/app/superadmin/apps/components/rotate-key-dialog";
 import Button from "@/components/ui/button/button";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import "@/app/superadmin/apps/app-detail-page.css";
 import type { AppsScope } from "@/app/superadmin/apps/services/apps.service";
-import type { PermissionInfo } from "@/app/superadmin/apps/services/apps.service.types";
+import type { PermissionInfo, UpdateAppRequest } from "@/app/superadmin/apps/services/apps.service.types";
 
 type Tab = "details" | "permissions";
 
@@ -24,10 +26,12 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
   const { data: app, isLoading, error } = useAppDetail(id, scope);
   const { mutateAsync: revokeAppAsync } = useRevokeApp(scope);
   const { mutateAsync: rotateKeyAsync } = useRotateKey(scope);
+  const { mutateAsync: updateAppAsync } = useUpdateApp(scope);
   const updatePermsMutation = useUpdatePermissions(scope);
   const [permissions, setPermissions] = useState<PermissionInfo[]>([]);
   const [showRevoke, setShowRevoke] = useState(false);
   const [showRotate, setShowRotate] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   
   const [tab, setTab] = useState<Tab>("details");
 
@@ -57,6 +61,11 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
     if (!app) throw new Error("No app selected");
     return await rotateKeyAsync(app.id);
   }, [app, rotateKeyAsync]);
+
+  const handleEditSubmit = useCallback(async (body: UpdateAppRequest) => {
+    if (!app) return;
+    await updateAppAsync({ appId: app.id, body });
+  }, [app, updateAppAsync]);
 
   if (isLoading) {
     return (
@@ -147,6 +156,9 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
                 </span>
               </div>
               <div className="ad-details-top-actions">
+                <Button variant="ghost" icon="bx bx-pencil" onClick={() => setShowEdit(true)}>
+                  Edit
+                </Button>
                 <Button variant="primary" icon="bx bx-rotate-cw" onClick={() => setShowRotate(true)} disabled={!app.is_active}>
                   Rotate Key
                 </Button>
@@ -169,6 +181,13 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
               <div className="ad-details-field">
                 <span className="ad-details-label">Created</span>
                 <span className="ad-details-value">{new Date(app.created_at).toLocaleDateString()}</span>
+              </div>
+
+              <div className="ad-details-field">
+                <span className="ad-details-label">Created By</span>
+                <span className="ad-details-value">
+                  {app.created_by?.name ?? app.created_by?.email ?? "—"}
+                </span>
               </div>
 
               <div className="ad-details-field">
@@ -197,6 +216,7 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
 
       <RevokeAppDialog open={showRevoke} appName={app.name} onClose={() => setShowRevoke(false)} onConfirm={handleRevoke} />
       <RotateKeyDialog open={showRotate} appName={app.name} onClose={() => setShowRotate(false)} onConfirm={handleRotate} />
+      <EditAppModal open={showEdit} app={app} onClose={() => setShowEdit(false)} onSubmit={handleEditSubmit} />
     </div>
   );
 }

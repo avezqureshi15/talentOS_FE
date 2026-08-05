@@ -11,6 +11,7 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [tenantId, setTenantId] = useState<number | "">("");
+  const [expiresAt, setExpiresAt] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fullKey, setFullKey] = useState("");
@@ -21,6 +22,7 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
       setName("");
       setDescription("");
       setTenantId("");
+      setExpiresAt("");
       setError(null);
       setFullKey("");
     }
@@ -37,6 +39,7 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
         name: name.trim(),
         description: description.trim() || undefined,
         tenant_id: tenantId === "" ? null : tenantId,
+        expires_at: expiresAt ? new Date(expiresAt + "T23:59:59").toISOString() : null,
       });
       setFullKey(result.full_key);
       setStep("result");
@@ -100,6 +103,15 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Optional description for this app"
                 rows={3}
+              />
+            </div>
+            <div className="ap-field">
+              <label>Expires On <span style={{ opacity: 0.6, fontWeight: 400 }}>(optional)</span></label>
+              <input
+                type="date"
+                value={expiresAt}
+                onChange={(e) => setExpiresAt(e.target.value)}
+                min={new Date().toISOString().slice(0, 10)}
               />
             </div>
           </div>
