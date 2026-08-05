@@ -129,6 +129,32 @@
   color: var(--accent);
 }
 
+/* archived count, subtle — bottom-right of each stage */
+.pipeline-archived {
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  opacity: 0.75;
+  line-height: 1;
+  cursor: pointer;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+
+.pipeline-archived i {
+  font-size: 12px;
+}
+
+.pipeline-archived:hover {
+  opacity: 1;
+  color: var(--accent);
+}
+
 /* width adjustments */
 .pipeline-stage--waiting-evaluation {
   flex: 1.4;

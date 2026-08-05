@@ -1,0 +1,93 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
+import SearchInput from "@/components/ui/search-input/search-input";
+import DataTable from "@/components/ui/data-table/data-table";
+import { useAuth } from "@/app/auth/hooks/use-auth";
+import { useEmployees } from "@/app/admin/employees/hooks/use-employees";
+import { buildEmployeesColumns } from "@/app/admin/employees/pages/employees-columns";
+import ImportEmployeesModal from "@/app/admin/employees/components/import-employees-modal/import-employees-modal";
+import {
+  EMPLOYEES_PAGE_GRID,
+  EMPLOYEES_PAGE_LABELS,
+  EMPLOYEES_PAGE_PER_PAGE,
+} from "@/app/admin/employees/pages/employees-page.constants";
+import { ROUTES } from "@/constants/routes";
+import type { Employee } from "@/app/admin/employees/pages/employees-page.types";
+import "./employees-page.css";
+
+const columns = buildEmployeesColumns();
+
+const EmployeesPage = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  // UI-only: modal open state
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const { data, isLoading, isError, page, search, setPage, onSearch, refetch } = useEmployees();
+
+  const total = data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / EMPLOYEES_PAGE_PER_PAGE));
+  const canImport = user?.role === "account_admin";
+
+  const handleRowClick = (row: Employee) => {
+    navigate(ROUTES.ADMIN_EMPLOYEE_DETAIL.replace(":empId", row.emp_id));
+  };
+
+  return (
+    <ErrorBoundary>
+      <div className="employees-page">
+        <PageHeader
+          title={EMPLOYEES_PAGE_LABELS.PAGE_TITLE}
+          actions={
+            canImport
+              ? [
+                  {
+                    key: "import-employees",
+                    label: EMPLOYEES_PAGE_LABELS.ACTION_IMPORT,
+                    variant: "primary",
+                    icon: "bx bx-upload",
+                    onClick: () => setIsImportOpen(true),
+                  },
+                ]
+              : undefined
+          }
+        />
+
+        <SearchInput
+          className="employees-search"
+          placeholder={EMPLOYEES_PAGE_LABELS.SEARCH_PLACEHOLDER}
+          value={search}
+          onChange={onSearch}
+        />
+
+        <div className="employees-content">
+          <DataTable
+            columns={columns}
+            data={data?.data ?? []}
+            keyExtractor={(e) => e.id}
+            loading={isLoading}
+            emptyMessage={EMPLOYEES_PAGE_LABELS.EMPTY}
+            gridTemplateColumns={EMPLOYEES_PAGE_GRID}
+            error={isError ? EMPLOYEES_PAGE_LABELS.LOAD_ERROR : null}
+            onRetry={refetch}
+            onRowClick={handleRowClick}
+            pagination={{
+              page,
+              total,
+              totalPages,
+              perPage: EMPLOYEES_PAGE_PER_PAGE,
+              onPageChange: setPage,
+            }}
+          />
+        </div>
+
+        {canImport && (
+          <ImportEmployeesModal open={isImportOpen} onClose={() => setIsImportOpen(false)} />
+        )}
+      </div>
+    </ErrorBoundary>
+  );
+};
+
+export default EmployeesPage;

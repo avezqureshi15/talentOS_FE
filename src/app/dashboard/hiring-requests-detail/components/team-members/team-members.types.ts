@@ -2,6 +2,7 @@ export type JobTeamMember = {
   user_id: number;
   name: string;
   email: string;
+  designation: string | null;
   is_owner: boolean;
   role: string;
 };

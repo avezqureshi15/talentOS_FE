@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Button from "@/components/ui/button/button";
 import UserTable from "@/app/admin/users/components/user-table";
 import InvitesTable from "@/app/admin/users/components/invites-table";
-import InviteUserModal from "@/app/admin/users/components/invite-user-modal";
+import InviteUserModal from "@/app/admin/users/components/invite-user-modal/invite-user-modal";
 import CreateUserModal from "@/app/admin/users/components/create-user-modal";
 import EditUserModal from "@/app/admin/users/components/edit-user-modal";
 import DeactivateDialog from "@/app/admin/users/components/deactivate-dialog";

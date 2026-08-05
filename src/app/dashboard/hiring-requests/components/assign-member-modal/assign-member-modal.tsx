@@ -12,6 +12,7 @@ import {
 } from "@/app/dashboard/hiring-requests-detail/components/team-members/use-team-members";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
 import { ASSIGN_MEMBER_MODAL } from "./assign-member-modal.constants";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import "./assign-member-modal.css";
 
 type Props = {
@@ -144,7 +145,10 @@ export default function AssignMemberModal({ job, onClose }: Props) {
                   disabled={disabled}
                   onChange={() => toggle(u.id)}
                 />
-                <span className="am-avatar">{u.name.charAt(0).toUpperCase()}</span>
+                <PersonAvatar
+                  className="am-avatar"
+                  person={{ name: u.name, email: u.email }}
+                />
                 <span className="am-info">
                   <span className="am-name-row">
                     <span className="am-name">{u.name}</span>

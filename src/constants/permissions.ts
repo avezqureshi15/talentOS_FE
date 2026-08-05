@@ -22,6 +22,7 @@ export const PERMISSIONS = {
   APPLICATION_WORKFLOW: "application.workflow",
   INTERVIEW_PLAN_EDIT: "interview.plan_edit",
   JOB_TEAM_MANAGE: "job.team_manage",
+  EMPLOYEE_VIEW: "employee.view",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

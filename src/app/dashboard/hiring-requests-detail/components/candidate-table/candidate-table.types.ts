@@ -8,6 +8,9 @@ export type CandidateTableProps = {
   columns: StageColumn[];
   onRowClick?: (candidate: Applicant) => void;
   onInfoClick?: (candidate: Applicant) => void;
+  /** Optional. When provided, adds "Schedule Round" to the actions menu for
+   * candidates whose status is eligible (currently "move_to_next_round"). */
+  onScheduleClick?: (candidate: Applicant) => void;
   onTimelineOpen?: (candidate: Applicant) => void;
   showBulkSelection?: boolean;
   selectedIds?: Set<string>;

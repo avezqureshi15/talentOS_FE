@@ -5,6 +5,7 @@ import { askSlotsForEmployee } from "@/components/shared/mentions/services/ask-s
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import SearchInput from "@/components/ui/search-input/search-input";
 import type { Interviewer, SlotTab } from "./schedule-round-modal.types";
 import type { CommandItem } from "@/components/shared/mentions/types";
@@ -44,21 +45,12 @@ const groupSlots = (items: CommandItem[]) => {
 
 const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch }: SrStep1Props) => {
   const isSelected = (iv: Interviewer) => selectedInterviewers.some((s) => s.id === iv.id);
-  // justification: stores tooltip state for avatar hover (name + designation)
-  const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
   // justification: stores tooltip state for ask-slots button hover
   const [askTooltip, setAskTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
 
-  const clearTooltip = useCallback(() => setTooltip(null), []);
   const clearAskTooltip = useCallback(() => setAskTooltip(null), []);
 
-  const handleAvatarHover = useCallback((e: React.MouseEvent<HTMLDivElement>, iv: Interviewer) => {
-    setAskTooltip(null);
-    setTooltip({ lines: [iv.name, iv.designation], rect: e.currentTarget.getBoundingClientRect() });
-  }, []);
-
   const handleAskSlotsHover = useCallback((e: React.MouseEvent<HTMLButtonElement>, iv: Interviewer) => {
-    setTooltip(null);
     setAskTooltip({ lines: [SR_LABELS.ASK_SLOTS_TOOLTIP.replace("{name}", iv.name)], rect: e.currentTarget.getBoundingClientRect() });
   }, []);
 
@@ -128,7 +120,10 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
           ) : (
             interviewers.map((iv) => (
               <button key={iv.id} className={`sr-interviewer-item ${isSelected(iv) ? "sr-interviewer-item--selected" : ""}`} onClick={() => onSelectInterviewer(iv)} type="button">
-                <div className="sr-interviewer-avatar" onMouseEnter={(e) => handleAvatarHover(e, iv)} onMouseLeave={clearTooltip}>{iv.name.charAt(0)}</div>
+                <PersonAvatar
+                  className="sr-interviewer-avatar"
+                  person={{ name: iv.name, designation: iv.designation }}
+                />
                 <div className="sr-interviewer-info">
                   <span className="sr-interviewer-name">{iv.name}</span>
                   <span className="sr-interviewer-slots">{slotsLabel(iv.slots_count)}</span>
@@ -170,7 +165,6 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
         </div>
       </div>
 
-      {tooltip && createPortal(<InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} />, document.body)}
       {askTooltip && createPortal(<InfoChipTooltip lines={askTooltip.lines} rect={askTooltip.rect} />, document.body)}
     </div>
   );

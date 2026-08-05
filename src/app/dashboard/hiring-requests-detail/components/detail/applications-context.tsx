@@ -23,6 +23,7 @@ export type ApplicationsData = {
   activeStage: StageKey;
   setActiveStage: (value: StageKey) => void;
   stageCounts: Record<string, number>;
+  archivedStageCounts: Record<string, number>;
   finalizedApplicants: Applicant[];
   finalizedTotal: number;
   finalizedLoading: boolean;

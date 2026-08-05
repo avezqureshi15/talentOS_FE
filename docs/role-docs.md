@@ -14,7 +14,7 @@
 | **Job Owner** | The person who owns a job / hiring request. Creates jobs, manages the hiring team, designs interviews. | "Hiring manager" |
 | **Recruiter** | Runs the day-to-day hiring process: moves candidates through stages, schedules interviews, rates candidates. | "Talent acquisition" |
 | **Reviewer** | Reviews and rates candidates, and gives a pass/reject opinion. | "Interviewer / evaluator" |
-| **Super Admin** | Platform-level administrator (webhyre platform team). Manages tenants, API keys, roles. Not a normal day-to-day hiring role. | "Platform admin" |
+| **Super Admin** | Platform-level administrator (TalentOS platform team). Manages tenants, API keys, roles. Not a normal day-to-day hiring role. | "Platform admin" |
 
 ---
 

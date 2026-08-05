@@ -91,4 +91,5 @@ export type PaginatedEvaluatedCandidatesResponse = {
   limit: number;
   offset: number;
   stage_counts?: StageCounts | null;
+  archived_stage_counts?: StageCounts | null;
 };

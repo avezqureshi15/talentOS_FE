@@ -1,6 +1,4 @@
 .info-chip-tooltip {
-  position: fixed;
-  transform: translateX(-50%) translateY(-100%);
   padding: 8px 14px;
   border-radius: var(--radius-sm);
   background: var(--bg-tertiary);
@@ -10,7 +8,6 @@
   font-weight: 500;
   box-shadow: var(--shadow-md);
   pointer-events: none;
-  z-index: 10002;
 }
 
 .info-chip-tooltip--wide {
@@ -20,21 +17,6 @@
 .info-chip-tooltip--below {
   white-space: nowrap;
   width: auto;
-  transform: translateX(-50%);
-}
-
-.info-chip-tooltip--below::after {
-  top: auto;
-  bottom: 100%;
-  border-top-color: transparent;
-  border-bottom-color: var(--border-default);
-}
-
-.info-chip-tooltip--below::before {
-  top: auto;
-  bottom: 100%;
-  border-top-color: transparent;
-  border-bottom-color: var(--bg-tertiary);
 }
 
 .info-chip-tip-title {
@@ -47,25 +29,4 @@
   font-weight: 400;
   color: var(--text-secondary);
   line-height: 1.6;
-}
-
-.info-chip-tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 5px solid transparent;
-  border-top-color: var(--border-default);
-}
-
-.info-chip-tooltip::before {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 4px solid transparent;
-  border-top-color: var(--bg-tertiary);
-  z-index: 1;
 }

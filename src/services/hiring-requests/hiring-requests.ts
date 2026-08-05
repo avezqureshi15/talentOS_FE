@@ -104,7 +104,7 @@ export const importCandidatesFromExcel = async (id: string, file: File): Promise
   const { data } = await httpClient.post<ImportSummary>(
     API_ENDPOINTS.HIRING_REQUEST_IMPORT_CANDIDATES.replace("{hiring_request_id}", id),
     formData,
-    { headers: { "Content-Type": "multipart/form-data" } },
+    { headers: { "Content-Type": "multipart/form-data" }, timeout: 120_000 },
   );
   return data;
 };

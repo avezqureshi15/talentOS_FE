@@ -1,5 +1,6 @@
 import type { CommandItem } from "../../types";
 import { MAX_SELECTION } from "@/app/chat/components/chat-input/hooks/use-multi-select";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import AskSlotsButton from "./ask-slots-button";
 
 type MultiSelectListProps = {
@@ -10,14 +11,12 @@ type MultiSelectListProps = {
   onToggleMultiSelect: (id: string) => void;
   onAskSlotsHover: (e: React.MouseEvent<HTMLButtonElement>, item: CommandItem) => void;
   onAskSlotsLeave: () => void;
-  onItemHover?: (e: React.MouseEvent<HTMLDivElement>, item: CommandItem) => void;
-  onItemLeave?: () => void;
 };
 
 const MultiSelectList = ({
   listItems, selectedIndex, setSelectedIndex,
   multiSelectedIds, onToggleMultiSelect,
-  onAskSlotsHover, onAskSlotsLeave, onItemHover, onItemLeave,
+  onAskSlotsHover, onAskSlotsLeave,
 }: MultiSelectListProps) => {
   const atMax = multiSelectedIds.length >= MAX_SELECTION;
   return (
@@ -32,7 +31,14 @@ const MultiSelectList = ({
             onMouseEnter={() => setSelectedIndex(i)}
           >
             <div className="mp-item-check"><i className={`bx ${isSelected ? "bx-checkbox-checked" : "bx-checkbox"} mp-check-icon`} /></div>
-            <div className="mp-item-avatar" onMouseEnter={(e) => onItemHover?.(e, item)} onMouseLeave={onItemLeave}>{item.label.charAt(0).toUpperCase()}</div>
+            <PersonAvatar
+              className="mp-item-avatar"
+              person={{
+                name: item.label,
+                email: item.meta?.email,
+                designation: item.meta?.designation,
+              }}
+            />
             <div className="mp-item-content">
               <div className="mp-item-label">{item.label}</div>
               {item.description && <div className="mp-item-desc">{item.description}</div>}

@@ -16,6 +16,7 @@ type UseApplicationsDataResult = {
   setPageSize: (size: number) => void;
   refresh: () => void;
   stageCounts: Record<string, number>;
+  archivedStageCounts: Record<string, number>;
 };
 
 export const useApplicationsData = (
@@ -99,6 +100,7 @@ export const useApplicationsData = (
     setPageSize,
     refresh: query.refetch,
     stageCounts: query.data?.stage_counts ?? {},
+    archivedStageCounts: query.data?.archived_stage_counts ?? {},
   };
 };
 

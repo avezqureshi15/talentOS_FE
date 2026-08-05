@@ -24,6 +24,11 @@ type UseHiringRequestHeaderOptions = {
   badges?: HeaderBadge[];
   onImport?: () => void;
   onArchived?: () => void;
+  title?: string;
+  titleIcon?: string;
+  subtitle?: string;
+  totalCount?: number;
+  onBack?: () => void;
 };
 
 export function useHiringRequestHeader({
@@ -35,6 +40,11 @@ export function useHiringRequestHeader({
   badges,
   onImport,
   onArchived,
+  title,
+  titleIcon,
+  subtitle,
+  totalCount: totalCountOverride,
+  onBack,
 }: UseHiringRequestHeaderOptions): HeaderConfig {
   const { can } = usePermissions();
   const canImport = can(PERMISSIONS.APPLICATION_WORKFLOW);
@@ -55,8 +65,11 @@ export function useHiringRequestHeader({
   }, [queryClient]);
 
   return useMemo(() => ({
-    title: "Applications",
-    totalCount,
+    title: title ?? "Applications",
+    titleIcon,
+    subtitle,
+    onBack,
+    totalCount: totalCountOverride ?? totalCount,
     hiringRequestName: data.title,
     hiringRequest: data,
     viewSwitcher: {
@@ -86,5 +99,5 @@ export function useHiringRequestHeader({
     ],
     badge,
     badges,
-  }), [totalCount, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, badges, canImport, onImport, onArchived]);
+  }), [totalCount, totalCountOverride, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, badges, canImport, onImport, onArchived, title, titleIcon, subtitle, onBack]);
 }

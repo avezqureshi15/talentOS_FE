@@ -12,7 +12,8 @@ import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/comp
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/constants/permissions";
-import { HEADER_DEFAULT_VIEW } from "@/layouts/protected-layouts/components/header/header.constants";
+import { HEADER_DEFAULT_VIEW, HEADER_ARCHIVE_LABEL } from "@/layouts/protected-layouts/components/header/header.constants";
+import type { HeaderConfig } from "@/store/header.store";
 import type { HiringRequestContext } from "./hiring-request-layout";
 
 import "../components/detail/detail.css";
@@ -38,6 +39,10 @@ const ArchivedCandidatesPage = () => {
     id,
     data,
     activeView: HEADER_DEFAULT_VIEW,
+    title: HEADER_ARCHIVE_LABEL,
+    titleIcon: "bx bx-archive-in",
+    totalCount: total,
+    onBack: () => navigate(-1),
     onArchived: undefined,
     onViewChange: (key: string) => {
       if (key === "board") navigate(`/hiring-requests/${id}/board`);
@@ -45,22 +50,20 @@ const ArchivedCandidatesPage = () => {
     },
   });
 
+  const minimalHeaderConfig: HeaderConfig = {
+    ...headerConfig,
+    subtitle: undefined,
+    hiringRequestName: undefined,
+    hiringRequest: undefined,
+    viewSwitcher: null,
+    actions: [],
+  };
+
   return (
     <>
-      <PageHeader {...headerConfig} />
+      <PageHeader {...minimalHeaderConfig} />
       <div className="job-page">
         <div className="archived-page">
-          <div className="archived-page-header">
-            <div className="archived-page-title">
-              <i className="bx bx-archive-in" />
-              <span>Archived Candidates</span>
-              <span className="archived-page-count">{total}</span>
-            </div>
-            <p className="archived-page-hint">
-              Candidates archived from any stage appear here. Select candidates to restore them back into the pipeline.
-            </p>
-          </div>
-
           <ErrorBoundary>
             {canWorkflow && bulkSelection.selectionCount > 0 && (
               <div className="bulk-action-bar">

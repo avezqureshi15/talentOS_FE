@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import "./recruiter-filter.css";
 import { MOCK_RECRUITERS, RECRUITER_COLORS } from "./recruiter-filter.constants";
 import type { RecruiterFilterProps } from "./recruiter-filter.types";
-import { getInitials } from "@/utils/user";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import SearchInput from "@/components/ui/search-input/search-input";
 
 const RecruiterFilter = ({}: RecruiterFilterProps) => {
@@ -73,17 +73,15 @@ const RecruiterFilter = ({}: RecruiterFilterProps) => {
             <div className="recruiter-avatar-stack">
               {displayAvatars.length > 0 ? (
                 displayAvatars.map((r, i) => (
-                  <div
+                  <PersonAvatar
                     key={r.id}
                     className="recruiter-avatar recruiter-avatar--active"
+                    person={{ name: r.name }}
                     style={{
                       borderColor: RECRUITER_COLORS[i % RECRUITER_COLORS.length],
                       zIndex: displayAvatars.length - i,
                     }}
-                    title={r.name}
-                  >
-                    {getInitials(r.name)}
-                  </div>
+                  />
                 ))
               ) : (
                 <div className="recruiter-avatar recruiter-avatar--empty">

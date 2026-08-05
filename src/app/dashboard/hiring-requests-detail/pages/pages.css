@@ -1098,6 +1098,11 @@
   color: var(--text-muted);
 }
 
+.tm-designation {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
 .tm-role-badge {
   display: inline-flex;
   align-items: center;

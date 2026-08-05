@@ -10,6 +10,7 @@ import PipelineStages from "@/app/dashboard/hiring-requests-detail/components/pi
 import { PIPELINE_STAGES, NAME_SCORE_STATUS, SUFFIX_COLUMNS } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.constants";
 import type { StageColumn } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table";
+import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
@@ -34,6 +35,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const applicantParam = searchParams.get("applicant");
   const [interviewSubFilter, setInterviewSubFilter] = useState<"ai-incoming" | "regular-incoming" | "no-show">("ai-incoming");
   const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
+  // UI-only: candidate whose Schedule Round modal is open, opened from table row action.
+  const [scheduleCandidate, setScheduleCandidate] = useState<Applicant | null>(null);
 
   const jobId = hiringRequest.id;
   const isRemote = hiringRequest.location?.toLowerCase() === "remote" || hiringRequest.type?.toLowerCase() === "remote";
@@ -56,6 +59,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     activeStage,
     setActiveStage,
     stageCounts,
+    archivedStageCounts,
   } = useApplicationsContext();
 
   const { viewMode, setViewMode, openId, setOpenId, handleRowClick, handleInfoClick, isSearchingForApplicant, applicantNotFound } = useJobDetail({
@@ -106,8 +110,9 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     PIPELINE_STAGES.map((s) => ({
       ...s,
       count: stageCounts[s.key] ?? 0,
+      archivedCount: archivedStageCounts[s.key] ?? 0,
     })),
-    [stageCounts],
+    [stageCounts, archivedStageCounts],
   );
 
   const interviewSubCounts = useMemo(() => ({
@@ -316,6 +321,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 columns={columns}
                 onRowClick={activeStage !== "waiting-evaluation" ? (candidate) => handleRowClick(candidate as Applicant) : undefined}
                 onInfoClick={(candidate) => handleInfoClick(candidate as Applicant)}
+                onScheduleClick={canWorkflow ? (candidate) => setScheduleCandidate(candidate as Applicant) : undefined}
                 onTimelineOpen={(candidate) => setTimelineId(candidate.candidateId)}
                 showBulkSelection={showBulkSelection}
                 selectedIds={bulkSelection.selectedIds}
@@ -354,6 +360,20 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
         />
 
         <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
+
+        <ScheduleRoundModal
+          open={!!scheduleCandidate}
+          candidateName={scheduleCandidate?.name ?? ""}
+          candidateId={scheduleCandidate?.id ?? ""}
+          candidateNumberId={scheduleCandidate?.candidateId ?? 0}
+          jdId={jobId}
+          hiringRequestId={jobId}
+          onClose={() => setScheduleCandidate(null)}
+          onScheduled={() => {
+            setScheduleCandidate(null);
+            refresh();
+          }}
+        />
       </motion.div>
     </div>
   );

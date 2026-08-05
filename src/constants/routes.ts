@@ -20,6 +20,8 @@ export const ROUTES = {
   ADMIN_USERS: "/admin/users",
   ADMIN_USER_DETAIL: "/admin/users/:userId",
   ADMIN_SETTINGS: "/admin/settings",
+  ADMIN_EMPLOYEES: "/admin/employees",
+  ADMIN_EMPLOYEE_DETAIL: "/admin/employees/:empId",
   SUPERADMIN_APPS: "/superadmin/apps",
   SUPERADMIN_APP_DETAIL: "/superadmin/apps/:appId",
   SUPERADMIN_TENANTS: "/superadmin/tenants",

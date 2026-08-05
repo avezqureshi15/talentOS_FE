@@ -13,18 +13,10 @@ import {
 } from "@/app/dashboard/hiring-requests-detail/components/team-members/use-team-members";
 import AddTeamMemberModal from "@/app/dashboard/hiring-requests-detail/components/team-members/add-team-member-modal";
 import DataTable from "@/components/ui/data-table/data-table";
-import { TEAM_MEMBERS_LABELS } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.constants";
-import { ROLE_DISPLAY } from "@/constants/role-display";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
+import { TEAM_MEMBERS_LABELS, formatRoleLabel } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.constants";
 import type { JobTeamMember } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.types";
 import "./pages.css";
-
-const TEAM_MEMBERS_ROLE_VARIANTS: Record<string, string> = {
-  job_owner: "job_owner",
-  recruiter: "recruiter",
-  reviewer: "reviewer",
-  account_admin: "admin",
-  superadmin: "admin",
-};
 
 const TeamMembersPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +42,10 @@ const TeamMembersPage = () => {
       header: TEAM_MEMBERS_LABELS.MEMBER_TITLE,
       render: (m: JobTeamMember) => (
         <div className="tm-member-cell">
-          <div className="tm-avatar">{m.name.charAt(0).toUpperCase()}</div>
+          <PersonAvatar
+            className="tm-avatar"
+            person={{ name: m.name, email: m.email }}
+          />
           <div className="tm-member-info">
             <span className="tm-member-name">{m.name}</span>
             <span className="tm-member-email">{m.email}</span>
@@ -61,8 +56,8 @@ const TeamMembersPage = () => {
     {
       header: TEAM_MEMBERS_LABELS.ROLE_TITLE,
       render: (m: JobTeamMember) => (
-        <span className={`tm-role-badge tm-role-badge--${TEAM_MEMBERS_ROLE_VARIANTS[m.role] ?? ""}`}>
-          {ROLE_DISPLAY[m.role]?.label ?? m.role}
+        <span className="tm-designation">
+          {formatRoleLabel(m.role)}
         </span>
       ),
     },

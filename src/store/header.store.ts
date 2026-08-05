@@ -56,6 +56,7 @@ export type HeaderConfig = {
   title?: string;
   titleIcon?: string;
   backRoute?: string;
+  onBack?: () => void;
   subtitle?: string;
   avatarLabel?: string;
   totalCount?: number;

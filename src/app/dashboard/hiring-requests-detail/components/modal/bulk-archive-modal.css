@@ -1,7 +1,7 @@
 .bam-body {
   padding: 20px;
-  min-width: 360px;
-  max-width: 420px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .bam-title {

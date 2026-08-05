@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate, useParams } from "react-router-dom";
 import "./pipeline-stages.css";
 import type { PipelineStagesProps, SubItem } from "./pipeline-stages.types";
 
@@ -10,6 +11,14 @@ const SUB_CLASS: Record<SubItem["color"], string> = {
 };
 
 const PipelineStages = ({ stages, activeKey, onStageChange }: PipelineStagesProps) => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  const handleArchivedClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (id) navigate(`/hiring-requests/${id}/archived`);
+  };
+
   return (
     <div className="pipeline-root">
       {stages.map((stage) => (
@@ -48,6 +57,17 @@ const PipelineStages = ({ stages, activeKey, onStageChange }: PipelineStagesProp
           ) : (
             <span className="pipeline-count">{stage.count}</span>
           )}
+
+          {stage.archivedCount ? (
+            <span
+              className="pipeline-archived"
+              title={`${stage.archivedCount} archived`}
+              onClick={handleArchivedClick}
+            >
+              <i className="bx bx-archive" />
+              {stage.archivedCount}
+            </span>
+          ) : null}
         </motion.div>
       ))}
     </div>

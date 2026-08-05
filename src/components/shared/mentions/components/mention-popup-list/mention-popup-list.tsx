@@ -36,15 +36,10 @@ const MentionPopupList = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
-  const [itemTooltip, setItemTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
   const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hideTooltip = useCallback(() => {
     setTooltip(null);
-  }, []);
-
-  const hideItemTooltip = useCallback(() => {
-    setItemTooltip(null);
   }, []);
 
   useEffect(() => {
@@ -76,20 +71,8 @@ const MentionPopupList = ({
   }, []);
 
   const handleAskSlotsHover = useCallback((e: React.MouseEvent<HTMLButtonElement>, item: CommandItem) => {
-    setItemTooltip(null);
     setTooltip({ lines: buildTooltipLines(item), rect: e.currentTarget.getBoundingClientRect() });
   }, [buildTooltipLines]);
-
-  const handleItemHover = useCallback((e: React.MouseEvent<HTMLDivElement>, item: CommandItem) => {
-    const m = item.meta;
-    if (m?.type !== "interviewer") return;
-    const lines: string[] = [];
-    if (m.email) lines.push(`Email: ${m.email}`);
-    if (m.designation) lines.push(`Designation: ${m.designation}`);
-    if (lines.length === 0) return;
-    setTooltip(null);
-    setItemTooltip({ lines, rect: e.currentTarget.getBoundingClientRect() });
-  }, []);
 
   const renderSkeleton = () => (
     <div className="mp-skeleton">
@@ -132,8 +115,6 @@ const MentionPopupList = ({
             onToggleMultiSelect={onToggleMultiSelect}
             onAskSlotsHover={handleAskSlotsHover}
             onAskSlotsLeave={hideTooltip}
-            onItemHover={handleItemHover}
-            onItemLeave={hideItemTooltip}
           />
           {sentinel}
         </>
@@ -150,8 +131,6 @@ const MentionPopupList = ({
             onSelect={onSelect}
             onAskSlotsHover={handleAskSlotsHover}
             onAskSlotsLeave={hideTooltip}
-            onItemHover={handleItemHover}
-            onItemLeave={hideItemTooltip}
           />
           {sentinel}
         </>
@@ -184,7 +163,6 @@ const MentionPopupList = ({
         {renderContent()}
       </div>
       {tooltip && <InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} />}
-      {itemTooltip && <InfoChipTooltip lines={itemTooltip.lines} rect={itemTooltip.rect} />}
     </>
   );
 };

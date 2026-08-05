@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getUsers, getInvites, type AdminUser, type Invite } from "@/app/admin/users/services/users-admin.service";
 import UserTable from "@/app/admin/users/components/user-table";
 import InvitesTable from "@/app/admin/users/components/invites-table";
-import InviteUserModal from "@/app/admin/users/components/invite-user-modal";
+import InviteUserModal from "@/app/admin/users/components/invite-user-modal/invite-user-modal";
 import CreateUserModal from "@/app/admin/users/components/create-user-modal";
 import EditUserModal from "@/app/admin/users/components/edit-user-modal";
 import DeactivateDialog from "@/app/admin/users/components/deactivate-dialog";
@@ -187,6 +187,7 @@ export default function UsersPage() {
         <InviteUserModal
           onClose={() => setShowInviteModal(false)}
           onSuccess={() => { setShowInviteModal(false); refreshInvites(); }}
+          mode="existing-and-email"
         />
       )}
 

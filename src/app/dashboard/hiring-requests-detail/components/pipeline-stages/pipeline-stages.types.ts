@@ -16,6 +16,7 @@ export type StageData = {
   key: StageKey;
   label: string;
   count: number;
+  archivedCount?: number;
   subItems?: SubItem[];
   columns: StageColumn[];
 };

@@ -45,6 +45,12 @@ export const ADMIN_NAV_ITEMS: NavItemConfig[] = [
     icon: "bx bx-building",
     permissions: ["settings.view"],
   },
+  {
+    label: "Employees",
+    href: "/admin/employees",
+    icon: "bx bx-people-diversity",
+    permissions: ["employee.view"],
+  },
 ];
 
 export const SUPERADMIN_NAV_ITEMS: NavItemConfig[] = [

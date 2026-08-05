@@ -9,7 +9,27 @@ export const TEAM_MEMBERS_LABELS = {
   OWNER_BADGE: "Owner",
   MEMBER_BADGE: "Member",
   ROLE_TITLE: "ROLE",
+  ROLE_UNASSIGNED: "—",
   MEMBER_TITLE: "TEAM MEMBER",
   LOADING: "Loading team members...",
   FAILED: "Failed to load team members",
 } as const;
+
+export const ROLE_LABELS: Record<string, string> = {
+  superadmin: "Super Admin",
+  account_admin: "Account Admin",
+  job_owner: "Job Owner",
+  recruiter: "Recruiter",
+  reviewer: "Reviewer",
+};
+
+export const formatRoleLabel = (role: string | null | undefined): string => {
+  if (!role) return TEAM_MEMBERS_LABELS.ROLE_UNASSIGNED;
+  return (
+    ROLE_LABELS[role] ??
+    role
+      .split("_")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ")
+  );
+};

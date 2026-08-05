@@ -1,0 +1,119 @@
+.cam {
+  position: relative;
+  display: inline-flex;
+}
+
+.cam-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-glass);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.cam-trigger:hover {
+  background: var(--surface-glass-hover);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.cam-trigger[aria-expanded="true"] {
+  background: var(--surface-glass-hover);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.cam-trigger-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.cam-trigger-chevron {
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+
+.cam-trigger:hover .cam-trigger-chevron,
+.cam-trigger[aria-expanded="true"] .cam-trigger-chevron {
+  color: var(--text-primary);
+}
+
+.cam-trigger-chevron--open {
+  transform: rotate(180deg);
+}
+
+.cam-menu {
+  position: fixed;
+  min-width: 200px;
+  padding: 4px;
+  border-radius: 10px;
+  /* Opaque surface (not glass) — --bg-secondary is #111 in dark, #f6f6f6 in light. */
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-xl);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* Inline style provides top + left = trigger.right; transform right-aligns
+     the menu to the trigger by shifting it left by 100% of its own width. */
+  transform: translateX(-100%);
+}
+
+.cam-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  text-align: left;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.cam-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.cam-item i {
+  font-size: 15px;
+  color: var(--text-secondary);
+  transition: color 0.12s ease;
+}
+
+.cam-item:hover i {
+  color: var(--text-primary);
+}
+
+.cam-item--destructive {
+  color: var(--danger);
+}
+
+.cam-item--destructive i {
+  color: var(--danger);
+}
+
+.cam-item--destructive:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.cam-item--destructive:hover i {
+  color: var(--danger);
+}

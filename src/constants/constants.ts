@@ -179,6 +179,7 @@ export const QUERY_KEYS = {
   AI_QUESTIONS: "ai-questions",
   CALL_WINDOW: "call-window",
   JOB_TEAM: "job-team",
+  EMPLOYEES: "employees",
 } as const;
 
 export const QUERY_CONFIG = {

@@ -71,6 +71,7 @@ const HiringRequestLayout = () => {
       activeStage,
       setActiveStage,
       stageCounts: appsData.stageCounts,
+      archivedStageCounts: appsData.archivedStageCounts,
       finalizedApplicants: finalizedData.applicants,
       finalizedTotal: finalizedData.total,
       finalizedLoading: finalizedData.isLoading,

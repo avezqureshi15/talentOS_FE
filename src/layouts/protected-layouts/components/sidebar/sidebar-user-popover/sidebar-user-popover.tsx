@@ -4,12 +4,12 @@ import { PROFILE_MENU_ITEMS, PROFILE_DANGER_ITEM, LOGOUT_MODAL } from "@/constan
 import { useSidebarUserPopover } from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/use-sidebar-user-popover";
 import { useAuth } from "@/app/auth/hooks/use-auth";
 import { ROUTES } from "@/constants/routes";
-import { getInitials } from "@/utils/user";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
 import ProfileModal from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/profile-modal";
 import SettingsModal from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/settings-modal";
 import KeyboardShortcutsModal from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/keyboard-shortcuts-modal";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import { useUiStore } from "@/store/ui.store";
 import "./sidebar-user-popover.css";
 
@@ -59,7 +59,14 @@ const SidebarUserPopover = ({ autoOpen, onAutoOpened }: SidebarUserPopoverProps)
     <>
       <div className="sidebar-user" ref={popoverRef}>
         <button className="sidebar-user__trigger" onClick={onToggle} type="button">
-          <div className="sidebar-avatar">{user ? getInitials(user.name) : "?"}</div>
+          {user ? (
+            <PersonAvatar
+              className="sidebar-avatar"
+              person={{ name: user.name, email: user.email }}
+            />
+          ) : (
+            <div className="sidebar-avatar">?</div>
+          )}
           <div>
             <div className="sidebar-user__name">{user?.name ?? "—"}</div>
             <div className="sidebar-user__email">{user?.email ?? "—"}</div>

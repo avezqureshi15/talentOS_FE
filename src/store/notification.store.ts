@@ -4,9 +4,9 @@ import { queryClient } from "@/services/query-client";
 import { QUERY_KEYS } from "@/constants/constants";
 import type { NotificationApiItem } from "@/services/notifications/notifications.types";
 
-const BASE_INTERVAL_MS = 15_000;
-const MAX_INTERVAL_MS = 60_000;
-const JITTER_MS = 2_000;
+const BASE_INTERVAL_MS = 60_000;
+const MAX_INTERVAL_MS = 300_000;
+const JITTER_MS = 5_000;
 const LATEST_PER_PAGE = 10;
 
 type NotificationState = {

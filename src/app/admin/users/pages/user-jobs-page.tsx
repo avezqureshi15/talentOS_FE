@@ -8,6 +8,7 @@ import {
   type UserJobAssignment,
   type UserJobAssignments,
 } from "@/app/admin/users/services/users-admin.service";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import "./user-jobs-page.css";
 
 const USER_JOBS_LABELS = {
@@ -98,7 +99,10 @@ export default function UserJobsPage() {
 
       {data && !loadError && (
         <div className="ujp-user-card">
-          <div className="ujp-avatar">{data.name.charAt(0).toUpperCase()}</div>
+          <PersonAvatar
+            className="ujp-avatar"
+            person={{ name: data.name, email: data.email }}
+          />
           <div className="ujp-user-info">
             <span className="ujp-user-name">{data.name}</span>
             <span className="ujp-user-email">{data.email}</span>

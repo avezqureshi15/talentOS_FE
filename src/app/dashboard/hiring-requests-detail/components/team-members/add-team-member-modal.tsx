@@ -4,6 +4,7 @@ import Button from "@/components/ui/button/button";
 import { fetchUsers, type UserItem } from "@/services/users/users";
 import { useAddTeamMember } from "./use-team-members";
 import { type JobTeamMember } from "./team-members.types";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import "./add-team-member-modal.css";
 
 type Props = {
@@ -92,7 +93,10 @@ export default function AddTeamMemberModal({ open, onClose, hiringRequestId, exi
               className={`atm-user${selected?.id === u.id ? " atm-user--selected" : ""}`}
               onClick={() => setSelected(u)}
             >
-              <span className="atm-user-avatar">{u.name.charAt(0).toUpperCase()}</span>
+              <PersonAvatar
+                className="atm-user-avatar"
+                person={{ name: u.name, email: u.email }}
+              />
               <span className="atm-user-info">
                 <span className="atm-user-name">{u.name}</span>
                 <span className="atm-user-email">{u.email}</span>

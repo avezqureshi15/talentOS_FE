@@ -25,6 +25,7 @@ import type {
   TeamAssignment,
 } from "./create-hiring-request-modal.types";
 import { useCreateHiringRequestForm } from "./use-create-hiring-request-form";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import "./create-hiring-request-modal.css";
 
 const STEPS: CreateHiringRequestStep[] = [1, 2, 3];
@@ -408,7 +409,10 @@ export default function CreateHiringRequestModal({
                       }
                     }}
                   >
-                    <span className="create-hr-user-avatar">{u.name.charAt(0).toUpperCase()}</span>
+                    <PersonAvatar
+                      className="create-hr-user-avatar"
+                      person={{ name: u.name, email: u.email }}
+                    />
                     <span className="create-hr-user-info">
                       <span className="create-hr-user-name">{u.name}</span>
                       <span className="create-hr-user-email">{u.email}</span>
@@ -442,9 +446,10 @@ export default function CreateHiringRequestModal({
                     </span>
                     {assignments.map((a) => (
                       <div key={a.user.id} className="create-hr-assign-chip">
-                        <span className="create-hr-assign-chip-avatar">
-                          {a.user.name.charAt(0).toUpperCase()}
-                        </span>
+                        <PersonAvatar
+                          className="create-hr-assign-chip-avatar"
+                          person={{ name: a.user.name, email: a.user.email }}
+                        />
                         <span className="create-hr-assign-chip-info">
                           <span className="create-hr-assign-chip-name">{a.user.name}</span>
                           <span className="create-hr-assign-chip-email">{a.user.email}</span>

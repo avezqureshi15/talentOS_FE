@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
 import DataTable from "@/components/ui/data-table/data-table";
+import CandidateActionsMenu from "./candidate-actions-menu/candidate-actions-menu";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import "./candidate-table.css";
 import type { CandidateTableProps } from "./candidate-table.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
-
-const getInitials = (name: string) =>
-  name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
 
 const formatDate = (iso?: string): string => {
   if (!iso) return "";
@@ -71,7 +70,7 @@ const isInterviewStatus = (s: string) =>
   s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled" || s === "screening_round_scheduled";
 
 const CandidateTable = ({
-  data, columns, onRowClick, onInfoClick, onTimelineOpen,
+  data, columns, onRowClick, onInfoClick, onScheduleClick, onTimelineOpen,
   showBulkSelection,
   selectedIds,
   onToggleSelect, onToggleSelectAll, allSelected,
@@ -80,7 +79,10 @@ const CandidateTable = ({
   const CELL_RENDERERS: Record<string, (c: Applicant, onInfo?: (c: Applicant) => void) => ReactNode> = {
     name: (c) => (
       <div className="applicant-table-cell--name">
-        <div className="candidate-avatar">{getInitials(c.name)}</div>
+        <PersonAvatar
+          className="candidate-avatar"
+          person={{ name: c.name, email: c.email, phone: c.phone }}
+        />
         <div>
           <div className="candidate-name">
             {c.name}
@@ -128,15 +130,11 @@ const CandidateTable = ({
       </button>
     ),
     info: (c, onInfo) => (
-      <button
-        className="info-icon-btn"
-        onClick={(e) => { e.stopPropagation(); onInfo?.(c); }}
-        type="button"
-        title="View Profile"
-      >
-        <i className="bx bx-user" />
-        <span>View</span>
-      </button>
+      <CandidateActionsMenu
+        candidate={c}
+        onViewProfile={(cand) => onInfo?.(cand)}
+        onScheduleRound={onScheduleClick}
+      />
     ),
     startDate: (c) =>
       c.scheduledAt ? (

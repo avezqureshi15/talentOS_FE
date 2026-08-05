@@ -99,29 +99,48 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
     <div className="jobs-toolbar">
       <div className="jobs-toolbar-left">
         {isTabRoute ? (
-          <>
-            <TabDropdown totalCount={totalCount} />
-            {headerBadges.map((b) => (
-              <span key={b.label} className="header-badge" title={b.tooltip}>
-                {b.icon && <i className={`bx ${b.icon}`} />}
-                <span>{b.label}</span>
-              </span>
-            ))}
-            {config.hiringRequestName && (
-              <span className="hiring-request-chip" onClick={() => setJdModalOpen(true)}><span className="hiring-request-chip-text">{config.hiringRequestName}</span></span>
-            )}
-            {interviewStats && (
-              <div className="header-interview-stats">
-                <span className={`header-interview-pill header-interview-pill--${interviewStats.timeStatus}`}>
-                  {interviewStats.totalMinutes} / {interviewStats.targetMinutes} min
-                </span>
-                <span className={`header-interview-status header-interview-status--${interviewStats.timeStatus}`}>
-                  {INTERVIEW_TIME_STATUS_LABEL[interviewStats.timeStatus]}
-                </span>
-                <span className="header-interview-count">{interviewStats.questionCount} questions</span>
+          config.onBack ? (
+            <>
+              <button type="button" className="jobs-back-btn" onClick={config.onBack} aria-label="Go back">
+                <i className="bx bx-chevron-left" />
+              </button>
+              <div className="jobs-title-group jobs-title-group--stacked">
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {config.titleIcon && <i className={config.titleIcon} />}
+                  <h1 className="jobs-title">{config.title}</h1>
+                  {config.totalCount !== undefined && <span className="jobs-count-pill">{config.totalCount}</span>}
+                </div>
+                {config.subtitle && <span className="jobs-subtitle">{config.subtitle}</span>}
               </div>
-            )}
-          </>
+              {config.hiringRequestName && (
+                <span className="hiring-request-chip" onClick={() => setJdModalOpen(true)}><span className="hiring-request-chip-text">{config.hiringRequestName}</span></span>
+              )}
+            </>
+          ) : (
+            <>
+              <TabDropdown totalCount={totalCount} />
+              {headerBadges.map((b) => (
+                <span key={b.label} className="header-badge" title={b.tooltip}>
+                  {b.icon && <i className={`bx ${b.icon}`} />}
+                  <span>{b.label}</span>
+                </span>
+              ))}
+              {config.hiringRequestName && (
+                <span className="hiring-request-chip" onClick={() => setJdModalOpen(true)}><span className="hiring-request-chip-text">{config.hiringRequestName}</span></span>
+              )}
+              {interviewStats && (
+                <div className="header-interview-stats">
+                  <span className={`header-interview-pill header-interview-pill--${interviewStats.timeStatus}`}>
+                    {interviewStats.totalMinutes} / {interviewStats.targetMinutes} min
+                  </span>
+                  <span className={`header-interview-status header-interview-status--${interviewStats.timeStatus}`}>
+                    {INTERVIEW_TIME_STATUS_LABEL[interviewStats.timeStatus]}
+                  </span>
+                  <span className="header-interview-count">{interviewStats.questionCount} questions</span>
+                </div>
+              )}
+            </>
+          )
         ) : (
           title && (
             config.backRoute ? (

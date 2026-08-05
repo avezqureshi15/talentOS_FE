@@ -2,7 +2,7 @@ import type { StageData, StageColumn } from "./pipeline-stages.types";
 
 export const SUFFIX_COLUMNS: StageColumn[] = [
   { key: "cv", label: "CV", flex: 0.6 },
-  { key: "info", label: "", flex: 0.4 },
+  { key: "info", label: "Actions", flex: 0.6 },
 ];
 
 export const NAME_SCORE_STATUS: StageColumn[] = [
