@@ -50,8 +50,8 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
 
   const clearAskTooltip = useCallback(() => setAskTooltip(null), []);
 
-  const handleAskSlotsHover = useCallback((e: React.MouseEvent<HTMLButtonElement>, iv: Interviewer) => {
-    setAskTooltip({ lines: [SR_LABELS.ASK_SLOTS_TOOLTIP.replace("{name}", iv.name)], rect: e.currentTarget.getBoundingClientRect() });
+  const handleAskSlotsHover = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    setAskTooltip({ lines: [SR_LABELS.ASK_SLOTS_TOOLTIP], rect: e.currentTarget.getBoundingClientRect() });
   }, []);
 
   const handleAskSlotsClick = useCallback(async (e: React.MouseEvent<HTMLButtonElement>, iv: Interviewer) => {
@@ -128,7 +128,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
                   <span className="sr-interviewer-name">{iv.name}</span>
                   <span className="sr-interviewer-slots">{slotsLabel(iv.slots_count)}</span>
                 </div>
-                <button className="sr-interviewer-ask-slots" onMouseEnter={(e) => handleAskSlotsHover(e, iv)} onMouseLeave={clearAskTooltip} onClick={(e) => handleAskSlotsClick(e, iv)} type="button">
+                <button className="sr-interviewer-ask-slots" onMouseEnter={handleAskSlotsHover} onMouseLeave={clearAskTooltip} onClick={(e) => handleAskSlotsClick(e, iv)} type="button">
                   <i className="bx bx-calendar-plus" />
                 </button>
                 {isSelected(iv) && <i className="bx bx-check sr-interviewer-check" />}
