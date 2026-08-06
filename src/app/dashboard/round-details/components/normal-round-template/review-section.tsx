@@ -1,6 +1,8 @@
 import Chip from "@/components/ui/chip/chip";
 import ExpandableAiSummary from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/expandable-ai-summary";
 import ReadMoreText from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/read-more-text";
+import ReviewPhasesAccordion from "@/app/dashboard/hiring-requests-detail/components/review-phases-accordion/review-phases-accordion";
+import { normalizeReviewPhases } from "@/app/dashboard/hiring-requests-detail/components/review-phases-accordion/review-phases-accordion.helpers";
 import type { ReviewEntity, RatingItem } from "@/services/applications/applications.types";
 import {
   RATING_LABELS, ENTITY_TITLE_LABELS, VERDICT_LABELS, VERDICT_ICONS,
@@ -16,11 +18,21 @@ const ReviewSection = ({ entity }: { entity: ReviewEntity }) => {
   const title = ENTITY_TITLE_LABELS[entity.entity_type] ?? entity.entity_type;
   const isAi = entity.entity_type === "ai";
   const ratings = entity.ratings as RatingItem[];
+  const phases = normalizeReviewPhases(entity.phases);
   const skills = entity.skills as string[] | undefined;
   const notes = entity.notes as string | undefined;
   const remarks = entity.remarks as string | undefined;
+  const averageRating = typeof entity.average_rating === "number"
+    ? entity.average_rating
+    : undefined;
 
-  const shouldRender = ratings.length > 0 || (skills?.length ?? 0) > 0 || !!notes || !!remarks || isAi;
+  const shouldRender =
+    phases.length > 0
+    || ratings.length > 0
+    || (skills?.length ?? 0) > 0
+    || !!notes
+    || !!remarks
+    || isAi;
   if (!shouldRender) return null;
 
   const headerIcon = isAi
@@ -40,7 +52,11 @@ const ReviewSection = ({ entity }: { entity: ReviewEntity }) => {
         )}
       </div>
       <div className="nrt-card-body">
-        {ratings.length > 0 && <ScoreGrid ratings={ratings} />}
+        {phases.length > 0 ? (
+          <ReviewPhasesAccordion phases={phases} averageRating={averageRating} />
+        ) : (
+          ratings.length > 0 && <ScoreGrid ratings={ratings} />
+        )}
 
         {skills && skills.length > 0 && (
           <div className="nrt-skills">
