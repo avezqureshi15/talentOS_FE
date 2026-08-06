@@ -68,18 +68,6 @@
   flex-shrink: 0;
 }
 
-.rpa-phase-avg {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-.rpa-score-denom {
-  font-weight: 500;
-  color: var(--text-muted);
-}
-
 .rpa-chevron {
   font-size: 16px;
   color: var(--text-muted);
@@ -109,9 +97,42 @@
   position: relative;
   padding: 10px 12px 10px 34px;
   border: 1px solid var(--border-subtle);
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--bg-tertiary, var(--bg-secondary));
   counter-increment: rpa-answer;
+}
+
+.rpa-answer--high {
+  background: color-mix(in srgb, var(--success) 10%, var(--bg-primary));
+  border-color: color-mix(in srgb, var(--success) 30%, transparent);
+}
+
+.rpa-answer--mid {
+  background: color-mix(in srgb, var(--warning) 9%, var(--bg-primary));
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+}
+
+.rpa-answer--low {
+  background: color-mix(in srgb, var(--danger) 10%, var(--bg-primary));
+  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+}
+
+.rpa-answer--high::before {
+  color: var(--success);
+}
+
+.rpa-answer--mid::before {
+  color: var(--warning);
+}
+
+.rpa-answer--low::before {
+  color: var(--danger);
+}
+
+.rpa-answer--high .rpa-question,
+.rpa-answer--mid .rpa-question,
+.rpa-answer--low .rpa-question {
+  color: var(--text-primary);
 }
 
 .rpa-answer::before {
@@ -137,14 +158,6 @@
   color: var(--text-secondary);
 }
 
-.rpa-score {
-  flex-shrink: 0;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
 .rpa-notes {
   margin: 8px 0 0;
   font-size: 12px;
@@ -153,12 +166,19 @@
 }
 
 .rpa-overall {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
   font-size: 12px;
   color: var(--text-secondary);
   padding-top: 2px;
 }
 
-.rpa-overall strong {
-  color: var(--text-primary);
-  font-weight: 700;
+.rpa-overall-label {
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11px;
 }

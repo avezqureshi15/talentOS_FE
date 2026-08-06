@@ -3,8 +3,10 @@ import {
   REVIEW_PHASE_MAX_SCORE,
   overallAverageScore,
   phaseAverageScore,
+  scoreTone,
 } from "./review-phases-accordion.helpers";
 import type { ReviewPhasesAccordionProps } from "./review-phases-accordion.types";
+import ReviewScoreChip from "./review-score-chip";
 import "./review-phases-accordion.css";
 
 const ReviewPhasesAccordion = ({
@@ -65,10 +67,7 @@ const ReviewPhasesAccordion = ({
                 </div>
                 <div className="rpa-card-header-meta">
                   {phaseAvg !== null && (
-                    <span className="rpa-phase-avg">
-                      {phaseAvg}
-                      <span className="rpa-score-denom">/{maxScore}</span>
-                    </span>
+                    <ReviewScoreChip score={phaseAvg} maxScore={maxScore} />
                   )}
                   <i className={`bx bx-chevron-down rpa-chevron${isOpen ? " rpa-chevron--open" : ""}`} />
                 </div>
@@ -77,20 +76,23 @@ const ReviewPhasesAccordion = ({
               {isOpen && (
                 <div className="rpa-card-body">
                   <ol className="rpa-answers">
-                    {phase.answers.map((answer, answerIndex) => (
-                      <li key={`${id}:${answerIndex}`} className="rpa-answer">
-                        <div className="rpa-answer-top">
-                          <span className="rpa-question">{answer.question}</span>
-                          <span className="rpa-score">
-                            {answer.score}
-                            <span className="rpa-score-denom">/{maxScore}</span>
-                          </span>
-                        </div>
-                        {answer.notes && (
-                          <p className="rpa-notes">{answer.notes}</p>
-                        )}
-                      </li>
-                    ))}
+                    {phase.answers.map((answer, answerIndex) => {
+                      const tone = scoreTone(answer.score, maxScore);
+                      return (
+                        <li
+                          key={`${id}:${answerIndex}`}
+                          className={`rpa-answer rpa-answer--${tone}`}
+                        >
+                          <div className="rpa-answer-top">
+                            <span className="rpa-question">{answer.question}</span>
+                            <ReviewScoreChip score={answer.score} maxScore={maxScore} />
+                          </div>
+                          {answer.notes && (
+                            <p className="rpa-notes">{answer.notes}</p>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ol>
                 </div>
               )}
@@ -101,8 +103,8 @@ const ReviewPhasesAccordion = ({
 
       {overall !== null && (
         <div className="rpa-overall">
-          Average: <strong>{overall}</strong>
-          <span className="rpa-score-denom">/{maxScore}</span>
+          <span className="rpa-overall-label">Average</span>
+          <ReviewScoreChip score={overall} maxScore={maxScore} />
         </div>
       )}
     </div>
