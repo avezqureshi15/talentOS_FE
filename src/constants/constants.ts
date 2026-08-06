@@ -187,6 +187,13 @@ export const QUERY_CONFIG = {
   DEFAULT_RETRY_COUNT: 3,
 } as const;
 
+export const AI_SCREENING_POLL_INTERVAL_MS = 15_000;
+
+export const AI_SCREENING_TERMINAL_STATUSES = new Set<string>([
+  "completed",
+  "failed",
+]);
+
 export const EXPORT_LABELS = {
   EXPORT_AS_EXCEL: "Export as Excel",
   DOWNLOADING: "Downloading...",

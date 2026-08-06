@@ -52,7 +52,7 @@ export const API_ENDPOINTS = {
   ADMIN_APPS: "/admin/apps",
   SUPERADMIN_TENANTS: "/superadmin/tenants",
   ADMIN_ORGANIZATION: "/admin/organization",
-  AI_SCREENING: "/hiring-requests/{hiring_request_id}/ai/screening",
+  AI_SCREENING: "/hiring-requests/{hiring_request_id}/ai/screening/{candidate_id}",
   AI_INTERVIEWS: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/interviews",
   AI_MOVE_TO_SCREENING: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-screening",
   AI_MOVE_TO_INTERVIEW: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-interview",
