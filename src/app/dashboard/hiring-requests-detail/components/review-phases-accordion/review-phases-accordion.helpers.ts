@@ -3,6 +3,22 @@ import type { ReviewPhase } from "./review-phases-accordion.types";
 
 export const REVIEW_PHASE_MAX_SCORE = 5;
 
+export type ScoreTone = "high" | "mid" | "low";
+
+/**
+ * Map a score onto high / mid / low relative to maxScore.
+ * For max=5: 5 → high (green), 3–4 → mid (yellow), 1–2 → low (red).
+ * Averages use nearest integer band so 4.5 reads as high.
+ */
+export function scoreTone(score: number, maxScore = REVIEW_PHASE_MAX_SCORE): ScoreTone {
+  if (!Number.isFinite(score) || maxScore <= 0) return "low";
+  const band = Math.min(maxScore, Math.max(1, Math.round(score)));
+  const midFloor = Math.ceil(maxScore * 0.6); // 3 when maxScore is 5
+  if (band >= maxScore) return "high";
+  if (band >= midFloor) return "mid";
+  return "low";
+}
+
 function isAnswerItem(value: unknown): value is { question: string; score: number; notes?: string | null } {
   if (!value || typeof value !== "object") return false;
   const item = value as Record<string, unknown>;
@@ -61,4 +77,9 @@ export function overallAverageScore(
   const scores = phases.flatMap((phase) => phase.answers.map((answer) => answer.score));
   if (scores.length === 0) return null;
   return Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10;
+}
+
+export function formatScoreLabel(score: number, maxScore = REVIEW_PHASE_MAX_SCORE): string {
+  const display = Number.isInteger(score) ? String(score) : score.toFixed(1);
+  return `${display}/${maxScore}`;
 }
