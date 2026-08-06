@@ -4,7 +4,7 @@ const SKIP_COMPARISON_KEYS = new Set([
   "entity_type", "verdict", "ratings", "skills", "notes",
   "summary", "summary_md", "strong_matches", "gaps_and_concerns",
   "remarks", "rejection_details", "rejected_status", "rejected_reason",
-  "average_rating",
+  "average_rating", "phases", "questions_source",
 ]);
 
 export type ComparisonField = { label: string; actual: string; expected: string };

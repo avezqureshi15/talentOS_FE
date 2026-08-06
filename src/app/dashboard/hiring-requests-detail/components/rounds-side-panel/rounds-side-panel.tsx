@@ -4,6 +4,7 @@ import Chip from "@/components/ui/chip/chip";
 import PanelSkeleton from "./panel-skeleton";
 import ReadMoreText from "./read-more-text";
 import ExpandableAiSummary from "./expandable-ai-summary";
+import ReviewPhasesAccordion from "@/app/dashboard/hiring-requests-detail/components/review-phases-accordion/review-phases-accordion";
 import { useRoundDetail } from "./use-round-detail";
 import { toISTDisplay, toISTTimeRange } from "@/utils/date";
 import type { RoundsSidePanelProps, PanelContentProps, RowProps, ReviewEntity } from "./rounds-side-panel.types";
@@ -147,8 +148,9 @@ function EntitySkills({ skills }: { skills: string[] }) {
 
 function ReviewEntityBlock({ entity }: { entity: ReviewEntity }) {
   const title = ENTITY_TITLE_LABELS[entity.entityType] ?? entity.entityType;
+  const hasPhases = entity.phases.length > 0;
   const hasRatings = entity.ratings.length > 0;
-  const hasContent = hasRatings || entity.skills.length > 0 || entity.notes ||
+  const hasContent = hasPhases || hasRatings || entity.skills.length > 0 || entity.notes ||
     entity.remarks || entity.entityType === "ai";
 
   if (!hasContent) return null;
@@ -164,7 +166,14 @@ function ReviewEntityBlock({ entity }: { entity: ReviewEntity }) {
           </span>
         )}
       </div>
-      <EntityRatings entity={entity} />
+      {hasPhases ? (
+        <ReviewPhasesAccordion
+          phases={entity.phases}
+          averageRating={entity.averageRating}
+        />
+      ) : (
+        <EntityRatings entity={entity} />
+      )}
       <EntitySkills skills={entity.skills} />
       {entity.notes && <p className="rp-notes">{entity.notes}</p>}
       {entity.entityType === "ai" && <EntityAiContent entity={entity} />}

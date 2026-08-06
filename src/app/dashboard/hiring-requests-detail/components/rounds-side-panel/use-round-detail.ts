@@ -3,12 +3,13 @@ import { fetchRoundDetail } from "@/services/applications/applications";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import type { RoundDetailApiResponse, ReviewEntity as ApiReviewEntity } from "@/services/applications/applications.types";
 import type { RoundDetail, ReviewEntity } from "./rounds-side-panel.types";
+import { normalizeReviewPhases } from "@/app/dashboard/hiring-requests-detail/components/review-phases-accordion/review-phases-accordion.helpers";
 
 const SKIP_COMPARISON_KEYS = new Set([
   "entity_type", "verdict", "ratings", "skills", "notes",
   "summary", "summary_md", "strong_matches", "gaps_and_concerns",
   "remarks", "rejection_details", "rejected_status", "rejected_reason",
-  "average_rating",
+  "average_rating", "phases", "questions_source",
 ]);
 
 function extractComparisonFields(api: ApiReviewEntity) {
@@ -32,6 +33,7 @@ function mapReview(api: ApiReviewEntity): ReviewEntity {
       score: rt.score,
       maxScore: rt.max_score,
     })),
+    phases: normalizeReviewPhases(api.phases),
     skills: (api.skills as string[]) ?? [],
     notes: (api.notes as string) ?? "",
     summary: (api.summary as string) ?? (api.summary_md as string) ?? undefined,

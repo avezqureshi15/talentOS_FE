@@ -4,10 +4,22 @@ export type ComparisonField = {
   expected: string;
 };
 
+export type ReviewAnswerItem = {
+  question: string;
+  score: number;
+  notes?: string | null;
+};
+
+export type ReviewAnswerPhase = {
+  phase: string;
+  answers: ReviewAnswerItem[];
+};
+
 export type ReviewEntity = {
   entityType: string;
   verdict?: string;
   ratings: { label: string; score: number; maxScore: number }[];
+  phases: ReviewAnswerPhase[];
   skills: string[];
   notes: string;
   summary?: string;

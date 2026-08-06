@@ -55,10 +55,26 @@ export type RatingItem = {
   entity_type?: string;
 };
 
+export type ReviewAnswerItem = {
+  question: string;
+  score: number;
+  notes?: string | null;
+};
+
+export type ReviewAnswerPhase = {
+  phase: string;
+  answers: ReviewAnswerItem[];
+};
+
 export type ReviewEntity = {
   entity_type: string;
   verdict?: string;
   ratings: RatingItem[];
+  phases?: ReviewAnswerPhase[];
+  skills?: string[];
+  notes?: string;
+  average_rating?: number;
+  questions_source?: string;
   rejection_details?: Array<Record<string, { JD: string; Candidate: string }>>;
   [key: string]: unknown;
 };
