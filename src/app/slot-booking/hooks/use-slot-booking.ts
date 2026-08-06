@@ -185,7 +185,14 @@ export function useSlotBooking() {
     };
 
     createMutation.mutate(payload, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        if (data.skipped.length > 0) {
+          const reasons = [...new Set(data.skipped.map((s) => s.reason))].join(", ");
+          toast.warning(
+            `${data.skipped.length} slot${data.skipped.length > 1 ? "s" : ""} skipped (${reasons}) - not added. Please review your selection.`
+          );
+          return;
+        }
         toast.success(BOOKING_LABELS.CONFIRMED);
       },
       onError: () => {

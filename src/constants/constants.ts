@@ -175,6 +175,7 @@ export const QUERY_KEYS = {
   TENANT_USERS: "tenant-users",
   TENANT_INVITES: "tenant-invites",
   AI_INTERVIEWS: "ai-interviews",
+  AI_INTERVIEW_TEMPLATE: "ai-interview-template",
   AI_SCREENING: "ai-screening",
   AI_QUESTIONS: "ai-questions",
   CALL_WINDOW: "call-window",
@@ -192,6 +193,14 @@ export const AI_SCREENING_POLL_INTERVAL_MS = 15_000;
 export const AI_SCREENING_TERMINAL_STATUSES = new Set<string>([
   "completed",
   "failed",
+]);
+
+export const AI_INTERVIEW_POLL_INTERVAL_MS = 15_000;
+
+export const AI_INTERVIEW_TERMINAL_STATUSES = new Set<string>([
+  "assessed",
+  "assessment_failed",
+  "completed",
 ]);
 
 export const EXPORT_LABELS = {

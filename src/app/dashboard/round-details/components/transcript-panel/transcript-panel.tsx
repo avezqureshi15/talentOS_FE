@@ -34,7 +34,9 @@ const TranscriptPanel = ({ sections, onSeek }: TranscriptPanelProps) => {
               {sec.utterances.map((u) => (
                 <div key={u.id} className="tp-utterance">
                   <span className={`tp-speaker-tag ${SPEAKER_CLASS[u.speaker]}`}>{u.speaker}</span>
-                  <span className="tp-timestamp" onClick={() => onSeek?.(u.timeInSeconds)}>{u.timestamp}</span>
+                  {u.timestamp && (
+                    <span className="tp-timestamp" onClick={() => onSeek?.(u.timeInSeconds)}>{u.timestamp}</span>
+                  )}
                   <span className="tp-text">{u.text}</span>
                 </div>
               ))}

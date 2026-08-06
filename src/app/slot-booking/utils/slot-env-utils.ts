@@ -23,7 +23,9 @@ let _cached: SlotBounds | null = null;
 
 export function getSlotBounds(): SlotBounds {
   if (!_cached) {
-    _cached = import.meta.env.DEV ? _DEV_BOUNDS : _PROD_BOUNDS;
+    const env = import.meta.env.VITE_APP_ENV ?? "";
+    const devLike = import.meta.env.DEV || env === "development" || env === "uat" || env === "staging";
+    _cached = devLike ? _DEV_BOUNDS : _PROD_BOUNDS;
   }
   return _cached;
 }

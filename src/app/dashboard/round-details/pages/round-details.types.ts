@@ -49,6 +49,8 @@ export type CandidateEvaluationData = {
   topics: EvaluationTopic[];
   transcript: TranscriptUtterance[];
   transcriptSections: TranscriptSection[];
+  interviewUrl?: string | null;
+  recordingUrl?: string | null;
 };
 
 export type RoundDetailsParams = {

@@ -8,7 +8,11 @@ import {
 } from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel.constants";
 import { extractComparisonFields } from "./normal-round-template.utils";
 
+const AI_ENTITY_TYPES_HANDLED_ELSEWHERE = new Set<string>(["ai_screening", "ai_interview"]);
+
 const ReviewSection = ({ entity }: { entity: ReviewEntity }) => {
+  if (AI_ENTITY_TYPES_HANDLED_ELSEWHERE.has(entity.entity_type)) return null;
+
   const title = ENTITY_TITLE_LABELS[entity.entity_type] ?? entity.entity_type;
   const isAi = entity.entity_type === "ai";
   const ratings = entity.ratings as RatingItem[];

@@ -1,0 +1,29 @@
+.ilc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-default);
+  background: var(--surface-glass);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.ilc-btn:hover {
+  background: var(--surface-glass-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.ilc-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.ilc-icon {
+  font-size: 14px;
+}

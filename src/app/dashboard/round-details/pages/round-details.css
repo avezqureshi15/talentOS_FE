@@ -818,3 +818,9 @@
   color: var(--danger);
   font-size: 13px;
 }
+
+.rd-center-row {
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}

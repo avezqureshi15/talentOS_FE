@@ -1,6 +1,7 @@
 import httpClient from "@/services/http-client";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
 import type { AiScreeningResult, AiInterviewItem, AiInterviewDetail, MoveToScreeningResponse, MoveToScreeningPayload, MoveToInterviewPayload, MoveToInterviewResponse, AiRetryResponse, AiInterviewRecordingResponse } from "./ai.types";
+import type { CandidateEvaluationData } from "@/app/dashboard/round-details/pages/round-details.types";
 
 export const fetchAiScreeningResult = async (hiringRequestId: string, candidateId: number): Promise<AiScreeningResult> => {
   const url = API_ENDPOINTS.AI_SCREENING.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId));
@@ -11,6 +12,19 @@ export const fetchAiScreeningResult = async (hiringRequestId: string, candidateI
 export const fetchAiInterviews = async (hiringRequestId: string, candidateId: number): Promise<AiInterviewItem[]> => {
   const url = API_ENDPOINTS.AI_INTERVIEWS.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId));
   const { data } = await httpClient.get<AiInterviewItem[]>(url);
+  return data;
+};
+
+export const fetchAiInterviewTemplate = async (
+  hiringRequestId: string,
+  candidateId: number,
+  interviewId: string,
+): Promise<CandidateEvaluationData> => {
+  const url = API_ENDPOINTS.AI_INTERVIEW_TEMPLATE
+    .replace("{hiring_request_id}", hiringRequestId)
+    .replace("{candidate_id}", String(candidateId))
+    .replace("{interview_id}", interviewId);
+  const { data } = await httpClient.get<CandidateEvaluationData>(url);
   return data;
 };
 

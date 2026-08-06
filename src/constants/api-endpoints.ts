@@ -54,6 +54,7 @@ export const API_ENDPOINTS = {
   ADMIN_ORGANIZATION: "/admin/organization",
   AI_SCREENING: "/hiring-requests/{hiring_request_id}/ai/screening/{candidate_id}",
   AI_INTERVIEWS: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/interviews",
+  AI_INTERVIEW_TEMPLATE: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/interviews/{interview_id}/template",
   AI_MOVE_TO_SCREENING: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-screening",
   AI_MOVE_TO_INTERVIEW: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/move-to-interview",
   AI_RETRY_SCREENING: "/hiring-requests/{hiring_request_id}/ai/retry-screening/{candidate_id}",

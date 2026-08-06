@@ -1,10 +1,11 @@
 import { useRef, useState } from "react";
-import { Sparkles, Play, Info, Check, X, AlertTriangle, FileCode, ShieldAlert, RotateCw, Video } from "lucide-react";
-import Chip from "@/components/ui/chip/chip";
+import { Sparkles, Info, ShieldAlert } from "lucide-react";
 import TranscriptPanel from "../transcript-panel/transcript-panel";
-import CustomVideo from "@/components/shared/custom-video/custom-video";
 import { useAiRetryInterview, useAiInterviewRecording } from "@/hooks/use-ai-retry";
 import { useAiInterviews } from "@/hooks/use-ai-interviews";
+import AiInterviewActions from "./ai-interview-actions";
+import RecordingPanel from "./recording-panel";
+import TopicCard from "./topic-card";
 import type { CandidateEvaluationData } from "../../pages/round-details.types";
 import type { CustomVideoHandle } from "@/components/shared/custom-video/custom-video.types";
 import "./ai-interview-template.css";
@@ -19,30 +20,6 @@ const PILL_CLASS: Record<string, string> = {
   REJECT: "rd-ai-pill--reject",
   ADVANCE: "rd-ai-pill--advance",
   POTENTIAL_FIT: "rd-ai-pill--potential",
-};
-
-const STATUS_VARIANT: Record<string, "danger" | "success" | "info"> = {
-  BELOW_BAR: "danger",
-  MEETS_BAR: "success",
-  ABOVE_BAR: "info",
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  BELOW_BAR: "BELOW BAR",
-  MEETS_BAR: "MEETS BAR",
-  ABOVE_BAR: "ABOVE BAR",
-};
-
-const EVIDENCE_ICON: Record<string, typeof X> = {
-  positive: Check,
-  negative: X,
-  warning: AlertTriangle,
-};
-
-const EVIDENCE_COLOR: Record<string, string> = {
-  positive: "rd-evidence--positive",
-  negative: "rd-evidence--negative",
-  warning: "rd-evidence--warning",
 };
 
 type Props = {
@@ -118,59 +95,7 @@ const AiInterviewTemplate = ({ data, hiringRequestId, candidateId }: Props) => {
         </div>
 
         {data.topics.map((topic) => (
-          <div key={topic.id} className="rd-topic-card">
-            <div className="rd-topic-header">
-              <h3 className="rd-topic-title">{topic.title}</h3>
-              <div className="rd-topic-actions">
-                <button className="rd-play-btn"><Play className="rd-play-icon" /> Play</button>
-                <span className="rd-rating-badge">
-                  RATING: {topic.rating} / {topic.maxRating}
-                  <Info className="rd-rating-info" />
-                </span>
-              </div>
-            </div>
-
-            {topic.problemStatement && (
-              <div className="rd-problem-bar">
-                <FileCode className="rd-problem-icon" />
-                <span className="rd-problem-text">Problem Statement shown to the Candidate</span>
-                <button className="rd-problem-open">Open</button>
-              </div>
-            )}
-
-            <ul className="rd-bullets">
-              {topic.summaryBullets.map((b, i) => (
-                <li key={i} className="rd-bullet"><span className="rd-bullet-dot">&bull;</span> {b}</li>
-              ))}
-            </ul>
-
-            <div className="rd-sub-grid">
-              {topic.subCriteria.map((sc, j) => {
-                return (
-                  <div key={j} className="rd-sub-card">
-                    <div className="rd-sub-header">
-                      <span className="rd-sub-title">{sc.title}</span>
-                      <div className="rd-sub-status-row">
-                        <Chip variant={STATUS_VARIANT[sc.status]} size="sm">{STATUS_LABEL[sc.status]}</Chip>
-                        <Info className="rd-sub-info" />
-                      </div>
-                    </div>
-                    <div className="rd-evidence-list">
-                      {sc.points.map((p, k) => {
-                        const PIcon = EVIDENCE_ICON[p.type];
-                        return (
-                          <div key={k} className={`rd-evidence ${EVIDENCE_COLOR[p.type]}`}>
-                            <PIcon className="rd-evidence-icon" />
-                            <span>{p.text}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <TopicCard key={topic.id} topic={topic} />
         ))}
 
         <div className="rd-proctoring-card">
@@ -182,24 +107,20 @@ const AiInterviewTemplate = ({ data, hiringRequestId, candidateId }: Props) => {
         </div>
 
         {hiringRequestId && candidateId && (
-          <div className="rd-ai-actions">
-            <button
-              className="rd-ai-action"
-              onClick={handleRecording}
-              disabled={recording.isPending || !interviewId}
-            >
-              <Video className="rd-ai-action-icon" /> View recording
-            </button>
-            <button className="rd-ai-action" onClick={handleRetry} disabled={retrying}>
-              <RotateCw className={`rd-ai-action-icon${retrying ? " rd-ai-action-icon--spin" : ""}`} /> Re-run assessment
-            </button>
-          </div>
+          <AiInterviewActions
+            interviewUrl={data.interviewUrl}
+            interviewId={interviewId}
+            retrying={retrying}
+            recordingPending={recording.isPending}
+            onRetry={handleRetry}
+            onOpenRecording={handleRecording}
+          />
         )}
       </div>
 
       <div className="rd-right">
         <div className="rd-video-wrapper">
-          <CustomVideo ref={videoRef} src="/videos/video.mp4" />
+          <RecordingPanel ref={videoRef} recordingUrl={data.recordingUrl} />
         </div>
         <div className="rd-transcript-area">
           <TranscriptPanel sections={data.transcriptSections} onSeek={handleSeek} />
