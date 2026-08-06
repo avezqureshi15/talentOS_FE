@@ -28,6 +28,8 @@ RUN pnpm build
 
 FROM nginx:alpine
 
+RUN apk add --no-cache tzdata
+
 RUN rm -f /etc/nginx/conf.d/*
 
 COPY --from=builder /app/dist /usr/share/nginx/html
