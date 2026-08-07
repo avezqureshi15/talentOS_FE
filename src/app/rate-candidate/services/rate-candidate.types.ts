@@ -3,10 +3,20 @@ export type ReviewPhase = {
   questions: string[];
 };
 
-export type ReviewQuestionsPayload = {
-  questions_source: string;
-  phases: ReviewPhase[];
+export type ReviewDesignQuestion = {
+  question: string;
+  score: number;
+  expected_points: string[];
 };
+
+export type ReviewDesignSection = {
+  section: string;
+  questions: ReviewDesignQuestion[];
+};
+
+export type ReviewQuestionsData =
+  | { format: "sections"; questions_source: string; sections: ReviewDesignSection[] }
+  | { format: "phases"; questions_source: string; phases: ReviewPhase[] };
 
 export type FormValidateResponse = {
   valid: boolean;
@@ -15,7 +25,8 @@ export type FormValidateResponse = {
   type?: string;
   round_id?: string;
   candidate_id?: number;
-  review_questions?: ReviewQuestionsPayload | null;
+  hiring_request_id?: string;
+  review_questions?: ReviewQuestionsData | null;
 };
 
 export type ReviewAnswerItem = {
@@ -29,11 +40,23 @@ export type ReviewAnswerPhase = {
   answers: ReviewAnswerItem[];
 };
 
+export type ReviewAnswerSectionItem = {
+  question: string;
+  score: number;
+  notes?: string | null;
+};
+
+export type ReviewAnswerSection = {
+  section: string;
+  answers: ReviewAnswerSectionItem[];
+};
+
 export type ReviewSubmitRequest = {
   entity_type: string;
   reviews: {
     questions_source: string;
-    phases: ReviewAnswerPhase[];
+    phases?: ReviewAnswerPhase[];
+    sections?: ReviewAnswerSection[];
     average_rating: number;
     skills: string[];
   };

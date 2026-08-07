@@ -7,6 +7,7 @@ import { useBookInterview } from "@/hooks/use-book-interview";
 import { useRescheduleInterview } from "@/hooks/use-reschedule-interview";
 import SrStep1 from "./sr-step1";
 import SrStep2 from "./sr-step2";
+import SrAskSlotsButton from "./sr-ask-slots-button";
 import { SR_LABELS } from "./schedule-round-modal.constants";
 import type { ScheduleRoundModalProps, Interviewer, ScheduleStep } from "./schedule-round-modal.types";
 import "./schedule-round-modal.css";
@@ -65,7 +66,7 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
 
   const slotFetchId = activeInterviewerId;
 
-  const { data: activeSlots, isLoading } = useInterviewerSlots(slotFetchId);
+  const { data: activeSlots, isLoading, refetch: refetchSlots } = useInterviewerSlots(slotFetchId);
 
   const allSlots = useMemo(() => activeSlots ?? [], [activeSlots]);
 
@@ -256,7 +257,8 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
                       selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
                       tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
                       activeSlots={allSlots} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
-                      isLoading={isLoading} isSearching={false} hideSearch={true} />
+                      isLoading={isLoading} isSearching={false} hideSearch={true}
+                      sectionAction={interviewerEmpId ? <SrAskSlotsButton empId={interviewerEmpId} onRequested={refetchSlots} /> : undefined} />
                 </div>
               </div>
             )}

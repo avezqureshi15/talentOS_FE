@@ -7,4 +7,6 @@ export type CandidateActionsMenuProps = {
   onViewProfile: (candidate: Applicant) => void;
   /** When omitted, the "Schedule Round" item is hidden regardless of status. */
   onScheduleRound?: (candidate: Applicant) => void;
+  /** Icon-only kebab trigger (hides the label + chevron). */
+  compact?: boolean;
 };

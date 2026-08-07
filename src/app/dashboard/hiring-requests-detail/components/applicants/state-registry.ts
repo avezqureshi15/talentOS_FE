@@ -38,6 +38,14 @@ const matchers: StateMatcher[] = [
   },
   (a) => {
     const status = a.status?.toLowerCase();
+    return status === "ongoing" ? "ongoing" : null;
+  },
+  (a) => {
+    const status = a.status?.toLowerCase();
+    return status === "no_show" ? "no_show" : null;
+  },
+  (a) => {
+    const status = a.status?.toLowerCase();
     if (status === "interview_scheduled" || status === "scheduled") {
       return "interview_scheduled";
     }
@@ -46,6 +54,16 @@ const matchers: StateMatcher[] = [
   (a) => {
     const status = a.status?.toLowerCase();
     return status === "screening_round_scheduled" ? "screening_round_scheduled" : null;
+  },
+  (a) => {
+    const status = a.status?.toLowerCase();
+    return status === "ai_screening_evaluation_failed"
+      ? "ai_screening_evaluation_failed"
+      : null;
+  },
+  (a) => {
+    const status = a.status?.toLowerCase();
+    return status === "ai_screening_flagged" ? "ai_screening_flagged" : null;
   },
   (a) => {
     const status = a.status?.toLowerCase();

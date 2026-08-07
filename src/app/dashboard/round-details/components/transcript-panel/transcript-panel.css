@@ -94,6 +94,10 @@
   color: var(--text-secondary);
 }
 
+.tp-speaker--ai {
+  color: var(--accent-indigo);
+}
+
 .tp-timestamp {
   font-family: "SF Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
   font-size: 10px;

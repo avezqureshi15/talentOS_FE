@@ -23,9 +23,9 @@ export type EvaluationTopic = {
 
 export type TranscriptUtterance = {
   id: string;
-  speaker: "INTERVIEWER" | "CANDIDATE";
-  timestamp: string;
-  timeInSeconds: number;
+  speaker: "INTERVIEWER" | "CANDIDATE" | "AI";
+  timestamp?: string;
+  timeInSeconds?: number;
   text: string;
 };
 

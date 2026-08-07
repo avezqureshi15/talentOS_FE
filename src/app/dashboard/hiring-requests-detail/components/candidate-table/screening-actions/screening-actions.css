@@ -1,0 +1,42 @@
+.call-now-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: 1px solid var(--button-primary-bg);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.call-now-btn:hover:not(:disabled) {
+  background: var(--button-primary-hover);
+  border-color: var(--button-primary-hover);
+}
+
+.call-now-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.call-now-btn i {
+  font-size: 14px;
+}
+
+.why-flagged-tooltip {
+  max-width: 320px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: var(--shadow-pop);
+  word-break: break-word;
+}

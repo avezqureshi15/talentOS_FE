@@ -11,7 +11,9 @@ export type AiScreeningResultBadge = AiScreeningStatusBadge;
 
 export type AiScreeningPanelProps = {
   hiringRequestId?: string;
-  candidateId: string | null | undefined;
+  candidateId: number | null | undefined;
+  flagged?: { flag_reason?: string | null } | null;
+  result?: AiScreeningPanelViewProps;
 };
 
 export type AiScreeningPanelViewProps = {

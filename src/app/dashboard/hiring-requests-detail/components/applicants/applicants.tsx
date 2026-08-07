@@ -5,10 +5,11 @@ import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
+import AiInterviewScheduleModal from "@/app/dashboard/hiring-requests-detail/components/applicants/ai-interview-schedule-modal/ai-interview-schedule-modal";
 import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/interviews/cancel-interview-modal";
 import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
 import { useMoveToScreening } from "@/hooks/use-move-to-screening";
-import { useAiRetryScreening } from "@/hooks/use-ai-retry";
+import { useAiRetryScreening, useTriggerScreeningCall } from "@/hooks/use-ai-retry";
 import { useUpdateCandidateRoundStatus } from "@/hooks/use-update-candidate-round-status";
 import { useCancelInterview } from "@/hooks/use-cancel-interview";
 import { useToastStore } from "@/store/toast.store";
@@ -51,6 +52,12 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
     interviewerEmpId?: string;
     interviewerName?: string;
     roundName?: string;
+  } | null>(null);
+  const [aiScheduleTarget, setAiScheduleTarget] = useState<{
+    id: string;
+    name: string;
+    candidateId: number;
+    currentSlot?: string;
   } | null>(null);
   const [cancelTarget, setCancelTarget] = useState<{ id: string; name: string; interviewId: string } | null>(null);
 
@@ -186,6 +193,7 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
 
   const { mutateAsync: moveToScreeningMut } = useMoveToScreening();
   const { mutateAsync: retryScreeningMut } = useAiRetryScreening();
+  const { mutateAsync: triggerScreeningMut } = useTriggerScreeningCall();
   const { mutateAsync: updateCandidateRoundStatusMut } = useUpdateCandidateRoundStatus();
   const { mutateAsync: cancelInterviewMut } = useCancelInterview();
   const [retryingScreeningId, setRetryingScreeningId] = useState<string | null>(null);
@@ -203,6 +211,17 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
       setRetryingScreeningId(null);
     }
   }, [data, jdId, retryScreeningMut, onRefresh]);
+
+  const handleCallNow = useCallback(async (id: string) => {
+    const applicant = data.find((a) => a.id === id);
+    if (!applicant) return;
+    try {
+      await triggerScreeningMut({ hiringRequestId: jdId, candidateId: applicant.candidateId });
+      onRefresh?.();
+    } catch {
+      // error toast is handled by the hook
+    }
+  }, [data, jdId, triggerScreeningMut, onRefresh]);
 
   const handleCancelInterview = useCallback(async (id: string) => {
     const applicant = data.find((a) => a.id === id);
@@ -241,6 +260,15 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
   const handleRescheduleInterview = useCallback((id: string) => {
     const applicant = data.find((a) => a.id === id);
     if (!applicant) return;
+    if (applicant.stage === "AI_INTERVIEW") {
+      setAiScheduleTarget({
+        id,
+        name: applicant.name,
+        candidateId: applicant.candidateId,
+        currentSlot: applicant.scheduledAt,
+      });
+      return;
+    }
     if (applicant.interviewId) {
       setRescheduleTarget({
         id,
@@ -255,6 +283,11 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
       useToastStore.getState().addToast("Interview data not available for rescheduling", ToastType.ERROR);
     }
   }, [data]);
+
+  const handleAiScheduled = useCallback(() => {
+    setAiScheduleTarget(null);
+    onRefresh?.();
+  }, [onRefresh]);
 
   const handleRescheduleScheduled = useCallback(() => {
     setRescheduleTarget(null);
@@ -307,6 +340,8 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
     onMoveToScreening: handleMoveToScreening,
     onCancelInterview: handleCancelInterview,
     onRescheduleInterview: handleRescheduleInterview,
+    onRetryAiScreening: handleRetryAiScreening,
+    onCallNow: handleCallNow,
     onMenuSelect: (id) => { setFinalCandidateId(id); setFinalDecision("selected"); },
     onMenuReject: (id) => { setFinalCandidateId(id); setFinalDecision("rejected"); },
     onMenuHold: (id) => { setFinalCandidateId(id); setFinalDecision("on-hold"); },
@@ -333,7 +368,7 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
         const merged = getLocalApplicant(a);
         return (
           <div key={a.id} data-applicant-id={a.id} data-highlight={applicantParam === a.id ? "true" : undefined}>
-            {merged.stage === "AI_SCREENING" && (
+            {merged.stage === "AI_SCREENING" && merged.status?.toLowerCase() !== "ai_screening_evaluation_failed" && merged.status?.toLowerCase() !== "ai_screening_flagged" && (
               <div className="ai-retry-row">
                 <button
                   className="action-link action-link-btn"
@@ -414,6 +449,17 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
         hiringRequestId={jdId}
         onClose={() => setRescheduleTarget(null)}
         onScheduled={handleRescheduleScheduled}
+      />
+
+      <AiInterviewScheduleModal
+        key={aiScheduleTarget?.id ?? "ai-schedule-closed"}
+        open={!!aiScheduleTarget}
+        candidateName={aiScheduleTarget?.name ?? ""}
+        candidateId={aiScheduleTarget?.candidateId ?? 0}
+        hiringRequestId={jdId}
+        currentSlot={aiScheduleTarget?.currentSlot}
+        onClose={() => setAiScheduleTarget(null)}
+        onScheduled={handleAiScheduled}
       />
 
       <CancelInterviewModal

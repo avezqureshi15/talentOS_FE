@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { SR_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP } from "./schedule-round-modal.constants";
 import { askSlotsForEmployee } from "@/components/shared/mentions/services/ask-slots.service";
@@ -25,6 +25,7 @@ type SrStep1Props = {
   isLoading: boolean;
   isSearching: boolean;
   hideSearch?: boolean;
+  sectionAction?: ReactNode;
 };
 
 const slotsLabel = (count: number): string => {
@@ -43,7 +44,7 @@ const groupSlots = (items: CommandItem[]) => {
   return [...map.entries()].sort(([a], [b]) => sortKey(a) - sortKey(b)).map(([group, items]) => ({ group, items }));
 };
 
-const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch }: SrStep1Props) => {
+const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch, sectionAction }: SrStep1Props) => {
   const isSelected = (iv: Interviewer) => selectedInterviewers.some((s) => s.id === iv.id);
   // justification: stores tooltip state for ask-slots button hover
   const [askTooltip, setAskTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
@@ -141,7 +142,10 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
         <div className="sr-right-col-scroll">
           {selectedInterviewers.length > 0 ? (
             <div className="sr-slot-section">
-              <span className="sr-section-label">{SR_LABELS.SELECT_SLOT}</span>
+              <div className="sr-section-header">
+                <span className="sr-section-label">{SR_LABELS.SELECT_SLOT}</span>
+                {sectionAction}
+              </div>
               {tabs.length > 0 && (
                 <div className="sr-tabs-row">
                   {tabs.map((tab) => (

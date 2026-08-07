@@ -1,6 +1,6 @@
 import httpClient from "@/services/http-client";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
-import type { AiScreeningResult, AiInterviewItem, AiInterviewDetail, MoveToScreeningResponse, MoveToScreeningPayload, MoveToInterviewPayload, MoveToInterviewResponse, AiRetryResponse, AiInterviewRecordingResponse } from "./ai.types";
+import type { AiScreeningResult, AiInterviewItem, AiInterviewDetail, MoveToScreeningResponse, MoveToScreeningPayload, MoveToInterviewPayload, MoveToInterviewResponse, AiRetryResponse, AiInterviewRecordingResponse, AiInterviewSchedulePayload, AiInterviewScheduleResponse, AiInterviewUnscheduleResponse, AiScreenTriggerResponse } from "./ai.types";
 import type { CandidateEvaluationData } from "@/app/dashboard/round-details/pages/round-details.types";
 
 export const fetchAiScreeningResult = async (hiringRequestId: string, candidateId: number): Promise<AiScreeningResult> => {
@@ -61,5 +61,23 @@ export const retryAiInterview = async (hiringRequestId: string, candidateId: num
 export const fetchAiInterviewRecordingUrl = async (hiringRequestId: string, candidateId: number, interviewId: string): Promise<AiInterviewRecordingResponse> => {
   const url = API_ENDPOINTS.AI_INTERVIEW_RECORDING.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId)).replace("{interview_id}", interviewId);
   const { data } = await httpClient.get<AiInterviewRecordingResponse>(url);
+  return data;
+};
+
+export const scheduleAiInterview = async (hiringRequestId: string, candidateId: number, payload: AiInterviewSchedulePayload): Promise<AiInterviewScheduleResponse> => {
+  const url = API_ENDPOINTS.AI_INTERVIEW_SCHEDULE.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId));
+  const { data } = await httpClient.post<AiInterviewScheduleResponse>(url, payload);
+  return data;
+};
+
+export const unscheduleAiInterview = async (hiringRequestId: string, candidateId: number): Promise<AiInterviewUnscheduleResponse> => {
+  const url = API_ENDPOINTS.AI_INTERVIEW_UNSCHEDULE.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId));
+  const { data } = await httpClient.post<AiInterviewUnscheduleResponse>(url);
+  return data;
+};
+
+export const triggerScreeningCall = async (hiringRequestId: string, candidateId: number): Promise<AiScreenTriggerResponse> => {
+  const url = API_ENDPOINTS.AI_TRIGGER_SCREENING.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId));
+  const { data } = await httpClient.post<AiScreenTriggerResponse>(url);
   return data;
 };

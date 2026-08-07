@@ -536,6 +536,30 @@
   border-bottom-color: var(--accent);
 }
 
+.id-tab-info {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-faint);
+  cursor: help;
+  transition: color 0.15s;
+}
+
+.id-tab-info:hover {
+  color: var(--text-secondary);
+}
+
+.id-tab-tooltip {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 8px 10px;
+  box-shadow: var(--shadow-pop);
+}
+
 .id-view-status {
   display: flex;
   align-items: center;

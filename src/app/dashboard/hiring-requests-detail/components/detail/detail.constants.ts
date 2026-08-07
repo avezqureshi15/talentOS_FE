@@ -13,7 +13,7 @@ export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
   screening: (a) => includesStage(a, "screening"),
   interview: (a) =>
     includesStage(a, "interview") &&
-    ["interview_scheduled", "interview_rescheduled", "interview_cancelled"].includes(a.status?.toLowerCase() ?? ""),
+    ["interview_scheduled", "interview_rescheduled", "interview_cancelled", "ongoing", "no_show"].includes(a.status?.toLowerCase() ?? ""),
   "waiting-evaluation": (a) =>
     includesStage(a, "waiting-evaluation") ||
     a.status?.toLowerCase() === "waiting_for_review",
@@ -42,21 +42,55 @@ export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean>
   "regular-incoming": (a) =>
     a.stage === "INTERVIEW" &&
     (a.status?.toLowerCase() === "interview_scheduled" ||
+     a.status?.toLowerCase() === "interview_rescheduled" ||
+     a.status?.toLowerCase() === "ongoing"),
+  "no-show": (a) =>
+    a.status?.toLowerCase() === "interview_cancelled" ||
+    a.status?.toLowerCase() === "no_show",
+  scheduled: (a) =>
+    a.stage === "INTERVIEW" &&
+    (a.status?.toLowerCase() === "interview_scheduled" ||
      a.status?.toLowerCase() === "interview_rescheduled"),
-  "no-show": (a) => a.status?.toLowerCase() === "interview_cancelled",
+  ongoing: (a) => a.stage === "INTERVIEW" && a.status?.toLowerCase() === "ongoing",
 };
 
 export const EVALUATED_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
   ai: (a) => a.stage === "AI_INTERVIEW" && a.status?.toLowerCase() === "under_evaluation",
   regular: (a) => a.stage === "INTERVIEW" && a.status?.toLowerCase() === "under_evaluation",
 };
+
+export const SCREENING_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
+  pending: (a) =>
+    a.status?.toLowerCase() === "shortlisted" ||
+    a.status?.toLowerCase() === "move_to_next_round" ||
+    a.status?.toLowerCase() === "screening_round_scheduled",
+  completed: (a) => a.status?.toLowerCase() === "under_evaluation",
+  flagged: (a) =>
+    a.status?.toLowerCase() === "ai_screening_evaluation_failed" ||
+    a.status?.toLowerCase() === "ai_screening_flagged",
+};
+
 export const UI_TABLE_VIEW = "Overview";
+
+export const SCREENING_STATUS_LABELS: Record<string, string> = {
+  shortlisted: "Pending",
+  move_to_next_round: "Pending",
+  screening_round_scheduled: "Pending",
+  under_evaluation: "Completed",
+  ai_screening_evaluation_failed: "Flagged",
+  ai_screening_flagged: "Flagged",
+};
 
 export const UI_CARD_VIEW = "Profile View";
 export const UI_INTERVIEW_AI_INCOMING = "AI Incoming";
 export const UI_INTERVIEW_REGULAR_INCOMING = "Regular Incoming";
 export const UI_INTERVIEW_NO_SHOW = "No Show";
+export const UI_INTERVIEW_SCHEDULED = "Scheduled";
+export const UI_INTERVIEW_ONGOING = "Ongoing";
 export const UI_EVALUATED_AI = "AI";
 export const UI_EVALUATED_REGULAR = "Regular";
+export const UI_SCREENING_PENDING = "Pending";
+export const UI_SCREENING_COMPLETED = "Completed";
+export const UI_SCREENING_FLAGGED = "Flagged";
 export const UI_SEARCHING_APPLICANT = "Searching for applicant across pages...";
 export const UI_APPLICANT_NOT_FOUND = "Applicant not found in this hiring request.";

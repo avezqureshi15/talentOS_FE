@@ -41,8 +41,6 @@ const RoundDetails = () => {
   const { id, roundId } = useParams<RoundDetailsParams>();
   const [searchParams] = useSearchParams();
   const candidateIdParam = searchParams.get("candidateId");
-  const candidateIdNum = candidateIdParam ? Number(candidateIdParam) : undefined;
-  const hasCandidate = Number.isFinite(candidateIdNum);
 
   const { data: apiData, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.ROUND_DETAIL, roundId],
@@ -54,6 +52,12 @@ const RoundDetails = () => {
 
   const mode: RoundDetailsMode | null = apiData ? detectMode(apiData) : null;
   const isAiInterviewMode = mode === "ai-interview";
+
+  const urlCandidateId = candidateIdParam ? Number(candidateIdParam) : undefined;
+  const candidateIdNum =
+    apiData?.candidate_id ??
+    (urlCandidateId !== undefined && Number.isFinite(urlCandidateId) ? urlCandidateId : undefined);
+  const hasCandidate = candidateIdNum !== undefined && Number.isFinite(candidateIdNum);
 
   const { data: interviews } = useAiInterviews(
     isAiInterviewMode && hasCandidate ? id : undefined,

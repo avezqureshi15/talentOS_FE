@@ -7,12 +7,14 @@ export const SUFFIX_COLUMNS: StageColumn[] = [
 
 export const NAME_SCORE_STATUS: StageColumn[] = [
   { key: "name", label: "Candidate", flex: 2 },
+  { key: "phone", label: "Phone", flex: 1.1 },
   { key: "score", label: "Score", flex: 0.8 },
   { key: "status", label: "Status", flex: 1 },
 ];
 
 const NAME_SCORE_VERDICT: StageColumn[] = [
   { key: "name", label: "Candidate", flex: 2 },
+  { key: "phone", label: "Phone", flex: 1.1 },
   { key: "score", label: "Score", flex: 0.8 },
   { key: "status", label: "Verdict", flex: 1 },
 ];

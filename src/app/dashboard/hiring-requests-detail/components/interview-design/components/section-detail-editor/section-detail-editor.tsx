@@ -3,6 +3,7 @@ import type { DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Clock, Plus, Trash2 } from "lucide-react";
 import {
+  MIN_QUESTION_MINUTES,
   SECTION_DEPTH_OPTIONS,
   SECTION_TYPE_OPTIONS,
 } from "../../interview-design.constants";
@@ -14,6 +15,9 @@ import "./section-detail-editor.css";
 export const SectionDetailEditor = ({
   section,
   maxQuestionMinutes,
+  hideMinutes = false,
+  minQuestionMinutes = MIN_QUESTION_MINUTES,
+  questionMinutesStep = 1,
   onUpdateSection,
   onDeleteSection,
   onAddQuestion,
@@ -104,10 +108,12 @@ export const SectionDetailEditor = ({
       <div className="sde-section-heading">
         <span className="sde-questions-label">
           {labels.QUESTIONS_LABEL}
-          <span className="sde-questions-meta">
-            <Clock size={11} />
-            {totalMinutes} {labels.MINUTES_SUFFIX}
-          </span>
+          {!hideMinutes && (
+            <span className="sde-questions-meta">
+              <Clock size={11} />
+              {totalMinutes} {labels.MINUTES_SUFFIX}
+            </span>
+          )}
         </span>
         <div className="sde-section-actions">
           <button type="button" className="sde-add-question-btn" onClick={onAddQuestion}>
@@ -139,6 +145,9 @@ export const SectionDetailEditor = ({
                   key={question.id}
                   question={question}
                   maxMinutes={maxQuestionMinutes}
+                  hideMinutes={hideMinutes}
+                  minMinutes={minQuestionMinutes}
+                  stepMinutes={questionMinutesStep}
                   onUpdate={(patch) => onUpdateQuestion(question.id, patch)}
                   onDelete={() => onDeleteQuestion(question.id)}
                   onDuplicate={() => onDuplicateQuestion(question.id)}

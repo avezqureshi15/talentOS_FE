@@ -4,6 +4,7 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-
 import { CSS } from "@dnd-kit/utilities";
 import { Clock, GripVertical, Plus } from "lucide-react";
 import type { PlannerSection } from "../../interview-design.types";
+import { formatMinutes } from "../../interview-design.utils";
 import { SECTION_LIST_SIDEBAR_LABELS } from "./section-list-sidebar.constants";
 import type { SectionListSidebarProps } from "./section-list-sidebar.types";
 import "./section-list-sidebar.css";
@@ -14,10 +15,11 @@ const sectionTypeClass = (type: string): string =>
 interface SectionItemProps {
   section: PlannerSection;
   isSelected: boolean;
+  showMinutes: boolean;
   onSelect: () => void;
 }
 
-const SectionItem = ({ section, isSelected, onSelect }: SectionItemProps) => {
+const SectionItem = ({ section, isSelected, showMinutes, onSelect }: SectionItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: section.id,
   });
@@ -48,9 +50,13 @@ const SectionItem = ({ section, isSelected, onSelect }: SectionItemProps) => {
             {section.type}
           </span>
           <span className="idls-item-stats">
-            <Clock size={11} />
-            {section.minutes} {SECTION_LIST_SIDEBAR_LABELS.MINUTES_SUFFIX} · {section.questions.length}{" "}
-            {SECTION_LIST_SIDEBAR_LABELS.QUESTION_COUNT_SUFFIX}
+            {showMinutes && (
+              <>
+                <Clock size={11} />
+                {formatMinutes(section.minutes)} ·
+              </>
+            )}{" "}
+            {section.questions.length} {SECTION_LIST_SIDEBAR_LABELS.QUESTION_COUNT_SUFFIX}
           </span>
         </span>
       </div>
@@ -61,6 +67,7 @@ const SectionItem = ({ section, isSelected, onSelect }: SectionItemProps) => {
 export const SectionListSidebar = ({
   sections,
   selectedSectionId,
+  showMinutes = true,
   onSelect,
   onAdd,
   onMove,
@@ -94,6 +101,7 @@ export const SectionListSidebar = ({
                   key={section.id}
                   section={section}
                   isSelected={section.id === selectedSectionId}
+                  showMinutes={showMinutes}
                   onSelect={() => onSelect(section.id)}
                 />
               ))}

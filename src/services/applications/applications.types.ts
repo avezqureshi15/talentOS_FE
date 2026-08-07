@@ -32,6 +32,18 @@ export type EvaluatedCandidate = {
   disqualified_by?: string[];
   scheduled_at?: string | null;
   scheduled_end_at?: string | null;
+  screening_review?: {
+    call_outcome?: string | null;
+    ended_reason?: string | null;
+    summary?: string | null;
+    flag_reason?: string | null;
+    disposition?: string | null;
+    flagged?: boolean | null;
+    attempt?: number | null;
+    retry_count?: number | null;
+    call_status?: string | null;
+    result?: string | null;
+  } | null;
 };
 
 export type RoundFromApi = {
@@ -66,11 +78,17 @@ export type ReviewAnswerPhase = {
   answers: ReviewAnswerItem[];
 };
 
+export type ReviewAnswerSection = {
+  section: string;
+  answers: ReviewAnswerItem[];
+};
+
 export type ReviewEntity = {
   entity_type: string;
   verdict?: string;
   ratings: RatingItem[];
   phases?: ReviewAnswerPhase[];
+  sections?: ReviewAnswerSection[];
   skills?: string[];
   notes?: string;
   average_rating?: number;
@@ -89,6 +107,7 @@ export type RoundDetailApiResponse = {
   slot: string | null;
   status: string | null;
   candidate: string | null;
+  candidate_id: number | null;
   role: string | null;
   jd_label: string | null;
   interviewer: string | null;

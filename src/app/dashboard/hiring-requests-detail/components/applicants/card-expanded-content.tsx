@@ -5,6 +5,17 @@ import CardAiSummaryTab from "./card-ai-summary-tab";
 import CardRoundsTab from "./card-rounds-tab";
 import type { CardExpandedContentProps } from "./applicants.types";
 
+function screeningFailureLabel(callOutcome?: string): string {
+  switch (callOutcome) {
+    case "no_answer": return "Unable to reach candidate — no answer";
+    case "voicemail": return "Reached voicemail — candidate didn't pick up";
+    case "declined":  return "Candidate declined the call";
+    case "dropped":   return "Call was dropped before completing";
+    case "failed":    return "Call failed to connect";
+    default:          return "Screening call could not be completed";
+  }
+}
+
 const CardExpandedContent = ({
   applicant: a,
   stateConfig,
@@ -18,6 +29,27 @@ const CardExpandedContent = ({
   jdId,
 }: CardExpandedContentProps) => (
   <div className="accordion-body">
+    {a.status === "ai_screening_evaluation_failed" && a.screeningReview && (
+      <div className="screening-failure-banner">
+        <i className="bx bx-error-circle screening-failure-icon" />
+        <div className="screening-failure-content">
+          <p className="screening-failure-reason">{screeningFailureLabel(a.screeningReview.callOutcome)}</p>
+          {a.screeningReview.endedReason && (
+            <p className="screening-failure-detail">Call ended: {a.screeningReview.endedReason}</p>
+          )}
+        </div>
+      </div>
+    )}
+    {a.status === "ai_screening_flagged" && a.screeningReview && (
+      <div className="screening-failure-banner">
+        <i className="bx bx-error-circle screening-failure-icon" />
+        <div className="screening-failure-content">
+          <p className="screening-failure-reason">
+            {a.screeningReview.flagReason ?? a.screeningReview.summary ?? "AI screening flagged — review the candidate manually"}
+          </p>
+        </div>
+      </div>
+    )}
     <div className="action-links">
       {a.phone && <a href={`tel:${a.phone}`} className="action-link"><i className="bx bx-phone"></i> {a.phone}</a>}
       <a href={a.linkedinUrl} target="_blank" rel="noreferrer" className="action-link"><i className="bx bx-link-alt"></i> {APPLICANT_LABELS.LINKEDIN}</a>

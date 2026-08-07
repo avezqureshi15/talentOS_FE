@@ -15,12 +15,13 @@ const arrayMove = <T,>(items: T[], fromIndex: number, toIndex: number): T[] => {
 
 const emptyPlan: InterviewPlan = { sections: [] };
 
-const planField = (kind: PlanKind): "interviewPlan" | "screeningPlan" =>
-  kind === "interview" ? "interviewPlan" : "screeningPlan";
+const planField = (kind: PlanKind): "interviewPlan" | "screeningPlan" | "reviewPlan" =>
+  kind === "interview" ? "interviewPlan" : kind === "screening" ? "screeningPlan" : "reviewPlan";
 
 interface InterviewPlannerState {
   interviewPlan: InterviewPlan;
   screeningPlan: InterviewPlan;
+  reviewPlan: InterviewPlan;
   activeKind: PlanKind;
   selectedSectionId: string | null;
   isEditing: boolean;
@@ -51,6 +52,7 @@ interface InterviewPlannerState {
 export const useInterviewPlannerStore = create<InterviewPlannerState>((set) => ({
   interviewPlan: emptyPlan,
   screeningPlan: emptyPlan,
+  reviewPlan: emptyPlan,
   activeKind: "interview",
   selectedSectionId: null,
   isEditing: false,

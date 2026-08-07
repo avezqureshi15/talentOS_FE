@@ -19,4 +19,8 @@ export type CandidateTableProps = {
   allSelected?: boolean;
   activeStage?: string;
   loading?: boolean;
+  /** When provided, adds "Call Now" / "Why flagged?" actions to the screening
+   * table for candidates in the screening pipeline. */
+  hiringRequestId?: string;
+  onScreeningTriggered?: () => void;
 };

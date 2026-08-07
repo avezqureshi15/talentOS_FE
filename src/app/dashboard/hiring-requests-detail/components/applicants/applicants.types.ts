@@ -1,6 +1,6 @@
 import type { Permission } from "@/constants/permissions";
 
-export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "resume_shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_scheduled" | "interview_rescheduled" | "interview_cancelled" | "SCREENING_ROUND_SCHEDULED" | "screening_round_scheduled";
+export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "resume_shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_scheduled" | "interview_rescheduled" | "interview_cancelled" | "ongoing" | "no_show" | "SCREENING_ROUND_SCHEDULED" | "screening_round_scheduled" | "AI_SCREENING_EVALUATION_FAILED" | "ai_screening_evaluation_failed" | "AI_SCREENING_FLAGGED" | "ai_screening_flagged";
 
 export type HiringState =
   | "waiting_for_review"
@@ -10,12 +10,16 @@ export type HiringState =
   | "interview_scheduled"
   | "interview_rescheduled"
   | "interview_cancelled"
+  | "ongoing"
+  | "no_show"
   | "screening_round_scheduled"
+  | "ai_screening_evaluation_failed"
+  | "ai_screening_flagged"
   | "rejected"
   | "selected"
   | "on-hold";
 
-export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move" | "cancel" | "reschedule";
+export type ActionVariant = "shortlist" | "reject" | "screen" | "schedule" | "move" | "cancel" | "reschedule" | "call";
 
 export type ActionConfig = {
   label: string;
@@ -112,6 +116,24 @@ export type Applicant = {
   roundName?: string;
   scheduledAt?: string;
   scheduledEndAt?: string;
+  screeningReview?: {
+    callOutcome?: string;
+    endedReason?: string;
+    summary?: string;
+    flagReason?: string;
+    disposition?: string;
+    flagged?: boolean;
+    retryCount?: number;
+    callStatus?: string;
+    attempt?: number;
+    result?: string;
+  };
+  aiInterviewReview?: {
+    flagReason?: string;
+    flagged?: boolean;
+    status?: string;
+    flaggedAt?: string;
+  };
 };
 
 export type ApplicantsProps = {

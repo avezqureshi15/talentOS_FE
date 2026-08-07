@@ -5,6 +5,10 @@ import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import "./candidate-table.css";
 import type { CandidateTableProps } from "./candidate-table.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import { SCREENING_STATUS_LABELS } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import ScreeningActions from "./screening-actions/screening-actions";
+import ScreeningStatusBadge from "./screening-actions/screening-status-badge";
+import { formatPhoneDisplay } from "./screening-actions/screening-actions.utils";
 
 const formatDate = (iso?: string): string => {
   if (!iso) return "";
@@ -38,9 +42,12 @@ const STATUS_LABELS: Record<string, string> = {
   waiting_for_review: "Waiting",
   selected: "Selected",
   screening_round_scheduled: "Scheduled",
+  ai_screening_evaluation_failed: "AI Screening Failed",
+  ai_screening_flagged: "AI Screening Flagged",
   interview_scheduled: "Scheduled",
   interview_rescheduled: "Rescheduled",
   interview_cancelled: "Cancelled",
+  ongoing: "Ongoing",
 };
 
 const STATUS_TOOLTIPS: Record<string, string> = {
@@ -49,9 +56,12 @@ const STATUS_TOOLTIPS: Record<string, string> = {
   move_to_next_round: "Move to Next Round",
   selected: "Selected And Closed",
   screening_round_scheduled: "Screening Round Scheduled",
+  ai_screening_evaluation_failed: "AI Screening Failed — retry or reject from the screening pipeline",
+  ai_screening_flagged: "AI Screening Flagged — candidate needs manual review",
   interview_scheduled: "Interview Scheduled",
   interview_rescheduled: "Interview Rescheduled",
   interview_cancelled: "Interview Cancelled",
+  ongoing: "Interview Ongoing",
 };
 
 function toLabel(raw: string): string {
@@ -67,7 +77,7 @@ function getDisplayStatus(rawStatus: string): { label: string; cssClass: string;
 }
 
 const isInterviewStatus = (s: string) =>
-  s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled" || s === "screening_round_scheduled";
+  s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled" || s === "screening_round_scheduled" || s === "ongoing";
 
 const CandidateTable = ({
   data, columns, onRowClick, onInfoClick, onScheduleClick, onTimelineOpen,
@@ -75,6 +85,8 @@ const CandidateTable = ({
   selectedIds,
   onToggleSelect, onToggleSelectAll, allSelected,
   activeStage, loading,
+  hiringRequestId,
+  onScreeningTriggered,
 }: CandidateTableProps) => {
   const CELL_RENDERERS: Record<string, (c: Applicant, onInfo?: (c: Applicant) => void) => ReactNode> = {
     name: (c) => (
@@ -84,9 +96,12 @@ const CandidateTable = ({
           person={{ name: c.name, email: c.email, phone: c.phone }}
         />
         <div>
-          <div className="candidate-name">
-            {c.name}
+          <div className="candidate-name-line">
+            <span className="candidate-name">{c.name}</span>
             {c.candidateType === "REFERRAL" && <span className="candidate-type-tag">Referral</span>}
+            {activeStage === "screening" && c.screeningReview?.attempt != null && (
+              <span className="attempt-badge--inline">attempt {c.screeningReview.attempt}</span>
+            )}
           </div>
           {c.email && <div className="candidate-email">{c.email}</div>}
         </div>
@@ -98,22 +113,42 @@ const CandidateTable = ({
       ) : (
         <span className="text-muted">—</span>
       ),
+    phone: (c) =>
+      c.phone ? (
+        <a href={`tel:${c.phone}`} className="candidate-phone" onClick={(e) => e.stopPropagation()}>
+          <i className="bx bx-phone" />
+          <span>{formatPhoneDisplay(c.phone)}</span>
+        </a>
+      ) : (
+        <span className="text-muted">—</span>
+      ),
     status: (c) => {
-      let label: string;
-      let cssClass: string;
-      let tooltip: string;
       if (activeStage === "resume-shortlisting" && c.score != null) {
-        label = c.score >= 70 ? "Selected" : "Rejected";
-        cssClass = c.score >= 70 ? "selected" : "rejected";
-        tooltip = label;
-      } else {
-        const ds = getDisplayStatus(c.status);
-        label = ds.label;
-        cssClass = ds.cssClass;
-        tooltip = ds.tooltip;
+        const selected = c.score >= 70;
+        return (
+          <span className={`status-chip status-chip--${selected ? "selected" : "rejected"}`} title={selected ? "Selected" : "Rejected"}>
+            {selected ? "Selected" : "Rejected"}
+          </span>
+        );
       }
+      if (activeStage === "screening") {
+        const hasReview =
+          c.screeningReview || c.status?.toLowerCase() === "ai_screening_flagged" || c.status?.toLowerCase() === "ai_screening_evaluation_failed";
+        if (hasReview) {
+          return <ScreeningStatusBadge candidate={c} />;
+        }
+        const legacyScreeningLabel = SCREENING_STATUS_LABELS[c.status?.toLowerCase() ?? ""];
+        if (legacyScreeningLabel) {
+          return (
+            <span className={`status-chip status-chip--${legacyScreeningLabel.toLowerCase()}`} title={legacyScreeningLabel}>
+              {legacyScreeningLabel}
+            </span>
+          );
+        }
+      }
+      const ds = getDisplayStatus(c.status);
       return (
-        <span className={`status-chip status-chip--${cssClass}`} title={tooltip}>{label}</span>
+        <span className={`status-chip status-chip--${ds.cssClass}`} title={ds.tooltip}>{ds.label}</span>
       );
     },
     cv: (c) =>
@@ -154,6 +189,21 @@ const CandidateTable = ({
       ) : (
         <span className="text-muted">—</span>
       ),
+    actions: (c, onInfo) => (
+      <div className="screening-actions-cell">
+        <ScreeningActions
+          candidate={c}
+          hiringRequestId={hiringRequestId ?? ""}
+          onScreeningTriggered={onScreeningTriggered}
+        />
+        <CandidateActionsMenu
+          candidate={c}
+          compact
+          onViewProfile={(cand) => onInfo?.(cand)}
+          onScheduleRound={onScheduleClick}
+        />
+      </div>
+    ),
   };
 
   const gridTemplate = columns.map((col) => `${col.flex}fr`).join(" ");
@@ -162,7 +212,12 @@ const CandidateTable = ({
     <DataTable
       columns={columns.map((col) => ({
         header: col.label,
-        className: col.key === "info" || col.key === "timeline" || col.key === "cv" ? "dt-cell-center" : undefined,
+        className:
+          col.key === "actions"
+            ? "dt-cell-right"
+            : col.key === "info" || col.key === "timeline" || col.key === "cv"
+              ? "dt-cell-center"
+              : undefined,
         render: (c: Applicant) => {
           const render = CELL_RENDERERS[col.key];
           return render ? render(c, onInfoClick) : null;

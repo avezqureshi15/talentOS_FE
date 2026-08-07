@@ -25,8 +25,37 @@
 
 .candidate-name {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-primary);
+}
+
+.candidate-name-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.attempt-badge--inline {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-subtle, rgba(0, 0, 0, 0.06));
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* merged actions cell (screening) */
+.screening-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  white-space: nowrap;
 }
 
 .candidate-email {
@@ -109,6 +138,16 @@
   color: var(--danger-light);
 }
 
+.status-chip--ai_screening_evaluation_failed {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+}
+
+.status-chip--ai_screening_flagged {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+}
+
 .status-chip--scheduled,
 .status-chip--interview_scheduled,
 .status-chip--screening_round_scheduled {
@@ -126,9 +165,68 @@
   color: var(--danger-light);
 }
 
+.status-chip--ongoing {
+  background: var(--accent-indigo-bg);
+  color: var(--accent-indigo-light);
+}
+
 .status-chip--on-hold {
   background: var(--yellow-bg);
   color: var(--yellow);
+}
+
+.status-chip--pending {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--completed {
+  background: var(--success-bg-strong);
+  color: var(--success-light);
+}
+
+.status-chip--flagged {
+  background: var(--danger-bg);
+  color: var(--danger-light);
+  border: 1px solid var(--danger-border);
+}
+
+.status-chip--interactive {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: help;
+}
+
+.status-chip--interactive:hover {
+  border-color: var(--danger-light-border);
+}
+
+.status-chip--flag-icon {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* candidate phone */
+.candidate-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.candidate-phone i {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.candidate-phone:hover {
+  color: var(--accent);
 }
 
 /* misc */
@@ -211,5 +309,18 @@
   font-size: 11px;
   font-weight: 500;
   color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.attempt-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-subtle, rgba(0,0,0,.06));
+  color: var(--text-secondary);
   white-space: nowrap;
 }

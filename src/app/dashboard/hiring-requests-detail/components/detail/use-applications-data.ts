@@ -1,9 +1,20 @@
 import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchApplicationsPaginated, fetchFinalVerdicts } from "@/services/applications/applications";
+import type { EvaluatedCandidate } from "@/services/applications/applications.types";
 import { PAGINATION } from "@/constants/api-endpoints";
-import { QUERY_KEYS } from "@/constants/constants";
+import { AI_SCREENING_POLL_INTERVAL_MS, AI_SCREENING_TERMINAL_STATUSES, QUERY_KEYS } from "@/constants/constants";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+
+function hasActiveScreeningCall(rows: EvaluatedCandidate[] | undefined): boolean {
+  return (
+    !!rows &&
+    rows.some((row) => {
+      const status = row.screening_review?.call_status;
+      return !!status && !AI_SCREENING_TERMINAL_STATUSES.has(status.toLowerCase());
+    })
+  );
+}
 
 type UseApplicationsDataResult = {
   applicants: Applicant[];
@@ -68,6 +79,8 @@ export const useApplicationsData = (
     enabled,
     staleTime: 30_000,
     refetchOnWindowFocus: false,
+    refetchInterval: (q) =>
+      hasActiveScreeningCall(q.state.data?.data) ? AI_SCREENING_POLL_INTERVAL_MS : false,
   });
 
   const total = query.data?.total ?? 0;
@@ -95,7 +108,7 @@ export const useApplicationsData = (
     page,
     totalPages,
     pageSize,
-    isLoading: query.isFetching,
+    isLoading: query.isLoading,
     goToPage,
     setPageSize,
     refresh: query.refetch,
@@ -169,6 +182,10 @@ function mapCandidate(app: {
   round_name?: string | null;
   scheduled_at?: string | null;
   scheduled_end_at?: string | null;
+  screening_review?: { call_outcome?: string | null; ended_reason?: string | null; summary?: string | null; flag_reason?: string | null; disposition?: string | null; flagged?: boolean | null; attempt?: number | null; retry_count?: number | null; call_status?: string | null; result?: string | null } | null;
+  ai_interview_review?: { flag_reason?: string | null; flagged?: boolean | null; status?: string | null; flagged_at?: string | null } | null;
+  attempt?: number | null;
+  retry_count?: number | null;
 }): Applicant {
   return {
     id: app.id,
@@ -208,5 +225,27 @@ function mapCandidate(app: {
     roundName: app.round_name ?? undefined,
     scheduledAt: app.scheduled_at ?? undefined,
     scheduledEndAt: app.scheduled_end_at ?? undefined,
+    screeningReview: app.screening_review
+      ? {
+          callOutcome: app.screening_review.call_outcome ?? undefined,
+          endedReason: app.screening_review.ended_reason ?? undefined,
+          summary: app.screening_review.summary ?? undefined,
+          flagReason: app.screening_review.flag_reason ?? undefined,
+          disposition: app.screening_review.disposition ?? undefined,
+          flagged: app.screening_review.flagged ?? undefined,
+          attempt: app.screening_review?.attempt ?? app.screening_review?.retry_count ?? app.attempt ?? app.retry_count ?? undefined,
+          retryCount: app.screening_review?.retry_count ?? app.screening_review?.attempt ?? app.retry_count ?? app.attempt ?? undefined,
+          callStatus: app.screening_review?.call_status ?? undefined,
+          result: app.screening_review?.result ?? undefined,
+        }
+      : undefined,
+    aiInterviewReview: app.ai_interview_review
+      ? {
+          flagReason: app.ai_interview_review.flag_reason ?? undefined,
+          flagged: app.ai_interview_review.flagged ?? undefined,
+          status: app.ai_interview_review.status ?? undefined,
+          flaggedAt: app.ai_interview_review.flagged_at ?? undefined,
+        }
+      : undefined,
   };
 }

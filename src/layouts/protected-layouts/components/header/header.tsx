@@ -77,9 +77,11 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   const plannerActiveKind = useInterviewPlannerStore((s) => s.activeKind);
   const plannerInterviewPlan = useInterviewPlannerStore((s) => s.interviewPlan);
   const plannerScreeningPlan = useInterviewPlannerStore((s) => s.screeningPlan);
+  const plannerReviewPlan = useInterviewPlannerStore((s) => s.reviewPlan);
 
   const interviewStats = useMemo(() => {
-    if (!isInterviewDesignRoute || !isPlannerEditing) return null;
+    if (!isInterviewDesignRoute) return null;
+    if (!isPlannerEditing || plannerActiveKind === "review") return null;
     const plan =
       plannerActiveKind === "interview" ? plannerInterviewPlan : plannerScreeningPlan;
     return computeInterviewPlanStats(plannerActiveKind, plan);
@@ -89,6 +91,7 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
     plannerActiveKind,
     plannerInterviewPlan,
     plannerScreeningPlan,
+    plannerReviewPlan,
   ]);
 
   if (meta) {

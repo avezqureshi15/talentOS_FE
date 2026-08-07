@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants/constants";
-import { retryAiScreening, retryAiInterview, fetchAiInterviewRecordingUrl } from "@/services/ai/ai";
+import { retryAiScreening, retryAiInterview, fetchAiInterviewRecordingUrl, triggerScreeningCall } from "@/services/ai/ai";
 import { useToast } from "@/hooks/use-toast";
-import type { AiRetryResponse } from "@/services/ai/ai.types";
+import type { AiRetryResponse, AiScreenTriggerResponse } from "@/services/ai/ai.types";
 
 type RetryArgs = {
   hiringRequestId: string;
@@ -43,6 +43,22 @@ export function useAiRetryScreening() {
 
 export function useAiRetryInterview() {
   return useRetryBase("interview");
+}
+
+export function useTriggerScreeningCall() {
+  const { success, error } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation<AiScreenTriggerResponse, Error, RetryArgs>({
+    mutationFn: ({ hiringRequestId, candidateId }) => triggerScreeningCall(hiringRequestId, candidateId),
+    onSuccess: (_, { hiringRequestId, candidateId }) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AI_SCREENING, hiringRequestId, candidateId] });
+      success("Screening call triggered successfully.", "Call triggered");
+    },
+    onError: (err) => {
+      error(err.message || "Failed to trigger screening call.", "Trigger failed");
+    },
+  });
 }
 
 export function useAiInterviewRecording() {

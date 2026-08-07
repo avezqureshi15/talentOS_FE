@@ -17,4 +17,4 @@ export type InterviewTimeStatus = "ok" | "warning" | "danger";
 
 export type PlannerSection = InterviewPlanSection & { minutes: number };
 
-export type PlanKind = "interview" | "screening";
+export type PlanKind = "interview" | "screening" | "review";

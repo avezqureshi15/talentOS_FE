@@ -21,10 +21,11 @@ import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/c
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
-import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATED_SUB_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATED_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import ViewToggle from "@/app/dashboard/hiring-requests-detail/components/detail/view-toggle";
-import InterviewFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
+import InterviewFilterBar, { type InterviewScheduleFilter } from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
 import EvaluatedFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
+import ScreeningFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/screening-filter-bar";
 import PaginationBar from "@/components/ui/pagination-bar/pagination-bar";
 import { fadeSlideUp, staggerContainer } from "@/utils/motion";
 import type { JobDetailProps } from "./detail.types";
@@ -34,7 +35,9 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [searchParams] = useSearchParams();
   const applicantParam = searchParams.get("applicant");
   const [interviewSubFilter, setInterviewSubFilter] = useState<"ai-incoming" | "regular-incoming" | "no-show">("ai-incoming");
+  const [interviewScheduleFilter, setInterviewScheduleFilter] = useState<InterviewScheduleFilter>(null);
   const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
+  const [screeningSubFilter, setScreeningSubFilter] = useState<"pending" | "completed" | "flagged">("pending");
   // UI-only: candidate whose Schedule Round modal is open, opened from table row action.
   const [scheduleCandidate, setScheduleCandidate] = useState<Applicant | null>(null);
 
@@ -67,7 +70,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   });
 
   const filteredApplicants = useFilteredApplicants({
-    applicants, activeStage, interviewSubFilter, evaluatedSubFilter,
+    applicants, activeStage, interviewSubFilter, evaluatedSubFilter, screeningSubFilter,
+    interviewScheduleFilter,
   });
 
   const BULK_STAGE_ACTIONS: Record<string, { screening: boolean; interview: boolean }> = {
@@ -99,11 +103,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const stageLabel = selectionStage ? (PIPELINE_STAGES.find((s) => s.key === selectionStage)?.label ?? selectionStage) : "";
 
   const handleBulkRemarksConfirm = (remarks: string) => {
-    if (remarks) bulkSelection.handleSubmitRemarks(remarks);
     const action = pendingBulkRemarks;
     setPendingBulkRemarks(null);
-    if (action === "screening") bulkSelection.handleBulkMoveToScreening();
-    else if (action === "interview") bulkSelection.handleBulkMoveToInterview();
+    if (action === "screening") void bulkSelection.handleBulkMoveToScreening(remarks);
+    else if (action === "interview") void bulkSelection.handleBulkMoveToInterview(remarks);
   };
 
   const stagesWithCounts = useMemo(() =>
@@ -128,12 +131,20 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   }), [applicants]);
 
   const columns = useMemo<StageColumn[]>(() => {
+    if (activeStage === "screening") {
+      return [
+        { key: "name", label: "Candidate", flex: 2 },
+        { key: "phone", label: "Phone", flex: 1.1 },
+        { key: "status", label: "Status", flex: 1 },
+        { key: "actions", label: "Actions", flex: 1 },
+      ];
+    }
     if (activeStage === "interview") {
       if (interviewSubFilter === "ai-incoming") {
         return [
           ...NAME_SCORE_STATUS,
           { key: "startDate", label: "Start Date", flex: 0.9 },
-          { key: "endDate", label: "End Date", flex: 0.9 },
+          { key: "time", label: "Time", flex: 0.7 },
           ...SUFFIX_COLUMNS,
         ];
       }
@@ -151,7 +162,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
         return [
           ...NAME_SCORE_STATUS,
           { key: "startDate", label: "Start Date", flex: 0.9 },
-          { key: "endDate", label: "End Date", flex: 0.9 },
+          { key: "time", label: "Time", flex: 0.7 },
           ...SUFFIX_COLUMNS,
         ];
       }
@@ -177,6 +188,18 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     ).length,
   }), [applicants]);
 
+  const screeningSubCounts = useMemo(() => ({
+    pending: applicants.filter(
+      (a) => STAGE_FILTER_MAP["screening"](a) && SCREENING_SUB_FILTER_MAP["pending"](a),
+    ).length,
+    completed: applicants.filter(
+      (a) => STAGE_FILTER_MAP["screening"](a) && SCREENING_SUB_FILTER_MAP["completed"](a),
+    ).length,
+    flagged: applicants.filter(
+      (a) => STAGE_FILTER_MAP["screening"](a) && SCREENING_SUB_FILTER_MAP["flagged"](a),
+    ).length,
+  }), [applicants]);
+
   return (
     <div className="job-page">
       <PipelineStages stages={stagesWithCounts} activeKey={activeStage} onStageChange={setActiveStage} />
@@ -196,7 +219,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     disabled={bulkSelection.isBulkProcessing}
                     type="button"
                   >
-                    {bulkSelection.isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-phone" />}
+                    {bulkSelection.activeAction === "screening" ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-phone" />}
                     {" "}Move to AI Screening
                   </button>
                 )}
@@ -210,7 +233,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     disabled={bulkSelection.isBulkProcessing}
                     type="button"
                   >
-                    {bulkSelection.isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-bot" />}
+                    {bulkSelection.activeAction === "interview" ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-bot" />}
                     {" "}Move to AI Interview
                   </button>
                 )}
@@ -221,7 +244,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                     disabled={bulkSelection.isBulkProcessing}
                     type="button"
                   >
-                    {bulkSelection.isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-archive" />}
+                    {bulkSelection.activeAction === "archive" ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-archive" />}
                     {" "}Archive
                   </button>
                 )}
@@ -246,8 +269,21 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
               rejectReason={rejectReason} onRejectReasonChange={setRejectReason}
             />
           )}
+          {activeStage === "screening" && (
+            <ScreeningFilterBar value={screeningSubFilter} onChange={setScreeningSubFilter} counts={screeningSubCounts} />
+          )}
+          {activeStage === "screening" && <div className="filter-chips" />}
           {activeStage === "interview" && (
-            <InterviewFilterBar value={interviewSubFilter} onChange={setInterviewSubFilter} counts={interviewSubCounts} />
+            <InterviewFilterBar
+              value={interviewSubFilter}
+              onChange={(v) => {
+                if (v !== "regular-incoming") setInterviewScheduleFilter(null);
+                setInterviewSubFilter(v);
+              }}
+              counts={interviewSubCounts}
+              scheduleFilter={interviewScheduleFilter}
+              onScheduleFilterChange={setInterviewScheduleFilter}
+            />
           )}
           {activeStage === "interview" && <div className="filter-chips" />}
           {activeStage === "evaluated" && (
@@ -330,6 +366,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 allSelected={bulkSelection.allSelected}
                 activeStage={activeStage}
                 loading={appsLoading}
+                hiringRequestId={jobId}
+                onScreeningTriggered={refresh}
               />
               <PaginationBar
                 page={page}

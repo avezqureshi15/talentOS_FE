@@ -1,4 +1,4 @@
-import type { AnswerMap, ReviewPhase } from "@/app/rate-candidate/services/rate-candidate.types";
+import type { AnswerMap, ReviewQuestionsData } from "@/app/rate-candidate/services/rate-candidate.types";
 
 export type RubricLevel = {
   score: number;
@@ -8,7 +8,7 @@ export type RubricLevel = {
 };
 
 export type RatingPanelProps = {
-  phases: ReviewPhase[];
+  resolvedQuestions: ReviewQuestionsData;
   answers: AnswerMap;
   onChangeScore: (key: string, score: number) => void;
   onChangeNotes: (key: string, notes: string) => void;

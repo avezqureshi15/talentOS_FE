@@ -138,6 +138,28 @@
   white-space: nowrap;
 }
 
+/* ─── Transcript ─── */
+.nrt-transcript {
+  max-height: 480px;
+  overflow-y: auto;
+  border-radius: 6px;
+}
+
+.nrt-transcript .tp-utterance {
+  align-items: stretch;
+}
+
+.nrt-transcript .tp-speaker-tag {
+  flex: 0 0 25%;
+  min-width: 0;
+  padding-right: 4px;
+}
+
+.nrt-transcript .tp-text {
+  flex: 1 0 0;
+  min-width: 0;
+}
+
 /* ─── Verdict Pill ─── */
 .nrt-pill {
   display: inline-flex;
