@@ -47,7 +47,7 @@ export const ROUND_VERDICT_LABELS: Record<string, string> = {
 
 export const INFO_CHIP_SKIP_KEYS = new Set(["fitscore", "summary", "summary_md", "rejection_details", "strong_matches", "gaps_and_concerns"]);
 
-export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round", "interview_scheduled", "interview_rescheduled", "interview_cancelled", "screening_round_scheduled"]);
+export const INFO_CHIP_STATUSES = new Set(["under_evaluation", "shortlisted", "move_to_next_round", "interview_scheduled", "interview_rescheduled", "interview_cancelled", "ongoing", "screening_round_scheduled"]);
 
 export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   state: "waiting_for_review",
@@ -151,9 +151,27 @@ export const INTERVIEW_RESCHEDULED_CONFIG: StateConfig = {
   menuActions: ["select", "reject", "hold"],
 };
 
+export const INTERVIEW_ONGOING_CONFIG: StateConfig = {
+  state: "ongoing",
+  chip: { label: "Interview Ongoing", variant: "info" },
+  showInfoChips: false,
+  showExpandedContent: true,
+  actions: [],
+  menuActions: ["select", "reject", "hold"],
+};
+
 export const INTERVIEW_CANCELLED_CONFIG: StateConfig = {
   state: "interview_cancelled",
   chip: { label: "Interview Cancelled", variant: "danger" },
+  showInfoChips: false,
+  showExpandedContent: true,
+  actions: [],
+  menuActions: ["select", "reject", "hold"],
+};
+
+export const NO_SHOW_CONFIG: StateConfig = {
+  state: "no_show",
+  chip: { label: "No Show", variant: "danger" },
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],
@@ -198,6 +216,8 @@ export const STATE_CONFIGS: Record<string, StateConfig> = {
   interview_scheduled: INTERVIEW_SCHEDULED_CONFIG,
   interview_rescheduled: INTERVIEW_RESCHEDULED_CONFIG,
   interview_cancelled: INTERVIEW_CANCELLED_CONFIG,
+  no_show: NO_SHOW_CONFIG,
+  ongoing: INTERVIEW_ONGOING_CONFIG,
   screening_round_scheduled: SCREENING_ROUND_SCHEDULED_CONFIG,
   ai_screening_evaluation_failed: AI_SCREENING_EVALUATION_FAILED_CONFIG,
   ai_screening_flagged: AI_SCREENING_FLAGGED_CONFIG,

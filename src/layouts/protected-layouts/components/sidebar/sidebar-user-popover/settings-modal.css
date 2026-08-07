@@ -79,6 +79,13 @@
   padding-bottom: 16px;
 }
 
+.settings-modal__body--ai-screening {
+  gap: 0;
+  min-height: 0;
+  flex: 1;
+  padding-bottom: 16px;
+}
+
 .settings-theme-row {
   display: flex;
   align-items: center;

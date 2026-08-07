@@ -165,6 +165,11 @@
   color: var(--danger-light);
 }
 
+.status-chip--ongoing {
+  background: var(--accent-indigo-bg);
+  color: var(--accent-indigo-light);
+}
+
 .status-chip--on-hold {
   background: var(--yellow-bg);
   color: var(--yellow);

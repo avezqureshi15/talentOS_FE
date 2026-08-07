@@ -47,6 +47,7 @@ const STATUS_LABELS: Record<string, string> = {
   interview_scheduled: "Scheduled",
   interview_rescheduled: "Rescheduled",
   interview_cancelled: "Cancelled",
+  ongoing: "Ongoing",
 };
 
 const STATUS_TOOLTIPS: Record<string, string> = {
@@ -60,6 +61,7 @@ const STATUS_TOOLTIPS: Record<string, string> = {
   interview_scheduled: "Interview Scheduled",
   interview_rescheduled: "Interview Rescheduled",
   interview_cancelled: "Interview Cancelled",
+  ongoing: "Interview Ongoing",
 };
 
 function toLabel(raw: string): string {
@@ -75,7 +77,7 @@ function getDisplayStatus(rawStatus: string): { label: string; cssClass: string;
 }
 
 const isInterviewStatus = (s: string) =>
-  s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled" || s === "screening_round_scheduled";
+  s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled" || s === "screening_round_scheduled" || s === "ongoing";
 
 const CandidateTable = ({
   data, columns, onRowClick, onInfoClick, onScheduleClick, onTimelineOpen,

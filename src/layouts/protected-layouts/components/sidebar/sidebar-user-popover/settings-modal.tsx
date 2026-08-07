@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
 import { SETTINGS_MODAL } from "@/constants/constants";
+import { PERMISSIONS } from "@/constants/permissions";
 import { useThemeStore, type ThemeMode } from "@/store/theme.store";
-import { useRole } from "@/app/auth/hooks/use-auth";
+import { useAuth, useRole } from "@/app/auth/hooks/use-auth";
 import { usePermissions } from "@/hooks/use-permissions";
 import { ROUTES } from "@/constants/routes";
 import ApiKeysSection from "@/app/superadmin/api-keys/components/api-keys-section";
 import RoleDocsTable from "./role-docs-table";
+import AiScreeningSection from "./ai-screening-section/ai-screening-section";
 import "./settings-modal.css";
 
 type SettingsModalProps = {
@@ -16,7 +18,7 @@ type SettingsModalProps = {
   onClose: () => void;
 };
 
-type SettingsTab = "theme" | "api-keys" | "apps" | "role-docs";
+type SettingsTab = "theme" | "api-keys" | "apps" | "role-docs" | "ai-screening";
 
 const THEME_OPTIONS: { value: ThemeMode; label: string; icon: string }[] = [
   { value: "light", label: SETTINGS_MODAL.THEME_LIGHT, icon: "bx bx-sun" },
@@ -29,9 +31,11 @@ const SETTINGS_TABS: { value: SettingsTab; label: string; icon: string }[] = [
   { value: "api-keys", label: "API Keys", icon: "bx bx-key" },
   { value: "apps", label: SETTINGS_MODAL.APPS_TAB, icon: "bx bx-code-alt" },
   { value: "role-docs", label: "Role Docs", icon: "bx bx-book-open" },
+  { value: "ai-screening", label: "AI Screening", icon: "bx bx-robot" },
 ];
 
 const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
+  const { user } = useAuth();
   const { hasRole } = useRole();
   const isSuperAdmin = hasRole("superadmin");
   const { can } = usePermissions();
@@ -41,12 +45,16 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
 
+  // Per-tenant AI-screening settings — hidden for superadmin (no own tenant).
+  const canViewAiScreening = !isSuperAdmin && !!user?.tenant_id && can(PERMISSIONS.SETTINGS_VIEW);
+
   const visibleTabs = SETTINGS_TABS.filter(
     (t) =>
       t.value === "theme" ||
       t.value === "role-docs" ||
       (t.value === "api-keys" && isSuperAdmin) ||
-      (t.value === "apps" && canManageApps),
+      (t.value === "apps" && canManageApps) ||
+      (t.value === "ai-screening" && canViewAiScreening),
   );
 
   const handleManageApps = () => {
@@ -125,6 +133,12 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
           {tab === "role-docs" && (
             <div className="settings-modal__body settings-modal__body--role-docs">
               <RoleDocsTable />
+            </div>
+          )}
+
+          {tab === "ai-screening" && canViewAiScreening && (
+            <div className="settings-modal__body settings-modal__body--ai-screening">
+              <AiScreeningSection />
             </div>
           )}
         </div>

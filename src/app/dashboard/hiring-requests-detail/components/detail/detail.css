@@ -1029,6 +1029,47 @@
   font-weight: 600;
 }
 
+/* ---------- Interview Schedule Criteria ---------- */
+.filter-section-schedule .schedule-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.schedule-chips {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.schedule-chip {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.schedule-chip:hover {
+  border-color: var(--accent-indigo-border);
+  color: var(--accent-indigo-light);
+}
+
+.schedule-chip.active {
+  background: var(--accent-indigo-bg);
+  border-color: var(--accent-indigo-border);
+  color: var(--accent-indigo-light);
+  font-weight: 600;
+}
+
 /* =========================
    FILTER CHIPS (active filter tags)
 ========================= */

@@ -107,6 +107,14 @@ const ApplicantCard = ({
               <i className="bx bx-time"></i> {formatSlot(a.scheduledAt)}
             </span>
           )}
+          {a.stage === "AI_INTERVIEW" && a.status?.toLowerCase() === "no_show" && (
+            <span
+              className="ai-interview-slot-chip no-show-reason-chip"
+              title={a.aiInterviewReview?.flagReason ?? "No reason recorded"}
+            >
+              <i className="bx bx-user-x"></i> {a.aiInterviewReview?.flagReason || "No Show"}
+            </span>
+          )}
           {a.appliedAt && (
             <span className="applied-date">
               <i className="bx bx-calendar"></i> {APPLICANT_LABELS.APPLIED} {formatDate(a.appliedAt)}

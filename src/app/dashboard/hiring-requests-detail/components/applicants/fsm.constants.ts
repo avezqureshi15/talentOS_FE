@@ -21,6 +21,8 @@ export const HIRING_STATE_TO_PIPELINE_STAGE: Record<HiringState, StageKey> = {
   interview_scheduled: "interview",
   interview_rescheduled: "interview",
   interview_cancelled: "interview",
+  ongoing: "interview",
+  no_show: "interview",
   screening_round_scheduled: "screening",
   ai_screening_evaluation_failed: "screening",
   ai_screening_flagged: "screening",
@@ -32,7 +34,7 @@ export const HIRING_STATE_TO_PIPELINE_STAGE: Record<HiringState, StageKey> = {
 export const STAGE_TO_HIRING_STATES: Record<StageKey, readonly HiringState[]> = {
   "resume-shortlisting": [],
   screening: ["shortlisted", "move_to_next_round", "screening_round_scheduled", "ai_screening_evaluation_failed", "ai_screening_flagged"],
-  interview: ["interview_scheduled", "interview_rescheduled", "interview_cancelled"],
+  interview: ["interview_scheduled", "interview_rescheduled", "interview_cancelled", "ongoing", "no_show"],
   "waiting-evaluation": ["waiting_for_review"],
   evaluated: ["under_evaluation"],
   selected: ["selected"],

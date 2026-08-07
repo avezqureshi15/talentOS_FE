@@ -110,12 +110,20 @@ const NotificationBell = () => {
                       className="notification-bell__item"
                       onClick={() => handleItemClick(n.id, n.action_url)}
                     >
-                      <span className={`notification-bell__item-icon notification-bell__item-icon--${meta.tab}`}>
+                      <span
+                        className={`notification-bell__item-icon notification-bell__item-icon--${meta.tab}${
+                          meta.tone === "failure" ? " notification-bell__item-icon--failure" : ""
+                        }`}
+                      >
                         <i className={meta.icon} />
                       </span>
                       <span className="notification-bell__item-content">
                         <span className="notification-bell__item-top">
-                          <span className={`notification-bell__item-chip notification-bell__item-chip--${meta.tab}`}>
+                          <span
+                            className={`notification-bell__item-chip notification-bell__item-chip--${meta.tab}${
+                              meta.tone === "failure" ? " notification-bell__item-chip--failure" : ""
+                            }`}
+                          >
                             {meta.label}
                           </span>
                           <span className="notification-bell__item-time">{formatRelativeTime(n.created_at)}</span>

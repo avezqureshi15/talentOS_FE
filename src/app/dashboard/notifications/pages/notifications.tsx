@@ -168,9 +168,18 @@ const Notifications = () => {
                             className={`notifications-item${
                               unread ? " notifications-item--unread" : " notifications-item--read"
                             }`}
-                            style={{ "--item-accent": `var(--notif-${meta.tab})` } as React.CSSProperties}
+                            style={
+                              {
+                                "--item-accent":
+                                  meta.tone === "failure" ? "var(--danger)" : `var(--notif-${meta.tab})`,
+                              } as React.CSSProperties
+                            }
                           >
-                            <span className={`notifications-item__icon notifications-item__icon--${meta.tab}`}>
+                            <span
+                              className={`notifications-item__icon notifications-item__icon--${meta.tab}${
+                                meta.tone === "failure" ? " notifications-item__icon--failure" : ""
+                              }`}
+                            >
                               <i className={meta.icon} />
                               {unread && <span className="notifications-item__dot" />}
                             </span>

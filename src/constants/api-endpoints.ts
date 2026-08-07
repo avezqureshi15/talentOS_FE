@@ -48,6 +48,7 @@ export const API_ENDPOINTS = {
   SETTINGS: "/settings",
   SETTINGS_API_KEYS: "/settings/api-keys",
   SETTINGS_API_KEYS_MANAGEABLE: "/settings/api-keys/manageable",
+  SETTINGS_AI_SCREENING: "/settings/ai-screening",
   SUPERADMIN_APPS: "/superadmin/apps",
   ADMIN_APPS: "/admin/apps",
   SUPERADMIN_TENANTS: "/superadmin/tenants",

@@ -9,6 +9,7 @@ type UseFilteredApplicantsArgs = {
   interviewSubFilter: string;
   evaluatedSubFilter: string;
   screeningSubFilter: string;
+  interviewScheduleFilter: string | null;
 };
 
 export function useFilteredApplicants({
@@ -17,12 +18,16 @@ export function useFilteredApplicants({
   interviewSubFilter,
   evaluatedSubFilter,
   screeningSubFilter,
+  interviewScheduleFilter,
 }: UseFilteredApplicantsArgs): Applicant[] {
   return useMemo(() => {
     let filtered = applicants.filter(STAGE_FILTER_MAP[activeStage]);
 
     if (activeStage === "interview") {
       filtered = filtered.filter(INTERVIEW_SUB_FILTER_MAP[interviewSubFilter]);
+      if (interviewScheduleFilter) {
+        filtered = filtered.filter(INTERVIEW_SUB_FILTER_MAP[interviewScheduleFilter]);
+      }
     }
 
     if (activeStage === "evaluated") {
@@ -34,5 +39,5 @@ export function useFilteredApplicants({
     }
 
     return filtered;
-  }, [applicants, activeStage, interviewSubFilter, evaluatedSubFilter, screeningSubFilter]);
+  }, [applicants, activeStage, interviewSubFilter, evaluatedSubFilter, screeningSubFilter, interviewScheduleFilter]);
 }

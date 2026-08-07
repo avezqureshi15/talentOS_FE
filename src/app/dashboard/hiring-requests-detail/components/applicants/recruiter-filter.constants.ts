@@ -26,6 +26,7 @@ export const STATUS_DISPLAY: Record<string, { label: string; cls: string }> = {
   interview_scheduled: { label: "Interview Scheduled", cls: "state-chip--info" },
   interview_rescheduled: { label: "Rescheduled", cls: "state-chip--warning" },
   interview_cancelled: { label: "Cancelled", cls: "state-chip--danger" },
+  ongoing: { label: "Ongoing", cls: "state-chip--info" },
   screening_round_scheduled: { label: "Screening Round Scheduled", cls: "state-chip--info" },
   waiting_for_review: { label: "Waiting", cls: "state-chip--yellow" },
   selected: { label: "Selected And Closed", cls: "state-chip--success" },

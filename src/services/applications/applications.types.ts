@@ -32,6 +32,18 @@ export type EvaluatedCandidate = {
   disqualified_by?: string[];
   scheduled_at?: string | null;
   scheduled_end_at?: string | null;
+  screening_review?: {
+    call_outcome?: string | null;
+    ended_reason?: string | null;
+    summary?: string | null;
+    flag_reason?: string | null;
+    disposition?: string | null;
+    flagged?: boolean | null;
+    attempt?: number | null;
+    retry_count?: number | null;
+    call_status?: string | null;
+    result?: string | null;
+  } | null;
 };
 
 export type RoundFromApi = {

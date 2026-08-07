@@ -23,7 +23,7 @@ import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
 import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATED_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import ViewToggle from "@/app/dashboard/hiring-requests-detail/components/detail/view-toggle";
-import InterviewFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
+import InterviewFilterBar, { type InterviewScheduleFilter } from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
 import EvaluatedFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
 import ScreeningFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/screening-filter-bar";
 import PaginationBar from "@/components/ui/pagination-bar/pagination-bar";
@@ -35,6 +35,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [searchParams] = useSearchParams();
   const applicantParam = searchParams.get("applicant");
   const [interviewSubFilter, setInterviewSubFilter] = useState<"ai-incoming" | "regular-incoming" | "no-show">("ai-incoming");
+  const [interviewScheduleFilter, setInterviewScheduleFilter] = useState<InterviewScheduleFilter>(null);
   const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
   const [screeningSubFilter, setScreeningSubFilter] = useState<"pending" | "completed" | "flagged">("pending");
   // UI-only: candidate whose Schedule Round modal is open, opened from table row action.
@@ -70,6 +71,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
 
   const filteredApplicants = useFilteredApplicants({
     applicants, activeStage, interviewSubFilter, evaluatedSubFilter, screeningSubFilter,
+    interviewScheduleFilter,
   });
 
   const BULK_STAGE_ACTIONS: Record<string, { screening: boolean; interview: boolean }> = {
@@ -272,7 +274,16 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           )}
           {activeStage === "screening" && <div className="filter-chips" />}
           {activeStage === "interview" && (
-            <InterviewFilterBar value={interviewSubFilter} onChange={setInterviewSubFilter} counts={interviewSubCounts} />
+            <InterviewFilterBar
+              value={interviewSubFilter}
+              onChange={(v) => {
+                if (v !== "regular-incoming") setInterviewScheduleFilter(null);
+                setInterviewSubFilter(v);
+              }}
+              counts={interviewSubCounts}
+              scheduleFilter={interviewScheduleFilter}
+              onScheduleFilterChange={setInterviewScheduleFilter}
+            />
           )}
           {activeStage === "interview" && <div className="filter-chips" />}
           {activeStage === "evaluated" && (

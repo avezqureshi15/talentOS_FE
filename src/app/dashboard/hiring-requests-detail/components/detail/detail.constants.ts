@@ -13,7 +13,7 @@ export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
   screening: (a) => includesStage(a, "screening"),
   interview: (a) =>
     includesStage(a, "interview") &&
-    ["interview_scheduled", "interview_rescheduled", "interview_cancelled"].includes(a.status?.toLowerCase() ?? ""),
+    ["interview_scheduled", "interview_rescheduled", "interview_cancelled", "ongoing", "no_show"].includes(a.status?.toLowerCase() ?? ""),
   "waiting-evaluation": (a) =>
     includesStage(a, "waiting-evaluation") ||
     a.status?.toLowerCase() === "waiting_for_review",
@@ -42,8 +42,16 @@ export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean>
   "regular-incoming": (a) =>
     a.stage === "INTERVIEW" &&
     (a.status?.toLowerCase() === "interview_scheduled" ||
+     a.status?.toLowerCase() === "interview_rescheduled" ||
+     a.status?.toLowerCase() === "ongoing"),
+  "no-show": (a) =>
+    a.status?.toLowerCase() === "interview_cancelled" ||
+    a.status?.toLowerCase() === "no_show",
+  scheduled: (a) =>
+    a.stage === "INTERVIEW" &&
+    (a.status?.toLowerCase() === "interview_scheduled" ||
      a.status?.toLowerCase() === "interview_rescheduled"),
-  "no-show": (a) => a.status?.toLowerCase() === "interview_cancelled",
+  ongoing: (a) => a.stage === "INTERVIEW" && a.status?.toLowerCase() === "ongoing",
 };
 
 export const EVALUATED_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
@@ -77,6 +85,8 @@ export const UI_CARD_VIEW = "Profile View";
 export const UI_INTERVIEW_AI_INCOMING = "AI Incoming";
 export const UI_INTERVIEW_REGULAR_INCOMING = "Regular Incoming";
 export const UI_INTERVIEW_NO_SHOW = "No Show";
+export const UI_INTERVIEW_SCHEDULED = "Scheduled";
+export const UI_INTERVIEW_ONGOING = "Ongoing";
 export const UI_EVALUATED_AI = "AI";
 export const UI_EVALUATED_REGULAR = "Regular";
 export const UI_SCREENING_PENDING = "Pending";

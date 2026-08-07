@@ -160,6 +160,11 @@
   color: var(--status-pill-info-text, var(--text-secondary));
 }
 
+.notification-bell__item-icon--failure {
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  color: var(--danger);
+}
+
 .notification-bell__item-content {
   display: flex;
   flex-direction: column;
@@ -207,6 +212,11 @@
 .notification-bell__item-chip--process {
   background: var(--status-pill-info-bg-soft, var(--bg-hover));
   color: var(--status-pill-info-text, var(--text-secondary));
+}
+
+.notification-bell__item-chip--failure {
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+  color: var(--danger);
 }
 
 .notification-bell__item-title {

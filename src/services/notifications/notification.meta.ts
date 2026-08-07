@@ -4,6 +4,7 @@ export type NotificationMeta = {
   label: string;
   icon: string;
   tab: NotificationTab;
+  tone?: "failure";
 };
 
 export const NOTIFICATION_META: Record<string, NotificationMeta> = {
@@ -14,7 +15,7 @@ export const NOTIFICATION_META: Record<string, NotificationMeta> = {
   JOB_CREATED: { label: "Job Created", icon: "bx bx-briefcase-alt-2", tab: "assignments" },
   ROLE_ASSIGNED: { label: "Role Changed", icon: "bx bx-user-pin", tab: "assignments" },
   EVALUATION_COMPLETED: { label: "Evaluation Completed", icon: "bx bx-badge-check", tab: "process" },
-  EVALUATION_FAILED: { label: "Evaluation Failed", icon: "bx bx-error-circle", tab: "process" },
+  EVALUATION_FAILED: { label: "Evaluation Failed", icon: "bx bx-badge-exclamation", tab: "process", tone: "failure" },
   INTERVIEW_SCHEDULED: { label: "Interview Scheduled", icon: "bx bx-calendar-event", tab: "process" },
   FINAL_VERDICT: { label: "Final Verdict", icon: "bx bx-trophy", tab: "process" },
 };

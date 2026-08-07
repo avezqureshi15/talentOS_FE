@@ -38,6 +38,14 @@ const matchers: StateMatcher[] = [
   },
   (a) => {
     const status = a.status?.toLowerCase();
+    return status === "ongoing" ? "ongoing" : null;
+  },
+  (a) => {
+    const status = a.status?.toLowerCase();
+    return status === "no_show" ? "no_show" : null;
+  },
+  (a) => {
+    const status = a.status?.toLowerCase();
     if (status === "interview_scheduled" || status === "scheduled") {
       return "interview_scheduled";
     }

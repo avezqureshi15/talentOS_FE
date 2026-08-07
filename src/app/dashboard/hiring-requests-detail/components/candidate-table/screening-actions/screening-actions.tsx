@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import { triggerScreeningCall } from "@/services/ai/ai";
+import {
+  loadAiScreeningSettings,
+  type AiScreeningSettings,
+} from "@/services/settings/screening-settings";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import { canTriggerScreeningCall } from "./screening-actions.utils";
 import "./screening-actions.css";
@@ -19,6 +23,17 @@ export const ScreeningActions = ({
 }: ScreeningActionsProps) => {
   const toast = useToastStore((s) => s.addToast);
   const [isCalling, setIsCalling] = useState(false);
+  const [settings, setSettings] = useState<AiScreeningSettings | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    void loadAiScreeningSettings().then((s) => {
+      if (mounted) setSettings(s);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleCallNow = async () => {
     if (isCalling) return;
@@ -36,7 +51,7 @@ export const ScreeningActions = ({
     }
   };
 
-  if (!canTriggerScreeningCall(candidate)) return null;
+  if (!canTriggerScreeningCall(candidate, settings ?? undefined)) return null;
 
   return (
     <button
