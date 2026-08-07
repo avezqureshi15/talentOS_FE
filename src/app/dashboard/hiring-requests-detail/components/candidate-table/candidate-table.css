@@ -141,6 +141,43 @@
   color: var(--yellow);
 }
 
+.status-chip--pending {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--completed {
+  background: var(--success-bg-strong);
+  color: var(--success-light);
+}
+
+.status-chip--flagged {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+}
+
+/* candidate phone */
+.candidate-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.candidate-phone i {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.candidate-phone:hover {
+  color: var(--accent);
+}
+
 /* misc */
 .text-muted {
   color: var(--text-muted);

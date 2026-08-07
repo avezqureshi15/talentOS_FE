@@ -169,7 +169,9 @@ function mapCandidate(app: {
   round_name?: string | null;
   scheduled_at?: string | null;
   scheduled_end_at?: string | null;
-  screening_review?: { call_outcome?: string | null; ended_reason?: string | null; summary?: string | null; flag_reason?: string | null; disposition?: string | null; flagged?: boolean | null } | null;
+  screening_review?: { call_outcome?: string | null; ended_reason?: string | null; summary?: string | null; flag_reason?: string | null; disposition?: string | null; flagged?: boolean | null; attempt?: number | null; retry_count?: number | null; call_status?: string | null } | null;
+  attempt?: number | null;
+  retry_count?: number | null;
 }): Applicant {
   return {
     id: app.id,
@@ -217,6 +219,9 @@ function mapCandidate(app: {
           flagReason: app.screening_review.flag_reason ?? undefined,
           disposition: app.screening_review.disposition ?? undefined,
           flagged: app.screening_review.flagged ?? undefined,
+          attempt: app.screening_review?.attempt ?? app.screening_review?.retry_count ?? app.attempt ?? app.retry_count ?? undefined,
+          retryCount: app.screening_review?.retry_count ?? app.screening_review?.attempt ?? app.retry_count ?? app.attempt ?? undefined,
+          callStatus: app.screening_review?.call_status ?? undefined,
         }
       : undefined,
   };

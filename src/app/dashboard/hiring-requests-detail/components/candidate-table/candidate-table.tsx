@@ -5,6 +5,7 @@ import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import "./candidate-table.css";
 import type { CandidateTableProps } from "./candidate-table.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import { SCREENING_STATUS_LABELS } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 
 const formatDate = (iso?: string): string => {
   if (!iso) return "";
@@ -102,22 +103,37 @@ const CandidateTable = ({
       ) : (
         <span className="text-muted">—</span>
       ),
+    phone: (c) =>
+      c.phone ? (
+        <a href={`tel:${c.phone}`} className="candidate-phone" onClick={(e) => e.stopPropagation()}>
+          <i className="bx bx-phone" />
+          <span>{c.phone}</span>
+        </a>
+      ) : (
+        <span className="text-muted">—</span>
+      ),
     status: (c) => {
-      let label: string;
-      let cssClass: string;
-      let tooltip: string;
       if (activeStage === "resume-shortlisting" && c.score != null) {
-        label = c.score >= 70 ? "Selected" : "Rejected";
-        cssClass = c.score >= 70 ? "selected" : "rejected";
-        tooltip = label;
-      } else {
-        const ds = getDisplayStatus(c.status);
-        label = ds.label;
-        cssClass = ds.cssClass;
-        tooltip = ds.tooltip;
+        const selected = c.score >= 70;
+        return (
+          <span className={`status-chip status-chip--${selected ? "selected" : "rejected"}`} title={selected ? "Selected" : "Rejected"}>
+            {selected ? "Selected" : "Rejected"}
+          </span>
+        );
       }
+      if (activeStage === "screening") {
+        const screeningLabel = SCREENING_STATUS_LABELS[c.status?.toLowerCase() ?? ""];
+        if (screeningLabel) {
+          return (
+            <span className={`status-chip status-chip--${screeningLabel.toLowerCase()}`} title={screeningLabel}>
+              {screeningLabel}
+            </span>
+          );
+        }
+      }
+      const ds = getDisplayStatus(c.status);
       return (
-        <span className={`status-chip status-chip--${cssClass}`} title={tooltip}>{label}</span>
+        <span className={`status-chip status-chip--${ds.cssClass}`} title={ds.tooltip}>{ds.label}</span>
       );
     },
     cv: (c) =>

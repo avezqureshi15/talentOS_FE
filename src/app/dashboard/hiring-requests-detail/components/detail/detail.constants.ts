@@ -64,6 +64,15 @@ export const SCREENING_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean>
 
 export const UI_TABLE_VIEW = "Overview";
 
+export const SCREENING_STATUS_LABELS: Record<string, string> = {
+  shortlisted: "Pending",
+  move_to_next_round: "Pending",
+  screening_round_scheduled: "Pending",
+  under_evaluation: "Completed",
+  ai_screening_evaluation_failed: "Flagged",
+  ai_screening_flagged: "Flagged",
+};
+
 export const UI_CARD_VIEW = "Profile View";
 export const UI_INTERVIEW_AI_INCOMING = "AI Incoming";
 export const UI_INTERVIEW_REGULAR_INCOMING = "Regular Incoming";
