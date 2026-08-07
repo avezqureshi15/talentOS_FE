@@ -2,12 +2,13 @@ import { useState } from "react";
 import { exportInterviewDesignPdf } from "@/services/questions/questions";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
+import type { InterviewDesignExportKind } from "../export/export-kinds";
 
 export const useExportInterviewDesignPdf = (hiringRequestId: string, fallbackTitle: string) => {
-  const [isExporting, setIsExporting] = useState(false);
+  const [exportingKind, setExportingKind] = useState<InterviewDesignExportKind | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
 
-  const handleExport = async () => {
+  const handleExport = async (kind: InterviewDesignExportKind = "all") => {
     if (!hiringRequestId) {
       const message = "Missing hiring request id";
       setExportError(message);
@@ -15,10 +16,10 @@ export const useExportInterviewDesignPdf = (hiringRequestId: string, fallbackTit
       return;
     }
 
-    setIsExporting(true);
+    setExportingKind(kind);
     setExportError(null);
     try {
-      const { blob, filename } = await exportInterviewDesignPdf(hiringRequestId);
+      const { blob, filename } = await exportInterviewDesignPdf(hiringRequestId, kind);
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -32,9 +33,14 @@ export const useExportInterviewDesignPdf = (hiringRequestId: string, fallbackTit
       setExportError(message);
       useToastStore.getState().addToast(message, ToastType.ERROR);
     } finally {
-      setIsExporting(false);
+      setExportingKind(null);
     }
   };
 
-  return { handleExport, isExporting, exportError };
+  return {
+    handleExport,
+    exportingKind,
+    isExporting: exportingKind !== null,
+    exportError,
+  };
 };
