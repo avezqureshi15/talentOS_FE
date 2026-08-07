@@ -131,9 +131,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const columns = useMemo<StageColumn[]>(() => {
     if (activeStage === "screening") {
       return [
-        ...NAME_SCORE_STATUS,
-        { key: "attempt", label: "Attempt", flex: 0.6 },
-        ...SUFFIX_COLUMNS,
+        { key: "name", label: "Candidate", flex: 2 },
+        { key: "phone", label: "Phone", flex: 1.1 },
+        { key: "status", label: "Status", flex: 1 },
+        { key: "actions", label: "Actions", flex: 1 },
       ];
     }
     if (activeStage === "interview") {
@@ -354,6 +355,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                 allSelected={bulkSelection.allSelected}
                 activeStage={activeStage}
                 loading={appsLoading}
+                hiringRequestId={jobId}
+                onScreeningTriggered={refresh}
               />
               <PaginationBar
                 page={page}

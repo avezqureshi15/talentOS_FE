@@ -124,6 +124,7 @@ export type Applicant = {
     retryCount?: number;
     callStatus?: string;
     attempt?: number;
+    result?: string;
   };
 };
 

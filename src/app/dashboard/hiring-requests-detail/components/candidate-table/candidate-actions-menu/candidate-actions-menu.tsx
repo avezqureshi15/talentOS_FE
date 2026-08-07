@@ -13,7 +13,7 @@ import "./candidate-actions-menu.css";
 
 const MENU_OFFSET_PX = 6;
 
-const CandidateActionsMenu = ({ candidate, onViewProfile, onScheduleRound }: CandidateActionsMenuProps) => {
+const CandidateActionsMenu = ({ candidate, onViewProfile, onScheduleRound, compact }: CandidateActionsMenuProps) => {
   // UI-only state: dropdown open flag + anchor rect used to position the
   // portaled menu (portal keeps the popover on top of the table's overflow).
   const [open, setOpen] = useState(false);
@@ -82,14 +82,20 @@ const CandidateActionsMenu = ({ candidate, onViewProfile, onScheduleRound }: Can
       <button
         ref={triggerRef}
         type="button"
-        className="cam-trigger"
+        className={`cam-trigger${compact ? " cam-trigger--compact" : ""}`}
         title={CANDIDATE_ACTIONS_TRIGGER_LABEL}
         aria-label={CANDIDATE_ACTIONS_TRIGGER_LABEL}
         aria-expanded={open}
         onClick={handleTriggerClick}
       >
-        <span className="cam-trigger-label">{CANDIDATE_ACTIONS_TRIGGER_LABEL}</span>
-        <i className={`bx bx-chevron-down cam-trigger-chevron${open ? " cam-trigger-chevron--open" : ""}`} />
+        {compact ? (
+          <i className="bx bx-dots-vertical-rounded cam-trigger-dots" />
+        ) : (
+          <>
+            <span className="cam-trigger-label">{CANDIDATE_ACTIONS_TRIGGER_LABEL}</span>
+            <i className={`bx bx-chevron-down cam-trigger-chevron${open ? " cam-trigger-chevron--open" : ""}`} />
+          </>
+        )}
       </button>
 
       {open && anchor &&

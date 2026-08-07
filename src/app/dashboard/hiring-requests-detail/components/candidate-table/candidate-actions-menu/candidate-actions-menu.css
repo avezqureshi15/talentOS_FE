@@ -37,6 +37,35 @@
   letter-spacing: 0.02em;
 }
 
+.cam-trigger--compact {
+  padding: 6px;
+  border: none;
+  background: transparent;
+}
+
+.cam-trigger--compact:hover {
+  background: var(--bg-hover);
+  border-color: transparent;
+  color: var(--text-primary);
+}
+
+.cam-trigger--compact[aria-expanded="true"] {
+  background: var(--bg-hover);
+  border-color: transparent;
+  color: var(--text-primary);
+}
+
+.cam-trigger-dots {
+  font-size: 16px;
+  color: var(--text-muted);
+  transition: color 0.15s ease;
+}
+
+.cam-trigger--compact:hover .cam-trigger-dots,
+.cam-trigger--compact[aria-expanded="true"] .cam-trigger-dots {
+  color: var(--text-primary);
+}
+
 .cam-trigger-chevron {
   font-size: 14px;
   color: var(--text-muted);

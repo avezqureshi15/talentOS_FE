@@ -6,6 +6,9 @@ import "./candidate-table.css";
 import type { CandidateTableProps } from "./candidate-table.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import { SCREENING_STATUS_LABELS } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import ScreeningActions from "./screening-actions/screening-actions";
+import ScreeningStatusBadge from "./screening-actions/screening-status-badge";
+import { formatPhoneDisplay } from "./screening-actions/screening-actions.utils";
 
 const formatDate = (iso?: string): string => {
   if (!iso) return "";
@@ -80,6 +83,8 @@ const CandidateTable = ({
   selectedIds,
   onToggleSelect, onToggleSelectAll, allSelected,
   activeStage, loading,
+  hiringRequestId,
+  onScreeningTriggered,
 }: CandidateTableProps) => {
   const CELL_RENDERERS: Record<string, (c: Applicant, onInfo?: (c: Applicant) => void) => ReactNode> = {
     name: (c) => (
@@ -89,9 +94,12 @@ const CandidateTable = ({
           person={{ name: c.name, email: c.email, phone: c.phone }}
         />
         <div>
-          <div className="candidate-name">
-            {c.name}
+          <div className="candidate-name-line">
+            <span className="candidate-name">{c.name}</span>
             {c.candidateType === "REFERRAL" && <span className="candidate-type-tag">Referral</span>}
+            {activeStage === "screening" && c.screeningReview?.attempt != null && (
+              <span className="attempt-badge--inline">attempt {c.screeningReview.attempt}</span>
+            )}
           </div>
           {c.email && <div className="candidate-email">{c.email}</div>}
         </div>
@@ -107,7 +115,7 @@ const CandidateTable = ({
       c.phone ? (
         <a href={`tel:${c.phone}`} className="candidate-phone" onClick={(e) => e.stopPropagation()}>
           <i className="bx bx-phone" />
-          <span>{c.phone}</span>
+          <span>{formatPhoneDisplay(c.phone)}</span>
         </a>
       ) : (
         <span className="text-muted">—</span>
@@ -122,11 +130,16 @@ const CandidateTable = ({
         );
       }
       if (activeStage === "screening") {
-        const screeningLabel = SCREENING_STATUS_LABELS[c.status?.toLowerCase() ?? ""];
-        if (screeningLabel) {
+        const hasReview =
+          c.screeningReview || c.status?.toLowerCase() === "ai_screening_flagged" || c.status?.toLowerCase() === "ai_screening_evaluation_failed";
+        if (hasReview) {
+          return <ScreeningStatusBadge candidate={c} />;
+        }
+        const legacyScreeningLabel = SCREENING_STATUS_LABELS[c.status?.toLowerCase() ?? ""];
+        if (legacyScreeningLabel) {
           return (
-            <span className={`status-chip status-chip--${screeningLabel.toLowerCase()}`} title={screeningLabel}>
-              {screeningLabel}
+            <span className={`status-chip status-chip--${legacyScreeningLabel.toLowerCase()}`} title={legacyScreeningLabel}>
+              {legacyScreeningLabel}
             </span>
           );
         }
@@ -174,12 +187,21 @@ const CandidateTable = ({
       ) : (
         <span className="text-muted">—</span>
       ),
-    attempt: (c) =>
-      c.screeningReview?.attempt != null ? (
-        <span className="attempt-badge">#{c.screeningReview.attempt}</span>
-      ) : (
-        <span className="text-muted">—</span>
-      ),
+    actions: (c, onInfo) => (
+      <div className="screening-actions-cell">
+        <ScreeningActions
+          candidate={c}
+          hiringRequestId={hiringRequestId ?? ""}
+          onScreeningTriggered={onScreeningTriggered}
+        />
+        <CandidateActionsMenu
+          candidate={c}
+          compact
+          onViewProfile={(cand) => onInfo?.(cand)}
+          onScheduleRound={onScheduleClick}
+        />
+      </div>
+    ),
   };
 
   const gridTemplate = columns.map((col) => `${col.flex}fr`).join(" ");
@@ -188,7 +210,12 @@ const CandidateTable = ({
     <DataTable
       columns={columns.map((col) => ({
         header: col.label,
-        className: col.key === "info" || col.key === "timeline" || col.key === "cv" ? "dt-cell-center" : undefined,
+        className:
+          col.key === "actions"
+            ? "dt-cell-right"
+            : col.key === "info" || col.key === "timeline" || col.key === "cv"
+              ? "dt-cell-center"
+              : undefined,
         render: (c: Applicant) => {
           const render = CELL_RENDERERS[col.key];
           return render ? render(c, onInfoClick) : null;
