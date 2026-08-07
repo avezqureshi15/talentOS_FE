@@ -69,8 +69,10 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   const [jdModalOpen, setJdModalOpen] = useState(false);
 
   const MORE_MENU_KEYS = ["import", "export", "archive"];
-  const overflowActions = actions?.filter((a) => MORE_MENU_KEYS.includes(a.key)) ?? [];
-  const inlineActions = actions?.filter((a) => !MORE_MENU_KEYS.includes(a.key)) ?? [];
+  const isOverflowAction = (key: string) =>
+    MORE_MENU_KEYS.includes(key) || key.startsWith("export-");
+  const overflowActions = actions?.filter((a) => isOverflowAction(a.key)) ?? [];
+  const inlineActions = actions?.filter((a) => !isOverflowAction(a.key)) ?? [];
 
   const isInterviewDesignRoute = location.pathname.endsWith("/interview-design");
   const isPlannerEditing = useInterviewPlannerStore((s) => s.isEditing);

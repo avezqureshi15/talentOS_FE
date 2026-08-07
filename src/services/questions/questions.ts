@@ -61,10 +61,14 @@ function filenameFromContentDisposition(header: string | undefined): string | nu
 
 export const exportInterviewDesignPdf = async (
   hiringRequestId: string,
+  kind: "all" | "screening" | "interview" | "review" = "all",
 ): Promise<ExportInterviewDesignPdfResult> => {
   const response = await httpClient.get<Blob>(
     API_ENDPOINTS.AI_QUESTIONS_EXPORT.replace("{hiring_request_id}", hiringRequestId),
-    { responseType: "blob" },
+    {
+      responseType: "blob",
+      params: kind === "all" ? undefined : { kind },
+    },
   );
   const filename =
     filenameFromContentDisposition(response.headers["content-disposition"]) ?? FALLBACK_PDF_FILENAME;

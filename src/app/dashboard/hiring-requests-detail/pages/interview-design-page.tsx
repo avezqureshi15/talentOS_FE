@@ -13,6 +13,7 @@ import { useInterviewPlanData } from "@/app/dashboard/hiring-requests-detail/com
 import { InterviewDesignPlanner } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/interview-design-planner/interview-design-planner";
 import { GenerateQuestionsButton } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/generate-questions-button/generate-questions-button";
 import { useExportInterviewDesignPdf } from "@/app/dashboard/hiring-requests-detail/components/interview-design/hooks/use-export-interview-design-pdf";
+import { INTERVIEW_DESIGN_EXPORT_OPTIONS } from "@/app/dashboard/hiring-requests-detail/components/interview-design/export/export-kinds";
 import { formatMinutes } from "@/app/dashboard/hiring-requests-detail/components/interview-design/interview-design.utils";
 import CallWindowModal from "@/app/dashboard/hiring-requests-detail/components/call-window/call-window-modal";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -76,7 +77,10 @@ const InterviewDesignPage = () => {
   const screeningPlan = useInterviewPlannerStore((s) => s.screeningPlan);
   const reviewPlan = useInterviewPlannerStore((s) => s.reviewPlan);
   const { data: designData, isLoading, error, refetch, save } = useInterviewPlanData(id ?? "");
-  const { handleExport, isExporting } = useExportInterviewDesignPdf(id ?? "", data?.title ?? "Interview Design");
+  const { handleExport, exportingKind, isExporting } = useExportInterviewDesignPdf(
+    id ?? "",
+    data?.title ?? "Interview Design",
+  );
 
   const sections =
     activeTab === "interview" ? designData?.interview_sections ?? []
@@ -135,16 +139,19 @@ const InterviewDesignPage = () => {
         },
       ]
     : [
-        {
-          key: "export",
-          label: isExporting ? "Exporting..." : "Export PDF",
-          icon: isExporting ? "bx-loader-alt bx-spin" : "bx-download",
-          variant: "primary",
-          onClick: () => void handleExport(),
-          disabled: isExporting || isLoading,
-          loading: isExporting,
-          loadingText: "Exporting...",
-        },
+        ...INTERVIEW_DESIGN_EXPORT_OPTIONS.map((opt) => {
+          const isThisExporting = exportingKind === opt.kind;
+          return {
+            key: opt.key,
+            label: isThisExporting ? "Exporting..." : opt.label,
+            icon: isThisExporting ? "bx-loader-alt bx-spin" : opt.icon,
+            variant: "primary" as const,
+            onClick: () => void handleExport(opt.kind),
+            disabled: isExporting || isLoading,
+            loading: isThisExporting,
+            loadingText: "Exporting...",
+          };
+        }),
         ...(canEditPlan
           ? [{
               key: "edit",
