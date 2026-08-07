@@ -11,6 +11,10 @@ import { useTenantUsers } from "../hooks/use-tenant-users";
 import { useTenantInvites } from "../hooks/use-tenant-invites";
 import { useRevokeInvite } from "../hooks/use-revoke-invite";
 import { QUERY_KEYS } from "@/constants/constants";
+import {
+  HEADER_REFRESH_ICON,
+  HEADER_REFRESH_LABEL,
+} from "@/layouts/protected-layouts/components/header/header.constants";
 import SearchInput from "@/components/ui/search-input/search-input";
 import type { AdminUser } from "@/app/admin/users/services/users-admin.service";
 
@@ -31,14 +35,25 @@ export default function TenantUserManagement({ tenantId }: Props) {
   const [editUser, setEditUser] = useState<AdminUser | null>(null);
   const [deactivateTarget, setDeactivateTarget] = useState<AdminUser | null>(null);
 
-  const { data: usersData, isLoading: usersLoading } = useTenantUsers(tenantId, page, search);
-  const { data: invitesData, isLoading: inviteLoading } = useTenantInvites(tenantId, invitePage);
+  const {
+    data: usersData,
+    isLoading: usersLoading,
+    isFetching: usersFetching,
+    isRefetching: usersRefetching,
+  } = useTenantUsers(tenantId, page, search);
+  const {
+    data: invitesData,
+    isLoading: inviteLoading,
+    isFetching: invitesFetching,
+    isRefetching: invitesRefetching,
+  } = useTenantInvites(tenantId, invitePage);
   const revokeMutation = useRevokeInvite(tenantId);
 
   const users = usersData?.data ?? [];
   const total = usersData?.total ?? 0;
   const invites = invitesData?.data ?? [];
   const inviteTotal = invitesData?.total ?? 0;
+  const isRefreshing = usersRefetching || invitesRefetching;
 
   const refreshData = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TENANT_USERS, tenantId] });
@@ -62,6 +77,15 @@ export default function TenantUserManagement({ tenantId }: Props) {
           <span className="td-section-count">{tab === "active" ? total : inviteTotal}</span>
         </h2>
         <div className="td-users-actions">
+          <Button
+            variant="secondary"
+            icon={HEADER_REFRESH_ICON}
+            onClick={refreshData}
+            loading={isRefreshing}
+            loadingText={HEADER_REFRESH_LABEL}
+          >
+            {HEADER_REFRESH_LABEL}
+          </Button>
           <Button variant="primary" onClick={() => setShowInviteModal(true)}>Invite User</Button>
           <Button variant="secondary" onClick={() => setShowCreateModal(true)}>Create User</Button>
         </div>
@@ -97,7 +121,7 @@ export default function TenantUserManagement({ tenantId }: Props) {
             <div className="td-table-card">
               <UserTable
                 users={users}
-                loading={usersLoading}
+                loading={usersLoading || usersFetching}
                 onEdit={(u) => setEditUser(u)}
                 onDeactivate={(u) => setDeactivateTarget(u)}
               />
@@ -115,7 +139,7 @@ export default function TenantUserManagement({ tenantId }: Props) {
             <div className="td-table-card">
               <InvitesTable
                 invites={invites}
-                loading={inviteLoading}
+                loading={inviteLoading || invitesFetching}
                 onRevoke={(invId) => revokeMutation.mutate(invId)}
               />
             </div>

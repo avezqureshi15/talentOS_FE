@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
+import {
+  HEADER_REFRESH_ICON,
+  HEADER_REFRESH_LABEL,
+} from "@/layouts/protected-layouts/components/header/header.constants";
 import SearchInput from "@/components/ui/search-input/search-input";
 import DataTable from "@/components/ui/data-table/data-table";
 import { useAuth } from "@/app/auth/hooks/use-auth";
@@ -15,6 +19,7 @@ import {
 } from "@/app/admin/employees/pages/employees-page.constants";
 import { ROUTES } from "@/constants/routes";
 import type { Employee } from "@/app/admin/employees/pages/employees-page.types";
+import type { HeaderConfig } from "@/store/header.store";
 import "./employees-page.css";
 
 const columns = buildEmployeesColumns();
@@ -24,7 +29,8 @@ const EmployeesPage = () => {
   const { user } = useAuth();
   // UI-only: modal open state
   const [isImportOpen, setIsImportOpen] = useState(false);
-  const { data, isLoading, isError, page, search, setPage, onSearch, refetch } = useEmployees();
+  const { data, isLoading, isFetching, isRefetching, isError, page, search, setPage, onSearch, refetch } =
+    useEmployees();
 
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / EMPLOYEES_PAGE_PER_PAGE));
@@ -34,24 +40,34 @@ const EmployeesPage = () => {
     navigate(ROUTES.ADMIN_EMPLOYEE_DETAIL.replace(":empId", row.emp_id));
   };
 
+  const actions: NonNullable<HeaderConfig["actions"]> = [
+    {
+      key: "refresh",
+      label: HEADER_REFRESH_LABEL,
+      icon: isRefetching ? "bx bx-loader-alt bx-spin" : HEADER_REFRESH_ICON,
+      variant: "primary",
+      disabled: isRefetching,
+      onClick: () => void refetch(),
+    },
+    ...(canImport
+      ? [
+          {
+            key: "import-employees",
+            label: EMPLOYEES_PAGE_LABELS.ACTION_IMPORT,
+            variant: "primary" as const,
+            icon: "bx bx-upload",
+            onClick: () => setIsImportOpen(true),
+          },
+        ]
+      : []),
+  ];
+
   return (
     <ErrorBoundary>
       <div className="employees-page">
         <PageHeader
           title={EMPLOYEES_PAGE_LABELS.PAGE_TITLE}
-          actions={
-            canImport
-              ? [
-                  {
-                    key: "import-employees",
-                    label: EMPLOYEES_PAGE_LABELS.ACTION_IMPORT,
-                    variant: "primary",
-                    icon: "bx bx-upload",
-                    onClick: () => setIsImportOpen(true),
-                  },
-                ]
-              : undefined
-          }
+          actions={actions}
         />
 
         <SearchInput
@@ -66,7 +82,7 @@ const EmployeesPage = () => {
             columns={columns}
             data={data?.data ?? []}
             keyExtractor={(e) => e.id}
-            loading={isLoading}
+            loading={isLoading || isFetching}
             emptyMessage={EMPLOYEES_PAGE_LABELS.EMPTY}
             gridTemplateColumns={EMPLOYEES_PAGE_GRID}
             error={isError ? EMPLOYEES_PAGE_LABELS.LOAD_ERROR : null}

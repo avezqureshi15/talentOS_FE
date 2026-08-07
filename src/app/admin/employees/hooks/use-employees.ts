@@ -11,6 +11,8 @@ import type { PaginatedEmployees } from "@/app/admin/employees/pages/employees-p
 type UseEmployeesResult = {
   data: PaginatedEmployees | undefined;
   isLoading: boolean;
+  isFetching: boolean;
+  isRefetching: boolean;
   isError: boolean;
   page: number;
   search: string;
@@ -48,6 +50,8 @@ export function useEmployees(): UseEmployeesResult {
   return {
     data: query.data,
     isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    isRefetching: query.isRefetching,
     isError: query.isError,
     page,
     search,
