@@ -23,7 +23,7 @@ export const computeInterviewPlanStats = (
   plan: InterviewPlan,
 ): InterviewPlanStats => {
   const targetMinutes =
-    kind === "interview" ? TARGET_INTERVIEW_MINUTES : SCREENING_TARGET_MINUTES;
+    kind === "screening" ? SCREENING_TARGET_MINUTES : TARGET_INTERVIEW_MINUTES;
 
   const totalMinutes = plan.sections.reduce(
     (sum, section) =>

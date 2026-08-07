@@ -19,6 +19,7 @@ export const SR_LABELS = {
   SLOTS_AVAILABLE: "{count} slot{plural} available",
   NO_SLOTS_AVAILABLE: "No slots",
   ASK_SLOTS_TOOLTIP: "Ask for slots",
+  ASK_SLOTS_BTN: "Ask for slots",
   ASK_SLOTS_FAILED: "Failed to request slots",
   ASK_SLOTS_ERROR: "Failed to request slots. Please try again.",
 

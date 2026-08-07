@@ -102,3 +102,27 @@ export type AiRetryResponse = {
 export type AiInterviewRecordingResponse = {
   recording_url: string | null;
 };
+
+export type AiInterviewSchedulePayload = {
+  scheduled_date: string;
+  scheduled_time: string;
+  timezone?: string;
+};
+
+export type AiInterviewScheduleResponse = {
+  round_id: string;
+  scheduled_date: string;
+  scheduled_time: string;
+  timezone: string;
+  scheduled_at: string | null;
+};
+
+export type AiInterviewUnscheduleResponse = {
+  round_id: string;
+  status: string;
+};
+
+export type AiScreenTriggerResponse = {
+  screening_call_id: string;
+  status: string;
+};

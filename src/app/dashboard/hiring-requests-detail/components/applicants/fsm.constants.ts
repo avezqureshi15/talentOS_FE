@@ -22,6 +22,8 @@ export const HIRING_STATE_TO_PIPELINE_STAGE: Record<HiringState, StageKey> = {
   interview_rescheduled: "interview",
   interview_cancelled: "interview",
   screening_round_scheduled: "screening",
+  ai_screening_evaluation_failed: "screening",
+  ai_screening_flagged: "screening",
   rejected: "rejected",
   selected: "selected",
   "on-hold": "on-hold",
@@ -29,7 +31,7 @@ export const HIRING_STATE_TO_PIPELINE_STAGE: Record<HiringState, StageKey> = {
 
 export const STAGE_TO_HIRING_STATES: Record<StageKey, readonly HiringState[]> = {
   "resume-shortlisting": [],
-  screening: ["shortlisted", "move_to_next_round", "screening_round_scheduled"],
+  screening: ["shortlisted", "move_to_next_round", "screening_round_scheduled", "ai_screening_evaluation_failed", "ai_screening_flagged"],
   interview: ["interview_scheduled", "interview_rescheduled", "interview_cancelled"],
   "waiting-evaluation": ["waiting_for_review"],
   evaluated: ["under_evaluation"],
@@ -49,7 +51,7 @@ export const TRANSITIONS: Transition[] = [
   },
   {
     action: "onRejectFromEvaluation",
-    from: ["under_evaluation"] as const,
+    from: ["under_evaluation", "ai_screening_flagged"] as const,
     to: "rejected",
     optimistic: (): Partial<{ status: ApplicantStatus; finalVerdict: string }> => ({
       status: "rejected",

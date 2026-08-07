@@ -169,6 +169,7 @@ function mapCandidate(app: {
   round_name?: string | null;
   scheduled_at?: string | null;
   scheduled_end_at?: string | null;
+  screening_review?: { call_outcome?: string | null; ended_reason?: string | null; summary?: string | null; flag_reason?: string | null; disposition?: string | null; flagged?: boolean | null } | null;
 }): Applicant {
   return {
     id: app.id,
@@ -208,5 +209,15 @@ function mapCandidate(app: {
     roundName: app.round_name ?? undefined,
     scheduledAt: app.scheduled_at ?? undefined,
     scheduledEndAt: app.scheduled_end_at ?? undefined,
+    screeningReview: app.screening_review
+      ? {
+          callOutcome: app.screening_review.call_outcome ?? undefined,
+          endedReason: app.screening_review.ended_reason ?? undefined,
+          summary: app.screening_review.summary ?? undefined,
+          flagReason: app.screening_review.flag_reason ?? undefined,
+          disposition: app.screening_review.disposition ?? undefined,
+          flagged: app.screening_review.flagged ?? undefined,
+        }
+      : undefined,
   };
 }

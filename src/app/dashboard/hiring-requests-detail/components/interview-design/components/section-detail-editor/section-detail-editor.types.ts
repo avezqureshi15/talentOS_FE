@@ -6,6 +6,9 @@ import type {
 export interface SectionDetailEditorProps {
   section: InterviewPlanSection;
   maxQuestionMinutes: number;
+  hideMinutes?: boolean;
+  minQuestionMinutes?: number;
+  questionMinutesStep?: number;
   onUpdateSection: (patch: Partial<Omit<InterviewPlanSection, "id" | "questions">>) => void;
   onDeleteSection: () => void;
   onAddQuestion: () => void;

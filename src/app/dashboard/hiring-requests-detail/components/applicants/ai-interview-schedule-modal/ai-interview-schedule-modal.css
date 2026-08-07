@@ -1,0 +1,239 @@
+/* ─── Modal surface ─── */
+.base-modal.centered.aism-modal {
+  width: 460px;
+  max-width: calc(100vw - 32px);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-xl);
+}
+
+/* ─── Header ─── */
+.aism-modal .base-header {
+  padding: 20px 24px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.aism-modal .base-title {
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.aism-modal .base-title i {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--accent-indigo-light);
+  background: var(--accent-indigo-bg);
+  border: 1px solid var(--accent-indigo-border);
+  border-radius: 10px;
+}
+
+.aism-modal .base-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 18px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.aism-modal .base-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ─── Body ─── */
+.aism-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 24px 24px;
+}
+
+.aism-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.aism-desc strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ─── Form ─── */
+.aism-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aism-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.aism-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-secondary);
+}
+
+.aism-input-wrap {
+  position: relative;
+}
+
+.aism-input-wrap > i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+  z-index: 1;
+  transition: color 0.15s;
+}
+
+.aism-input-wrap:focus-within > i {
+  color: var(--accent-indigo-light);
+}
+
+.aism-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px 11px 38px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.aism-input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.aism-input:hover:not(:disabled) {
+  border-color: var(--border-default);
+}
+
+.aism-input:focus {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-indigo-border);
+  box-shadow: 0 0 0 3px var(--accent-indigo-subtle);
+}
+
+.aism-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.aism-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+/* Timezone select */
+.aism-input-wrap--select .select-wrapper {
+  width: 100%;
+}
+
+.aism-input-wrap--select .select {
+  width: 100%;
+  padding: 11px 36px 11px 38px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.aism-input-wrap--select .select:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.aism-input-wrap--select .select:focus {
+  background: var(--bg-tertiary);
+  border-color: var(--accent-indigo-border);
+  box-shadow: 0 0 0 3px var(--accent-indigo-subtle);
+}
+
+.aism-input-wrap--select .select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* ─── Footer ─── */
+.aism-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.aism-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.aism-footer .btn {
+  min-height: 36px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 13.5px;
+}
+
+.aism-footer .btn--primary.aism-btn--primary {
+  min-width: 128px;
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.aism-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+
+.aism-btn--ghost:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.aism-btn--clear {
+  background: transparent;
+  border-color: transparent;
+  color: var(--danger);
+}
+
+.aism-btn--clear:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+  color: var(--danger-light);
+}

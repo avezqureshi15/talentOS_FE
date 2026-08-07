@@ -29,12 +29,13 @@ export interface InterviewDesign {
   hiring_request_id: string;
   screening_sections: InterviewDesignSection[];
   interview_sections: InterviewDesignSection[];
+  review_sections: InterviewDesignSection[];
   updated_at: string;
   sync_status: DesignSyncStatus;
   sync_errors: string[];
 }
 
-export type DesignQuestionKind = "screening" | "interview";
+export type DesignQuestionKind = "screening" | "interview" | "review";
 
 export interface GenerateDesignQuestionsPayload {
   kind: DesignQuestionKind;
@@ -44,4 +45,5 @@ export interface GenerateDesignQuestionsPayload {
 export interface UpdateInterviewDesignPayload {
   screening_sections?: InterviewDesignSection[];
   interview_sections?: InterviewDesignSection[];
+  review_sections?: InterviewDesignSection[];
 }

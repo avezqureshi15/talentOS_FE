@@ -18,7 +18,10 @@ const ReviewSection = ({ entity }: { entity: ReviewEntity }) => {
   const title = ENTITY_TITLE_LABELS[entity.entity_type] ?? entity.entity_type;
   const isAi = entity.entity_type === "ai";
   const ratings = entity.ratings as RatingItem[];
-  const phases = normalizeReviewPhases(entity.phases);
+  const phases = normalizeReviewPhases([
+    ...(Array.isArray(entity.phases) ? entity.phases : []),
+    ...(Array.isArray(entity.sections) ? entity.sections.map((s) => ({ phase: s.section, answers: s.answers })) : []),
+  ]);
   const skills = entity.skills as string[] | undefined;
   const notes = entity.notes as string | undefined;
   const remarks = entity.remarks as string | undefined;

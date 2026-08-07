@@ -5,6 +5,7 @@ import type { AiScreeningResult } from "@/services/ai/ai.types";
 
 type UseAiScreeningOptions = {
   poll?: boolean;
+  enabled?: boolean;
 };
 
 const shouldKeepPolling = (data: AiScreeningResult | undefined) => {
@@ -21,7 +22,7 @@ export function useAiScreeningResult(
   return useQuery({
     queryKey: [QUERY_KEYS.AI_SCREENING, hiringRequestId, candidateId],
     queryFn: () => fetchAiScreeningResult(hiringRequestId!, candidateId!),
-    enabled: !!hiringRequestId && !!candidateId,
+    enabled: (options.enabled ?? true) && !!hiringRequestId && !!candidateId,
     staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
     retry: QUERY_CONFIG.DEFAULT_RETRY_COUNT,
     refetchInterval: options.poll

@@ -1,6 +1,11 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { useInterviewPlannerStore } from "@/store/interview-planner.store";
-import { MAX_QUESTION_MINUTES, SCREENING_MAX_QUESTION_MINUTES } from "../interview-design.constants";
+import {
+  MAX_QUESTION_MINUTES,
+  MIN_QUESTION_MINUTES,
+  MIN_SCREENING_QUESTION_MINUTES,
+  SCREENING_MAX_QUESTION_MINUTES,
+} from "../interview-design.constants";
 import { createQuestion, createSection } from "../interview-design.mappers";
 import { computeInterviewPlanStats } from "../interview-design.stats";
 import type {
@@ -16,6 +21,7 @@ export const useInterviewPlanner = (hiringRequestId: string) => {
   const activeKind = useInterviewPlannerStore((s) => s.activeKind);
   const interviewPlan = useInterviewPlannerStore((s) => s.interviewPlan);
   const screeningPlan = useInterviewPlannerStore((s) => s.screeningPlan);
+  const reviewPlan = useInterviewPlannerStore((s) => s.reviewPlan);
   const selectedSectionId = useInterviewPlannerStore((s) => s.selectedSectionId);
   const isEditing = useInterviewPlannerStore((s) => s.isEditing);
   const setEditing = useInterviewPlannerStore((s) => s.setEditing);
@@ -32,14 +38,16 @@ export const useInterviewPlanner = (hiringRequestId: string) => {
   const duplicateQuestion = useInterviewPlannerStore((s) => s.duplicateQuestion);
   const moveQuestion = useInterviewPlannerStore((s) => s.moveQuestion);
 
-  const plan = activeKind === "interview" ? interviewPlan : screeningPlan;
+  const plan =
+    activeKind === "interview" ? interviewPlan
+    : activeKind === "review" ? reviewPlan
+    : screeningPlan;
 
-  const seededRef = useRef(false);
   useEffect(() => {
-    if (!seededRef.current && !isLoading && data) {
-      seededRef.current = true;
+    if (!isLoading && data) {
       setPlan("interview", { sections: data.interview_sections });
       setPlan("screening", { sections: data.screening_sections });
+      setPlan("review", { sections: data.review_sections });
     }
   }, [data, isLoading, setPlan]);
 
@@ -56,7 +64,14 @@ export const useInterviewPlanner = (hiringRequestId: string) => {
   );
 
   const maxQuestionMinutes =
-    activeKind === "interview" ? MAX_QUESTION_MINUTES : SCREENING_MAX_QUESTION_MINUTES;
+    activeKind === "screening" ? SCREENING_MAX_QUESTION_MINUTES : MAX_QUESTION_MINUTES;
+
+  const minutesConfig =
+    activeKind === "review"
+      ? { hide: true as const, min: MIN_QUESTION_MINUTES, step: 1 }
+      : activeKind === "screening"
+        ? { hide: false as const, min: MIN_SCREENING_QUESTION_MINUTES, step: 0.25 }
+        : { hide: false as const, min: MIN_QUESTION_MINUTES, step: 1 };
 
   const { totalMinutes, targetMinutes, timeStatus, questionCount } = computeInterviewPlanStats(
     activeKind,
@@ -119,6 +134,7 @@ export const useInterviewPlanner = (hiringRequestId: string) => {
     save.mutate({
       interview_sections: interviewPlan.sections,
       screening_sections: screeningPlan.sections,
+      review_sections: reviewPlan.sections,
     });
   };
 
@@ -129,6 +145,7 @@ export const useInterviewPlanner = (hiringRequestId: string) => {
     totalMinutes,
     targetMinutes,
     maxQuestionMinutes,
+    minutesConfig,
     timeStatus,
     questionCount,
     isLoading,

@@ -1,6 +1,7 @@
 import { publicClient } from "@/services/http-client";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
 import type { RoundDetailApiResponse } from "@/services/applications/applications.types";
+import type { InterviewDesign } from "@/services/questions/questions.types";
 import type { FormValidateResponse, FormSubmitResponse, ReviewSubmitRequest, ReviewSubmitResponse } from "./rate-candidate.types";
 
 export const validateForm = async (formId: string): Promise<FormValidateResponse> => {
@@ -32,6 +33,14 @@ export const submitReview = async (
 export const submitForm = async (formId: string): Promise<FormSubmitResponse> => {
   const { data } = await publicClient.post<FormSubmitResponse>(
     `${API_ENDPOINTS.FORMS_SUBMIT}${formId}/submit`,
+  );
+  return data;
+};
+
+export const fetchInterviewDesignPublic = async (hiringRequestId: string): Promise<InterviewDesign> => {
+  const { data } = await publicClient.get<InterviewDesign>(
+    API_ENDPOINTS.AI_QUESTIONS.replace("{hiring_request_id}", hiringRequestId),
+    { toastOnError: false },
   );
   return data;
 };

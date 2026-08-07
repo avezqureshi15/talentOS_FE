@@ -13,6 +13,15 @@ export const PlannerKindSwitcher = ({
         <button
           type="button"
           role="tab"
+          aria-selected={activeKind === "screening"}
+          className={`pks-tab${activeKind === "screening" ? " pks-tab--active" : ""}`}
+          onClick={() => onKindChange("screening")}
+        >
+          {labels.SCREENING}
+        </button>
+        <button
+          type="button"
+          role="tab"
           aria-selected={activeKind === "interview"}
           className={`pks-tab${activeKind === "interview" ? " pks-tab--active" : ""}`}
           onClick={() => onKindChange("interview")}
@@ -22,16 +31,13 @@ export const PlannerKindSwitcher = ({
         <button
           type="button"
           role="tab"
-          aria-selected={activeKind === "screening"}
-          className={`pks-tab${activeKind === "screening" ? " pks-tab--active" : ""}`}
-          onClick={() => onKindChange("screening")}
+          aria-selected={activeKind === "review"}
+          className={`pks-tab${activeKind === "review" ? " pks-tab--active" : ""}`}
+          onClick={() => onKindChange("review")}
         >
-          {labels.SCREENING}
+          {labels.REVIEW}
         </button>
       </div>
-      {activeKind === "screening" && (
-        <span className="pks-hint">{labels.SCREENING_HINT}</span>
-      )}
     </div>
   );
 };

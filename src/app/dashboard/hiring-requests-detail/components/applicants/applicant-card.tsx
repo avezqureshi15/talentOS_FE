@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { formatDate } from "./applicants.utils";
+import { formatDate, formatSlot } from "./applicants.utils";
 import Chip from "@/components/ui/chip/chip";
 import type { ChipVariant } from "@/components/ui/chip/chip.types";
 import { APPLICANT_LABELS } from "@/constants/constants";
@@ -101,6 +101,11 @@ const ApplicantCard = ({
             <Chip variant={stateConfig.chip.variant as ChipVariant} size="sm">
               {stateConfig.chip.label}
             </Chip>
+          )}
+          {a.stage === "AI_INTERVIEW" && a.scheduledAt && (
+            <span className="ai-interview-slot-chip" title="Scheduled AI interview slot">
+              <i className="bx bx-time"></i> {formatSlot(a.scheduledAt)}
+            </span>
           )}
           {a.appliedAt && (
             <span className="applied-date">

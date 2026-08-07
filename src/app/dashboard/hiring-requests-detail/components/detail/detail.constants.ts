@@ -50,6 +50,18 @@ export const EVALUATED_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean>
   ai: (a) => a.stage === "AI_INTERVIEW" && a.status?.toLowerCase() === "under_evaluation",
   regular: (a) => a.stage === "INTERVIEW" && a.status?.toLowerCase() === "under_evaluation",
 };
+
+export const SCREENING_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
+  pending: (a) =>
+    a.status?.toLowerCase() === "shortlisted" ||
+    a.status?.toLowerCase() === "move_to_next_round" ||
+    a.status?.toLowerCase() === "screening_round_scheduled",
+  completed: (a) => a.status?.toLowerCase() === "under_evaluation",
+  flagged: (a) =>
+    a.status?.toLowerCase() === "ai_screening_evaluation_failed" ||
+    a.status?.toLowerCase() === "ai_screening_flagged",
+};
+
 export const UI_TABLE_VIEW = "Overview";
 
 export const UI_CARD_VIEW = "Profile View";
@@ -58,5 +70,8 @@ export const UI_INTERVIEW_REGULAR_INCOMING = "Regular Incoming";
 export const UI_INTERVIEW_NO_SHOW = "No Show";
 export const UI_EVALUATED_AI = "AI";
 export const UI_EVALUATED_REGULAR = "Regular";
+export const UI_SCREENING_PENDING = "Pending";
+export const UI_SCREENING_COMPLETED = "Completed";
+export const UI_SCREENING_FLAGGED = "Flagged";
 export const UI_SEARCHING_APPLICANT = "Searching for applicant across pages...";
 export const UI_APPLICANT_NOT_FOUND = "Applicant not found in this hiring request.";

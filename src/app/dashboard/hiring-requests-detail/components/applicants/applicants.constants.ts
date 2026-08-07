@@ -107,7 +107,34 @@ export const SCREENING_ROUND_SCHEDULED_CONFIG: StateConfig = {
   showInfoChips: false,
   showExpandedContent: true,
   actions: [
+    { label: "Call Now", icon: "bx bx-phone", variant: "call", handler: "onCallNow", permission: "application.workflow" },
     { label: "Cancel", icon: "bx bx-x-circle", variant: "cancel", handler: "onCancelInterview", permission: "application.workflow" },
+  ],
+  menuActions: ["select", "reject", "hold"],
+};
+
+export const AI_SCREENING_EVALUATION_FAILED_CONFIG: StateConfig = {
+  state: "ai_screening_evaluation_failed",
+  chip: { label: "AI Screening Failed", variant: "danger" },
+  showInfoChips: false,
+  showExpandedContent: true,
+  actions: [
+    { label: "Call Now", icon: "bx bx-phone", variant: "call", handler: "onCallNow", permission: "application.workflow" },
+    { label: "Re-run AI screening", icon: "bx bx-refresh", variant: "move", handler: "onRetryAiScreening", permission: "application.workflow" },
+    { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
+  ],
+  menuActions: ["select", "reject", "hold"],
+};
+
+export const AI_SCREENING_FLAGGED_CONFIG: StateConfig = {
+  state: "ai_screening_flagged",
+  chip: { label: "AI Screening Flagged", variant: "danger" },
+  showInfoChips: false,
+  showExpandedContent: true,
+  actions: [
+    { label: "Call Now", icon: "bx bx-phone", variant: "call", handler: "onCallNow", permission: "application.workflow" },
+    { label: "Re-run AI screening", icon: "bx bx-refresh", variant: "move", handler: "onRetryAiScreening", permission: "application.workflow" },
+    { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
   ],
   menuActions: ["select", "reject", "hold"],
 };
@@ -172,6 +199,8 @@ export const STATE_CONFIGS: Record<string, StateConfig> = {
   interview_rescheduled: INTERVIEW_RESCHEDULED_CONFIG,
   interview_cancelled: INTERVIEW_CANCELLED_CONFIG,
   screening_round_scheduled: SCREENING_ROUND_SCHEDULED_CONFIG,
+  ai_screening_evaluation_failed: AI_SCREENING_EVALUATION_FAILED_CONFIG,
+  ai_screening_flagged: AI_SCREENING_FLAGGED_CONFIG,
   rejected: REJECTED_CONFIG,
   selected: SELECTED_CONFIG,
   "on-hold": ON_HOLD_CONFIG,

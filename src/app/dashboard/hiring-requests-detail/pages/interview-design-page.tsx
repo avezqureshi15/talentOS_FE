@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, ChevronDown } from "lucide-react";
+import { Clock, ChevronDown, Info } from "lucide-react";
 import { useOutletContext, useParams } from "react-router-dom";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import { useTooltip } from "@/components/shared/tooltip/use-tooltip";
+import { TooltipContent } from "@/components/shared/tooltip/tooltip";
 import { fadeSlideUp } from "@/utils/motion";
 import { useInterviewPlannerStore } from "@/store/interview-planner.store";
 import { useInterviewPlanData } from "@/app/dashboard/hiring-requests-detail/components/interview-design/hooks/use-interview-plan-data";
 import { InterviewDesignPlanner } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/interview-design-planner/interview-design-planner";
-import { GenerateQuestionsButton } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/generate-questions-button/generate-questions-button";
+import { formatMinutes } from "@/app/dashboard/hiring-requests-detail/components/interview-design/interview-design.utils";
 import CallWindowModal from "@/app/dashboard/hiring-requests-detail/components/call-window/call-window-modal";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/constants/permissions";
@@ -17,12 +19,37 @@ import type { HeaderActionConfig } from "@/store/header.store";
 import type { HiringRequestContext } from "./hiring-request-layout";
 import "./pages.css";
 
-type TabKey = "screening" | "interview";
+type TabKey = "screening" | "interview" | "review";
 
 const TAB_KEYS: { key: TabKey; label: string }[] = [
   { key: "screening", label: "AI Screening Questions" },
   { key: "interview", label: "AI Interview Questions" },
+  { key: "review", label: "Candidate Review Questions" },
 ];
+
+const TAB_TOOLTIPS: Record<TabKey, string> = {
+  screening:
+    "These questions will be asked during the initial screening phone call with the candidate.",
+  interview: "These questions will be asked during the interview.",
+  review:
+    "These questions are given to the interviewer to rate the candidate. Questions generated from the interview transcript take priority; if that generation fails, the static questions shown below are used instead.",
+};
+
+const TabInfoTip = ({ tip }: { tip: string }) => {
+  const { anchorRef, visible, position, anchorRect, triggerProps } = useTooltip<HTMLSpanElement>();
+  return (
+    <>
+      <span ref={anchorRef} className="id-tab-info" {...triggerProps}>
+        <Info size={13} aria-hidden="true" />
+      </span>
+      {visible && anchorRect && (
+        <TooltipContent anchorRect={anchorRect} position={position} className="id-tab-tooltip">
+          {tip}
+        </TooltipContent>
+      )}
+    </>
+  );
+};
 
 const contentVariants = {
   hidden: { opacity: 0, y: 12 },
@@ -45,10 +72,12 @@ const InterviewDesignPage = () => {
   const setEditing = useInterviewPlannerStore((s) => s.setEditing);
   const interviewPlan = useInterviewPlannerStore((s) => s.interviewPlan);
   const screeningPlan = useInterviewPlannerStore((s) => s.screeningPlan);
+  const reviewPlan = useInterviewPlannerStore((s) => s.reviewPlan);
   const { data: designData, isLoading, error, refetch, save } = useInterviewPlanData(id ?? "");
 
-  const sections = activeTab === "interview"
-    ? designData?.interview_sections ?? []
+  const sections =
+    activeTab === "interview" ? designData?.interview_sections ?? []
+    : activeTab === "review"  ? designData?.review_sections ?? []
     : designData?.screening_sections ?? [];
 
   const totalMinutes = sections.reduce(
@@ -65,6 +94,7 @@ const InterviewDesignPage = () => {
     save.mutate({
       interview_sections: interviewPlan.sections,
       screening_sections: screeningPlan.sections,
+      review_sections: reviewPlan.sections,
     });
   };
 
@@ -134,18 +164,15 @@ const InterviewDesignPage = () => {
         <div className="id-page">
           <div className="id-meta-row">
             <span className="id-meta-pill">
-              <Clock className="id-meta-pill-icon" />
-              {activeTab === "interview" ? "AI INTERVIEW" : "AI SCREENING"} &middot; {totalMinutes} MIN &middot; {sections.length} SECTIONS
+              {activeTab !== "review" && <Clock className="id-meta-pill-icon" />}
+              {activeTab === "interview" ? "AI INTERVIEW" : activeTab === "review" ? "CANDIDATE REVIEW" : "AI SCREENING"}
+              {activeTab !== "review" && formatMinutes(totalMinutes) && (
+                <> &middot; {formatMinutes(totalMinutes)}</>
+              )}{" "}
+              &middot; {sections.length} SECTIONS
             </span>
-            {id && (
+            {id && activeTab === "screening" && (
               <div className="id-meta-actions">
-                {canEditPlan && (
-                  <GenerateQuestionsButton
-                    hiringRequestId={id}
-                    kind={activeTab}
-                    onGenerated={() => refetch()}
-                  />
-                )}
                 <button
                   type="button"
                   className="cw-trigger-btn"
@@ -168,6 +195,7 @@ const InterviewDesignPage = () => {
                 onClick={() => setActiveTab(t.key)}
               >
                 {t.label}
+                <TabInfoTip tip={TAB_TOOLTIPS[t.key]} />
               </button>
             ))}
           </div>
@@ -234,9 +262,11 @@ const InterviewDesignPage = () => {
                                 </span>
                               </div>
                               <div className="id-section-top-right">
-                                <span className="id-section-duration">
-                                  {sectionMinutes} min
-                                </span>
+                                {activeTab !== "review" && (
+                                  <span className="id-section-duration">
+                                    {formatMinutes(sectionMinutes)}
+                                  </span>
+                                )}
                                 <ChevronDown
                                   className={`id-section-chevron${
                                     isOpen

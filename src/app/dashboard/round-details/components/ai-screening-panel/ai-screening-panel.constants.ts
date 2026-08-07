@@ -14,11 +14,11 @@ export const AI_SCREENING_LABELS = {
   MISSING: "No screening result available yet.",
   ERROR: "Could not load the screening result.",
   SUMMARY: "Summary",
-  TRANSCRIPT: "Transcript",
   DETAILS: "Extracted Details",
   RETRIES_PREFIX: "Retries:",
-  SHOW_TRANSCRIPT: "Show transcript",
-  HIDE_TRANSCRIPT: "Hide transcript",
+  FLAGGED_TITLE: "Candidate was flagged",
+  FLAGGED_BODY: "This candidate was flagged and couldn’t be screened, so screening round details aren’t available.",
+  FLAGGED_REASON_PREFIX: "Reason:",
 } as const;
 
 export const AI_SCREENING_STATUS_BADGES: Record<string, AiScreeningStatusBadge> = {

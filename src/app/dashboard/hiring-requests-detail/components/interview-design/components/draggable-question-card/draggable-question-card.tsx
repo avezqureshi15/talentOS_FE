@@ -13,6 +13,9 @@ import "./draggable-question-card.css";
 export const DraggableQuestionCard = ({
   question,
   maxMinutes,
+  hideMinutes = false,
+  minMinutes = MIN_QUESTION_MINUTES,
+  stepMinutes = 1,
   onUpdate,
   onDelete,
   onDuplicate,
@@ -51,25 +54,28 @@ export const DraggableQuestionCard = ({
         />
       </div>
       <div className="dq-card-footer">
-        <label className="dq-field">
-          <span className="dq-field-label">
-            <Clock size={11} />
-            {labels.MINUTES_LABEL}
-          </span>
-          <input
-            className="dq-number-input"
-            type="number"
-            min={MIN_QUESTION_MINUTES}
-            max={maxMinutes}
-            value={question.timeAllocationMinutes}
-            onChange={(event) => {
-              const value = Number(event.target.value);
-              if (value >= MIN_QUESTION_MINUTES && value <= maxMinutes) {
-                onUpdate({ timeAllocationMinutes: value });
-              }
-            }}
-          />
-        </label>
+        {!hideMinutes && (
+          <label className="dq-field">
+            <span className="dq-field-label">
+              <Clock size={11} />
+              {labels.MINUTES_LABEL}
+            </span>
+            <input
+              className="dq-number-input"
+              type="number"
+              min={minMinutes}
+              max={maxMinutes}
+              step={stepMinutes}
+              value={question.timeAllocationMinutes}
+              onChange={(event) => {
+                const value = Number(event.target.value);
+                if (value >= minMinutes && value <= maxMinutes) {
+                  onUpdate({ timeAllocationMinutes: value });
+                }
+              }}
+            />
+          </label>
+        )}
         <label className="dq-field">
           <span className="dq-field-label">{labels.SCORE_LABEL}</span>
           <input

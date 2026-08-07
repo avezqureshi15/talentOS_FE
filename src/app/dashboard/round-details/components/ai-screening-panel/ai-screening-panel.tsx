@@ -1,7 +1,5 @@
-import { useState } from "react";
 import Chip from "@/components/ui/chip/chip";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
-import { useAiScreeningResult } from "@/hooks/use-ai-screening";
 import type { AiScreeningResult } from "@/services/ai/ai.types";
 import {
   AI_SCREENING_EXTRACTED_FIELDS,
@@ -11,33 +9,43 @@ import {
   AI_SCREENING_TERMINAL_STATUSES,
   AI_SCREENING_WILLINGNESS_BADGE,
 } from "./ai-screening-panel.constants";
-import type { AiScreeningPanelProps } from "./ai-screening-panel.types";
+import type { AiScreeningPanelProps, AiScreeningPanelViewProps } from "./ai-screening-panel.types";
 import "./ai-screening-panel.css";
 
-const AiScreeningPanel = ({ hiringRequestId, candidateId }: AiScreeningPanelProps) => {
-  // UI-only state — controls the transcript disclosure toggle. Not derivable from server data.
-  const [showTranscript, setShowTranscript] = useState(false);
-
-  const numericCandidateId = candidateId ? Number(candidateId) : undefined;
-  const { data, isLoading, isError, isFetching } = useAiScreeningResult(
-    hiringRequestId,
-    Number.isFinite(numericCandidateId) ? numericCandidateId : undefined,
-    { poll: true },
-  );
-
+const AiScreeningPanel = ({ flagged, result }: AiScreeningPanelProps) => {
+  if (flagged) {
+    return (
+      <section className="asp-card">
+        <AiScreeningFlaggedNotice flagReason={flagged.flag_reason} />
+      </section>
+    );
+  }
   return (
     <section className="asp-card">
-      <AiScreeningHeader data={data} isFetching={isFetching} />
-      <AiScreeningBody
-        data={data}
-        isLoading={isLoading}
-        isError={isError}
-        showTranscript={showTranscript}
-        onToggleTranscript={() => setShowTranscript((v) => !v)}
-      />
+      <AiScreeningHeader data={result?.data} isFetching={result?.isFetching ?? false} />
+      <AiScreeningBody result={result} />
     </section>
   );
 };
+
+function AiScreeningFlaggedNotice({ flagReason }: { flagReason?: string | null }) {
+  return (
+    <div className="asp-flagged">
+      <span className="asp-flagged-icon" aria-hidden="true">
+        <i className="bx bx-error-circle" />
+      </span>
+      <div className="asp-flagged-body">
+        <p className="asp-flagged-title">{AI_SCREENING_LABELS.FLAGGED_TITLE}</p>
+        <p className="asp-flagged-text">{AI_SCREENING_LABELS.FLAGGED_BODY}</p>
+        {flagReason && (
+          <p className="asp-flagged-reason">
+            {AI_SCREENING_LABELS.FLAGGED_REASON_PREFIX} {flagReason}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function AiScreeningHeader({ data, isFetching }: { data: AiScreeningResult | undefined; isFetching: boolean }) {
   const statusKey = (data?.call_status || "").toLowerCase();
@@ -74,15 +82,11 @@ function AiScreeningHeader({ data, isFetching }: { data: AiScreeningResult | und
   );
 }
 
-type BodyProps = {
-  data: AiScreeningResult | undefined;
-  isLoading: boolean;
-  isError: boolean;
-  showTranscript: boolean;
-  onToggleTranscript: () => void;
-};
+function AiScreeningBody({ result }: { result: AiScreeningPanelViewProps | undefined }) {
+  const data = result?.data;
+  const isLoading = result?.isLoading;
+  const isError = result?.isError;
 
-function AiScreeningBody({ data, isLoading, isError, showTranscript, onToggleTranscript }: BodyProps) {
   if (isLoading) {
     return (
       <div className="asp-loading">
@@ -118,14 +122,6 @@ function AiScreeningBody({ data, isLoading, isError, showTranscript, onToggleTra
           <p className="asp-section-label">{AI_SCREENING_LABELS.DETAILS}</p>
           <ExtractedFieldsGrid data={data} />
         </div>
-      )}
-
-      {data.transcript && (
-        <TranscriptDisclosure
-          transcript={data.transcript}
-          expanded={showTranscript}
-          onToggle={onToggleTranscript}
-        />
       )}
     </>
   );
@@ -163,18 +159,6 @@ function ExtractedFieldsGrid({ data }: { data: AiScreeningResult }) {
           </span>
         </div>
       )}
-    </div>
-  );
-}
-
-function TranscriptDisclosure({ transcript, expanded, onToggle }: { transcript: string; expanded: boolean; onToggle: () => void }) {
-  return (
-    <div>
-      <button type="button" className="asp-transcript-toggle" onClick={onToggle}>
-        <i className={expanded ? "bx bx-chevron-up" : "bx bx-chevron-down"} />
-        {expanded ? AI_SCREENING_LABELS.HIDE_TRANSCRIPT : AI_SCREENING_LABELS.SHOW_TRANSCRIPT}
-      </button>
-      {expanded && <div className="asp-transcript-body">{transcript}</div>}
     </div>
   );
 }

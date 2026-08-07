@@ -66,11 +66,17 @@ export type ReviewAnswerPhase = {
   answers: ReviewAnswerItem[];
 };
 
+export type ReviewAnswerSection = {
+  section: string;
+  answers: ReviewAnswerItem[];
+};
+
 export type ReviewEntity = {
   entity_type: string;
   verdict?: string;
   ratings: RatingItem[];
   phases?: ReviewAnswerPhase[];
+  sections?: ReviewAnswerSection[];
   skills?: string[];
   notes?: string;
   average_rating?: number;
@@ -89,6 +95,7 @@ export type RoundDetailApiResponse = {
   slot: string | null;
   status: string | null;
   candidate: string | null;
+  candidate_id: number | null;
   role: string | null;
   jd_label: string | null;
   interviewer: string | null;

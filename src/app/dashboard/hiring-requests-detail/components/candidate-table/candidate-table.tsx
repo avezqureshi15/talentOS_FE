@@ -38,6 +38,8 @@ const STATUS_LABELS: Record<string, string> = {
   waiting_for_review: "Waiting",
   selected: "Selected",
   screening_round_scheduled: "Scheduled",
+  ai_screening_evaluation_failed: "AI Screening Failed",
+  ai_screening_flagged: "AI Screening Flagged",
   interview_scheduled: "Scheduled",
   interview_rescheduled: "Rescheduled",
   interview_cancelled: "Cancelled",
@@ -49,6 +51,8 @@ const STATUS_TOOLTIPS: Record<string, string> = {
   move_to_next_round: "Move to Next Round",
   selected: "Selected And Closed",
   screening_round_scheduled: "Screening Round Scheduled",
+  ai_screening_evaluation_failed: "AI Screening Failed — retry or reject from the screening pipeline",
+  ai_screening_flagged: "AI Screening Flagged — candidate needs manual review",
   interview_scheduled: "Interview Scheduled",
   interview_rescheduled: "Interview Rescheduled",
   interview_cancelled: "Interview Cancelled",
@@ -151,6 +155,12 @@ const CandidateTable = ({
     time: (c) =>
       c.scheduledAt ? (
         <span className="interview-time">{formatTime(c.scheduledAt)}</span>
+      ) : (
+        <span className="text-muted">—</span>
+      ),
+    attempt: (c) =>
+      c.screeningReview?.attempt != null ? (
+        <span className="attempt-badge">#{c.screeningReview.attempt}</span>
       ) : (
         <span className="text-muted">—</span>
       ),

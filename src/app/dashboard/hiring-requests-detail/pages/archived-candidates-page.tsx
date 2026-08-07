@@ -75,7 +75,7 @@ const ArchivedCandidatesPage = () => {
                     disabled={bulkSelection.isBulkProcessing}
                     type="button"
                   >
-                    {bulkSelection.isBulkProcessing ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-archive-out" />}
+                    {bulkSelection.activeAction === "archive" ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-archive-out" />}
                     {" "}Restore
                   </button>
                   <button

@@ -49,6 +49,16 @@ const matchers: StateMatcher[] = [
   },
   (a) => {
     const status = a.status?.toLowerCase();
+    return status === "ai_screening_evaluation_failed"
+      ? "ai_screening_evaluation_failed"
+      : null;
+  },
+  (a) => {
+    const status = a.status?.toLowerCase();
+    return status === "ai_screening_flagged" ? "ai_screening_flagged" : null;
+  },
+  (a) => {
+    const status = a.status?.toLowerCase();
     return status === "rejected" ? "rejected" : null;
   },
 
