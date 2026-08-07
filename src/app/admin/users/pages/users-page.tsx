@@ -9,6 +9,10 @@ import EditUserModal from "@/app/admin/users/components/edit-user-modal";
 import DeactivateDialog from "@/app/admin/users/components/deactivate-dialog";
 import type { Tab } from "./users-page.types";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
+import {
+  HEADER_REFRESH_ICON,
+  HEADER_REFRESH_LABEL,
+} from "@/layouts/protected-layouts/components/header/header.constants";
 import SearchInput from "@/components/ui/search-input/search-input";
 import "./users-page.css";
 
@@ -31,6 +35,7 @@ export default function UsersPage() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const loadUsers = (p: number, q: string) => {
+    setLoading(true);
     getUsers({ page: p, per_page: 20, q: q || undefined })
       .then(({ data }) => {
         setUsers(data.data);
@@ -41,6 +46,7 @@ export default function UsersPage() {
   };
 
   const loadInvites = (p: number) => {
+    setInviteLoading(true);
     getInvites({ page: p, per_page: 20 })
       .then(({ data }) => {
         setInvites(data.data);
@@ -52,6 +58,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
     getUsers({ page, per_page: 20, q: search || undefined })
       .then(({ data }) => {
         if (!cancelled) {
@@ -70,6 +77,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     let cancelled = false;
+    setInviteLoading(true);
     getInvites({ page: invitePage, per_page: 20 })
       .then(({ data }) => {
         if (!cancelled) {
@@ -95,7 +103,12 @@ export default function UsersPage() {
 
   const refreshUsers = () => loadUsers(page, search);
   const refreshInvites = () => loadInvites(invitePage);
+  const refreshAll = () => {
+    loadUsers(page, search);
+    loadInvites(invitePage);
+  };
 
+  const isRefreshing = loading || inviteLoading;
   const totalPages = Math.ceil(total / 20);
   const inviteTotalPages = Math.ceil(inviteTotal / 20);
 
@@ -104,6 +117,14 @@ export default function UsersPage() {
       <PageHeader
         title="User Management"
         actions={[
+          {
+            key: "refresh",
+            label: HEADER_REFRESH_LABEL,
+            icon: isRefreshing ? "bx bx-loader-alt bx-spin" : HEADER_REFRESH_ICON,
+            variant: "primary",
+            disabled: isRefreshing,
+            onClick: refreshAll,
+          },
           {
             key: "invite-user",
             label: "Invite User",

@@ -66,6 +66,7 @@ export const API_ENDPOINTS = {
   AI_INTERVIEW_UNSCHEDULE: "/hiring-requests/{hiring_request_id}/ai/candidates/{candidate_id}/interview/unschedule",
   AI_QUESTIONS: "/hiring-requests/{hiring_request_id}/ai/questions",
   AI_QUESTIONS_GENERATE: "/hiring-requests/{hiring_request_id}/ai/questions/generate",
+  AI_QUESTIONS_EXPORT: "/hiring-requests/{hiring_request_id}/ai/questions/export",
   CALL_WINDOW: "/hiring-requests/{hiring_request_id}/call-window",
   AI_GENERATE: "/ai/generate",
   APPLICATION_ROUND_STATUS: "/applications/{candidate_id}/round-status",

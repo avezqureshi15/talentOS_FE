@@ -56,7 +56,7 @@ const ArchivedCandidatesPage = () => {
     hiringRequestName: undefined,
     hiringRequest: undefined,
     viewSwitcher: null,
-    actions: [],
+    actions: headerConfig.actions?.filter((a) => a.key === "refresh") ?? [],
   };
 
   return (
