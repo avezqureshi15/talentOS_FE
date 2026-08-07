@@ -37,3 +37,36 @@ export const generateHiringRequestDesignQuestions = async (
   );
   return data;
 };
+
+export type ExportInterviewDesignPdfResult = {
+  blob: Blob;
+  filename: string;
+};
+
+const FALLBACK_PDF_FILENAME = "interview_design.pdf";
+
+function filenameFromContentDisposition(header: string | undefined): string | null {
+  if (!header) return null;
+  const utfMatch = /filename\*=UTF-8''([^;]+)/i.exec(header);
+  if (utfMatch?.[1]) {
+    try {
+      return decodeURIComponent(utfMatch[1].trim());
+    } catch {
+      return utfMatch[1].trim();
+    }
+  }
+  const plainMatch = /filename="?([^";]+)"?/i.exec(header);
+  return plainMatch?.[1]?.trim() ?? null;
+}
+
+export const exportInterviewDesignPdf = async (
+  hiringRequestId: string,
+): Promise<ExportInterviewDesignPdfResult> => {
+  const response = await httpClient.get<Blob>(
+    API_ENDPOINTS.AI_QUESTIONS_EXPORT.replace("{hiring_request_id}", hiringRequestId),
+    { responseType: "blob" },
+  );
+  const filename =
+    filenameFromContentDisposition(response.headers["content-disposition"]) ?? FALLBACK_PDF_FILENAME;
+  return { blob: response.data, filename };
+};

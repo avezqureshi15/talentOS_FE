@@ -10,6 +10,7 @@ import { useInterviewPlannerStore } from "@/store/interview-planner.store";
 import { useInterviewPlanData } from "@/app/dashboard/hiring-requests-detail/components/interview-design/hooks/use-interview-plan-data";
 import { InterviewDesignPlanner } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/interview-design-planner/interview-design-planner";
 import { GenerateQuestionsButton } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/generate-questions-button/generate-questions-button";
+import { useExportInterviewDesignPdf } from "@/app/dashboard/hiring-requests-detail/components/interview-design/hooks/use-export-interview-design-pdf";
 import CallWindowModal from "@/app/dashboard/hiring-requests-detail/components/call-window/call-window-modal";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/constants/permissions";
@@ -46,6 +47,7 @@ const InterviewDesignPage = () => {
   const interviewPlan = useInterviewPlannerStore((s) => s.interviewPlan);
   const screeningPlan = useInterviewPlannerStore((s) => s.screeningPlan);
   const { data: designData, isLoading, error, refetch, save } = useInterviewPlanData(id ?? "");
+  const { handleExport, isExporting } = useExportInterviewDesignPdf(id ?? "", data?.title ?? "Interview Design");
 
   const sections = activeTab === "interview"
     ? designData?.interview_sections ?? []
@@ -102,7 +104,16 @@ const InterviewDesignPage = () => {
         },
       ]
     : [
-        { key: "export", label: "Export PDF", icon: "bx-download", variant: "primary" },
+        {
+          key: "export",
+          label: isExporting ? "Exporting..." : "Export PDF",
+          icon: isExporting ? "bx-loader-alt bx-spin" : "bx-download",
+          variant: "primary",
+          onClick: () => void handleExport(),
+          disabled: isExporting || isLoading,
+          loading: isExporting,
+          loadingText: "Exporting...",
+        },
         ...(canEditPlan
           ? [{
               key: "edit",
