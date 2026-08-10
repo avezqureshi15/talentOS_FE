@@ -11,8 +11,7 @@ import { QUERY_CONFIG } from "@/constants/constants";
 export const useApiKeys = (tenantId: number | undefined) =>
   useQuery({
     queryKey: [API_KEYS_QUERY_KEYS.LIST, tenantId],
-    queryFn: async () => (await fetchApiKeys(tenantId!)).data,
-    enabled: !!tenantId,
+    queryFn: async () => (await fetchApiKeys(tenantId)).data,
     staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
     retry: QUERY_CONFIG.DEFAULT_RETRY_COUNT,
   });
@@ -25,11 +24,18 @@ export const useManageableApiKeys = () =>
     retry: QUERY_CONFIG.DEFAULT_RETRY_COUNT,
   });
 
+export type UpdateApiKeysVariables = {
+  tenantId: number | undefined;
+  keys: ApiKeyUpdate[];
+};
+
 export const useUpdateApiKeys = (tenantId: number | undefined) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (keys: ApiKeyUpdate[]) => (await updateApiKeys(tenantId!, keys)).data,
-    onSuccess: () => {
+    mutationFn: async ({ tenantId: saveTenantId, keys }: UpdateApiKeysVariables) =>
+      (await updateApiKeys(saveTenantId, keys)).data,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [API_KEYS_QUERY_KEYS.LIST, variables.tenantId] });
       queryClient.invalidateQueries({ queryKey: [API_KEYS_QUERY_KEYS.LIST, tenantId] });
     },
   });
