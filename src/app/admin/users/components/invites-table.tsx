@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DataTable from "@/components/ui/data-table/data-table";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import type { Invite } from "@/app/admin/users/services/users-admin.service";
 import { ROLE_DISPLAY } from "@/constants/role-display";
 import { APP_URL } from "@/constants/constants";
@@ -41,7 +42,7 @@ export default function InvitesTable({ invites, loading, onRevoke }: InvitesTabl
     <DataTable
       columns={[
         { header: "#", render: (_, i) => <span style={{ color: "var(--text-faint)" }}>{i + 1}</span> },
-        { header: "Email", render: (inv: Invite) => inv.email },
+        { header: "Email", render: (inv: Invite) => <TruncatedCell text={inv.email} /> },
         {
           header: "Role",
           render: (inv: Invite) => {
@@ -70,9 +71,7 @@ export default function InvitesTable({ invites, loading, onRevoke }: InvitesTabl
             const link = getInviteLink(inv.token);
             return (
               <div className="invite-link-cell">
-                <span className="invite-link-text" title={link}>
-                  {link}
-                </span>
+                <TruncatedCell text={link} className="invite-link-text" />
                 <button
                   type="button"
                   className={`invite-copy-btn${copiedId === inv.id ? " invite-copy-btn--copied" : ""}`}

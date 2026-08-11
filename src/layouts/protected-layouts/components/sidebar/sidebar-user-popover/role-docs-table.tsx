@@ -1,5 +1,6 @@
 import { PERSONA_LABELS } from "@/constants/personas";
 import { ROLE_DOCS_FEATURES, ROLE_DOCS_PERSONAS } from "@/constants/role-docs";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import "./role-docs-table.css";
 
 const RoleDocsTable = () => (
@@ -20,10 +21,8 @@ const RoleDocsTable = () => (
           {ROLE_DOCS_FEATURES.map((feature) => (
             <tr key={feature.id}>
               <td className="role-docs-table__feature">
-                <span className="role-docs-feature-label" title={feature.description}>
-                  {feature.label}
-                </span>
-                <span className="role-docs-feature-desc">{feature.description}</span>
+                <TruncatedCell text={feature.label} className="role-docs-feature-label" />
+                <TruncatedCell text={feature.description} className="role-docs-feature-desc" />
               </td>
               {ROLE_DOCS_PERSONAS.map((persona) => (
                 <td key={persona} className="role-docs-table__persona">

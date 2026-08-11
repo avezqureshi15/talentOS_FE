@@ -9,6 +9,7 @@ import {
   type UserJobAssignments,
 } from "@/app/admin/users/services/users-admin.service";
 import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import "./user-jobs-page.css";
 
 const USER_JOBS_LABELS = {
@@ -69,9 +70,8 @@ export default function UserJobsPage() {
           type="button"
           className="ujp-job-link"
           onClick={() => navigate(`/hiring-requests/${a.hiring_request_id}`)}
-          title={a.job_title}
         >
-          {a.job_title}
+          <TruncatedCell text={a.job_title} />
         </button>
       ),
     },

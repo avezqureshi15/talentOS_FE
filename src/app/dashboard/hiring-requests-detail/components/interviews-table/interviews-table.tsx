@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DataTable from "@/components/ui/data-table/data-table";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
 import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/interviews/cancel-interview-modal";
 import { useInterviewsByHr } from "./use-interviews-by-hr";
@@ -68,13 +69,13 @@ const InterviewsTable = ({ hiringRequestId, subTab, onInfoClick }: Props) => {
     <div className="interviews-table-wrapper">
       <DataTable
         columns={[
-          { header: "Round Name", render: (row) => row.roundName },
+          { header: "Round Name", render: (row) => <TruncatedCell text={row.roundName} className="dt-cell-name" /> },
           {
             header: "Candidate Name",
             className: "it-candidate-cell",
-            render: (row) => row.candidateName,
+            render: (row) => <TruncatedCell text={row.candidateName} className="dt-cell-name" />,
           },
-          { header: "Interviewer", render: (row) => row.interviewerName },
+          { header: "Interviewer", render: (row) => <TruncatedCell text={row.interviewerName} /> },
           {
             header: "Timing",
             render: (row) => (

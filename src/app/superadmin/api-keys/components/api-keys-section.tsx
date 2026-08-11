@@ -1,20 +1,84 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Button from "@/components/ui/button/button";
 import { useAuth } from "@/app/auth/hooks/use-auth";
-import { useApiKeys, useManageableApiKeys, useUpdateApiKeys } from "../hooks/use-api-keys";
+import {
+  useApiKeys,
+  useManageableApiKeys,
+  useUpdateApiKeys,
+} from "../hooks/use-api-keys";
 import {
   API_KEYS_CLEAR_LABEL,
   API_KEYS_EMPTY_PLACEHOLDER,
   API_KEYS_ERROR_MESSAGE,
   API_KEYS_PAGE_SUBTITLE,
   API_KEYS_PAGE_TITLE,
+  API_KEYS_PLATFORM_SECTION_HINT,
+  API_KEYS_PLATFORM_SECTION_TITLE,
   API_KEYS_SAVED_MESSAGE,
   API_KEYS_SAVE_LABEL,
   API_KEYS_SOURCE_PLATFORM,
+  API_KEYS_SOURCE_PLATFORM_GLOBAL,
   API_KEYS_SOURCE_TENANT,
+  API_KEYS_TENANT_SECTION_HINT,
+  API_KEYS_TENANT_SECTION_TITLE,
 } from "../api-keys.constants";
 import type { ApiKeyEntry } from "../services/api-keys.service";
+import type { ManageableApiKeyMeta } from "../services/api-keys.service";
 import "./api-keys-section.css";
+
+type Feedback = { kind: "success" | "error"; text: string } | null;
+
+type ApiKeyRowProps = {
+  cfg: ManageableApiKeyMeta;
+  entry?: ApiKeyEntry;
+  value: string;
+  hasOverride: boolean;
+  onValueChange: (value: string) => void;
+  onClear: () => void;
+};
+
+const ApiKeyRow = ({ cfg, entry, value, hasOverride, onValueChange, onClear }: ApiKeyRowProps) => {
+  const isSecret = cfg.is_secret;
+  const placeholder = entry?.value || API_KEYS_EMPTY_PLACEHOLDER;
+  const sourceLabel = hasOverride
+    ? cfg.scope === "platform"
+      ? API_KEYS_SOURCE_PLATFORM_GLOBAL
+      : API_KEYS_SOURCE_TENANT
+    : API_KEYS_SOURCE_PLATFORM;
+
+  return (
+    <div className="api-key-row">
+      <div className="api-key-row-icon">
+        <i className={cfg.icon} />
+      </div>
+      <div className="api-key-row-main">
+        <div className="api-key-row-head">
+          <span className="api-key-row-label">{cfg.label}</span>
+          <span className={`api-key-source${hasOverride ? " api-key-source--tenant" : ""}`}>
+            {sourceLabel}
+          </span>
+        </div>
+        <div className="api-key-row-hint">{cfg.hint}</div>
+        <div className="api-key-row-controls">
+          <input
+            type={isSecret ? "password" : "text"}
+            className="api-key-input"
+            placeholder={placeholder}
+            value={value}
+            onChange={(e) => onValueChange(e.target.value)}
+            autoComplete="off"
+            spellCheck={false}
+          />
+          {hasOverride && (
+            <button type="button" className="api-key-clear" onClick={onClear}>
+              {API_KEYS_CLEAR_LABEL}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ApiKeysSection = () => {
   const { user } = useAuth();
@@ -23,31 +87,75 @@ const ApiKeysSection = () => {
   const { data: manageableKeys, isLoading: isManageableLoading } = useManageableApiKeys();
   const updateMutation = useUpdateApiKeys(tenantId);
 
-  const [values, setValues] = useState<Record<string, string>>({});
-  const [feedback, setFeedback] = useState<{ kind: "success" | "error"; text: string } | null>(null);
+  const [platformValues, setPlatformValues] = useState<Record<string, string>>({});
+  const [tenantValues, setTenantValues] = useState<Record<string, string>>({});
+  const [feedback, setFeedback] = useState<Feedback>(null);
 
   const current = useMemo(() => {
     const map: Record<string, ApiKeyEntry> = {};
-    data?.keys.forEach((k) => { map[k.key] = k; });
+    data?.keys.forEach((k) => {
+      map[k.key] = k;
+    });
     return map;
   }, [data]);
 
-  useEffect(() => {
-    setValues({});
-  }, [data]);
+  const platformKeys = useMemo(
+    () => (manageableKeys ?? []).filter((m) => m.scope === "platform"),
+    [manageableKeys],
+  );
+  const tenantKeys = useMemo(
+    () => (manageableKeys ?? []).filter((m) => m.scope === "tenant"),
+    [manageableKeys],
+  );
 
-  const dirtyCount = Object.keys(values).length;
+  const dirtyCount = Object.keys(platformValues).length + Object.keys(tenantValues).length;
+
+  const setValue = (
+    scope: "platform" | "tenant",
+    key: string,
+    value: string,
+  ) => {
+    const setter = scope === "platform" ? setPlatformValues : setTenantValues;
+    setter((prev) => {
+      const next = { ...prev };
+      if (value === "") delete next[key];
+      else next[key] = value;
+      return next;
+    });
+    setFeedback(null);
+  };
+
+  const markClear = (scope: "platform" | "tenant", key: string) => {
+    const setter = scope === "platform" ? setPlatformValues : setTenantValues;
+    setter((prev) => ({ ...prev, [key]: "" }));
+    setFeedback(null);
+  };
 
   const handleSave = async () => {
-    const entries = Object.entries(values).map(([key, value]) => ({ key, value: value.trim() }));
-    if (entries.length === 0) {
+    const platformEntries = Object.entries(platformValues).map(([key, value]) => ({
+      key,
+      value: value.trim(),
+    }));
+    const tenantEntries = Object.entries(tenantValues).map(([key, value]) => ({
+      key,
+      value: value.trim(),
+    }));
+    if (platformEntries.length === 0 && tenantEntries.length === 0) {
       setFeedback({ kind: "error", text: "Nothing to save" });
       return;
     }
     setFeedback(null);
     try {
-      await updateMutation.mutateAsync(entries);
-      setValues({});
+      const tasks: Promise<unknown>[] = [];
+      if (platformEntries.length > 0) {
+        tasks.push(updateMutation.mutateAsync({ tenantId: undefined, keys: platformEntries }));
+      }
+      if (tenantEntries.length > 0 && tenantId !== undefined) {
+        tasks.push(updateMutation.mutateAsync({ tenantId, keys: tenantEntries }));
+      }
+      await Promise.all(tasks);
+      setPlatformValues({});
+      setTenantValues({});
       setFeedback({ kind: "success", text: API_KEYS_SAVED_MESSAGE });
     } catch {
       setFeedback({ kind: "error", text: API_KEYS_ERROR_MESSAGE });
@@ -65,63 +173,45 @@ const ApiKeysSection = () => {
 
       {!isLoading && !isManageableLoading && (
         <div className="api-keys-section__list">
-          {(manageableKeys ?? []).map((cfg) => {
-            const entry = current[cfg.key];
-            const hasOverride = entry?.hasOverride ?? false;
-            const shownValue = values[cfg.key] ?? "";
-            const masked = entry?.value ?? "";
-            return (
-              <div key={cfg.key} className="api-key-row">
-                <div className="api-key-row-icon">
-                  <i className={cfg.icon} />
-                </div>
-                <div className="api-key-row-main">
-                  <div className="api-key-row-head">
-                    <span className="api-key-row-label">{cfg.label}</span>
-                    <span className={`api-key-source${hasOverride ? " api-key-source--tenant" : ""}`}>
-                      {hasOverride ? API_KEYS_SOURCE_TENANT : API_KEYS_SOURCE_PLATFORM}
-                    </span>
-                  </div>
-                  <div className="api-key-row-hint">{cfg.hint}</div>
-                  <div className="api-key-row-controls">
-                    <input
-                      type="password"
-                      className="api-key-input"
-                      placeholder={hasOverride ? masked : API_KEYS_EMPTY_PLACEHOLDER}
-                      value={shownValue}
-                      onChange={(e) => {
-                        setValues((prev) => {
-                          const next = { ...prev };
-                          const v = e.target.value;
-                          if (v === "") delete next[cfg.key];
-                          else next[cfg.key] = v;
-                          return next;
-                        });
-                        setFeedback(null);
-                      }}
-                      autoComplete="off"
-                      spellCheck={false}
-                    />
-                    {hasOverride && (
-                      <button
-                        type="button"
-                        className="api-key-clear"
-                        onClick={() => {
-                          setValues((prev) => {
-                            const next = { ...prev };
-                            delete next[cfg.key];
-                            return next;
-                          });
-                        }}
-                      >
-                        {API_KEYS_CLEAR_LABEL}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          <div className="api-keys-section__group">
+            <div className="api-keys-section__group-title">{API_KEYS_PLATFORM_SECTION_TITLE}</div>
+            <div className="api-keys-section__group-hint">{API_KEYS_PLATFORM_SECTION_HINT}</div>
+            {platformKeys.map((cfg) => {
+              const entry = current[cfg.key];
+              return (
+                <ApiKeyRow
+                  key={cfg.key}
+                  cfg={cfg}
+                  entry={entry}
+                  value={platformValues[cfg.key] ?? ""}
+                  hasOverride={entry?.hasOverride ?? false}
+                  onValueChange={(v) => setValue("platform", cfg.key, v)}
+                  onClear={() => markClear("platform", cfg.key)}
+                />
+              );
+            })}
+          </div>
+
+          {tenantId !== undefined && tenantKeys.length > 0 && (
+            <div className="api-keys-section__group">
+              <div className="api-keys-section__group-title">{API_KEYS_TENANT_SECTION_TITLE}</div>
+              <div className="api-keys-section__group-hint">{API_KEYS_TENANT_SECTION_HINT}</div>
+              {tenantKeys.map((cfg) => {
+                const entry = current[cfg.key];
+                return (
+                  <ApiKeyRow
+                    key={cfg.key}
+                    cfg={cfg}
+                    entry={entry}
+                    value={tenantValues[cfg.key] ?? ""}
+                    hasOverride={entry?.hasOverride ?? false}
+                    onValueChange={(v) => setValue("tenant", cfg.key, v)}
+                    onClear={() => markClear("tenant", cfg.key)}
+                  />
+                );
+              })}
+            </div>
+          )}
 
           <div className="api-keys-section__footer">
             {feedback && (

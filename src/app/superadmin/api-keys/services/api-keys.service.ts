@@ -1,11 +1,15 @@
 import httpClient from "@/services/http-client";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
 
+export type ApiKeyScope = "platform" | "tenant";
+
 export type ApiKeyEntry = {
   key: string;
   value: string;
   hasOverride: boolean;
   source: "tenant" | "platform";
+  scope: ApiKeyScope;
+  isSecret: boolean;
 };
 
 export type ApiKeysResponse = {
@@ -22,6 +26,8 @@ export type ManageableApiKeyMeta = {
   label: string;
   icon: string;
   hint: string;
+  scope: ApiKeyScope;
+  is_secret: boolean;
 };
 
 export type ManageableApiKeysResponse = {
@@ -31,13 +37,13 @@ export type ManageableApiKeysResponse = {
 export const fetchManageableApiKeys = () =>
   httpClient.get<ManageableApiKeysResponse>(API_ENDPOINTS.SETTINGS_API_KEYS_MANAGEABLE);
 
-export const fetchApiKeys = (tenantId: number) =>
+export const fetchApiKeys = (tenantId?: number) =>
   httpClient.get<ApiKeysResponse>(API_ENDPOINTS.SETTINGS_API_KEYS, {
-    params: { tenant_id: tenantId },
+    params: tenantId !== undefined ? { tenant_id: tenantId } : undefined,
   });
 
-export const updateApiKeys = (tenantId: number, keys: ApiKeyUpdate[]) =>
+export const updateApiKeys = (tenantId: number | undefined, keys: ApiKeyUpdate[]) =>
   httpClient.patch<ApiKeysResponse>(API_ENDPOINTS.SETTINGS_API_KEYS, {
-    tenant_id: tenantId,
+    ...(tenantId !== undefined ? { tenant_id: tenantId } : {}),
     keys,
   });
