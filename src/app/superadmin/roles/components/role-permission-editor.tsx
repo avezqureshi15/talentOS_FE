@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Button from "@/components/ui/button/button";
 import { ROLE_DISPLAY } from "@/constants/role-display";
 import PermissionDetailsPanel from "../permission-effects/permission-details-panel";
 import type { PermissionInfo } from "../pages/roles-page.types";
@@ -7,10 +6,6 @@ import type { PermissionInfo } from "../pages/roles-page.types";
 type Props = {
   roleName: string;
   permissions: PermissionInfo[];
-  onToggle: (code: string) => void;
-  onSave: () => void;
-  onCancel: () => void;
-  saving: boolean;
   userCount?: number;
 };
 
@@ -36,10 +31,6 @@ const MODULE_LOOKUP = new Map(MODULES.map((m) => [m.group, m]));
 export const RolePermissionEditor = ({
   roleName,
   permissions,
-  onToggle,
-  onSave,
-  onCancel,
-  saving,
   userCount,
 }: Props) => {
   const [activeCode, setActiveCode] = useState<string | null>(null);
@@ -120,23 +111,12 @@ export const RolePermissionEditor = ({
                   >
                     <button
                       type="button"
-                      className="rpe-toggle-switch"
-                      onClick={() => onToggle(p.code)}
-                      aria-pressed={p.assigned}
-                      title={p.assigned ? "Disable permission" : "Enable permission"}
-                    >
-                      <span className="rpe-toggle-track">
-                        <span className="rpe-toggle-thumb" />
-                      </span>
-                    </button>
-                    <button
-                      type="button"
                       className="rpe-toggle-label-btn"
                       onClick={() => setActiveCode(p.code)}
-                      title={`What happens when "${p.name}" is disabled`}
+                      title={`What "${p.name}" allows`}
                     >
                       {!p.enforced && (
-                        <span className="rpe-toggle-dot" title="Not enforced yet — toggling this has no effect" />
+                        <span className="rpe-toggle-dot" title="Not enforced" />
                       )}
                       <span className="rpe-toggle-label">{p.name}</span>
                       <i className="bx bx-info-circle" />
@@ -147,16 +127,6 @@ export const RolePermissionEditor = ({
             </div>
           );
         })}
-      </div>
-
-      {/* ── Sticky Footer ── */}
-      <div className="rpe-sticky-footer">
-        <Button variant="ghost" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button variant="primary" onClick={onSave} loading={saving}>
-          {saving ? "Saving..." : "Save Changes"}
-        </Button>
       </div>
 
       <PermissionDetailsPanel

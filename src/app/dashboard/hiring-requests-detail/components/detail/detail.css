@@ -1592,6 +1592,24 @@
   box-shadow: 0 2px 8px var(--shadow-color-light);
 }
 
+.bulk-action-skeleton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.bulk-action-skeleton-count {
+  margin-bottom: 0;
+}
+
+.bulk-action-skeleton-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .bulk-action-count {
   font-size: 12px;
   font-weight: 600;

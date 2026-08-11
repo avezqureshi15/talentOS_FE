@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
 import { PERMISSIONS } from "@/constants/permissions";
@@ -106,6 +107,7 @@ const TeamMembersPage = () => {
 
   return (
     <>
+      <PageHeader title="Team Members" />
       <ErrorBoundary>
         <div className="tm-page">
           <div className="tm-header-bar">

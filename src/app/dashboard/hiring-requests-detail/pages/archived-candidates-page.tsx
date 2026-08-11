@@ -67,6 +67,15 @@ const ArchivedCandidatesPage = () => {
           <ErrorBoundary>
             {canWorkflow && bulkSelection.selectionCount > 0 && (
               <div className="bulk-action-bar">
+                {bulkSelection.isBulkProcessing ? (
+                  <div className="bulk-action-skeleton">
+                    <Skeleton variant="text" width="220px" height="14px" className="bulk-action-skeleton-count" />
+                    <div className="bulk-action-skeleton-buttons">
+                      <Skeleton variant="rect" width="98px" height="34px" borderRadius="6px" />
+                    </div>
+                  </div>
+                ) : (
+                  <>
                 <span className="bulk-action-count">{bulkSelection.selectionCount} candidate{bulkSelection.selectionCount !== 1 ? "s" : ""} selected</span>
                 <div className="bulk-action-buttons">
                   <button
@@ -87,6 +96,8 @@ const ArchivedCandidatesPage = () => {
                     Clear
                   </button>
                 </div>
+                  </>
+                )}
               </div>
             )}
 

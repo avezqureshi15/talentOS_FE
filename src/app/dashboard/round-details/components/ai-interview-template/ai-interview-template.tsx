@@ -1,9 +1,6 @@
-import { useRef, useState } from "react";
-import { Sparkles, Info, ShieldAlert } from "lucide-react";
+import { useRef } from "react";
+import { Sparkles, Info } from "lucide-react";
 import TranscriptPanel from "../transcript-panel/transcript-panel";
-import { useAiRetryInterview, useAiInterviewRecording } from "@/hooks/use-ai-retry";
-import { useAiInterviews } from "@/hooks/use-ai-interviews";
-import AiInterviewActions from "./ai-interview-actions";
 import RecordingPanel from "./recording-panel";
 import TopicCard from "./topic-card";
 import type { CandidateEvaluationData } from "../../pages/round-details.types";
@@ -24,35 +21,10 @@ const PILL_CLASS: Record<string, string> = {
 
 type Props = {
   data: CandidateEvaluationData;
-  hiringRequestId?: string;
-  candidateId?: number;
 };
 
-const AiInterviewTemplate = ({ data, hiringRequestId, candidateId }: Props) => {
+const AiInterviewTemplate = ({ data }: Props) => {
   const videoRef = useRef<CustomVideoHandle>(null);
-  const [retrying, setRetrying] = useState(false);
-  const retryInterview = useAiRetryInterview();
-  const recording = useAiInterviewRecording();
-  const { data: interviews } = useAiInterviews(
-    hiringRequestId && candidateId ? hiringRequestId : undefined,
-    candidateId,
-  );
-  const interviewId = interviews && interviews.length > 0 ? interviews[0].id : undefined;
-
-  const handleRetry = async () => {
-    if (!hiringRequestId || !candidateId) return;
-    setRetrying(true);
-    try {
-      await retryInterview.mutateAsync({ hiringRequestId, candidateId });
-    } finally {
-      setRetrying(false);
-    }
-  };
-
-  const handleRecording = async () => {
-    if (!hiringRequestId || !candidateId || !interviewId) return;
-    await recording.mutateAsync({ hiringRequestId, candidateId, interviewId });
-  };
 
   const handleSeek = (time: number) => {
     videoRef.current?.seek(time);
@@ -97,25 +69,6 @@ const AiInterviewTemplate = ({ data, hiringRequestId, candidateId }: Props) => {
         {data.topics.map((topic) => (
           <TopicCard key={topic.id} topic={topic} />
         ))}
-
-        <div className="rd-proctoring-card">
-          <ShieldAlert className="rd-proctoring-icon" />
-          <div className="rd-proctoring-body">
-            <h4 className="rd-proctoring-title">PROCTORING FLAGS</h4>
-            <p className="rd-proctoring-text">No proctoring flags surfaced during analysis. We still recommend reviewing the recording yourself before finalizing your decision.</p>
-          </div>
-        </div>
-
-        {hiringRequestId && candidateId && (
-          <AiInterviewActions
-            interviewUrl={data.interviewUrl}
-            interviewId={interviewId}
-            retrying={retrying}
-            recordingPending={recording.isPending}
-            onRetry={handleRetry}
-            onOpenRecording={handleRecording}
-          />
-        )}
       </div>
 
       <div className="rd-right">
@@ -123,7 +76,7 @@ const AiInterviewTemplate = ({ data, hiringRequestId, candidateId }: Props) => {
           <RecordingPanel ref={videoRef} recordingUrl={data.recordingUrl} />
         </div>
         <div className="rd-transcript-area">
-          <TranscriptPanel sections={data.transcriptSections} onSeek={handleSeek} />
+          <TranscriptPanel sections={data.transcriptSections} onSeek={handleSeek} collapsible={false} showSectionHeader={false} showBadge={false} />
         </div>
       </div>
     </div>

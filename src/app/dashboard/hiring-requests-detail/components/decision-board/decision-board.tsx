@@ -7,6 +7,7 @@ import Applicants from "@/app/dashboard/hiring-requests-detail/components/applic
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import Skeleton from "@/components/ui/skeleton/skeleton";
 import { useFinalizedData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -80,6 +81,15 @@ const DecisionBoard = ({ jobId }: Props) => {
         <ErrorBoundary>
           {canWorkflow && bulkSelection.selectionCount > 0 && (
             <div className="bulk-action-bar">
+              {bulkSelection.isBulkProcessing ? (
+                <div className="bulk-action-skeleton">
+                  <Skeleton variant="text" width="220px" height="14px" className="bulk-action-skeleton-count" />
+                  <div className="bulk-action-skeleton-buttons">
+                    <Skeleton variant="rect" width="98px" height="34px" borderRadius="6px" />
+                  </div>
+                </div>
+              ) : (
+                <>
               <span className="bulk-action-count">{bulkSelection.selectionCount} candidate{bulkSelection.selectionCount !== 1 ? "s" : ""} selected</span>
               <div className="bulk-action-buttons">
                 <button
@@ -100,6 +110,8 @@ const DecisionBoard = ({ jobId }: Props) => {
                   Clear
                 </button>
               </div>
+                </>
+              )}
             </div>
           )}
           <div className="persistent-view-toggle">

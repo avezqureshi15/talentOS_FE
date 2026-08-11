@@ -15,6 +15,7 @@ import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/compo
 
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import Skeleton from "@/components/ui/skeleton/skeleton";
 import BulkRemarksModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-remarks-modal";
 import BulkArchiveModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-archive-modal";
 import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
@@ -209,6 +210,17 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
         <ErrorBoundary>
           {showBulkSelection && bulkSelection.selectionCount > 0 && (
             <div className="bulk-action-bar">
+              {bulkSelection.isBulkProcessing ? (
+                <div className="bulk-action-skeleton">
+                  <Skeleton variant="text" width="260px" height="14px" className="bulk-action-skeleton-count" />
+                  <div className="bulk-action-skeleton-buttons">
+                    <Skeleton variant="rect" width="130px" height="34px" borderRadius="6px" />
+                    <Skeleton variant="rect" width="130px" height="34px" borderRadius="6px" />
+                    <Skeleton variant="rect" width="98px" height="34px" borderRadius="6px" />
+                  </div>
+                </div>
+              ) : (
+                <>
               <span className="bulk-action-count">{bulkSelection.selectionCount} candidate{bulkSelection.selectionCount !== 1 ? "s" : ""} selected in <span className="bulk-stage-chip">{stageLabel}</span> stage</span>
               <div className="bulk-action-buttons">
                 {canWorkflow && showBulkScreening && (
@@ -259,6 +271,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
                   Clear
                 </button>
               </div>
+                </>
+              )}
             </div>
           )}
 

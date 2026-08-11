@@ -84,3 +84,25 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ─── Transcript ─── */
+.rd-transcript-area {
+  max-height: 480px;
+  overflow-y: auto;
+  border-radius: 6px;
+}
+
+.rd-transcript-area .tp-utterance {
+  align-items: stretch;
+}
+
+.rd-transcript-area .tp-speaker-tag {
+  flex: 0 0 25%;
+  min-width: 0;
+  padding-right: 4px;
+}
+
+.rd-transcript-area .tp-text {
+  flex: 1 0 0;
+  min-width: 0;
+}

@@ -7,11 +7,12 @@ import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import { toISTDisplay } from "@/utils/date";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import { useHeaderShare } from "@/layouts/protected-layouts/components/header/hooks/use-header-share";
-import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import AiInterviewTemplate from "../components/ai-interview-template/ai-interview-template";
+import AiInterviewSkeleton from "../components/ai-interview-template/ai-interview-skeleton";
 import NormalRoundTemplate from "../components/normal-round-template/normal-round-template";
+import NormalRoundSkeleton from "../components/normal-round-template/normal-round-skeleton";
 import { useAiInterviews } from "@/hooks/use-ai-interviews";
 import { useAiInterviewTemplate } from "@/hooks/use-ai-interview-template";
 import type { RoundDetailsParams, RoundDetailsMode } from "./round-details.types";
@@ -121,9 +122,7 @@ const RoundDetails = () => {
       {headerConfig && <PageHeader {...headerConfig} />}
 
       {isLoading && (
-        <div className="rd-split rd-center-row">
-          <LoadingSpinner size="md" />
-        </div>
+        <NormalRoundSkeleton />
       )}
 
       {isError && (
@@ -134,9 +133,7 @@ const RoundDetails = () => {
 
       {!isLoading && isAiInterviewMode && (
         interviewLoading || !interviewTemplate ? (
-          <div className="rd-split rd-center-row">
-            <LoadingSpinner size="md" />
-          </div>
+          <AiInterviewSkeleton />
         ) : interviewError ? (
           <div className="rd-split rd-center-row">
             <p className="rd-error">Failed to load interview assessment.</p>
@@ -144,8 +141,6 @@ const RoundDetails = () => {
         ) : (
           <AiInterviewTemplate
             data={interviewTemplate}
-            hiringRequestId={id}
-            candidateId={candidateIdNum}
           />
         )
       )}

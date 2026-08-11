@@ -99,13 +99,18 @@
 }
 
 .tp-timestamp {
+  align-self: flex-start;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
   font-family: "SF Mono", "Cascadia Code", "Fira Code", "Consolas", monospace;
   font-size: 10px;
   color: var(--text-muted);
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
   border-radius: 2px;
-  padding: 2px 8px;
+  padding: 0 8px;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.15s ease, color 0.15s ease;

@@ -1,60 +1,19 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState } from "react";
 import { useRolesList } from "../hooks/use-roles-list";
 import { useRoleDetail } from "../hooks/use-role-detail";
-import { useUpdateRolePermissions } from "../hooks/use-update-role-permissions";
 import { RolePermissionEditor } from "../components/role-permission-editor";
-import CreateRoleModal from "../components/create-role-modal";
-import type { PermissionInfo } from "./roles-page.types";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import { ROLE_DISPLAY } from "@/constants/role-display";
 import "./roles-page.css";
 
 export default function RolesPage() {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const [permissions, setPermissions] = useState<PermissionInfo[]>([]);
-  const [, setDirty] = useState(false);
-  const [createOpen, setCreateOpen] = useState(false);
 
   const { data: rolesData, isLoading, error: listError } = useRolesList();
   const { data: roleDetail, isFetching: detailLoading } = useRoleDetail(selectedRole);
-  const updateMutation = useUpdateRolePermissions();
 
   const roleList = rolesData?.roles ?? [];
-
-  const handleSelectRole = useCallback((roleName: string) => {
-    setSelectedRole(roleName);
-    setDirty(false);
-  }, []);
-
-  useEffect(() => {
-    if (roleDetail) {
-      setPermissions(roleDetail.permissions);
-      setDirty(false);
-    }
-  }, [roleDetail]);
-
-  const handleToggle = useCallback((code: string) => {
-    setPermissions((prev) =>
-      prev.map((p) => (p.code === code ? { ...p, assigned: !p.assigned } : p))
-    );
-    setDirty(true);
-  }, []);
-
-  const handleSave = useCallback(() => {
-    if (!selectedRole) return;
-    const codes = permissions.filter((p) => p.assigned).map((p) => p.code);
-    updateMutation.mutate(
-      { roleName: selectedRole, permissionCodes: codes },
-      { onSuccess: () => setDirty(false) }
-    );
-  }, [selectedRole, permissions, updateMutation]);
-
-  const handleCancel = useCallback(() => {
-    if (roleDetail) {
-      setPermissions(roleDetail.permissions);
-      setDirty(false);
-    }
-  }, [roleDetail]);
+  const permissions = roleDetail?.permissions ?? [];
 
   const selectedRoleMeta = roleList.find((r) => r.role_name === selectedRole);
 
@@ -70,17 +29,7 @@ export default function RolesPage() {
     <div className="rp-root">
       <PageHeader
         title="Role Management"
-        actions={[
-          {
-            key: "create-role",
-            label: "Create New Role",
-            variant: "primary",
-            onClick: () => setCreateOpen(true),
-          },
-        ]}
       />
-
-      <CreateRoleModal open={createOpen} onClose={() => setCreateOpen(false)} />
 
       <div className="rp-card">
         <div className="rp-body">
@@ -97,7 +46,7 @@ export default function RolesPage() {
                     key={role.role_name}
                     type="button"
                     className={`rp-role-card${isSelected ? " rp-role-card--active" : ""}`}
-                    onClick={() => handleSelectRole(role.role_name)}
+                    onClick={() => setSelectedRole(role.role_name)}
                   >
                     <div className="rp-role-card-body">
                       <span className="rp-role-card-name">{ROLE_DISPLAY[role.role_name]?.label ?? role.role_name}</span>
@@ -114,13 +63,6 @@ export default function RolesPage() {
                         )}
                       </div>
                     </div>
-                    <button
-                      className="rp-role-menu"
-                      onClick={(e) => { e.stopPropagation(); }}
-                      title="More actions"
-                    >
-                      <i className="bx bx-dots-vertical-rounded" />
-                    </button>
                   </button>
                 );
               })}
@@ -131,7 +73,7 @@ export default function RolesPage() {
             {!selectedRole && (
               <div className="rp-empty">
                 <span className="rp-empty-icon"><i className="bx bx-left-arrow-alt" /></span>
-                <p>Select a role to manage its permissions</p>
+                <p>Select a role to view its permissions</p>
               </div>
             )}
 
@@ -143,10 +85,6 @@ export default function RolesPage() {
               <RolePermissionEditor
                 roleName={selectedRole}
                 permissions={permissions}
-                onToggle={handleToggle}
-                onSave={handleSave}
-                onCancel={handleCancel}
-                saving={updateMutation.isPending}
                 userCount={selectedRoleMeta?.user_count}
               />
             )}
