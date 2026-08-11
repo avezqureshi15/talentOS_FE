@@ -1,4 +1,5 @@
 import DataTable from "@/components/ui/data-table/data-table";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import type { AdminUser } from "@/app/admin/users/services/users-admin.service";
 import { ROLE_DISPLAY } from "@/constants/role-display";
 import type { UserTableProps } from "./user-table.types";
@@ -8,8 +9,8 @@ export default function UserTable({ users, loading, onEdit, onDeactivate, onView
     <DataTable
       columns={[
         { header: "#", render: (_, i) => i + 1 },
-        { header: "Name", render: (u: AdminUser) => u.name },
-        { header: "Email", render: (u: AdminUser) => <span className="dt-cell-muted">{u.email}</span> },
+        { header: "Name", render: (u: AdminUser) => <TruncatedCell text={u.name} className="dt-cell-name" /> },
+        { header: "Email", render: (u: AdminUser) => <TruncatedCell text={u.email} className="dt-cell-muted" /> },
         {
           header: "Role",
           render: (u: AdminUser) => {
@@ -25,7 +26,7 @@ export default function UserTable({ users, loading, onEdit, onDeactivate, onView
             </span>
           ),
         },
-        { header: "Auth", render: (u: AdminUser) => u.auth_provider },
+        { header: "Auth", render: (u: AdminUser) => <TruncatedCell text={u.auth_provider} /> },
         {
           header: "",
           render: (u: AdminUser) => (

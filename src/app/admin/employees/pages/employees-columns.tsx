@@ -1,6 +1,7 @@
 import { EMPLOYEES_PAGE_LABELS } from "@/app/admin/employees/pages/employees-page.constants";
 import type { Employee } from "@/app/admin/employees/pages/employees-page.types";
 import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import type { Column } from "@/components/ui/data-table/data-table.types";
 
 const fallback = (value: string | null | undefined): string =>
@@ -21,23 +22,23 @@ export const buildEmployeesColumns = (): Column<Employee>[] => [
           }}
         />
         <div className="employees-member-info">
-          <span className="employees-member-name">{e.name}</span>
-          <span className="employees-member-email">{e.email}</span>
+          <TruncatedCell text={e.name} className="employees-member-name" />
+          <TruncatedCell text={e.email} className="employees-member-email" />
         </div>
       </div>
     ),
   },
   {
     header: EMPLOYEES_PAGE_LABELS.COLUMN_DESIGNATION,
-    render: (e) => <span className="employees-cell-text">{fallback(e.designation)}</span>,
+    render: (e) => <TruncatedCell text={fallback(e.designation)} className="employees-cell-text" />,
   },
   {
     header: EMPLOYEES_PAGE_LABELS.COLUMN_DEPARTMENT,
-    render: (e) => <span className="employees-cell-text">{fallback(e.department)}</span>,
+    render: (e) => <TruncatedCell text={fallback(e.department)} className="employees-cell-text" />,
   },
   {
     header: EMPLOYEES_PAGE_LABELS.COLUMN_CONTACT,
-    render: (e) => <span className="employees-cell-text">{fallback(e.contact_number)}</span>,
+    render: (e) => <TruncatedCell text={fallback(e.contact_number)} className="employees-cell-text" />,
   },
   {
     header: EMPLOYEES_PAGE_LABELS.COLUMN_STATUS,

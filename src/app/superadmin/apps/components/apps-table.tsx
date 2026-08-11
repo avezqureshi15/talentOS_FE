@@ -1,4 +1,5 @@
 import DataTable from "@/components/ui/data-table/data-table";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import type { AppResponse } from "@/app/superadmin/apps/services/apps.service.types";
 import type { AppsTableProps } from "./apps-table.types";
 
@@ -20,13 +21,13 @@ export default function AppsTable({
     <DataTable
       columns={[
         { header: "#", render: (_, i) => i + 1 },
-        { header: "App Name", render: (app) => app.name },
+        { header: "App Name", render: (app) => <TruncatedCell text={app.name} className="dt-cell-name" /> },
         {
           header: "Key",
-          render: (app) => <code className="ap-key-prefix">{app.key_prefix}...</code>,
+          render: (app) => <TruncatedCell text={`${app.key_prefix}...`} className="ap-key-prefix" />,
         },
         ...(showTenant
-          ? [{ header: "Tenant", render: (app: AppResponse) => app.tenant_name ?? "—" }]
+          ? [{ header: "Tenant", render: (app: AppResponse) => <TruncatedCell text={app.tenant_name ?? "—"} /> }]
           : []),
         {
           header: "Status",
@@ -40,7 +41,7 @@ export default function AppsTable({
         { header: "Created", render: (app) => new Date(app.created_at).toLocaleDateString() },
         {
           header: "Created By",
-          render: (app) => app.created_by?.name ?? app.created_by?.email ?? "—",
+          render: (app) => <TruncatedCell text={app.created_by?.name ?? app.created_by?.email ?? "—"} />,
         },
         {
           header: "Last Used",

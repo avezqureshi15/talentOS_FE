@@ -14,6 +14,7 @@ import {
 import AddTeamMemberModal from "@/app/dashboard/hiring-requests-detail/components/team-members/add-team-member-modal";
 import DataTable from "@/components/ui/data-table/data-table";
 import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import { TEAM_MEMBERS_LABELS, formatRoleLabel } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.constants";
 import type { JobTeamMember } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.types";
 import "./pages.css";
@@ -47,8 +48,8 @@ const TeamMembersPage = () => {
             person={{ name: m.name, email: m.email }}
           />
           <div className="tm-member-info">
-            <span className="tm-member-name">{m.name}</span>
-            <span className="tm-member-email">{m.email}</span>
+            <TruncatedCell text={m.name} className="tm-member-name" />
+            <TruncatedCell text={m.email} className="tm-member-email" />
           </div>
         </div>
       ),
@@ -56,9 +57,7 @@ const TeamMembersPage = () => {
     {
       header: TEAM_MEMBERS_LABELS.ROLE_TITLE,
       render: (m: JobTeamMember) => (
-        <span className="tm-designation">
-          {formatRoleLabel(m.role)}
-        </span>
+        <TruncatedCell text={formatRoleLabel(m.role)} className="tm-designation" />
       ),
     },
     ...(manageable

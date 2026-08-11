@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "@/components/ui/data-table/data-table";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import Select from "@/components/ui/select/select";
 import { PERMISSIONS } from "@/constants/permissions";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -62,14 +63,14 @@ const HiringRequestsTable = ({
           className: "dt-cell-name",
           render: (item) => (
             <div>
-              <div className="role-title">{item.title}</div>
-              <div className="role-meta">{item.department}</div>
+              <TruncatedCell text={item.title} className="role-title" />
+              <TruncatedCell text={item.department} className="role-meta" />
             </div>
           ),
         },
         {
           header: "Location",
-          render: (item) => <span className="location-cell">{item.location}</span>,
+          render: (item) => <TruncatedCell text={item.location} className="location-cell" />,
         },
         {
           header: "Status",
@@ -81,7 +82,7 @@ const HiringRequestsTable = ({
         },
         {
           header: "Type",
-          render: (item) => <span className="type-cell">{item.type}</span>,
+          render: (item) => <TruncatedCell text={item.type} className="type-cell" />,
         },
         {
           header: "Created",

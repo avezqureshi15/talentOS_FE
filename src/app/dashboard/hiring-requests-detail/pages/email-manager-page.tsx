@@ -1,109 +1,168 @@
-import { useState } from "react";
-import { Eye, Send } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Eye, Pencil, Send } from "lucide-react";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
-import SearchInput from "@/components/ui/search-input/search-input";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import DataTable from "@/components/ui/data-table/data-table";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
+import { useAuth } from "@/app/auth/hooks/use-auth";
+import {
+  fetchEmailTemplate,
+  type EmailTemplateDetail,
+  type EmailTemplateSummary,
+} from "@/services/email-templates/email-templates";
+import {
+  useEmailTemplates,
+  useTestEmailTemplate,
+} from "./email-manager-hooks";
+import EmailTemplatePreviewModal from "./email-template-preview-modal";
+import EmailTemplateEditModal from "./email-template-edit-modal";
 import "./pages.css";
 
-interface EmailTemplate {
-  id: string;
-  name: string;
-  tag?: string;
-  updatedAt: string;
-  updatedBy: string;
-}
-
-const TEMPLATES: EmailTemplate[] = [
-  { id: "1", name: "Interview Invitation", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "2", name: "Interview Reminder", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "3", name: "Completion Reminder", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "4", name: "Deadline Update", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "5", name: "Resume Interview Invitation", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "6", name: "Interview Not Completed", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "7", name: "Interview Not Completed", tag: "from_incomplete", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "8", name: "No Show Notice", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "9", name: "Interview Completed", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "10", name: "Rejection Notice", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-  { id: "11", name: "Archive Confirmation", updatedAt: "06/07/2026, 5:58 PM", updatedBy: "Default template" },
-];
+const formatUpdatedAt = (iso: string | undefined | null): string => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString([], {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
 
 const EmailManagerPage = () => {
-  const [activeTab, setActiveTab] = useState<"templates" | "tracking">("templates");
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredTemplates = TEMPLATES.filter((t) =>
-    t.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [previewTemplate, setPreviewTemplate] = useState<EmailTemplateSummary | null>(null);
+  const [editTemplateKey, setEditTemplateKey] = useState<string | null>(null);
+  const [testingKey, setTestingKey] = useState<string | null>(null);
+
+  const templatesQuery = useEmailTemplates();
+  const testMutation = useTestEmailTemplate();
+
+  const editTemplateQuery = useQuery({
+    queryKey: ["email-template-detail", editTemplateKey],
+    queryFn: () => fetchEmailTemplate(editTemplateKey!),
+    enabled: !!editTemplateKey,
+    retry: 1,
+  });
+  const editTemplate: EmailTemplateDetail | null = editTemplateQuery.data ?? null;
+
+  const filteredTemplates = useMemo(() => {
+    const rows = templatesQuery.data ?? [];
+    if (!searchQuery.trim()) return rows;
+    const q = searchQuery.toLowerCase();
+    return rows.filter(
+      (t) => t.name.toLowerCase().includes(q) || t.key.toLowerCase().includes(q),
+    );
+  }, [templatesQuery.data, searchQuery]);
+
+  const handleTest = (template: EmailTemplateSummary) => {
+    setTestingKey(template.key);
+    testMutation.mutate(
+      { key: template.key, toEmail: user?.email ?? undefined },
+      { onSettled: () => setTestingKey(null) },
+    );
+  };
 
   return (
     <>
-      <PageHeader title="Email Manager" />
+      <PageHeader
+        title="Email Templates"
+        search={{
+          placeholder: "Search templates...",
+          value: searchQuery,
+          onChange: setSearchQuery,
+        }}
+      />
       <ErrorBoundary>
         <div className="em-page">
-
-          <div className="em-controls">
-            <div className="em-tabs">
-              <button
-                className={`em-tab ${activeTab === "templates" ? "em-tab--active" : ""}`}
-                onClick={() => setActiveTab("templates")}
-              >
-                Email Templates
-              </button>
-              <button
-                className={`em-tab ${activeTab === "tracking" ? "em-tab--active" : ""}`}
-                onClick={() => setActiveTab("tracking")}
-              >
-                Sent Emails Tracking
-              </button>
-            </div>
-
-            <SearchInput
-              className="em-search"
-              size="sm"
-              placeholder="Search templates..."
-              value={searchQuery}
-              onChange={setSearchQuery}
-            />
-          </div>
-
           <DataTable
             columns={[
               {
                 header: "Template",
-                render: (t: EmailTemplate) => (
+                render: (t: EmailTemplateSummary) => (
                   <div className="em-td-template">
-                    <span className="em-template-name">{t.name}</span>
-                    {t.tag && <span className="em-tag">{t.tag}</span>}
+                    <TruncatedCell text={t.name} className="em-template-name" />
                   </div>
                 ),
               },
-              { header: "Updated", className: "em-td-muted", render: (t: EmailTemplate) => t.updatedAt },
-              { header: "Updated by", className: "em-td-muted", render: (t: EmailTemplate) => t.updatedBy },
+              {
+                header: "Updated",
+                className: "em-td-muted",
+                render: (t: EmailTemplateSummary) => formatUpdatedAt(t.updated_at),
+              },
+              {
+                header: "Updated by",
+                className: "em-td-muted",
+                render: (t: EmailTemplateSummary) => <TruncatedCell text={t.updated_by ?? "Default template"} className="em-td-muted" />,
+              },
               {
                 header: "Actions",
                 className: "em-th-actions",
-                render: () => (
+                render: (t: EmailTemplateSummary) => (
                   <div className="em-action-group">
-                    <button className="em-action-btn">
+                    <button
+                      className="em-action-btn"
+                      onClick={() => setPreviewTemplate(t)}
+                      title="Preview rendered email"
+                    >
                       <Eye className="em-action-icon" />
                       <span>Preview</span>
                     </button>
-                    <button className="em-action-btn">
+                    <button
+                      className="em-action-btn"
+                      onClick={() => setEditTemplateKey(t.key)}
+                      disabled={!t.is_editable}
+                      title={t.is_editable ? "Edit template" : "Template is not editable"}
+                    >
+                      <Pencil className="em-action-icon" />
+                      <span>Edit</span>
+                    </button>
+                    <button
+                      className="em-action-btn"
+                      onClick={() => handleTest(t)}
+                      disabled={testingKey === t.key}
+                      title={`Send a test to ${user?.email ?? "your email"}`}
+                    >
                       <Send className="em-action-icon" />
-                      <span>Test</span>
+                      <span>{testingKey === t.key ? "Sending…" : "Test"}</span>
                     </button>
                   </div>
                 ),
               },
             ]}
             data={filteredTemplates}
-            keyExtractor={(t) => t.id}
+            keyExtractor={(t) => t.key}
+            loading={templatesQuery.isLoading}
+            error={
+              templatesQuery.isError
+                ? "Failed to load email templates. Please try again."
+                : null
+            }
+            onRetry={() => templatesQuery.refetch()}
             emptyMessage="No templates found"
-            gridTemplateColumns="2fr 1.2fr 1fr 170px"
+            gridTemplateColumns="2fr 1.2fr 1fr 240px"
           />
         </div>
       </ErrorBoundary>
+
+      <EmailTemplatePreviewModal
+        open={!!previewTemplate}
+        template={previewTemplate}
+        onClose={() => setPreviewTemplate(null)}
+      />
+
+      <EmailTemplateEditModal
+        key={editTemplate?.key ?? "em-edit-none"}
+        open={!!editTemplateKey}
+        template={editTemplate}
+        onClose={() => setEditTemplateKey(null)}
+      />
     </>
   );
 };

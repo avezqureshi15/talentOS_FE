@@ -1,4 +1,5 @@
 import DataTable from "@/components/ui/data-table/data-table";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import TenantActionsMenu from "./tenant-actions-menu";
 import type { Tenant } from "@/app/superadmin/tenants/services/tenants.service";
 import type { TenantTableProps } from "./tenant-table.types";
@@ -24,7 +25,7 @@ export default function TenantTable({
     <DataTable
       columns={[
         { header: "#", className: "dt-cell-num", render: (_, i) => i + 1 },
-        { header: "Organization", className: "dt-cell-name", render: (t: Tenant) => t.name },
+        { header: "Organization", className: "dt-cell-name", render: (t: Tenant) => <TruncatedCell text={t.name} className="dt-cell-name" /> },
         {
           header: "Status",
           render: (t: Tenant) => {

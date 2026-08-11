@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import DataTable from "@/components/ui/data-table/data-table";
 import CandidateActionsMenu from "./candidate-actions-menu/candidate-actions-menu";
 import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import "./candidate-table.css";
 import type { CandidateTableProps } from "./candidate-table.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
@@ -97,13 +98,13 @@ const CandidateTable = ({
         />
         <div>
           <div className="candidate-name-line">
-            <span className="candidate-name">{c.name}</span>
+            <TruncatedCell text={c.name} className="candidate-name" />
             {c.candidateType === "REFERRAL" && <span className="candidate-type-tag">Referral</span>}
             {activeStage === "screening" && c.screeningReview?.attempt != null && (
               <span className="attempt-badge--inline">attempt {c.screeningReview.attempt}</span>
             )}
           </div>
-          {c.email && <div className="candidate-email">{c.email}</div>}
+          {c.email && <TruncatedCell text={c.email} className="candidate-email" />}
         </div>
       </div>
     ),
@@ -117,7 +118,7 @@ const CandidateTable = ({
       c.phone ? (
         <a href={`tel:${c.phone}`} className="candidate-phone" onClick={(e) => e.stopPropagation()}>
           <i className="bx bx-phone" />
-          <span>{formatPhoneDisplay(c.phone)}</span>
+          <TruncatedCell text={formatPhoneDisplay(c.phone)} />
         </a>
       ) : (
         <span className="text-muted">—</span>
