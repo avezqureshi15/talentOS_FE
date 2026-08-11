@@ -52,10 +52,9 @@ export const CREATE_HR_FIELDS = {
   },
   location: {
     label: "Location",
-    placeholder: "Select or type a location",
+    placeholder: "Select or type a location, then press Enter",
     required: true,
     maxLength: 255,
-    listId: "create-hr-location-list",
   },
   type: {
     label: "Type",
@@ -88,16 +87,17 @@ export const CREATE_HR_FIELDS = {
 export const CREATE_HR_ERRORS = {
   REQUIRED: "This field is required",
   MAX_LENGTH: (max: number) => `Must be at most ${max} characters`,
+  LOCATION_ITEM_MAX: (max: number) => `Each location must be at most ${max} characters`,
 } as const;
 
 export const INITIAL_CREATE_HR_VALUES = {
   title: "",
   department: "",
-  location: "",
+  location: [] as string[],
   type: "",
   description: "",
   requirements: "",
   benefits: "",
   custom_evaluation_criteria: "",
   is_active: true,
-} as const;
+};

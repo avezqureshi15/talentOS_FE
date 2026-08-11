@@ -46,7 +46,10 @@ export default function CreateRoleModal({ open, onClose }: Props) {
     <BaseModal open={open} onClose={onClose} title="Create New Role" icon="bx bx-plus-circle">
       <form className="crm-form" onSubmit={handleSubmit}>
         <div className="crm-field">
-          <label className="crm-label">Role Name</label>
+          <label className="crm-label">
+            Role Name
+            <span className="crm-required" aria-hidden="true">*</span>
+          </label>
           <input
             type="text"
             className="crm-input"

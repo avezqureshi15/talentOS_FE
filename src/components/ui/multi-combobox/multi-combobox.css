@@ -1,0 +1,104 @@
+.multi-combobox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.multi-combobox-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.multi-combobox-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.multi-combobox-input {
+  width: 100%;
+  padding: 10px 32px 10px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: var(--text-white, var(--text-primary));
+  background: var(--overlay-subtle);
+  border: 1px solid var(--input-icon-bg, var(--border-default));
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+[data-theme="light"] .multi-combobox-input {
+  background: var(--bg-secondary);
+  border-color: var(--border-default);
+}
+
+.multi-combobox-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-glow, transparent);
+}
+
+.multi-combobox-input--error {
+  border-color: var(--danger);
+}
+
+.multi-combobox-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.multi-combobox-caret {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: var(--text-muted, var(--input-icon-color));
+  pointer-events: none;
+}
+
+.multi-combobox-input-wrap:focus-within .multi-combobox-caret {
+  color: var(--accent);
+}
+
+.multi-combobox-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle, var(--input-icon-bg));
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--shadow-color-dense);
+  z-index: 50;
+}
+
+.multi-combobox-option {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.multi-combobox-option:hover,
+.multi-combobox-option--highlighted {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+
+.multi-combobox-empty {
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--text-muted, var(--input-icon-color));
+}

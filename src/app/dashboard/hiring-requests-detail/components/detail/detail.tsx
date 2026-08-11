@@ -30,6 +30,7 @@ import PaginationBar from "@/components/ui/pagination-bar/pagination-bar";
 import { fadeSlideUp, staggerContainer } from "@/utils/motion";
 import type { JobDetailProps } from "./detail.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import { isRemoteLocation } from "@/utils/format-locations";
 
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [searchParams] = useSearchParams();
@@ -42,7 +43,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [scheduleCandidate, setScheduleCandidate] = useState<Applicant | null>(null);
 
   const jobId = hiringRequest.id;
-  const isRemote = hiringRequest.location?.toLowerCase() === "remote" || hiringRequest.type?.toLowerCase() === "remote";
+  const isRemote =
+    isRemoteLocation(hiringRequest.location) || hiringRequest.type?.toLowerCase() === "remote";
   const {
     applicants,
     isLoading: appsLoading,

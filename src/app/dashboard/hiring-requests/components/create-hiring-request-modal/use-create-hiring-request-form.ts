@@ -37,7 +37,7 @@ export function useCreateHiringRequestForm() {
   );
 
   const reset = useCallback(() => {
-    setValues({ ...INITIAL_CREATE_HR_VALUES });
+    setValues({ ...INITIAL_CREATE_HR_VALUES, location: [] });
     setErrors({});
   }, []);
 
@@ -54,10 +54,16 @@ export function useCreateHiringRequestForm() {
     if (deptReq) next.department = deptReq;
     else if (deptMax) next.department = deptMax;
 
-    const locReq = requiredError(values.location);
-    const locMax = maxLengthError(values.location, CREATE_HR_FIELDS.location.maxLength);
-    if (locReq) next.location = locReq;
-    else if (locMax) next.location = locMax;
+    if (values.location.length === 0) {
+      next.location = CREATE_HR_ERRORS.REQUIRED;
+    } else {
+      const tooLong = values.location.find(
+        (loc) => loc.trim().length > CREATE_HR_FIELDS.location.maxLength,
+      );
+      if (tooLong) {
+        next.location = CREATE_HR_ERRORS.LOCATION_ITEM_MAX(CREATE_HR_FIELDS.location.maxLength);
+      }
+    }
 
     const typeReq = requiredError(values.type);
     const typeMax = maxLengthError(values.type, CREATE_HR_FIELDS.type.maxLength);
@@ -79,7 +85,7 @@ export function useCreateHiringRequestForm() {
     return {
       title: values.title.trim(),
       department: values.department.trim(),
-      location: values.location.trim(),
+      location: values.location.map((loc) => loc.trim()).filter(Boolean),
       type: values.type.trim(),
       description: values.description.trim(),
       requirements,

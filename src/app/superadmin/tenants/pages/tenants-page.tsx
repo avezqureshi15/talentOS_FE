@@ -147,9 +147,6 @@ export default function TenantsPage() {
               { value: "", label: "All Status" },
               { value: "active", label: "Active" },
               { value: "suspended", label: "Suspended" },
-              { value: "pending", label: "Pending" },
-              { value: "approved", label: "Approved" },
-              { value: "rejected", label: "Rejected" },
             ],
           },
         ]}

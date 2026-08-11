@@ -12,6 +12,7 @@ import { TABLE_EMPTY_STATE, DATE_FROM_LABEL, DATE_TO_LABEL, ALL_DEPARTMENTS, ALL
 import type { HiringRequestsTableProps } from "./table.types";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
 import DatePickerInput from "./date-picker-input";
+import { formatLocations } from "@/utils/format-locations";
 import "./table.css";
 
 const HiringRequestsTable = ({
@@ -69,7 +70,7 @@ const HiringRequestsTable = ({
         },
         {
           header: "Location",
-          render: (item) => <span className="location-cell">{item.location}</span>,
+          render: (item) => <span className="location-cell">{formatLocations(item.location)}</span>,
         },
         {
           header: "Status",

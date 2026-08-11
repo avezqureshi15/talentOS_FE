@@ -108,6 +108,7 @@ export type RoundDetailApiResponse = {
   status: string | null;
   candidate: string | null;
   candidate_id: number | null;
+  resume_url: string | null;
   role: string | null;
   jd_label: string | null;
   interviewer: string | null;

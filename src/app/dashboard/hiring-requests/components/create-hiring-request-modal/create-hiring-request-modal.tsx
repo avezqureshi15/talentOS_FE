@@ -2,10 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Combobox from "@/components/ui/combobox/combobox";
+import MultiCombobox from "@/components/ui/multi-combobox/multi-combobox";
 import Select from "@/components/ui/select/select";
 import Switch from "@/components/ui/switch/switch";
 import { useCreateHiringRequest } from "@/app/dashboard/hiring-requests/hooks/use-create-hiring-request";
 import { useDepartments } from "@/app/dashboard/hiring-requests/hooks/use-departments";
+import { useLocations } from "@/app/dashboard/hiring-requests/hooks/use-locations";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import { fetchUsers, type UserItem } from "@/services/users/users";
@@ -38,6 +40,7 @@ export default function CreateHiringRequestModal({
   const { values, errors, setField, reset, validate, toPayload } = useCreateHiringRequestForm();
   const { mutateAsync, isPending } = useCreateHiringRequest();
   const { data: departmentOptions = [] } = useDepartments();
+  const { data: apiLocations = [] } = useLocations();
   const { user } = useAuth();
 
   const [step, setStep] = useState<CreateHiringRequestStep>(1);
@@ -55,6 +58,11 @@ export default function CreateHiringRequestModal({
     () => FILTER_OPTIONS.TYPES.map((t) => ({ value: t, label: t })),
     [],
   );
+
+  const locationOptions = useMemo(() => {
+    const merged = new Set<string>([...CREATE_HR_LOCATION_PRESETS, ...apiLocations]);
+    return Array.from(merged);
+  }, [apiLocations]);
 
   const resetAll = useCallback(() => {
     reset();
@@ -232,20 +240,16 @@ export default function CreateHiringRequestModal({
             </Field>
 
             <Field label={CREATE_HR_FIELDS.location.label} required error={errors.location}>
-              <input
-                className={`create-hr-input${errors.location ? " create-hr-input--error" : ""}`}
-                list={CREATE_HR_FIELDS.location.listId}
-                value={values.location}
-                maxLength={CREATE_HR_FIELDS.location.maxLength}
+              <MultiCombobox
+                className="create-hr-combobox"
+                options={locationOptions}
                 placeholder={CREATE_HR_FIELDS.location.placeholder}
+                value={values.location}
                 disabled={isPending}
-                onChange={(e) => setField("location", e.target.value)}
+                error={!!errors.location}
+                maxItemLength={CREATE_HR_FIELDS.location.maxLength}
+                onChange={(v) => setField("location", v)}
               />
-              <datalist id={CREATE_HR_FIELDS.location.listId}>
-                {CREATE_HR_LOCATION_PRESETS.map((l) => (
-                  <option key={l} value={l} />
-                ))}
-              </datalist>
             </Field>
 
             <Field label={CREATE_HR_FIELDS.type.label} required error={errors.type}>
@@ -330,7 +334,10 @@ export default function CreateHiringRequestModal({
 
         {step === 3 && (
           <div className="create-hr-assign">
-            <div className="create-hr-assign-question">{CREATE_HR_MODAL.ASSIGN_QUESTION}</div>
+            <div className="create-hr-assign-question">
+              {CREATE_HR_MODAL.ASSIGN_QUESTION}
+              <span className="create-hr-required">*</span>
+            </div>
 
             <div className="create-hr-assign-options">
               <button

@@ -3,7 +3,7 @@ export type HiringRequest = {
   tenant_id: number | null;
   title: string;
   department: string;
-  location: string;
+  location: string[];
   type: string;
   description: string;
   requirements: string[] | null;
@@ -19,7 +19,7 @@ export type HiringRequest = {
 export type HiringRequestCreatePayload = {
   title: string;
   department: string;
-  location: string;
+  location: string[];
   type: string;
   description: string;
   requirements?: string[] | null;

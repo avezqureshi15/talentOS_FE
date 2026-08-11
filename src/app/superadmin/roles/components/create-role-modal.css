@@ -14,6 +14,11 @@
   font-weight: 500;
 }
 
+.crm-required {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
 .crm-input {
   width: 100%;
   padding: 10px 12px;

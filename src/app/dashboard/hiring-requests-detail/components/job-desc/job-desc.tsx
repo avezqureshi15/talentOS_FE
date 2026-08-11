@@ -1,4 +1,5 @@
 import type { JobDescriptionProps } from "./job-desc.types";
+import { formatLocations } from "@/utils/format-locations";
 import "./job-desc.css";
 
 const JobDescription = ({ hiringRequest }: JobDescriptionProps) => {
@@ -36,7 +37,7 @@ const JobDescription = ({ hiringRequest }: JobDescriptionProps) => {
             <span className="jd-detail-icon"><i className="bx bx-location-pin" /></span>
             <div className="jd-detail-body">
               <span className="jd-detail-label">Location</span>
-              <span className="jd-detail-value">{hiringRequest.location}</span>
+              <span className="jd-detail-value">{formatLocations(hiringRequest.location)}</span>
             </div>
           </div>
           {(hiringRequest.benefits ?? []).length > 0 && (

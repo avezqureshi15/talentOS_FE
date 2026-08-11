@@ -1,4 +1,5 @@
 import { fetchHiringRequests } from "./hiring-requests";
+import { formatLocations } from "@/utils/format-locations";
 
 export type MentionsFetcherResultItem = {
   id: string;
@@ -25,7 +26,7 @@ export const fetchHiringRequestsForMentions = async (
   const items: MentionsFetcherResultItem[] = res.data.map((hr) => ({
     id: hr.id,
     label: hr.title,
-    description: `${hr.department} · ${hr.location}`,
+    description: `${hr.department} · ${formatLocations(hr.location)}`,
     relationalId: hr.external_job_id || hr.id,
   }));
 

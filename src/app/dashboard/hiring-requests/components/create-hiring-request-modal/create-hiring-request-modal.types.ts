@@ -4,7 +4,7 @@ import type { UserItem } from "@/services/users/users";
 export type CreateHiringRequestFormValues = {
   title: string;
   department: string;
-  location: string;
+  location: string[];
   type: string;
   description: string;
   requirements: string;

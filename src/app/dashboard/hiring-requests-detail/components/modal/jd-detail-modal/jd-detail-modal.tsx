@@ -1,5 +1,6 @@
 import BaseModal from "@/components/ui/modal/base-modal";
 import type { JdDetailModalProps } from "./jd-detail-modal.types";
+import { formatLocations } from "@/utils/format-locations";
 import "./jd-detail-modal.css";
 
 const JdDetailModal = ({ open, onClose, hiringRequest }: JdDetailModalProps) => {
@@ -34,7 +35,7 @@ const JdDetailModal = ({ open, onClose, hiringRequest }: JdDetailModalProps) => 
               </div>
               <div className="jd-modal-detail-item">
                 <span className="label"><i className="bx bx-location-pin" /> Location</span>
-                <span className="value">{hiringRequest.location}</span>
+                <span className="value">{formatLocations(hiringRequest.location)}</span>
               </div>
               <div className="jd-modal-detail-item">
                 <span className="label"><i className="bx bx-briefcase" /> Employment</span>

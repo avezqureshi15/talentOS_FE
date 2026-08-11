@@ -1,11 +1,15 @@
 import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useCallback } from "react";
 import "./round-details.css";
 import { fetchRoundDetail } from "@/services/applications/applications";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import { toISTDisplay } from "@/utils/date";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
+import { useHeaderShare } from "@/layouts/protected-layouts/components/header/hooks/use-header-share";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import { useToastStore } from "@/store/toast.store";
+import { ToastType } from "@/components/ui/toast/toast.types";
 import AiInterviewTemplate from "../components/ai-interview-template/ai-interview-template";
 import NormalRoundTemplate from "../components/normal-round-template/normal-round-template";
 import { useAiInterviews } from "@/hooks/use-ai-interviews";
@@ -21,7 +25,10 @@ const detectMode = (data: RoundDetailApiResponse): RoundDetailsMode => {
   return "normal-round";
 };
 
-function buildApiHeader(data: RoundDetailApiResponse) {
+function buildApiHeader(
+  data: RoundDetailApiResponse,
+  handlers: { onResume: () => void; onShare: () => void },
+) {
   return {
     title: data.candidate ?? "Round Details",
     avatarLabel: data.candidate ? getInitials(data.candidate) : "?",
@@ -31,8 +38,8 @@ function buildApiHeader(data: RoundDetailApiResponse) {
       ...(data.occurred_on ? [{ label: toISTDisplay(data.occurred_on) }] : []),
     ].filter(Boolean),
     actions: [
-      { key: "resume", label: "Resume", icon: "bx-file" },
-      { key: "share", label: "Share", icon: "bx-share-alt" },
+      { key: "resume", label: "Resume", icon: "bx-file", onClick: handlers.onResume },
+      { key: "share", label: "Share", icon: "bx-share-alt", onClick: handlers.onShare },
     ],
   };
 }
@@ -41,6 +48,7 @@ const RoundDetails = () => {
   const { id, roundId } = useParams<RoundDetailsParams>();
   const [searchParams] = useSearchParams();
   const candidateIdParam = searchParams.get("candidateId");
+  const { handleShare } = useHeaderShare();
 
   const { data: apiData, isLoading, isError } = useQuery({
     queryKey: [QUERY_KEYS.ROUND_DETAIL, roundId],
@@ -49,6 +57,24 @@ const RoundDetails = () => {
     staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
     retry: QUERY_CONFIG.DEFAULT_RETRY_COUNT,
   });
+
+  const onResume = useCallback(() => {
+    const url = apiData?.resume_url?.trim();
+    if (!url) {
+      useToastStore.getState().addToast("No resume available", ToastType.ERROR);
+      return;
+    }
+    window.open(url, "_blank", "noopener,noreferrer");
+  }, [apiData?.resume_url]);
+
+  const onShare = useCallback(async () => {
+    const ok = await handleShare();
+    if (ok) {
+      useToastStore.getState().addToast("Link copied to clipboard", ToastType.SUCCESS);
+    } else {
+      useToastStore.getState().addToast("Unable to copy link", ToastType.ERROR);
+    }
+  }, [handleShare]);
 
   const mode: RoundDetailsMode | null = apiData ? detectMode(apiData) : null;
   const isAiInterviewMode = mode === "ai-interview";
@@ -67,7 +93,7 @@ const RoundDetails = () => {
 
   const { data: interviewTemplate, isLoading: interviewLoading, isError: interviewError } = useAiInterviewTemplate(
     isAiInterviewMode ? id : undefined,
-    isAiInterviewMode ? candidateIdNum : undefined,
+    isAiInterviewMode && hasCandidate ? candidateIdNum : undefined,
     isAiInterviewMode ? interviewId : undefined,
     { poll: true },
   );
@@ -76,7 +102,9 @@ const RoundDetails = () => {
     return <div className="rd-root" />;
   }
 
-  const headerConfig = apiData ? buildApiHeader(apiData) : null;
+  const headerConfig = apiData
+    ? buildApiHeader(apiData, { onResume, onShare })
+    : null;
 
   return (
     <div className="rd-root">
