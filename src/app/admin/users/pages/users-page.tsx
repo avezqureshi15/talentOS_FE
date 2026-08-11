@@ -5,7 +5,7 @@ import UserTable from "@/app/admin/users/components/user-table";
 import InvitesTable from "@/app/admin/users/components/invites-table";
 import InviteUserModal from "@/app/admin/users/components/invite-user-modal/invite-user-modal";
 import CreateUserModal from "@/app/admin/users/components/create-user-modal";
-import EditUserModal from "@/app/admin/users/components/edit-user-modal";
+import EditUserModal from "@/app/admin/users/components/edit-user-modal/edit-user-modal";
 import DeactivateDialog from "@/app/admin/users/components/deactivate-dialog";
 import type { Tab } from "./users-page.types";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
