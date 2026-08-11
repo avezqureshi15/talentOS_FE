@@ -3,7 +3,6 @@ import DataTable from "@/components/ui/data-table/data-table";
 import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import type { Invite } from "@/app/admin/users/services/users-admin.service";
 import { ROLE_DISPLAY } from "@/constants/role-display";
-import { APP_URL } from "@/constants/constants";
 import type { InvitesTableProps } from "./invites-table.types";
 import "./invites-table.css";
 
@@ -20,7 +19,7 @@ export default function InvitesTable({ invites, loading, onRevoke }: InvitesTabl
     }
   };
 
-  const getInviteLink = (token: string) => `${APP_URL}/auth/invite/${token}`;
+  const getInviteLink = (token: string) => `${window.location.origin}/auth/invite/${token}`;
 
   const handleCopy = async (inv: Invite) => {
     try {
