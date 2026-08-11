@@ -13,6 +13,7 @@ export default function BaseModal({
   variant = "centered",
   className = "",
   overlayClassName = "",
+  showClose = true,
 }: BaseModalProps) {
 
   // Explanation: closes the modal when the Escape key is pressed
@@ -33,6 +34,8 @@ export default function BaseModal({
     return () => { document.body.style.overflow = prev; };
   }, [open]);
 
+  const showHeader = Boolean(title) || showClose;
+
   return (
     <AnimatePresence>
       {open && (
@@ -52,22 +55,25 @@ export default function BaseModal({
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={springWarm}
           >
-            {title && (
+            {showHeader && (
               <div className="base-header">
                 <div className="base-title">
                   {icon && <i className={`bx ${icon}`}></i>}
-                  <span>{title}</span>
+                  {title ? <span>{title}</span> : <span className="base-title-spacer" />}
                 </div>
-                <motion.button
-                  className="base-close"
-                  onClick={onClose}
-                  aria-label="Close modal"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={springWarm}
-                >
-                  <i className="bx bx-x"></i>
-                </motion.button>
+                {showClose && (
+                  <motion.button
+                    className="base-close"
+                    onClick={onClose}
+                    aria-label="Close modal"
+                    type="button"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={springWarm}
+                  >
+                    <i className="bx bx-x"></i>
+                  </motion.button>
+                )}
               </div>
             )}
             {children}

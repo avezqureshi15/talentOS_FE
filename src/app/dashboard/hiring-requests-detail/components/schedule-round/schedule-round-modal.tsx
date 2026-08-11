@@ -187,7 +187,7 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
   const successSubtext = SR_LABELS.STEP_3_SUBTEXT.replace("{candidate}", candidateName).replace("{interviewer}", interviewerNames);
 
   return (
-    <BaseModal open={open} onClose={handleClose} className="sr-modal">
+    <BaseModal open={open} onClose={handleClose} title="Schedule interview" className="sr-modal">
       <div className="sr-body">
         {!rescheduleMode && (
           <div className="sr-title-row">

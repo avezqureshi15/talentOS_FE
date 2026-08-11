@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
@@ -8,13 +9,33 @@ import {
   EMPLOYEE_DETAIL_BACK_ICON,
   EMPLOYEE_DETAIL_LABELS,
 } from "@/app/admin/employees/pages/employee-detail-page.constants";
+import EditEmployeeModal from "@/app/admin/employees/components/edit-employee-modal/edit-employee-modal";
 import { ROUTES } from "@/constants/routes";
+import { PERMISSIONS } from "@/constants/permissions";
+import { usePermissions } from "@/hooks/use-permissions";
 import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
+import type { HeaderConfig } from "@/store/header.store";
 import "./employee-detail-page.css";
 
 const EmployeeDetailPage = () => {
   const { empId } = useParams<{ empId: string }>();
-  const { employee, isLoading, isError } = useEmployeeDetail(empId);
+  const { can } = usePermissions();
+  const canEdit = can(PERMISSIONS.USER_MANAGE);
+  const { employee, isLoading, isError, refetch } = useEmployeeDetail(empId);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const actions: NonNullable<HeaderConfig["actions"]> | undefined =
+    canEdit && employee
+      ? [
+          {
+            key: "edit-employee",
+            label: EMPLOYEE_DETAIL_LABELS.ACTION_EDIT,
+            icon: "bx bx-edit-alt",
+            variant: "primary",
+            onClick: () => setIsEditOpen(true),
+          },
+        ]
+      : undefined;
 
   return (
     <ErrorBoundary>
@@ -23,6 +44,7 @@ const EmployeeDetailPage = () => {
           title={EMPLOYEE_DETAIL_LABELS.PAGE_TITLE}
           titleIcon={EMPLOYEE_DETAIL_BACK_ICON}
           backRoute={ROUTES.ADMIN_EMPLOYEES}
+          actions={actions}
         />
 
         {isLoading && (
@@ -90,6 +112,17 @@ const EmployeeDetailPage = () => {
               ))}
             </div>
           </div>
+        )}
+
+        {isEditOpen && employee && (
+          <EditEmployeeModal
+            employee={employee}
+            onClose={() => setIsEditOpen(false)}
+            onSuccess={() => {
+              setIsEditOpen(false);
+              void refetch();
+            }}
+          />
         )}
       </div>
     </ErrorBoundary>

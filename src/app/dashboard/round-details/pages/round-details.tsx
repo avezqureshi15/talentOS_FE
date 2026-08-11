@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 import "./round-details.css";
@@ -27,7 +27,7 @@ const detectMode = (data: RoundDetailApiResponse): RoundDetailsMode => {
 
 function buildApiHeader(
   data: RoundDetailApiResponse,
-  handlers: { onResume: () => void; onShare: () => void },
+  handlers: { onResume: () => void; onShare: () => void; onBack: () => void },
 ) {
   return {
     title: data.candidate ?? "Round Details",
@@ -37,6 +37,7 @@ function buildApiHeader(
       ...(data.interviewer ? [{ label: data.interviewer }] : []),
       ...(data.occurred_on ? [{ label: toISTDisplay(data.occurred_on) }] : []),
     ].filter(Boolean),
+    onBack: handlers.onBack,
     actions: [
       { key: "resume", label: "Resume", icon: "bx-file", onClick: handlers.onResume },
       { key: "share", label: "Share", icon: "bx-share-alt", onClick: handlers.onShare },
@@ -46,6 +47,7 @@ function buildApiHeader(
 
 const RoundDetails = () => {
   const { id, roundId } = useParams<RoundDetailsParams>();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const candidateIdParam = searchParams.get("candidateId");
   const { handleShare } = useHeaderShare();
@@ -76,6 +78,14 @@ const RoundDetails = () => {
     }
   }, [handleShare]);
 
+  const onBack = useCallback(() => {
+    if (id) {
+      navigate(`/hiring-requests/${id}/applications`);
+      return;
+    }
+    navigate(-1);
+  }, [id, navigate]);
+
   const mode: RoundDetailsMode | null = apiData ? detectMode(apiData) : null;
   const isAiInterviewMode = mode === "ai-interview";
 
@@ -103,7 +113,7 @@ const RoundDetails = () => {
   }
 
   const headerConfig = apiData
-    ? buildApiHeader(apiData, { onResume, onShare })
+    ? buildApiHeader(apiData, { onResume, onShare, onBack })
     : null;
 
   return (

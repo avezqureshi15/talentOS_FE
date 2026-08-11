@@ -7,7 +7,13 @@ import type { Column } from "@/components/ui/data-table/data-table.types";
 const fallback = (value: string | null | undefined): string =>
   value && value.length > 0 ? value : EMPLOYEES_PAGE_LABELS.UNASSIGNED;
 
-export const buildEmployeesColumns = (): Column<Employee>[] => [
+type BuildEmployeesColumnsOptions = {
+  onEdit?: (employee: Employee) => void;
+};
+
+export const buildEmployeesColumns = ({
+  onEdit,
+}: BuildEmployeesColumnsOptions = {}): Column<Employee>[] => [
   {
     header: EMPLOYEES_PAGE_LABELS.COLUMN_EMPLOYEE,
     render: (e) => (
@@ -52,4 +58,23 @@ export const buildEmployeesColumns = (): Column<Employee>[] => [
       </span>
     ),
   },
+  ...(onEdit
+    ? [
+        {
+          header: EMPLOYEES_PAGE_LABELS.COLUMN_ACTIONS,
+          render: (e: Employee) => (
+            <button
+              type="button"
+              className="employees-edit-btn"
+              onClick={(ev) => {
+                ev.stopPropagation();
+                onEdit(e);
+              }}
+            >
+              {EMPLOYEES_PAGE_LABELS.ACTION_EDIT}
+            </button>
+          ),
+        } satisfies Column<Employee>,
+      ]
+    : []),
 ];

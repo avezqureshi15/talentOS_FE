@@ -61,6 +61,12 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
+  min-width: 0;
+  flex: 1;
+}
+
+.base-title-spacer {
+  flex: 1;
 }
 
 .base-close {
@@ -70,6 +76,8 @@
   cursor: pointer;
   font-size: 18px;
   padding: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .base-close:hover {

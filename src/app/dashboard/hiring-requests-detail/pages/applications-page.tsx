@@ -20,6 +20,7 @@ const ApplicationsPage = () => {
     activeView: HEADER_DEFAULT_VIEW,
     onImport: () => setIsImportOpen(true),
     onArchived: () => navigate(`/hiring-requests/${id}/archived`),
+    onBack: () => navigate("/hiring-requests"),
     onViewChange: (key: string) => {
       if (key === "board") navigate(`/hiring-requests/${id}/board`);
     },

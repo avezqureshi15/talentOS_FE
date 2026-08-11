@@ -1,11 +1,16 @@
 import type { CandidateHeaderProps } from "./candidate-header.types";
 
-const CandidateHeader = ({ title, avatarLabel, meta, actions }: CandidateHeaderProps) => {
+const CandidateHeader = ({ title, avatarLabel, meta, actions, onBack }: CandidateHeaderProps) => {
   if (!meta) return null;
 
   return (
     <div className="jobs-toolbar">
       <div className="jobs-candidate-left">
+        {onBack && (
+          <button type="button" className="jobs-back-btn" onClick={onBack} aria-label="Go back">
+            <i className="bx bx-chevron-left" />
+          </button>
+        )}
         {avatarLabel && <div className="jobs-avatar-ring">{avatarLabel}</div>}
         <div className="jobs-candidate-info">
           <div className="jobs-candidate-top-row">

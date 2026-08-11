@@ -7,6 +7,11 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/constants/permissions";
 import "./organization-page.css";
 
+type FieldErrors = {
+  phone?: string;
+  address_line1?: string;
+};
+
 export default function OrganizationPage() {
   const { can } = usePermissions();
   const canEdit = can(PERMISSIONS.SETTINGS_EDIT);
@@ -16,6 +21,8 @@ export default function OrganizationPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [form, setForm] = useState<UpdateOrganizationPayload>({});
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     getOrganization()
@@ -41,22 +48,48 @@ export default function OrganizationPage() {
 
   const set = useCallback(<K extends keyof UpdateOrganizationPayload>(key: K, value: UpdateOrganizationPayload[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+    if (key === "phone" || key === "address_line1") {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    }
   }, []);
 
   const handleSave = useCallback(async () => {
+    const phone = (form.phone ?? "").trim();
+    const addressLine1 = (form.address_line1 ?? "").trim();
+    const nextErrors: FieldErrors = {};
+    if (!phone) nextErrors.phone = "Phone is required";
+    if (!addressLine1) nextErrors.address_line1 = "Address Line 1 is required";
+    setFieldErrors(nextErrors);
+    setFormError("");
+    if (Object.keys(nextErrors).length > 0) return;
+
     setSaving(true);
     setSaved(false);
     try {
-      const { data } = await updateOrganization(form);
+      const payload: UpdateOrganizationPayload = {
+        ...form,
+        phone,
+        address_line1: addressLine1,
+      };
+      const { data } = await updateOrganization(payload);
       setOrg(data);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch { /* ignore */ }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to save organization details";
+      setFormError(msg);
+    }
     setSaving(false);
   }, [form]);
 
   const handleReset = useCallback(() => {
     if (!org) return;
+    setFieldErrors({});
+    setFormError("");
     setForm({
       logo_url: org.logo_url,
       website: org.website,
@@ -84,7 +117,10 @@ export default function OrganizationPage() {
       <div className="org-card">
         <div className="org-form-grid">
           <div className="org-field org-field--full">
-            <label className="org-label">Organization Name</label>
+            <label className="org-label">
+              Organization Name
+              <span className="org-required" aria-hidden="true">*</span>
+            </label>
             <div className="org-name-readonly">{org?.name ?? ""}</div>
           </div>
 
@@ -111,7 +147,10 @@ export default function OrganizationPage() {
           </div>
 
           <div className="org-field">
-            <label className="org-label">Phone</label>
+            <label className="org-label">
+              Phone
+              <span className="org-required" aria-hidden="true">*</span>
+            </label>
             <input
               type="text"
               className="org-input"
@@ -119,6 +158,7 @@ export default function OrganizationPage() {
               onChange={(e) => set("phone", e.target.value || null)}
               placeholder="+1 234 567 890"
             />
+            {fieldErrors.phone && <p className="org-field-error">{fieldErrors.phone}</p>}
           </div>
 
           <div className="org-field">
@@ -143,7 +183,10 @@ export default function OrganizationPage() {
           </div>
 
           <div className="org-field">
-            <label className="org-label">Address Line 1</label>
+            <label className="org-label">
+              Address Line 1
+              <span className="org-required" aria-hidden="true">*</span>
+            </label>
             <input
               type="text"
               className="org-input"
@@ -151,6 +194,7 @@ export default function OrganizationPage() {
               onChange={(e) => set("address_line1", e.target.value || null)}
               placeholder="Street address"
             />
+            {fieldErrors.address_line1 && <p className="org-field-error">{fieldErrors.address_line1}</p>}
           </div>
 
           <div className="org-field">
@@ -208,6 +252,8 @@ export default function OrganizationPage() {
             />
           </div>
         </div>
+
+        {formError && <p className="org-form-error">{formError}</p>}
 
         <div className="org-actions">
           {saved && <span className="org-saved-msg">Saved!</span>}

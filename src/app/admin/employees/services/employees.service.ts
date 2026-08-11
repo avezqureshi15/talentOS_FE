@@ -6,6 +6,7 @@ import type {
   EmployeesListParams,
   ImportTemplateResult,
   PaginatedEmployees,
+  UpdateEmployeePayload,
 } from "@/app/admin/employees/pages/employees-page.types";
 
 const FALLBACK_TEMPLATE_FILENAME = "employees_template.xlsx";
@@ -21,6 +22,9 @@ export const getEmployees = (params: EmployeesListParams) =>
 
 export const getEmployee = (empId: string) =>
   httpClient.get<Employee>(`${API_ENDPOINTS.EMPLOYEES}${empId}`);
+
+export const updateEmployee = (empId: string, payload: UpdateEmployeePayload) =>
+  httpClient.patch<Employee>(`${API_ENDPOINTS.EMPLOYEES}${empId}`, payload);
 
 export const importEmployeesFromExcel = async (file: File): Promise<EmployeeImportSummary> => {
   const formData = new FormData();

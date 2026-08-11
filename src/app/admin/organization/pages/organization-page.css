@@ -50,6 +50,23 @@
   font-weight: 500;
 }
 
+.org-required {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
+.org-field-error {
+  font-size: 12px;
+  color: var(--danger);
+  margin: 4px 0 0;
+}
+
+.org-form-error {
+  font-size: 13px;
+  color: var(--danger);
+  margin: 0 0 12px;
+}
+
 .org-input {
   width: 100%;
   padding: 10px 12px;

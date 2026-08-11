@@ -11,4 +11,6 @@ export type BaseModalProps = {
   variant?: BaseModalVariant;
   className?: string;
   overlayClassName?: string;
+  /** When true (default), always show the close (X) control even without a title. */
+  showClose?: boolean;
 };

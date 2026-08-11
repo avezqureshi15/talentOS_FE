@@ -24,10 +24,15 @@ export default function EditUserModal({ user, onClose, onSuccess, tenantId }: Pr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setError("Name is required");
+      return;
+    }
     setLoading(true);
     try {
       const payload: Record<string, unknown> = {};
-      if (name !== user.name) payload.name = name;
+      if (trimmedName !== user.name) payload.name = trimmedName;
       if (role !== user.role) payload.role = role;
       if (isActive !== user.is_active) payload.is_active = isActive;
       if (password) payload.password = password;
@@ -45,8 +50,18 @@ export default function EditUserModal({ user, onClose, onSuccess, tenantId }: Pr
     <BaseModal open title={`Edit User: ${user.name}`} onClose={onClose}>
       <form className="admin-modal-form" onSubmit={handleSubmit}>
         <div className="admin-field">
-          <label className="admin-label">Name</label>
-          <input type="text" className="admin-input" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
+          <label className="admin-label">
+            Name
+            <span className="admin-required" aria-hidden="true">*</span>
+          </label>
+          <input
+            type="text"
+            className="admin-input"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoFocus
+            required
+          />
         </div>
         <div className="admin-field">
           <label className="admin-label">Role</label>

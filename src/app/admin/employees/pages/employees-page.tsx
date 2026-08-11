@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
@@ -9,9 +9,12 @@ import {
 import SearchInput from "@/components/ui/search-input/search-input";
 import DataTable from "@/components/ui/data-table/data-table";
 import { useAuth } from "@/app/auth/hooks/use-auth";
+import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/constants/permissions";
 import { useEmployees } from "@/app/admin/employees/hooks/use-employees";
 import { buildEmployeesColumns } from "@/app/admin/employees/pages/employees-columns";
 import ImportEmployeesModal from "@/app/admin/employees/components/import-employees-modal/import-employees-modal";
+import EditEmployeeModal from "@/app/admin/employees/components/edit-employee-modal/edit-employee-modal";
 import {
   EMPLOYEES_PAGE_GRID,
   EMPLOYEES_PAGE_LABELS,
@@ -22,19 +25,27 @@ import type { Employee } from "@/app/admin/employees/pages/employees-page.types"
 import type { HeaderConfig } from "@/store/header.store";
 import "./employees-page.css";
 
-const columns = buildEmployeesColumns();
-
 const EmployeesPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  // UI-only: modal open state
+  const { can } = usePermissions();
+  const canEdit = can(PERMISSIONS.USER_MANAGE);
   const [isImportOpen, setIsImportOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const { data, isLoading, isFetching, isRefetching, isError, page, search, setPage, onSearch, refetch } =
     useEmployees();
 
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / EMPLOYEES_PAGE_PER_PAGE));
   const canImport = user?.role === "account_admin";
+
+  const columns = useMemo(
+    () =>
+      buildEmployeesColumns({
+        onEdit: canEdit ? (employee) => setEditingEmployee(employee) : undefined,
+      }),
+    [canEdit],
+  );
 
   const handleRowClick = (row: Employee) => {
     navigate(ROUTES.ADMIN_EMPLOYEE_DETAIL.replace(":empId", row.emp_id));
@@ -100,6 +111,17 @@ const EmployeesPage = () => {
 
         {canImport && (
           <ImportEmployeesModal open={isImportOpen} onClose={() => setIsImportOpen(false)} />
+        )}
+
+        {editingEmployee && (
+          <EditEmployeeModal
+            employee={editingEmployee}
+            onClose={() => setEditingEmployee(null)}
+            onSuccess={() => {
+              setEditingEmployee(null);
+              void refetch();
+            }}
+          />
         )}
       </div>
     </ErrorBoundary>

@@ -97,7 +97,15 @@ const JobsToolbar = ({ onOpenPalette }: { onOpenPalette?: () => void }) => {
   ]);
 
   if (meta) {
-    return <CandidateHeader title={title} avatarLabel={config.avatarLabel} meta={meta} actions={actions} />;
+    return (
+      <CandidateHeader
+        title={title}
+        avatarLabel={config.avatarLabel}
+        meta={meta}
+        actions={actions}
+        onBack={config.onBack}
+      />
+    );
   }
 
   return (

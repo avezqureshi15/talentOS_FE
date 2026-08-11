@@ -45,6 +45,12 @@ export type EmployeeImportSummary = {
   failed: EmployeeImportRowError[];
 };
 
+export type UpdateEmployeePayload = {
+  designation?: string | null;
+  department?: string | null;
+  contact_number?: string | null;
+};
+
 export type ImportTemplateResult = {
   blob: Blob;
   filename: string;

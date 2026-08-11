@@ -5,4 +5,5 @@ export type CandidateHeaderProps = {
   avatarLabel?: string;
   meta?: HeaderConfig["meta"];
   actions?: HeaderConfig["actions"];
+  onBack?: () => void;
 };

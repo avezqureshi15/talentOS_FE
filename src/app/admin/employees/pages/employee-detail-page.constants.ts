@@ -28,6 +28,7 @@ export const EMPLOYEE_DETAIL_LABELS = {
 
   LINKED_YES: "Linked to auth account",
   LINKED_NO: "Directory-only (no login)",
+  ACTION_EDIT: "Edit",
 } as const;
 
 export const EMPLOYEE_DETAIL_BACK_ICON = "bx bx-chevron-left";

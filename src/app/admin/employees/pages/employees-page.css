@@ -89,3 +89,20 @@
   color: var(--neutral-light);
   border-color: var(--border-subtle);
 }
+
+.employees-edit-btn {
+  appearance: none;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.employees-edit-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
