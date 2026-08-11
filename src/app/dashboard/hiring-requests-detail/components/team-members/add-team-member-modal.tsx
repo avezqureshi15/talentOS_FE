@@ -35,7 +35,7 @@ export default function AddTeamMemberModal({ open, onClose, hiringRequestId, exi
     if (!open) return;
     let cancelled = false;
     setLoadingUsers(true);
-    fetchUsers(search.trim() || undefined, 1, 100)
+    fetchUsers(search.trim() || undefined, 1, 100, undefined, true)
       .then((data) => {
         if (!cancelled) setUsers(data.data);
       })

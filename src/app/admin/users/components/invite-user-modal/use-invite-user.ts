@@ -4,6 +4,7 @@ import { QUERY_KEYS } from "@/constants/constants";
 import { createInvite } from "@/app/admin/users/services/users-admin.service";
 import { fetchUsers } from "@/services/users/users";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useToast } from "@/hooks/use-toast";
 import {
   INVITE_MODAL_LABELS,
   INVITE_SEARCH_DEBOUNCE_MS,
@@ -18,6 +19,8 @@ type UseInviteUserArgs = {
 };
 
 export function useInviteUser({ mode, tenantId, onSuccess }: UseInviteUserArgs) {
+  const { success: showSuccess } = useToast();
+
   // UI-only state: form fields + tab + selected picker item + async error.
   const [tab, setTab] = useState<InviteTab>(mode === "existing-and-email" ? "existing" : "manual");
   const [email, setEmail] = useState("");
@@ -40,6 +43,7 @@ export function useInviteUser({ mode, tenantId, onSuccess }: UseInviteUserArgs) 
     mutationFn: (payload: { email: string; role: string; tenant_id?: number }) => createInvite(payload),
     onSuccess: () => {
       setError("");
+      showSuccess(INVITE_MODAL_LABELS.TOAST_SUCCESS);
       onSuccess();
     },
     onError: (err: unknown) => {

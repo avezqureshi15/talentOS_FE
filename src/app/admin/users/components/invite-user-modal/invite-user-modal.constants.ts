@@ -17,6 +17,7 @@ export const INVITE_MODAL_LABELS = {
   ERR_EMAIL_REQUIRED: "Email is required",
   ERR_PICK_EMPLOYEE: "Select an employee to invite",
   ERR_GENERIC: "Failed to send invite",
+  TOAST_SUCCESS: "Invitation sent successfully",
 } as const;
 
 export const INVITE_TABS: { key: InviteTab; label: string }[] = [

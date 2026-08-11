@@ -43,7 +43,7 @@ export default function AssignMemberModal({ job, onClose }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    fetchUsers(search.trim() || undefined, 1, 100)
+    fetchUsers(search.trim() || undefined, 1, 100, undefined, true)
       .then((data) => {
         if (!cancelled) {
           setUsers(data.data);
