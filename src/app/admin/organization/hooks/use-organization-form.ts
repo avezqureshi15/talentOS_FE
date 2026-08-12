@@ -49,9 +49,10 @@ export function useOrganizationForm() {
     <K extends keyof UpdateOrganizationPayload>(key: K, value: UpdateOrganizationPayload[K]) => {
       setForm((prev) => ({ ...prev, [key]: value }));
       if (key === "phone" || key === "address_line1") {
+        const errorKey: keyof OrganizationFieldErrors = key;
         setFieldErrors((prev) => {
           const next = { ...prev };
-          delete next[key];
+          delete next[errorKey];
           return next;
         });
       }
