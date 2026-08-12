@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback } from "react";
 import "./round-details.css";
 import { fetchRoundDetail } from "@/services/applications/applications";
+import httpClient from "@/services/http-client";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import { toISTDisplay } from "@/utils/date";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
@@ -61,14 +62,25 @@ const RoundDetails = () => {
     retry: QUERY_CONFIG.DEFAULT_RETRY_COUNT,
   });
 
-  const onResume = useCallback(() => {
-    const url = apiData?.resume_url?.trim();
-    if (!url) {
+  const onResume = useCallback(async () => {
+    if (!roundId) return;
+    try {
+      const response = await httpClient.get(`/rounds/${roundId}/resume`, {
+        responseType: "blob",
+        toastOnError: false,
+      });
+      const url = URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${apiData?.candidate ?? "resume"}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
       useToastStore.getState().addToast("No resume available", ToastType.ERROR);
-      return;
     }
-    window.open(url, "_blank", "noopener,noreferrer");
-  }, [apiData?.resume_url]);
+  }, [roundId, apiData?.candidate]);
 
   const onShare = useCallback(async () => {
     const ok = await handleShare();
