@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
-import { fetchUsers, type UserItem } from "@/services/users/users";
+import { fetchSystemUsers, type UserItem } from "@/services/users/users";
 import { useAuth } from "@/app/auth/hooks/use-auth";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
@@ -43,7 +43,7 @@ export default function AssignMemberModal({ job, onClose }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    fetchUsers(search.trim() || undefined, 1, 100, undefined, true)
+    fetchSystemUsers(search.trim() || undefined, 1, 100)
       .then((data) => {
         if (!cancelled) {
           setUsers(data.data);
@@ -74,10 +74,12 @@ export default function AssignMemberModal({ job, onClose }: Props) {
     setBusy(true);
     setError("");
     let failed = 0;
+    const userMap = new Map(users.map((u) => [u.id, u]));
     for (const userId of selected) {
+      const u = userMap.get(userId);
       try {
         await addMutation.mutateAsync({
-          user_id: userId,
+          user_id: u?.employee_id ?? userId,
           is_owner: false,
         });
       } catch {

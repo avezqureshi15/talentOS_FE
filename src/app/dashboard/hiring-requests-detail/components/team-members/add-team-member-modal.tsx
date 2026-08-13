@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
-import { fetchUsers, type UserItem } from "@/services/users/users";
+import { fetchSystemUsers, type UserItem } from "@/services/users/users";
 import { useAddTeamMember } from "./use-team-members";
 import { type JobTeamMember } from "./team-members.types";
 import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
+import { ROLE_DISPLAY } from "@/constants/role-display";
 import "./add-team-member-modal.css";
 
 type Props = {
@@ -35,7 +36,7 @@ export default function AddTeamMemberModal({ open, onClose, hiringRequestId, exi
     if (!open) return;
     let cancelled = false;
     setLoadingUsers(true);
-    fetchUsers(search.trim() || undefined, 1, 100, undefined, true)
+    fetchSystemUsers(search.trim() || undefined, 1, 100)
       .then((data) => {
         if (!cancelled) setUsers(data.data);
       })
@@ -59,7 +60,7 @@ export default function AddTeamMemberModal({ open, onClose, hiringRequestId, exi
       return;
     }
     addMutation.mutate(
-      { user_id: selected.id, is_owner: false },
+      { user_id: selected.employee_id ?? selected.id, is_owner: false },
       {
         onSuccess: () => onClose(),
         onError: (err: Error) => setError(err.message || "Failed to add member"),
@@ -100,6 +101,9 @@ export default function AddTeamMemberModal({ open, onClose, hiringRequestId, exi
               <span className="atm-user-info">
                 <span className="atm-user-name">{u.name}</span>
                 <span className="atm-user-email">{u.email}</span>
+              </span>
+              <span className="atm-role-badge">
+                {ROLE_DISPLAY[u.role]?.label ?? u.role}
               </span>
               <i className={`bx ${selected?.id === u.id ? "bx-check-circle" : "bx-circle"}`} />
             </button>

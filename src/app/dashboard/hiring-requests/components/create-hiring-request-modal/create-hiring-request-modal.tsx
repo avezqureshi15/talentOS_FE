@@ -501,6 +501,9 @@ export default function CreateHiringRequestModal({
                         <span className="create-hr-user-name">{u.name}</span>
                         <span className="create-hr-user-email">{u.email}</span>
                       </span>
+                      <span className="create-hr-role-badge create-hr-role-badge--row">
+                        {ROLE_DISPLAY[u.role]?.label ?? u.role}
+                      </span>
                       <span className="create-hr-user-check">
                         <i className={`bx ${isAssigned ? "bx-check-circle" : "bx-circle"}`} />
                       </span>

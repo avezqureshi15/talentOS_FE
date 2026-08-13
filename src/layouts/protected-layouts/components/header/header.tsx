@@ -68,7 +68,7 @@ const JobsToolbar = ({ onOpenPalette, sidebarOpen }: { onOpenPalette?: () => voi
   const isPaletteRoute = isCommandPaletteRoute(location.pathname);
   const [jdModalOpen, setJdModalOpen] = useState(false);
 
-  const MORE_MENU_KEYS = ["import", "export", "archive"];
+  const MORE_MENU_KEYS = ["import", "export", "archive", "close-job"];
   const isOverflowAction = (key: string) =>
     MORE_MENU_KEYS.includes(key) || key.startsWith("export-");
   const overflowActions = actions?.filter((a) => isOverflowAction(a.key)) ?? [];

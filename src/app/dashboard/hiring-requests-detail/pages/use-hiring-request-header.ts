@@ -11,6 +11,8 @@ import {
   HEADER_IMPORT_LABEL, HEADER_IMPORT_ICON, HEADER_IMPORT_TOOLTIP,
   HEADER_REFRESH_LABEL, HEADER_REFRESH_ICON, HEADER_EXPORT_FILENAME,
   HEADER_ARCHIVE_LABEL, HEADER_ARCHIVE_ICON, HEADER_ARCHIVE_TOOLTIP,
+  HEADER_CLOSE_JOB_LABEL, HEADER_CLOSE_JOB_ICON, HEADER_CLOSE_JOB_TOOLTIP,
+  HEADER_REOPEN_JOB_LABEL, HEADER_REOPEN_JOB_ICON, HEADER_REOPEN_JOB_TOOLTIP,
 } from "@/layouts/protected-layouts/components/header/header.constants";
 import type { HeaderBadge, HeaderConfig } from "@/store/header.store";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
@@ -24,6 +26,8 @@ type UseHiringRequestHeaderOptions = {
   badges?: HeaderBadge[];
   onImport?: () => void;
   onArchived?: () => void;
+  onCloseJob?: () => void;
+  isJobClosing?: boolean;
   title?: string;
   titleIcon?: string;
   subtitle?: string;
@@ -40,6 +44,8 @@ export function useHiringRequestHeader({
   badges,
   onImport,
   onArchived,
+  onCloseJob,
+  isJobClosing,
   title,
   titleIcon,
   subtitle,
@@ -95,9 +101,19 @@ export function useHiringRequestHeader({
       ...(canImport && onArchived
         ? [{ key: "archive", label: HEADER_ARCHIVE_LABEL, icon: HEADER_ARCHIVE_ICON, variant: "primary" as const, tooltipLines: HEADER_ARCHIVE_TOOLTIP, onClick: onArchived }]
         : []),
+      ...(onCloseJob
+        ? [{
+            key: "close-job",
+            label: data.is_active ? HEADER_CLOSE_JOB_LABEL : HEADER_REOPEN_JOB_LABEL,
+            icon: data.is_active ? HEADER_CLOSE_JOB_ICON : HEADER_REOPEN_JOB_ICON,
+            tooltipLines: data.is_active ? HEADER_CLOSE_JOB_TOOLTIP : HEADER_REOPEN_JOB_TOOLTIP,
+            className: data.is_active ? "header-more-item--danger" : undefined,
+            onClick: onCloseJob,
+          }]
+        : []),
       { key: "refresh", label: HEADER_REFRESH_LABEL, icon: HEADER_REFRESH_ICON, variant: "primary", onClick: handleRefresh },
     ],
     badge,
     badges,
-  }), [totalCount, totalCountOverride, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, badges, canImport, onImport, onArchived, title, titleIcon, subtitle, onBack]);
+  }), [totalCount, totalCountOverride, handleExport, isExporting, exportError, handleRefresh, data, activeView, onViewChange, badge, badges, canImport, onImport, onArchived, onCloseJob, title, titleIcon, subtitle, onBack]);
 }

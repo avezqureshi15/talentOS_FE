@@ -26,3 +26,10 @@ export const HEADER_ARCHIVE_ICON = "bx bx-trash-x";
 export const HEADER_ARCHIVE_TOOLTIP = ["Archived candidates", "View candidates archived from any stage and restore them if needed."];
 
 export const HEADER_EXPORT_FILENAME = "Hiring Request";
+
+export const HEADER_CLOSE_JOB_LABEL = "Close Job";
+export const HEADER_CLOSE_JOB_ICON = "bx bx-x-circle";
+export const HEADER_CLOSE_JOB_TOOLTIP = ["Close Job", "Mark this job as closed. It will no longer appear as active."];
+export const HEADER_REOPEN_JOB_LABEL = "Re-open Job";
+export const HEADER_REOPEN_JOB_ICON = "bx bx-rotate-cw";
+export const HEADER_REOPEN_JOB_TOOLTIP = ["Re-open Job", "Mark this job as active again."];

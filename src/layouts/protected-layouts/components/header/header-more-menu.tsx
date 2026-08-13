@@ -61,7 +61,7 @@ const HeaderMoreMenu = ({ actions }: HeaderMoreMenuProps) => {
                 <button
                   key={action.key}
                   type="button"
-                  className="header-more-item"
+                  className={`header-more-item${action.className ? ` ${action.className}` : ""}`}
                   role="menuitem"
                   disabled={action.disabled || action.loading}
                   onClick={() => {

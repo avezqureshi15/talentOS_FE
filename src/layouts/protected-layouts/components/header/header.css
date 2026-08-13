@@ -736,6 +736,30 @@
   color: var(--text-muted);
 }
 
+.header-more-item--danger {
+  margin-top: 4px;
+  border-top: 1px solid rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.header-more-item--danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.header-more-item--danger > i {
+  color: #ef4444;
+}
+
+.header-more-item--danger .header-more-item-title {
+  color: #ef4444;
+}
+
+.header-more-item--danger .header-more-item-desc {
+  color: rgba(239, 68, 68, 0.7);
+}
+
 /* ── Responsive: collapse button text to icons ── */
 
 @media (max-width: 1100px) {
