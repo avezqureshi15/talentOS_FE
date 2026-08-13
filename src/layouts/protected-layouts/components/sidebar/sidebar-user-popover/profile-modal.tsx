@@ -1,7 +1,7 @@
 import { useState } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
 import { useAuth } from "@/app/auth/hooks/use-auth";
-import { getInitials } from "@/utils/user";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import { PROFILE_MODAL } from "@/constants/constants";
 import "./profile-modal.css";
 
@@ -25,7 +25,10 @@ const ProfileModal = ({ open, onClose }: ProfileModalProps) => {
     <BaseModal open={open} onClose={onClose} title={PROFILE_MODAL.TITLE} icon={PROFILE_MODAL.ICON} className="profile-modal">
       <div className="profile-modal__body">
         <div className="profile-modal__user">
-          <div className="profile-modal__avatar">{user ? getInitials(user.name) : "?"}</div>
+          <PersonAvatar
+            className="profile-modal__avatar"
+            person={{ name: user?.name ?? "User", email: user?.email }}
+          />
           <div className="profile-modal__info">
             <div className="profile-modal__name">{user?.name ?? "\u2014"}</div>
             <div className="profile-modal__email">{user?.email ?? "\u2014"}</div>

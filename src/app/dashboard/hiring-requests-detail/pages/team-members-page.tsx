@@ -46,7 +46,7 @@ const TeamMembersPage = () => {
         <div className="tm-member-cell">
           <PersonAvatar
             className="tm-avatar"
-            person={{ name: m.name, email: m.email }}
+            person={{ name: m.name, email: m.email, designation: m.designation ?? undefined }}
           />
           <div className="tm-member-info">
             <TruncatedCell text={m.name} className="tm-member-name" />

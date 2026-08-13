@@ -147,7 +147,7 @@ export default function AssignMemberModal({ job, onClose }: Props) {
                 />
                 <PersonAvatar
                   className="am-avatar"
-                  person={{ name: u.name, email: u.email }}
+                  person={{ name: u.name, email: u.email, designation: u.designation || undefined }}
                 />
                 <span className="am-info">
                   <span className="am-name-row">

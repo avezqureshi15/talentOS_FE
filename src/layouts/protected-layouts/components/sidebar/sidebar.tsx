@@ -4,7 +4,6 @@ import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import { useAuth } from "@/app/auth/hooks/use-auth";
 import { usePermissions } from "@/hooks/use-permissions";
-import { getInitials } from "@/utils/user";
 import "./sidebar.css";
 import type { SidebarProps, ChatHistoryItem } from "@/layouts/protected-layouts/components/sidebar/sidebar.types";
 import { SIDEBAR_LABELS } from "@/constants/constants";
@@ -13,6 +12,7 @@ import DeleteChatModal from "./delete-chat-modal";
 import ChatItem from "./chat-item";
 import SidebarNav from "./sidebar-nav";
 import SidebarUserPopover from "@/layouts/protected-layouts/components/sidebar/sidebar-user-popover/sidebar-user-popover";
+import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import { Sidebar as SidebarShell, SidebarSection } from "@/components/ui/sidebar";
 import { MAIN_NAV_ITEMS, ADMIN_NAV_ITEMS, SUPERADMIN_NAV_ITEMS, type NavGroupConfig, type NavItemConfig } from "@/layouts/protected-layouts/navigation.config";
 
@@ -158,17 +158,11 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
 
-          <div className="sidebar-tooltip-wrapper">
-            <button
-              className="sidebar-collapsed-avatar"
-              onClick={() => { setSidebarOpen(true); setAutoOpenUser(true); }}
-            >
-              {user ? getInitials(user.name) : "?"}
-            </button>
-            <span className="sidebar-tooltip">
-              {user?.name ?? "User"}
-            </span>
-          </div>
+          <PersonAvatar
+            className="sidebar-collapsed-avatar"
+            person={{ name: user?.name ?? "User", email: user?.email }}
+            onClick={() => { setSidebarOpen(true); setAutoOpenUser(true); }}
+          />
         </div>
       </SidebarShell>
     );

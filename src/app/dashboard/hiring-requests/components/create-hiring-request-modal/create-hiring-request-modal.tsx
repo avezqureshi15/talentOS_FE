@@ -418,7 +418,7 @@ export default function CreateHiringRequestModal({
                   >
                     <PersonAvatar
                       className="create-hr-user-avatar"
-                      person={{ name: u.name, email: u.email }}
+                      person={{ name: u.name, email: u.email, designation: u.designation || undefined }}
                     />
                     <span className="create-hr-user-info">
                       <span className="create-hr-user-name">{u.name}</span>
@@ -455,7 +455,7 @@ export default function CreateHiringRequestModal({
                       <div key={a.user.id} className="create-hr-assign-chip">
                         <PersonAvatar
                           className="create-hr-assign-chip-avatar"
-                          person={{ name: a.user.name, email: a.user.email }}
+                          person={{ name: a.user.name, email: a.user.email, designation: a.user.designation || undefined }}
                         />
                         <span className="create-hr-assign-chip-info">
                           <span className="create-hr-assign-chip-name">{a.user.name}</span>

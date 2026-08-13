@@ -95,7 +95,7 @@ export default function AddTeamMemberModal({ open, onClose, hiringRequestId, exi
             >
               <PersonAvatar
                 className="atm-user-avatar"
-                person={{ name: u.name, email: u.email }}
+                person={{ name: u.name, email: u.email, designation: u.designation || undefined }}
               />
               <span className="atm-user-info">
                 <span className="atm-user-name">{u.name}</span>

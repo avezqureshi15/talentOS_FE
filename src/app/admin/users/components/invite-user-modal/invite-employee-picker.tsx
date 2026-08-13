@@ -36,7 +36,7 @@ const InviteEmployeePicker = ({
       <div className="iep-selected" role="group" aria-label="Selected employee">
         <PersonAvatar
           className="iep-selected-avatar"
-          person={{ name: selected.name, email: selected.email }}
+          person={{ name: selected.name, email: selected.email, designation: selected.designation || undefined }}
         />
         <div className="iep-selected-info">
           <span className="iep-selected-name">{selected.name}</span>

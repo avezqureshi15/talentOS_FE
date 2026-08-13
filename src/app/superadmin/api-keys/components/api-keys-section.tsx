@@ -58,12 +58,16 @@ const ApiKeyRow = ({ cfg, entry, value, hasOverride, onValueChange, onClear }: A
         <div className="api-key-row-controls">
           <input
             type={isSecret ? "password" : "text"}
+            name={`api-key-${cfg.key}`}
             className="api-key-input"
             placeholder={placeholder}
             value={value}
             onChange={(e) => onValueChange(e.target.value)}
-            autoComplete="off"
+            autoComplete={isSecret ? "new-password" : "off"}
             spellCheck={false}
+            autoCorrect="off"
+            autoCapitalize="off"
+            data-lpignore="true"
           />
           {hasOverride && (
             <button type="button" className="api-key-clear" onClick={onClear}>
@@ -170,7 +174,6 @@ const ApiKeysSection = () => {
       {!isLoading && !isManageableLoading && (
         <div className="api-keys-section__list">
           <div className="api-keys-section__group">
-            <div className="api-keys-section__group-title">Platform (global)</div>
             {platformKeys.map((cfg) => {
               const entry = current[cfg.key];
               return (

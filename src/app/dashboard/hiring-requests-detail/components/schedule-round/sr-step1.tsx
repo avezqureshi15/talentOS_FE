@@ -123,7 +123,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
               <button key={iv.id} className={`sr-interviewer-item ${isSelected(iv) ? "sr-interviewer-item--selected" : ""}`} onClick={() => onSelectInterviewer(iv)} type="button">
                 <PersonAvatar
                   className="sr-interviewer-avatar"
-                  person={{ name: iv.name, designation: iv.designation }}
+                  person={{ name: iv.name, email: iv.email, designation: iv.designation }}
                 />
                 <div className="sr-interviewer-info">
                   <span className="sr-interviewer-name">{iv.name}</span>
