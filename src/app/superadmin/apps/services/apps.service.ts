@@ -33,6 +33,9 @@ export const updateApp = (appId: number, body: UpdateAppRequest, scope: AppsScop
 export const revokeApp = (appId: number, scope: AppsScope = "superadmin") =>
   httpClient.delete<{ message: string }>(`${APPS_BASE[scope]}/${appId}`);
 
+export const deleteApp = (appId: number, scope: AppsScope = "superadmin") =>
+  httpClient.delete<{ message: string }>(`${APPS_BASE[scope]}/${appId}/permanent`);
+
 export const rotateKey = (appId: number, scope: AppsScope = "superadmin") =>
   httpClient.post<AppCreatedResponse>(`${APPS_BASE[scope]}/${appId}/rotate`);
 

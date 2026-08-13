@@ -5,16 +5,19 @@ import { useAppDetail } from "@/app/superadmin/apps/hooks/use-app-detail";
 import { useRevokeApp } from "@/app/superadmin/apps/hooks/use-revoke-app";
 import { useRotateKey } from "@/app/superadmin/apps/hooks/use-rotate-key";
 import { useUpdateApp } from "@/app/superadmin/apps/hooks/use-update-app";
+import { useDeleteApp } from "@/app/superadmin/apps/hooks/use-delete-app";
 import { useUpdatePermissions } from "@/app/superadmin/apps/hooks/use-update-permissions";
 import AppPermissionEditor from "@/app/superadmin/apps/components/app-permission-editor";
 import EditAppModal from "@/app/superadmin/apps/components/edit-app-modal";
 import RevokeAppDialog from "@/app/superadmin/apps/components/revoke-app-dialog";
+import DeleteAppDialog from "@/app/superadmin/apps/components/delete-app-dialog";
 import RotateKeyDialog from "@/app/superadmin/apps/components/rotate-key-dialog";
 import Button from "@/components/ui/button/button";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import "@/app/superadmin/apps/app-detail-page.css";
 import type { AppsScope } from "@/app/superadmin/apps/services/apps.service";
 import type { PermissionInfo, UpdateAppRequest } from "@/app/superadmin/apps/services/apps.service.types";
+import { API_KEY_ROLE_LABELS } from "@/app/superadmin/apps/api-key-roles";
 
 type Tab = "details" | "permissions";
 
@@ -27,9 +30,11 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
   const { mutateAsync: revokeAppAsync } = useRevokeApp(scope);
   const { mutateAsync: rotateKeyAsync } = useRotateKey(scope);
   const { mutateAsync: updateAppAsync } = useUpdateApp(scope);
+  const { mutateAsync: deleteAppAsync } = useDeleteApp(scope);
   const updatePermsMutation = useUpdatePermissions(scope);
   const [permissions, setPermissions] = useState<PermissionInfo[]>([]);
   const [showRevoke, setShowRevoke] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const [showRotate, setShowRotate] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   
@@ -56,6 +61,13 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
     await revokeAppAsync(app.id);
     setShowRevoke(false);
   }, [app, revokeAppAsync]);
+
+  const handleDelete = useCallback(async () => {
+    if (!app) return;
+    await deleteAppAsync(app.id);
+    setShowDelete(false);
+    navigate(appsBasePath);
+  }, [app, deleteAppAsync, navigate, appsBasePath]);
 
   const handleRotate = useCallback(async () => {
     if (!app) throw new Error("No app selected");
@@ -165,6 +177,9 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
                 <Button variant="ghost" icon="bx bx-x-circle" onClick={() => setShowRevoke(true)} disabled={!app.is_active}>
                   Revoke
                 </Button>
+                <Button variant="danger" icon="bx bx-trash" onClick={() => setShowDelete(true)}>
+                  Delete
+                </Button>
               </div>
             </div>
 
@@ -196,6 +211,13 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
                   {app.last_used_at ? new Date(app.last_used_at).toLocaleDateString() : "Never"}
                 </span>
               </div>
+
+              <div className="ad-details-field">
+                <span className="ad-details-label">Role</span>
+                <span className="ad-details-value">
+                  {app.role ? API_KEY_ROLE_LABELS[app.role] ?? app.role : "No role (platform keys only)"}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -215,6 +237,7 @@ export default function AppDetailPage({ scope = "superadmin" }: { scope?: AppsSc
       )}
 
       <RevokeAppDialog open={showRevoke} appName={app.name} onClose={() => setShowRevoke(false)} onConfirm={handleRevoke} />
+      <DeleteAppDialog open={showDelete} appName={app.name} onClose={() => setShowDelete(false)} onConfirm={handleDelete} />
       <RotateKeyDialog open={showRotate} appName={app.name} onClose={() => setShowRotate(false)} onConfirm={handleRotate} />
       <EditAppModal open={showEdit} app={app} onClose={() => setShowEdit(false)} onSubmit={handleEditSubmit} />
     </div>

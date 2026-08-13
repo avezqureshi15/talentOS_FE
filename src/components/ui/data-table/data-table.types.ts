@@ -6,6 +6,15 @@ export type Column<T> = {
   className?: string;
   style?: CSSProperties;
   width?: string;
+  /**
+   * Per-column truncation limit.
+   * - number  → truncate at that many characters
+   * - true    → truncate at the TruncatedCell default (25 chars)
+   * Only applied when render() returns a plain string.
+   */
+  truncate?: number | boolean;
+  /** Extra class forwarded to the TruncatedCell tooltip popup. */
+  truncateTooltipClassName?: string;
 };
 
 export type DataTablePagination = {

@@ -15,6 +15,7 @@ export type AppResponse = {
   created_at: string;
   tenant_id: number | null;
   tenant_name: string | null;
+  role: string | null;
   created_by: CreatedByBrief | null;
 };
 
@@ -46,12 +47,14 @@ export type CreateAppRequest = {
   name: string;
   description?: string;
   tenant_id?: number | null;
+  role?: string | null;
   expires_at?: string | null;
 };
 
 export type UpdateAppRequest = {
   name?: string;
   description?: string;
+  role?: string | null;
   expires_at?: string | null;
 };
 

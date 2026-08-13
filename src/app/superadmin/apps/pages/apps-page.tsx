@@ -6,19 +6,21 @@ import PageHeader from "@/layouts/protected-layouts/components/header/page-heade
 import { useAppsList } from "@/app/superadmin/apps/hooks/use-apps-list";
 import { useCreateApp } from "@/app/superadmin/apps/hooks/use-create-app";
 import { useRevokeApp } from "@/app/superadmin/apps/hooks/use-revoke-app";
+import { useDeleteApp } from "@/app/superadmin/apps/hooks/use-delete-app";
 import { useRotateKey } from "@/app/superadmin/apps/hooks/use-rotate-key";
 import { useUpdateApp } from "@/app/superadmin/apps/hooks/use-update-app";
 import AppsTable from "@/app/superadmin/apps/components/apps-table";
 import CreateAppModal from "@/app/superadmin/apps/components/create-app-modal";
 import EditAppModal from "@/app/superadmin/apps/components/edit-app-modal";
 import RevokeAppDialog from "@/app/superadmin/apps/components/revoke-app-dialog";
+import DeleteAppDialog from "@/app/superadmin/apps/components/delete-app-dialog";
 import RotateKeyDialog from "@/app/superadmin/apps/components/rotate-key-dialog";
 import { getTenants } from "@/app/superadmin/tenants/services/tenants.service";
 import type { AppsScope } from "@/app/superadmin/apps/services/apps.service";
 import type { AppResponse, UpdateAppRequest } from "@/app/superadmin/apps/services/apps.service.types";
 import type { TenantOption } from "@/app/superadmin/apps/components/create-app-modal.types";
 
-type ModalState = "none" | "create" | "revoke" | "rotate" | "edit";
+type ModalState = "none" | "create" | "revoke" | "delete" | "rotate" | "edit";
 
 export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }) {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
   const { data, isLoading } = useAppsList(page, search, tenantId, scope);
   const { mutateAsync: createAppAsync } = useCreateApp(scope);
   const { mutateAsync: revokeAppAsync } = useRevokeApp(scope);
+  const { mutateAsync: deleteAppAsync } = useDeleteApp(scope);
   const { mutateAsync: rotateKeyAsync } = useRotateKey(scope);
   const { mutateAsync: updateAppAsync } = useUpdateApp(scope);
 
@@ -87,6 +90,12 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
     await revokeAppAsync(selectedApp.id);
     closeModal();
   }, [selectedApp, revokeAppAsync, closeModal]);
+
+  const handleDelete = useCallback(async () => {
+    if (!selectedApp) return;
+    await deleteAppAsync(selectedApp.id);
+    closeModal();
+  }, [selectedApp, deleteAppAsync, closeModal]);
 
   const handleRotate = useCallback(async () => {
     if (!selectedApp) throw new Error("No app selected");
@@ -136,6 +145,7 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
           onRevoke={(app) => openModal("revoke", app)}
           onRotate={(app) => openModal("rotate", app)}
           onEdit={(app) => openModal("edit", app)}
+          onDelete={(app) => openModal("delete", app)}
           onRowClick={handleRowClick}
         />
 
@@ -162,6 +172,13 @@ export default function AppsPage({ scope = "superadmin" }: { scope?: AppsScope }
             appName={selectedApp.name}
             onClose={closeModal}
             onConfirm={handleRevoke}
+          />
+
+          <DeleteAppDialog
+            open={modal === "delete"}
+            appName={selectedApp.name}
+            onClose={closeModal}
+            onConfirm={handleDelete}
           />
 
           <RotateKeyDialog

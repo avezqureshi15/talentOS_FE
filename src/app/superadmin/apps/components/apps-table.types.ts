@@ -6,6 +6,7 @@ export type AppsTableProps = {
   onRevoke: (app: AppResponse) => void;
   onRotate: (app: AppResponse) => void;
   onEdit: (app: AppResponse) => void;
+  onDelete: (app: AppResponse) => void;
   onRowClick: (app: AppResponse) => void;
   showTenant?: boolean;
 };

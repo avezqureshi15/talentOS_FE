@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import type { DataTableProps } from "./data-table.types";
 import "./data-table.css";
 
@@ -104,11 +105,24 @@ export default function DataTable<T>({
                     />
                   </div>
                 )}
-                {columns.map((col, j) => (
-                  <div key={j} className={col.className} style={col.style}>
-                    {col.render(row, i)}
-                  </div>
-                ))}
+                {columns.map((col, j) => {
+                  const rendered = col.render(row, i);
+                  const cellChild =
+                    col.truncate !== undefined && typeof rendered === "string" ? (
+                      <TruncatedCell
+                        text={rendered}
+                        maxChars={typeof col.truncate === "number" ? col.truncate : undefined}
+                        tooltipClassName={col.truncateTooltipClassName}
+                      />
+                    ) : (
+                      rendered
+                    );
+                  return (
+                    <div key={j} className={col.className} style={col.style}>
+                      {cellChild}
+                    </div>
+                  );
+                })}
               </>
             );
 

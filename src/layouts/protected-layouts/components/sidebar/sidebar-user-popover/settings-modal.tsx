@@ -48,11 +48,14 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
   // Per-tenant AI-screening settings — hidden for superadmin (no own tenant).
   const canViewAiScreening = !isSuperAdmin && !!user?.tenant_id && can(PERMISSIONS.SETTINGS_VIEW);
 
+  // API keys: superadmin sees all scopes; tenant admins surface their own tenant-scope keys.
+  const canViewApiKeys = isSuperAdmin || (!!user?.tenant_id && can(PERMISSIONS.SETTINGS_VIEW));
+
   const visibleTabs = SETTINGS_TABS.filter(
     (t) =>
       t.value === "theme" ||
       t.value === "role-docs" ||
-      (t.value === "api-keys" && isSuperAdmin) ||
+      (t.value === "api-keys" && canViewApiKeys) ||
       (t.value === "apps" && canManageApps) ||
       (t.value === "ai-screening" && canViewAiScreening),
   );
@@ -109,7 +112,7 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
             </div>
           )}
 
-          {tab === "api-keys" && isSuperAdmin && (
+          {tab === "api-keys" && canViewApiKeys && (
             <div className="settings-modal__body settings-modal__body--api-keys">
               <ApiKeysSection />
             </div>

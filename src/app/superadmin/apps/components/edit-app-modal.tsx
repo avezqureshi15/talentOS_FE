@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
 import type { AppResponse, UpdateAppRequest } from "@/app/superadmin/apps/services/apps.service.types";
+import { API_KEY_ROLES } from "../api-key-roles";
+
+const roleOptions = API_KEY_ROLES.map((r) => ({ value: r.value, label: r.label }));
 
 export type EditAppModalProps = {
   open: boolean;
@@ -20,6 +23,7 @@ const toDateInput = (iso: string | null): string => {
 export default function EditAppModal({ open, app, onClose, onSubmit }: EditAppModalProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [role, setRole] = useState<string>("");
   const [expiresAt, setExpiresAt] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +32,7 @@ export default function EditAppModal({ open, app, onClose, onSubmit }: EditAppMo
     if (open && app) {
       setName(app.name);
       setDescription(app.description ?? "");
+      setRole(app.role ?? "");
       setExpiresAt(toDateInput(app.expires_at));
       setError(null);
     }
@@ -42,6 +47,7 @@ export default function EditAppModal({ open, app, onClose, onSubmit }: EditAppMo
       await onSubmit({
         name: name.trim(),
         description: description.trim(),
+        role: role || null,
         expires_at: expiresAt ? new Date(expiresAt + "T23:59:59").toISOString() : null,
       });
       onClose();
@@ -73,6 +79,15 @@ export default function EditAppModal({ open, app, onClose, onSubmit }: EditAppMo
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
             />
+          </div>
+          <div className="ap-field">
+            <label>Role</label>
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="">No role (platform keys only)</option>
+              {roleOptions.map((r) => (
+                <option key={r.value} value={r.value}>{r.label}</option>
+              ))}
+            </select>
           </div>
           <div className="ap-field">
             <label>Expires On <span style={{ opacity: 0.6, fontWeight: 400 }}>(optional)</span></label>

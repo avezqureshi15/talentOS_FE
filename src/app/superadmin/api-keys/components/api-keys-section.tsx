@@ -12,15 +12,11 @@ import {
   API_KEYS_ERROR_MESSAGE,
   API_KEYS_PAGE_SUBTITLE,
   API_KEYS_PAGE_TITLE,
-  API_KEYS_PLATFORM_SECTION_HINT,
-  API_KEYS_PLATFORM_SECTION_TITLE,
   API_KEYS_SAVED_MESSAGE,
   API_KEYS_SAVE_LABEL,
   API_KEYS_SOURCE_PLATFORM,
   API_KEYS_SOURCE_PLATFORM_GLOBAL,
   API_KEYS_SOURCE_TENANT,
-  API_KEYS_TENANT_SECTION_HINT,
-  API_KEYS_TENANT_SECTION_TITLE,
 } from "../api-keys.constants";
 import type { ApiKeyEntry } from "../services/api-keys.service";
 import type { ManageableApiKeyMeta } from "../services/api-keys.service";
@@ -174,8 +170,7 @@ const ApiKeysSection = () => {
       {!isLoading && !isManageableLoading && (
         <div className="api-keys-section__list">
           <div className="api-keys-section__group">
-            <div className="api-keys-section__group-title">{API_KEYS_PLATFORM_SECTION_TITLE}</div>
-            <div className="api-keys-section__group-hint">{API_KEYS_PLATFORM_SECTION_HINT}</div>
+            <div className="api-keys-section__group-title">Platform (global)</div>
             {platformKeys.map((cfg) => {
               const entry = current[cfg.key];
               return (
@@ -194,8 +189,7 @@ const ApiKeysSection = () => {
 
           {tenantId !== undefined && tenantKeys.length > 0 && (
             <div className="api-keys-section__group">
-              <div className="api-keys-section__group-title">{API_KEYS_TENANT_SECTION_TITLE}</div>
-              <div className="api-keys-section__group-hint">{API_KEYS_TENANT_SECTION_HINT}</div>
+              <div className="api-keys-section__group-title">Tenant override</div>
               {tenantKeys.map((cfg) => {
                 const entry = current[cfg.key];
                 return (

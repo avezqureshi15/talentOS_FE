@@ -2,6 +2,7 @@ import DataTable from "@/components/ui/data-table/data-table";
 import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import type { AppResponse } from "@/app/superadmin/apps/services/apps.service.types";
 import type { AppsTableProps } from "./apps-table.types";
+import { API_KEY_ROLE_LABELS } from "../api-key-roles";
 
 const STATUS_LABELS: Record<string, { badge: string; label: string }> = {
   active: { badge: "active", label: "Active" },
@@ -14,6 +15,7 @@ export default function AppsTable({
   onRevoke,
   onRotate,
   onEdit,
+  onDelete,
   onRowClick,
   showTenant = false,
 }: AppsTableProps) {
@@ -29,6 +31,14 @@ export default function AppsTable({
         ...(showTenant
           ? [{ header: "Tenant", render: (app: AppResponse) => <TruncatedCell text={app.tenant_name ?? "—"} /> }]
           : []),
+        {
+          header: "Role",
+          render: (app) => (
+            <span className={`dt-badge dt-badge--inactive`}>
+              {app.role ? API_KEY_ROLE_LABELS[app.role] ?? app.role : "—"}
+            </span>
+          ),
+        },
         {
           header: "Status",
           render: (app) => {
@@ -65,6 +75,9 @@ export default function AppsTable({
                   <span className="bx bx-x-circle" />
                 </button>
               )}
+              <button className="dt-btn dt-btn--danger" onClick={() => onDelete(app)} title="Delete forever">
+                <span className="bx bx-trash" />
+              </button>
             </div>
           ),
         },
@@ -73,7 +86,7 @@ export default function AppsTable({
       loading={loading}
       keyExtractor={(app) => app.id}
       emptyMessage="No apps found"
-      gridTemplateColumns={showTenant ? "40px 1.4fr 1.1fr 1.1fr 0.9fr 0.9fr 1.1fr 0.9fr 80px" : "40px 1.6fr 1.3fr 0.9fr 0.9fr 1.1fr 0.9fr 80px"}
+      gridTemplateColumns={showTenant ? "40px 1.4fr 1.1fr 1fr 1fr 0.9fr 0.9fr 1.1fr 0.9fr 80px" : "40px 1.6fr 1.3fr 1fr 0.9fr 0.9fr 1.1fr 0.9fr 80px"}
       onRowClick={onRowClick}
     />
   );

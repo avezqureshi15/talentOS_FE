@@ -2,15 +2,19 @@ import { useEffect, useState } from "react";
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
 import KeyDisplay from "./key-display";
+import { API_KEY_ROLES } from "../api-key-roles";
 import type { CreateAppModalProps } from "./create-app-modal.types";
 
 type Step = "form" | "result";
+
+const roleOptions = API_KEY_ROLES.map((r) => ({ value: r.value, label: r.label }));
 
 export default function CreateAppModal({ open, onClose, onSuccess, tenants }: CreateAppModalProps) {
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [tenantId, setTenantId] = useState<number | "">("");
+  const [role, setRole] = useState<string>("account_admin");
   const [expiresAt, setExpiresAt] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,6 +26,7 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
       setName("");
       setDescription("");
       setTenantId("");
+      setRole("account_admin");
       setExpiresAt("");
       setError(null);
       setFullKey("");
@@ -39,6 +44,7 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
         name: name.trim(),
         description: description.trim() || undefined,
         tenant_id: tenantId === "" ? null : tenantId,
+        role: role || null,
         expires_at: expiresAt ? new Date(expiresAt + "T23:59:59").toISOString() : null,
       });
       setFullKey(result.full_key);
@@ -114,6 +120,21 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
                 min={new Date().toISOString().slice(0, 10)}
               />
             </div>
+            {roleOptions.length > 0 && (
+              <div className="ap-field">
+                <label>Role</label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  required
+                >
+                  <option value="">Select role...</option>
+                  {roleOptions.map((r) => (
+                    <option key={r.value} value={r.value}>{r.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
           <div className="ap-modal-footer">
             <Button variant="ghost" onClick={handleClose}>Cancel</Button>
