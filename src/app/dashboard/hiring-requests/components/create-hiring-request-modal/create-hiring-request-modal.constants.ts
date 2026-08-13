@@ -30,11 +30,29 @@ export const CREATE_HR_MODAL = {
   ASSIGN_FAILED: (n: number) => `Job created, but ${n} assignment(s) failed`,
 } as const;
 
+export const CREATE_HR_DEPARTMENT_PRESETS = [
+  "Engineering",
+  "QA",
+  "DevOps",
+  "HR",
+  "IT Admin",
+  "Business Analyst",
+  "Account Manager",
+  "Leadership",
+] as const;
+
 export const CREATE_HR_LOCATION_PRESETS = [
   "Remote",
   "Bangalore",
   "Mumbai",
   "Hyderabad",
+  "Pune",
+  "Delhi",
+  "Noida",
+  "Gurgaon",
+  "Chennai",
+  "Kolkata",
+  "Ahmedabad",
 ] as const;
 
 export const CREATE_HR_FIELDS = {
@@ -69,8 +87,8 @@ export const CREATE_HR_FIELDS = {
   },
   requirements: {
     label: "Requirements",
-    placeholder: "One requirement per line (optional)",
-    required: false,
+    placeholder: "One requirement per line",
+    required: true,
   },
   benefits: {
     label: "Benefits",
@@ -79,8 +97,8 @@ export const CREATE_HR_FIELDS = {
   },
   custom_evaluation_criteria: {
     label: "Custom evaluation criteria",
-    placeholder: "Optional ATS / screening criteria…",
-    required: false,
+    placeholder: "ATS / screening criteria…",
+    required: true,
   },
 } as const;
 

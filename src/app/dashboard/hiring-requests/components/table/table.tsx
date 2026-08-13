@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DataTable from "@/components/ui/data-table/data-table";
 import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
+import { LocationCell } from "@/app/dashboard/hiring-requests/components/table/location-cell";
 import Select from "@/components/ui/select/select";
 import { PERMISSIONS } from "@/constants/permissions";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -13,7 +14,6 @@ import { TABLE_EMPTY_STATE, DATE_FROM_LABEL, DATE_TO_LABEL, ALL_DEPARTMENTS, ALL
 import type { HiringRequestsTableProps } from "./table.types";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
 import DatePickerInput from "./date-picker-input";
-import { formatLocations } from "@/utils/format-locations";
 import "./table.css";
 
 const HiringRequestsTable = ({
@@ -71,9 +71,7 @@ const HiringRequestsTable = ({
         },
         {
           header: "Location",
-          render: (item) => (
-            <TruncatedCell text={formatLocations(item.location)} className="location-cell" />
-          ),
+          render: (item) => <LocationCell locations={item.location} />,
         },
         {
           header: "Status",

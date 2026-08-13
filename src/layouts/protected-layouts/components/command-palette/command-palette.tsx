@@ -21,11 +21,17 @@ const getSelectedSectionItem = (
   return null;
 };
 
-const getItemIcon = (type: SearchResultItem["type"]) =>
-  type === "action" ? "bx bx-plus-circle" : "bx bx-briefcase";
+const getItemIcon = (type: SearchResultItem["type"]) => {
+  if (type === "action") return "bx bx-plus-circle";
+  if (type === "employee") return "bx bx-user";
+  return "bx bx-briefcase";
+};
 
-const getItemIconClass = (type: SearchResultItem["type"]) =>
-  type === "action" ? "cp-item-icon cp-item-icon--action" : "cp-item-icon cp-item-icon--request";
+const getItemIconClass = (type: SearchResultItem["type"]) => {
+  if (type === "action") return "cp-item-icon cp-item-icon--action";
+  if (type === "employee") return "cp-item-icon cp-item-icon--employee";
+  return "cp-item-icon cp-item-icon--request";
+};
 
 export default function CommandPalette({
   open,
@@ -36,6 +42,7 @@ export default function CommandPalette({
   selectedIndex,
   onKeyDown,
   onSelectHiringRequest,
+  onSelectEmployee,
   onNewChat,
   onLoadMore,
   hasMore,
@@ -62,12 +69,14 @@ export default function CommandPalette({
     (item: SearchResultItem) => {
       if (item.type === "action") {
         onNewChat();
+      } else if (item.type === "employee") {
+        onSelectEmployee(item.id);
       } else {
         onSelectHiringRequest(item.id);
       }
       onClose();
     },
-    [onNewChat, onSelectHiringRequest, onClose],
+    [onNewChat, onSelectHiringRequest, onSelectEmployee, onClose],
   );
 
   return (

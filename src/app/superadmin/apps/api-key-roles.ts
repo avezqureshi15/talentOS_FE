@@ -19,7 +19,7 @@ export const API_KEY_ROLES: { value: ApiKeyRole; label: string; hint: string }[]
   {
     value: "reviewer",
     label: "Reviewer",
-    hint: "View jobs and applications, evaluate candidates, and submit reviews.",
+    hint: "View jobs and applications only — no candidate status changes.",
   },
 ];
 

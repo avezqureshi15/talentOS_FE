@@ -15,6 +15,8 @@ import { useCancelInterview } from "@/hooks/use-cancel-interview";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import { useApplicantActions } from "./hooks/use-applicant-actions";
+import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/constants/permissions";
 import type { Applicant, ApplicantStatus, AccordionTab, ApplicantsProps } from "./applicants.types";
 
 type LocalOverride = {
@@ -24,6 +26,8 @@ type LocalOverride = {
 };
 
 function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefresh, jdId, isRemote, showBulkSelection = false, selectedIds, onToggleSelect, onToggleSelectAll, allSelected, selectionCount = 0, onTimeline }: ApplicantsProps) {
+  const { can } = usePermissions();
+  const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [screeningId, setScreeningId] = useState<string | null>(null);
   const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
@@ -368,7 +372,7 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
         const merged = getLocalApplicant(a);
         return (
           <div key={a.id} data-applicant-id={a.id} data-highlight={applicantParam === a.id ? "true" : undefined}>
-            {merged.stage === "AI_SCREENING" && merged.status?.toLowerCase() !== "ai_screening_evaluation_failed" && merged.status?.toLowerCase() !== "ai_screening_flagged" && (
+            {canWorkflow && merged.stage === "AI_SCREENING" && merged.status?.toLowerCase() !== "ai_screening_evaluation_failed" && merged.status?.toLowerCase() !== "ai_screening_flagged" && (
               <div className="ai-retry-row">
                 <button
                   className="action-link action-link-btn"

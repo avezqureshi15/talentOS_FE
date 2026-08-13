@@ -1,3 +1,4 @@
+import { OrganizationLogoAvatar } from "@/app/admin/organization/components/organization-logo-avatar/organization-logo-avatar";
 import {
   ORG_VIEW_EMPTY_VALUE,
   ORG_VIEW_FIELDS,
@@ -10,6 +11,15 @@ export const OrganizationProfileView = ({ org }: OrganizationProfileViewProps) =
   return (
     <div className="org-card">
       <div className="org-view-hint">{ORG_VIEW_READONLY_HINT}</div>
+
+      <div className="org-identity">
+        <OrganizationLogoAvatar src={org.logo_url} name={org.name} size="lg" />
+        <div className="org-identity-text">
+          <span className="org-identity-label">Organization Name</span>
+          <div className="org-name-readonly">{org.name}</div>
+        </div>
+      </div>
+
       <div className="org-view-grid">
         {ORG_VIEW_FIELDS.map((field) => {
           const rawValue = field.getValue(org);

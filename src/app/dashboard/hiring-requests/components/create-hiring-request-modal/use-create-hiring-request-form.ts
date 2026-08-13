@@ -7,6 +7,7 @@ import {
 import type {
   CreateHiringRequestFormErrors,
   CreateHiringRequestFormValues,
+  CreateHiringRequestStep,
   HiringRequestCreatePayload,
 } from "./create-hiring-request-modal.types";
 import { parseListField } from "./parse-list-field";
@@ -41,41 +42,55 @@ export function useCreateHiringRequestForm() {
     setErrors({});
   }, []);
 
-  const validate = useCallback((): boolean => {
-    const next: CreateHiringRequestFormErrors = {};
+  const validate = useCallback(
+    (step: CreateHiringRequestStep): boolean => {
+      const next: CreateHiringRequestFormErrors = {};
 
-    const titleReq = requiredError(values.title);
-    const titleMax = maxLengthError(values.title, CREATE_HR_FIELDS.title.maxLength);
-    if (titleReq) next.title = titleReq;
-    else if (titleMax) next.title = titleMax;
+      if (step === 1) {
+        const titleReq = requiredError(values.title);
+        const titleMax = maxLengthError(values.title, CREATE_HR_FIELDS.title.maxLength);
+        if (titleReq) next.title = titleReq;
+        else if (titleMax) next.title = titleMax;
 
-    const deptReq = requiredError(values.department);
-    const deptMax = maxLengthError(values.department, CREATE_HR_FIELDS.department.maxLength);
-    if (deptReq) next.department = deptReq;
-    else if (deptMax) next.department = deptMax;
+        const deptReq = requiredError(values.department);
+        const deptMax = maxLengthError(values.department, CREATE_HR_FIELDS.department.maxLength);
+        if (deptReq) next.department = deptReq;
+        else if (deptMax) next.department = deptMax;
 
-    if (values.location.length === 0) {
-      next.location = CREATE_HR_ERRORS.REQUIRED;
-    } else {
-      const tooLong = values.location.find(
-        (loc) => loc.trim().length > CREATE_HR_FIELDS.location.maxLength,
-      );
-      if (tooLong) {
-        next.location = CREATE_HR_ERRORS.LOCATION_ITEM_MAX(CREATE_HR_FIELDS.location.maxLength);
+        if (values.location.length === 0) {
+          next.location = CREATE_HR_ERRORS.REQUIRED;
+        } else {
+          const tooLong = values.location.find(
+            (loc) => loc.trim().length > CREATE_HR_FIELDS.location.maxLength,
+          );
+          if (tooLong) {
+            next.location = CREATE_HR_ERRORS.LOCATION_ITEM_MAX(CREATE_HR_FIELDS.location.maxLength);
+          }
+        }
+
+        const typeReq = requiredError(values.type);
+        const typeMax = maxLengthError(values.type, CREATE_HR_FIELDS.type.maxLength);
+        if (typeReq) next.type = typeReq;
+        else if (typeMax) next.type = typeMax;
+
+        const descReq = requiredError(values.description);
+        if (descReq) next.description = descReq;
       }
-    }
 
-    const typeReq = requiredError(values.type);
-    const typeMax = maxLengthError(values.type, CREATE_HR_FIELDS.type.maxLength);
-    if (typeReq) next.type = typeReq;
-    else if (typeMax) next.type = typeMax;
+      if (step === 2) {
+        if (parseListField(values.requirements).length === 0) {
+          next.requirements = CREATE_HR_ERRORS.REQUIRED;
+        }
 
-    const descReq = requiredError(values.description);
-    if (descReq) next.description = descReq;
+        const criteriaReq = requiredError(values.custom_evaluation_criteria);
+        if (criteriaReq) next.custom_evaluation_criteria = criteriaReq;
+      }
 
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  }, [values]);
+      setErrors(next);
+      return Object.keys(next).length === 0;
+    },
+    [values],
+  );
 
   const toPayload = useCallback((): HiringRequestCreatePayload => {
     const requirements = parseListField(values.requirements);

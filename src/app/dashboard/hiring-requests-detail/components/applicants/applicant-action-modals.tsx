@@ -1,6 +1,8 @@
 import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
 import { APPLICANT_LABELS } from "@/constants/constants";
+import { PERMISSIONS } from "@/constants/permissions";
+import { usePermissions } from "@/hooks/use-permissions";
 import type { ApplicantActionModalsProps } from "./applicants.types";
 
 const ApplicantActionModals = ({
@@ -32,6 +34,11 @@ const ApplicantActionModals = ({
   isShortlisting,
   isConfirmingHire,
 }: ApplicantActionModalsProps) => {
+  const { can } = usePermissions();
+  const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
+  const canEvaluate = can(PERMISSIONS.APPLICATION_EVALUATE);
+  const canReject = can(PERMISSIONS.APPLICATION_REJECT);
+
   const actionLabel = finalDecision === "selected"
     ? APPLICANT_LABELS.SELECT_CANDIDATE
     : finalDecision === "on-hold"
@@ -155,12 +162,16 @@ const ApplicantActionModals = ({
             <button className="confirm-btn confirm-cancel" onClick={onCloseShortlist} type="button">
               Cancel
             </button>
-            <button className="confirm-btn confirm-proceed" onClick={onMoveToNextRound} type="button">
-              {APPLICANT_LABELS.MOVE_TO_NEXT_ROUND}
-            </button>
-            <button className="confirm-btn confirm-danger" onClick={onOpenFinalSelectionWarning} type="button">
-              {APPLICANT_LABELS.FINAL_SELECTION}
-            </button>
+            {canWorkflow ? (
+              <button className="confirm-btn confirm-proceed" onClick={onMoveToNextRound} type="button">
+                {APPLICANT_LABELS.MOVE_TO_NEXT_ROUND}
+              </button>
+            ) : null}
+            {canEvaluate || canReject ? (
+              <button className="confirm-btn confirm-danger" onClick={onOpenFinalSelectionWarning} type="button">
+                {APPLICANT_LABELS.FINAL_SELECTION}
+              </button>
+            ) : null}
           </div>
         </div>
       </BaseModal>
@@ -178,15 +189,21 @@ const ApplicantActionModals = ({
             <button className="confirm-btn confirm-cancel" onClick={onCloseFinalConfirm} type="button">
               Cancel
             </button>
-            <Button className="confirm-btn confirm-proceed" onClick={() => onFinalConfirmAction("selected")} loading={isConfirmingHire} loadingText="Selecting...">
-              Select
-            </Button>
-            <Button className="confirm-btn confirm-danger" onClick={() => onFinalConfirmAction("rejected")} loading={isConfirmingHire} loadingText="Rejecting...">
-              Reject
-            </Button>
-            <button className="confirm-btn confirm-cancel" onClick={() => onFinalConfirmAction("on-hold")} type="button">
-              Hold
-            </button>
+            {canEvaluate ? (
+              <Button className="confirm-btn confirm-proceed" onClick={() => onFinalConfirmAction("selected")} loading={isConfirmingHire} loadingText="Selecting...">
+                Select
+              </Button>
+            ) : null}
+            {canReject ? (
+              <Button className="confirm-btn confirm-danger" onClick={() => onFinalConfirmAction("rejected")} loading={isConfirmingHire} loadingText="Rejecting...">
+                Reject
+              </Button>
+            ) : null}
+            {canEvaluate ? (
+              <button className="confirm-btn confirm-cancel" onClick={() => onFinalConfirmAction("on-hold")} type="button">
+                Hold
+              </button>
+            ) : null}
           </div>
         </div>
       </BaseModal>

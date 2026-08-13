@@ -14,6 +14,7 @@ export type CommandPaletteRouteMatcher = (pathname: string) => boolean;
 
 export const COMMAND_PALETTE_ROUTES: CommandPaletteRouteMatcher[] = [
   routeExact(ROUTES.HIRING_REQUESTS),
+  routeExact(ROUTES.ADMIN_EMPLOYEES),
 ];
 
 export const isCommandPaletteRoute = (pathname: string): boolean =>

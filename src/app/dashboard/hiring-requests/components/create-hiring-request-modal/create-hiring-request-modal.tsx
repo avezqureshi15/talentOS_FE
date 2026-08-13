@@ -10,12 +10,13 @@ import { useDepartments } from "@/app/dashboard/hiring-requests/hooks/use-depart
 import { useLocations } from "@/app/dashboard/hiring-requests/hooks/use-locations";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
-import { fetchUsers, type UserItem } from "@/services/users/users";
+import { fetchSystemUsers, type UserItem } from "@/services/users/users";
 import { useAuth } from "@/app/auth/hooks/use-auth";
 import { addJobTeamMember } from "@/app/dashboard/hiring-requests-detail/components/team-members/team-members.service";
 import { FILTER_OPTIONS } from "@/constants/constants";
 import { ROLE_DISPLAY } from "@/constants/role-display";
 import {
+  CREATE_HR_DEPARTMENT_PRESETS,
   CREATE_HR_FIELDS,
   CREATE_HR_LOCATION_PRESETS,
   CREATE_HR_MODAL,
@@ -39,7 +40,7 @@ export default function CreateHiringRequestModal({
 }: CreateHiringRequestModalProps) {
   const { values, errors, setField, reset, validate, toPayload } = useCreateHiringRequestForm();
   const { mutateAsync, isPending } = useCreateHiringRequest();
-  const { data: departmentOptions = [] } = useDepartments();
+  const { data: apiDepartments = [] } = useDepartments();
   const { data: apiLocations = [] } = useLocations();
   const { user } = useAuth();
 
@@ -49,8 +50,11 @@ export default function CreateHiringRequestModal({
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState<UserItem[]>([]);
   const [usersStatus, setUsersStatus] = useState<"idle" | "loading" | "ready">("idle");
-  const [selected, setSelected] = useState<UserItem | null>(null);
   const [stepError, setStepError] = useState("");
+  const [showAddDept, setShowAddDept] = useState(false);
+  const [customDept, setCustomDept] = useState("");
+  const [showAddLocation, setShowAddLocation] = useState(false);
+  const [customLocation, setCustomLocation] = useState("");
 
   const loadingUsers = usersStatus === "loading";
 
@@ -58,6 +62,11 @@ export default function CreateHiringRequestModal({
     () => FILTER_OPTIONS.TYPES.map((t) => ({ value: t, label: t })),
     [],
   );
+
+  const departmentOptions = useMemo(() => {
+    const merged = new Set<string>([...CREATE_HR_DEPARTMENT_PRESETS, ...apiDepartments]);
+    return Array.from(merged);
+  }, [apiDepartments]);
 
   const locationOptions = useMemo(() => {
     const merged = new Set<string>([...CREATE_HR_LOCATION_PRESETS, ...apiLocations]);
@@ -72,14 +81,35 @@ export default function CreateHiringRequestModal({
     setSearch("");
     setUsers([]);
     setUsersStatus("idle");
-    setSelected(null);
     setStepError("");
+    setShowAddDept(false);
+    setCustomDept("");
+    setShowAddLocation(false);
+    setCustomLocation("");
   }, [reset]);
+
+  const handleAddCustomDept = () => {
+    const val = customDept.trim();
+    if (!val) return;
+    setField("department", val);
+    setCustomDept("");
+    setShowAddDept(false);
+  };
+
+  const handleAddCustomLocation = () => {
+    const val = customLocation.trim();
+    if (!val) return;
+    if (!values.location.some((l) => l.toLowerCase() === val.toLowerCase())) {
+      setField("location", [...values.location, val]);
+    }
+    setCustomLocation("");
+    setShowAddLocation(false);
+  };
 
   useEffect(() => {
     if (!open || assignMode !== "assign") return;
     let cancelled = false;
-    fetchUsers(search.trim() || undefined, 1, 100)
+    fetchSystemUsers(search.trim() || undefined, 1, 100)
       .then((data) => {
         if (!cancelled) {
           setUsers(data.data);
@@ -97,10 +127,7 @@ export default function CreateHiringRequestModal({
     };
   }, [open, assignMode, search]);
 
-  const candidates = users.filter(
-    (u) =>
-      u.id !== user?.id && !assignments.some((a) => a.user.id === u.id),
-  );
+  const candidates = users.filter((u) => u.id !== user?.id);
 
   const handleClose = () => {
     if (isPending) return;
@@ -109,7 +136,7 @@ export default function CreateHiringRequestModal({
   };
 
   const handleNext = () => {
-    if (step === 1 && !validate()) return;
+    if ((step === 1 || step === 2) && !validate(step)) return;
     setStep((s) => Math.min(s + 1, 3) as CreateHiringRequestStep);
   };
 
@@ -122,7 +149,6 @@ export default function CreateHiringRequestModal({
     setStepError("");
     if (mode === "skip") {
       setSearch("");
-      setSelected(null);
       setUsers([]);
       setUsersStatus("idle");
     } else {
@@ -135,15 +161,13 @@ export default function CreateHiringRequestModal({
     setUsersStatus("loading");
   };
 
-  const handleAddAssignment = (user: UserItem) => {
-    if (assignments.some((a) => a.user.id === user.id)) {
-      setStepError(CREATE_HR_MODAL.ASSIGN_ALREADY_ADDED);
-      return;
-    }
-    setAssignments((prev) => [...prev, { user }]);
-    setSelected((prev) => (prev?.id === user.id ? null : prev));
-    handleSearchChange("");
+  const handleToggleAssignment = (u: UserItem) => {
     setStepError("");
+    if (assignments.some((a) => a.user.id === u.id)) {
+      handleRemoveAssignment(u.id);
+    } else {
+      setAssignments((prev) => [...prev, { user: u }]);
+    }
   };
 
   const handleRemoveAssignment = (userId: number) => {
@@ -152,6 +176,10 @@ export default function CreateHiringRequestModal({
 
   const handleSubmit = async () => {
     if (isPending) return;
+    if (!validate(2)) {
+      setStep(2);
+      return;
+    }
 
     try {
       const created = await mutateAsync(toPayload());
@@ -160,7 +188,7 @@ export default function CreateHiringRequestModal({
         for (const a of assignments) {
           try {
             await addJobTeamMember(created.id, {
-              user_id: a.user.id,
+              user_id: a.user.employee_id ?? a.user.id,
               is_owner: false,
             });
           } catch {
@@ -237,6 +265,28 @@ export default function CreateHiringRequestModal({
                 error={!!errors.department}
                 onChange={(v) => setField("department", v)}
               />
+              {showAddDept ? (
+                <div className="create-hr-add-row">
+                  <input
+                    autoFocus
+                    className="create-hr-input create-hr-add-input"
+                    value={customDept}
+                    placeholder="New department name…"
+                    disabled={isPending}
+                    onChange={(e) => setCustomDept(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") { e.preventDefault(); handleAddCustomDept(); }
+                      if (e.key === "Escape") setShowAddDept(false);
+                    }}
+                  />
+                  <button type="button" className="create-hr-add-confirm" onClick={handleAddCustomDept}>Add</button>
+                  <button type="button" className="create-hr-add-cancel" onClick={() => { setShowAddDept(false); setCustomDept(""); }}>Cancel</button>
+                </div>
+              ) : (
+                <button type="button" className="create-hr-add-link" disabled={isPending} onClick={() => setShowAddDept(true)}>
+                  <i className="bx bx-plus" /> Add department
+                </button>
+              )}
             </Field>
 
             <Field label={CREATE_HR_FIELDS.location.label} required error={errors.location}>
@@ -250,6 +300,28 @@ export default function CreateHiringRequestModal({
                 maxItemLength={CREATE_HR_FIELDS.location.maxLength}
                 onChange={(v) => setField("location", v)}
               />
+              {showAddLocation ? (
+                <div className="create-hr-add-row">
+                  <input
+                    autoFocus
+                    className="create-hr-input create-hr-add-input"
+                    value={customLocation}
+                    placeholder="New location…"
+                    disabled={isPending}
+                    onChange={(e) => setCustomLocation(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") { e.preventDefault(); handleAddCustomLocation(); }
+                      if (e.key === "Escape") setShowAddLocation(false);
+                    }}
+                  />
+                  <button type="button" className="create-hr-add-confirm" onClick={handleAddCustomLocation}>Add</button>
+                  <button type="button" className="create-hr-add-cancel" onClick={() => { setShowAddLocation(false); setCustomLocation(""); }}>Cancel</button>
+                </div>
+              ) : (
+                <button type="button" className="create-hr-add-link" disabled={isPending} onClick={() => setShowAddLocation(true)}>
+                  <i className="bx bx-plus" /> Add location
+                </button>
+              )}
             </Field>
 
             <Field label={CREATE_HR_FIELDS.type.label} required error={errors.type}>
@@ -297,9 +369,14 @@ export default function CreateHiringRequestModal({
 
         {step === 2 && (
           <div className="create-hr-grid">
-            <Field label={CREATE_HR_FIELDS.requirements.label} className="create-hr-field--pair">
+            <Field
+              label={CREATE_HR_FIELDS.requirements.label}
+              required
+              error={errors.requirements}
+              className="create-hr-field--pair"
+            >
               <textarea
-                className="create-hr-textarea create-hr-textarea--pair"
+                className={`create-hr-textarea create-hr-textarea--pair${errors.requirements ? " create-hr-textarea--error" : ""}`}
                 value={values.requirements}
                 placeholder={CREATE_HR_FIELDS.requirements.placeholder}
                 disabled={isPending}
@@ -319,10 +396,12 @@ export default function CreateHiringRequestModal({
 
             <Field
               label={CREATE_HR_FIELDS.custom_evaluation_criteria.label}
+              required
+              error={errors.custom_evaluation_criteria}
               className="create-hr-field--full"
             >
               <textarea
-                className="create-hr-textarea"
+                className={`create-hr-textarea${errors.custom_evaluation_criteria ? " create-hr-textarea--error" : ""}`}
                 value={values.custom_evaluation_criteria}
                 placeholder={CREATE_HR_FIELDS.custom_evaluation_criteria.placeholder}
                 disabled={isPending}
@@ -398,53 +477,36 @@ export default function CreateHiringRequestModal({
                 {!loadingUsers && candidates.length === 0 && (
                   <p className="create-hr-error">{CREATE_HR_MODAL.ASSIGN_EMPTY}</p>
                 )}
-                {candidates.map((u) => (
-                  <div
-                    key={u.id}
-                    role="button"
-                    tabIndex={0}
-                    className={`create-hr-user-row${
-                      selected?.id === u.id ? " create-hr-user-row--selected" : ""
-                    }`}
-                    onClick={() =>
-                      setSelected((prev) => (prev?.id === u.id ? null : u))
-                    }
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setSelected((prev) => (prev?.id === u.id ? null : u));
-                      }
-                    }}
-                  >
-                    <PersonAvatar
-                      className="create-hr-user-avatar"
-                      person={{ name: u.name, email: u.email, designation: u.designation || undefined }}
-                    />
-                    <span className="create-hr-user-info">
-                      <span className="create-hr-user-name">{u.name}</span>
-                      <span className="create-hr-user-email">{u.email}</span>
-                    </span>
-                    <span className="create-hr-user-check">
-                      <i
-                        className={`bx ${
-                          selected?.id === u.id ? "bx-check-circle" : "bx-circle"
-                        }`}
-                      />
-                    </span>
-                    <button
-                      type="button"
-                      className="create-hr-user-add"
-                      title={CREATE_HR_MODAL.ASSIGN_ADD}
-                      aria-label={`${CREATE_HR_MODAL.ASSIGN_ADD} ${u.name}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddAssignment(u);
+                {candidates.map((u) => {
+                  const isAssigned = assignments.some((a) => a.user.id === u.id);
+                  return (
+                    <div
+                      key={u.id}
+                      role="button"
+                      tabIndex={0}
+                      className={`create-hr-user-row${isAssigned ? " create-hr-user-row--selected" : ""}`}
+                      onClick={() => handleToggleAssignment(u)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleToggleAssignment(u);
+                        }
                       }}
                     >
-                      <i className="bx bx-plus" />
-                    </button>
-                  </div>
-                ))}
+                      <PersonAvatar
+                        className="create-hr-user-avatar"
+                        person={{ name: u.name, email: u.email, designation: u.designation || undefined }}
+                      />
+                      <span className="create-hr-user-info">
+                        <span className="create-hr-user-name">{u.name}</span>
+                        <span className="create-hr-user-email">{u.email}</span>
+                      </span>
+                      <span className="create-hr-user-check">
+                        <i className={`bx ${isAssigned ? "bx-check-circle" : "bx-circle"}`} />
+                      </span>
+                    </div>
+                  );
+                })}
 
                 {assignments.length > 0 && (
                   <div className="create-hr-assign-list">

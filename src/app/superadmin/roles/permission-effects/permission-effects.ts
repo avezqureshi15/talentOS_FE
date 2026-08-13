@@ -501,12 +501,12 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
         "\"Join Room\", \"Reschedule\" and \"Cancel\" on interview cards (hidden)",
       ],
       stillWorks: [
-        "Viewing and evaluating candidates (application.view / application.evaluate)",
+        "Viewing candidates and profiles (application.view)",
       ],
     },
     scenario:
-      "Give a reviewer only viewing and evaluation: without Application Workflow they can't accidentally move or reschedule anyone — the buttons simply don't render.",
-    related: ["application.view", "application.evaluate"],
+      "Give a reviewer view-only access: without Application Workflow they can't move or reschedule anyone — the buttons simply don't render.",
+    related: ["application.view"],
   },
 
   "interview.plan_edit": {

@@ -4,7 +4,7 @@ export type SearchResultItem = {
   id: string;
   label: string;
   sublabel: string;
-  type: "action" | "hiring-request" | "tenant";
+  type: "action" | "hiring-request" | "employee" | "tenant";
   hiringRequest?: HiringRequest;
 };
 
@@ -17,6 +17,7 @@ export type CommandPaletteProps = {
   onClose: () => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onSelectHiringRequest: (id: string) => void;
+  onSelectEmployee: (empId: string) => void;
   onNewChat: () => void;
   onLoadMore?: () => void;
   hasMore?: boolean;

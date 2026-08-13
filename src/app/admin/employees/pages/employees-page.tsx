@@ -6,7 +6,6 @@ import {
   HEADER_REFRESH_ICON,
   HEADER_REFRESH_LABEL,
 } from "@/layouts/protected-layouts/components/header/header.constants";
-import SearchInput from "@/components/ui/search-input/search-input";
 import DataTable from "@/components/ui/data-table/data-table";
 import { useAuth } from "@/app/auth/hooks/use-auth";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -52,14 +51,6 @@ const EmployeesPage = () => {
   };
 
   const actions: NonNullable<HeaderConfig["actions"]> = [
-    {
-      key: "refresh",
-      label: HEADER_REFRESH_LABEL,
-      icon: isRefetching ? "bx bx-loader-alt bx-spin" : HEADER_REFRESH_ICON,
-      variant: "primary",
-      disabled: isRefetching,
-      onClick: () => void refetch(),
-    },
     ...(canImport
       ? [
           {
@@ -71,6 +62,15 @@ const EmployeesPage = () => {
           },
         ]
       : []),
+    {
+      key: "refresh",
+      label: HEADER_REFRESH_LABEL,
+      icon: isRefetching ? "bx bx-loader-alt bx-spin" : HEADER_REFRESH_ICON,
+      variant: "primary",
+      disabled: isRefetching,
+      tooltipLines: [HEADER_REFRESH_LABEL],
+      onClick: () => void refetch(),
+    },
   ];
 
   return (
@@ -79,13 +79,12 @@ const EmployeesPage = () => {
         <PageHeader
           title={EMPLOYEES_PAGE_LABELS.PAGE_TITLE}
           actions={actions}
-        />
-
-        <SearchInput
-          className="employees-search"
-          placeholder={EMPLOYEES_PAGE_LABELS.SEARCH_PLACEHOLDER}
-          value={search}
-          onChange={onSearch}
+          search={{
+            placeholder: EMPLOYEES_PAGE_LABELS.SEARCH_PLACEHOLDER,
+            shortcut: "Ctrl+K",
+            value: search,
+            onChange: onSearch,
+          }}
         />
 
         <div className="employees-content">

@@ -8,8 +8,6 @@ export interface OrgViewField {
 }
 
 export const ORG_VIEW_FIELDS: OrgViewField[] = [
-  { key: "name", label: "Organization Name", fullWidth: true, getValue: (o) => o.name },
-  { key: "logo_url", label: "Logo URL", getValue: (o) => o.logo_url },
   { key: "website", label: "Website", getValue: (o) => o.website },
   { key: "phone", label: "Phone", getValue: (o) => o.phone },
   { key: "gst_number", label: "GST Number", getValue: (o) => o.gst_number },

@@ -9,6 +9,7 @@ export type UserItem = {
   role: string;
   designation: string;
   department: string;
+  employee_id?: number | null;
   slots_count?: number;
   has_slots?: boolean;
 };
@@ -99,6 +100,57 @@ const toUserDetail = (e: EmployeeApiItem, createdAt: string): UserDetailResponse
   work_location_type: e.work_location_type ?? "",
   created_at: createdAt,
 });
+
+type SystemUserApiItem = {
+  id: number;
+  emp_id: string;
+  email: string;
+  name: string;
+  status: string;
+  role: string;
+  is_active: boolean;
+  employee_id: number | null;
+  slots_count?: number;
+  has_slots?: boolean;
+};
+
+type PaginatedSystemUsersApi = {
+  data: SystemUserApiItem[];
+  total: number;
+  page: number;
+  per_page: number;
+  has_more: boolean;
+};
+
+const toUserItemFromSystem = (u: SystemUserApiItem): UserItem => ({
+  id: u.id,
+  emp_id: u.emp_id,
+  email: u.email,
+  name: u.name,
+  role: u.role,
+  designation: "",
+  department: "",
+  employee_id: u.employee_id,
+  slots_count: u.slots_count,
+  has_slots: u.has_slots,
+});
+
+export const fetchSystemUsers = async (
+  q?: string,
+  page: number = 1,
+  per_page: number = 100,
+): Promise<PaginatedUsersResponse> => {
+  const params: Record<string, string | number> = { page, per_page };
+  if (q) params.q = q;
+  const { data } = await httpClient.get<PaginatedSystemUsersApi>(API_ENDPOINTS.USERS, { params });
+  return {
+    data: data.data.map(toUserItemFromSystem),
+    total: data.total,
+    page: data.page,
+    per_page: data.per_page,
+    has_more: data.has_more,
+  };
+};
 
 export const fetchUsers = async (
   q?: string,

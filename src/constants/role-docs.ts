@@ -26,7 +26,7 @@ export const ROLE_DOCS_FEATURES: RoleDocsFeature[] = [
     id: "submit-candidate-feedback",
     label: "Submit candidate feedback (Accept/Reject/Watchlist)",
     description: "Shortlist, select, hold or reject candidates from the pipeline.",
-    permissions: { superadmin: true, account_admin: true, job_owner: true, recruiter: true, reviewer: true },
+    permissions: { superadmin: true, account_admin: true, job_owner: true, recruiter: true, reviewer: false },
   },
   {
     id: "export-reports",

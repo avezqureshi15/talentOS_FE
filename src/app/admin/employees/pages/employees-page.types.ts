@@ -14,7 +14,12 @@ export type Employee = {
   work_mode: string | null;
   delivery_status: string | null;
   work_location_type: string | null;
+  doj: string | null;
+  doe: string | null;
+  date_of_birth: string | null;
+  internship_duration: number | null;
   band: string | null;
+  skills: string | null;
   tenant_id: number | null;
   created_at: string;
 };
@@ -46,9 +51,24 @@ export type EmployeeImportSummary = {
 };
 
 export type UpdateEmployeePayload = {
+  name?: string | null;
+  email?: string | null;
+  personal_email?: string | null;
+  hrms_id?: string | null;
   designation?: string | null;
   department?: string | null;
   contact_number?: string | null;
+  band?: string | null;
+  user_type?: string | null;
+  status?: string | null;
+  work_mode?: string | null;
+  delivery_status?: string | null;
+  work_location_type?: string | null;
+  doj?: string | null;
+  doe?: string | null;
+  date_of_birth?: string | null;
+  internship_duration?: number | null;
+  skills?: string | null;
 };
 
 export type ImportTemplateResult = {

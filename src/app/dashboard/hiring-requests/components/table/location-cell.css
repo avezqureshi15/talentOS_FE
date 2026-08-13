@@ -1,0 +1,50 @@
+/* multi-location cell */
+.location-cell--multi {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: default;
+  white-space: nowrap;
+}
+
+.location-cell--multi-icon {
+  font-size: 14px;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+  transition: color 0.15s ease;
+}
+
+.location-cell--multi:hover .location-cell--multi-icon {
+  color: var(--text-primary);
+}
+
+/* multi-location tooltip */
+.location-multi-tooltip {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-size: 12px;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  max-width: 260px;
+  word-break: break-word;
+}
+
+.location-multi-tooltip-title {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-white);
+}
+
+.location-multi-tooltip-line {
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

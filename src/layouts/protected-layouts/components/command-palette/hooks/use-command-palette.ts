@@ -4,6 +4,7 @@ import { isCommandPaletteRoute } from "@/layouts/protected-layouts/components/co
 import type { SearchResultItem, CommandPaletteSection } from "@/layouts/protected-layouts/components/command-palette/command-palette.types";
 import { COMMAND_PALETTE_LABELS, SEARCH_DEBOUNCE_MS } from "@/layouts/protected-layouts/components/command-palette/command-palette.constants";
 import { useHiringSearch } from "./use-hiring-search";
+import { useEmployeeSearch } from "./use-employee-search";
 import { useDebounce } from "@/hooks/use-debounce";
 
 type UseCommandPaletteReturn = {
@@ -24,6 +25,7 @@ type UseCommandPaletteReturn = {
 export const useCommandPalette = (
   onSelectHiringRequest: (id: string) => void,
   onNewChat: () => void,
+  onSelectEmployee: (empId: string) => void,
 ): UseCommandPaletteReturn => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -35,11 +37,18 @@ export const useCommandPalette = (
   const debouncedQuery = useDebounce(query, SEARCH_DEBOUNCE_MS);
 
   const {
-    data: results,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
+    data: hiringResults,
+    fetchNextPage: fetchNextHiringPage,
+    hasNextPage: hasNextHiringPage,
+    isFetchingNextPage: isFetchingNextHiringPage,
   } = useHiringSearch(debouncedQuery);
+
+  const {
+    data: employeeResults,
+    fetchNextPage: fetchNextEmployeePage,
+    hasNextPage: hasNextEmployeePage,
+    isFetchingNextPage: isFetchingNextEmployeePage,
+  } = useEmployeeSearch(debouncedQuery);
 
   const open = useCallback(() => {
     setIsOpen(true);
@@ -89,10 +98,10 @@ export const useCommandPalette = (
       ],
     });
 
-    if (results && results.length > 0) {
+    if (hiringResults && hiringResults.length > 0) {
       result.push({
         title: COMMAND_PALETTE_LABELS.HIRING_REQUESTS_SECTION,
-        items: results.map((r) => ({
+        items: hiringResults.map((r) => ({
           id: r.id,
           label: r.title,
           sublabel: `${r.department} - ${r.location}`,
@@ -102,8 +111,20 @@ export const useCommandPalette = (
       });
     }
 
+    if (employeeResults && employeeResults.length > 0) {
+      result.push({
+        title: COMMAND_PALETTE_LABELS.EMPLOYEES_SECTION,
+        items: employeeResults.map((e) => ({
+          id: e.emp_id,
+          label: e.name,
+          sublabel: `${e.designation ?? "—"} · ${e.department ?? "—"}`,
+          type: "employee" as const,
+        })),
+      });
+    }
+
     return result;
-  }, [results]);
+  }, [hiringResults, employeeResults]);
 
   const totalItems = useMemo(() => {
     return sections.reduce((acc, s) => acc + s.items.length, 0);
@@ -115,10 +136,12 @@ export const useCommandPalette = (
         onNewChat();
       } else if (item.type === "hiring-request") {
         onSelectHiringRequest(item.id);
+      } else if (item.type === "employee") {
+        onSelectEmployee(item.id);
       }
       close();
     },
-    [onNewChat, onSelectHiringRequest, close],
+    [onNewChat, onSelectHiringRequest, onSelectEmployee, close],
   );
 
   const handleKeyDown = useCallback(
@@ -156,8 +179,8 @@ export const useCommandPalette = (
     close,
     handleKeyDown,
     totalItems,
-    loadMore: fetchNextPage,
-    hasMore: !!hasNextPage,
-    isLoadingMore: isFetchingNextPage,
+    loadMore: () => { fetchNextHiringPage(); fetchNextEmployeePage(); },
+    hasMore: !!hasNextHiringPage || !!hasNextEmployeePage,
+    isLoadingMore: isFetchingNextHiringPage || isFetchingNextEmployeePage,
   };
 };

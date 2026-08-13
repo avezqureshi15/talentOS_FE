@@ -48,6 +48,13 @@ export default function ProtectedLayout() {
     [navigate],
   );
 
+  const handleSelectEmployee = useCallback(
+    (empId: string) => {
+      navigate(ROUTES.ADMIN_EMPLOYEE_DETAIL.replace(":empId", empId));
+    },
+    [navigate],
+  );
+
   const deleteChatMutation = useDeleteChat();
   const renameChatMutation = useRenameChat();
 
@@ -141,7 +148,7 @@ export default function ProtectedLayout() {
     loadMore: cmdLoadMore,
     hasMore: cmdHasMore,
     isLoadingMore: cmdIsLoadingMore,
-  } = useCommandPalette(handleSelectHiringRequest, handleNewChat);
+  } = useCommandPalette(handleSelectHiringRequest, handleNewChat, handleSelectEmployee);
 
   return (
     <div className="chat-root">
@@ -189,6 +196,7 @@ export default function ProtectedLayout() {
         selectedIndex={cmdSelectedIndex}
         onKeyDown={cmdHandleKeyDown}
         onSelectHiringRequest={handleSelectHiringRequest}
+        onSelectEmployee={handleSelectEmployee}
         onNewChat={handleNewChat}
         onLoadMore={cmdLoadMore}
         hasMore={cmdHasMore}

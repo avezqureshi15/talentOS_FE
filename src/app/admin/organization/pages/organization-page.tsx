@@ -1,3 +1,4 @@
+import { OrganizationLogoAvatar } from "@/app/admin/organization/components/organization-logo-avatar/organization-logo-avatar";
 import { OrganizationProfileView } from "@/app/admin/organization/components/organization-profile-view/organization-profile-view";
 import { useOrganizationForm } from "@/app/admin/organization/hooks/use-organization-form";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
@@ -26,23 +27,28 @@ export default function OrganizationPage() {
     return <div className="org-loading">{ORG_PAGE_LABELS.LOADING}</div>;
   }
 
+  const orgName = org?.name ?? "";
+
   return (
     <div className="org-page">
       <PageHeader title={ORG_PAGE_LABELS.PAGE_TITLE} />
 
       {canEdit ? (
         <div className="org-card">
-          <div className="org-form-grid">
-            <div className="org-field org-field--full">
-              <label className="org-label">
+          <div className="org-identity">
+            <OrganizationLogoAvatar src={form.logo_url} name={orgName} size="lg" />
+            <div className="org-identity-text">
+              <span className="org-identity-label">
                 {ORG_PAGE_LABELS.NAME}
                 <span className="org-required" aria-hidden="true">
                   *
                 </span>
-              </label>
-              <div className="org-name-readonly">{org?.name ?? ""}</div>
+              </span>
+              <div className="org-name-readonly">{orgName}</div>
             </div>
+          </div>
 
+          <div className="org-form-grid">
             <div className="org-field">
               <label className="org-label">{ORG_PAGE_LABELS.LOGO_URL}</label>
               <input
