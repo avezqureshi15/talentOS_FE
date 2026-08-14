@@ -4,6 +4,7 @@ import { updateEmployee } from "@/app/admin/employees/services/employees.service
 import type { Employee, UpdateEmployeePayload } from "@/app/admin/employees/pages/employees-page.types";
 import { EDIT_EMPLOYEE_LABELS } from "@/app/admin/employees/components/edit-employee-modal/edit-employee-modal.constants";
 import type { EditEmployeeFormState } from "@/app/admin/employees/components/edit-employee-modal/edit-employee-modal.types";
+import { isValidEmail } from "@/utils/validation";
 
 type UseEditEmployeeArgs = {
   employee: Employee;
@@ -54,6 +55,14 @@ export function useEditEmployee({ employee, onSuccess }: UseEditEmployeeArgs) {
   const submit = () => {
     setError("");
     const toNullable = (value: string) => (value.trim() ? value.trim() : null);
+    if (form.email.trim() && !isValidEmail(form.email)) {
+      setError(EDIT_EMPLOYEE_LABELS.ERROR_EMAIL_INVALID);
+      return;
+    }
+    if (form.personalEmail.trim() && !isValidEmail(form.personalEmail)) {
+      setError(EDIT_EMPLOYEE_LABELS.ERROR_EMAIL_INVALID);
+      return;
+    }
     const payload: UpdateEmployeePayload = {
       name: toNullable(form.name),
       email: toNullable(form.email),

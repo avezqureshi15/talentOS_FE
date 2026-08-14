@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "@/components/ui/button/button";
 import { updateTenant } from "@/app/superadmin/tenants/services/tenants.service";
+import { getApiErrorMessage } from "@/utils/api-error";
 import type { EditTenantModalProps } from "./edit-tenant-modal.types";
 
 export default function EditTenantModal({ tenant, onClose, onSuccess }: EditTenantModalProps) {
@@ -23,8 +24,8 @@ export default function EditTenantModal({ tenant, onClose, onSuccess }: EditTena
         is_active: isActive !== tenant.is_active ? isActive : undefined,
       });
       onSuccess();
-    } catch (err: any) {
-      setError(err?.response?.data?.detail ?? "Failed to update tenant");
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "Failed to update tenant"));
     } finally {
       setSubmitting(false);
     }

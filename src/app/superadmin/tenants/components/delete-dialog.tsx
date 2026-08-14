@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "@/components/ui/button/button";
 import { deleteTenant } from "@/app/superadmin/tenants/services/tenants.service";
+import { getApiErrorMessage } from "@/utils/api-error";
 import type { DeleteTenantDialogProps } from "./delete-dialog.types";
 
 export default function DeleteTenantDialog({ tenant, onClose, onSuccess }: DeleteTenantDialogProps) {
@@ -13,8 +14,8 @@ export default function DeleteTenantDialog({ tenant, onClose, onSuccess }: Delet
     try {
       await deleteTenant(tenant.id);
       onSuccess();
-    } catch (err: any) {
-      setError(err?.response?.data?.detail ?? "Failed to suspend tenant");
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "Failed to suspend tenant"));
     } finally {
       setSubmitting(false);
     }

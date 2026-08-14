@@ -9,6 +9,7 @@ import { Eye, EyeOff, Mail, Lock, Sparkles, Shield, Zap } from 'lucide-react'
 import { useAuth } from '@/app/auth/hooks/use-auth'
 import { ROUTES } from '@/constants/routes'
 import Logo from '@/components/shared/logo/logo'
+import { getApiErrorMessage } from '@/utils/api-error'
 import { LOGIN } from './login.constants'
 import './login.css'
 
@@ -17,14 +18,8 @@ const schema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
-const getErrorMessage = (err: unknown, fallback: string): string => {
-  if (err && typeof err === 'object' && 'response' in err) {
-    const axiosErr = err as { response?: { data?: { error?: string; detail?: string } } }
-    return axiosErr.response?.data?.error || axiosErr.response?.data?.detail || fallback
-  }
-  if (err instanceof Error) return err.message
-  return fallback
-}
+const getErrorMessage = (err: unknown, fallback: string): string =>
+  getApiErrorMessage(err, fallback)
 
 interface AuthForm {
   email: string

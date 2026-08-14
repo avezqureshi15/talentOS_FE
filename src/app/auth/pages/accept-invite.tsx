@@ -4,6 +4,7 @@ import { useAuth } from "@/app/auth/hooks/use-auth";
 import { ROUTES } from "@/constants/routes";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
 import httpClient from "@/services/http-client";
+import { getApiErrorMessage } from "@/utils/api-error";
 import type { InviteInfo } from "./accept-invite.types";
 import "./accept-invite.css";
 
@@ -28,7 +29,7 @@ export default function AcceptInvite() {
     if (!token) return;
     httpClient.get<InviteInfo>(`${API_ENDPOINTS.AUTH_INVITES}/${token}`)
       .then(({ data }) => setInvite(data))
-      .catch((err) => setError(err?.response?.data?.detail ?? "Invite is invalid or expired"))
+      .catch((err) => setError(getApiErrorMessage(err, "Invite is invalid or expired")))
       .finally(() => setLoading(false));
   }, [token]);
 
@@ -46,8 +47,8 @@ export default function AcceptInvite() {
       });
       loginWithEmail(invite!.email, password);
       navigate(ROUTES.CHAT, { replace: true });
-    } catch (err: any) {
-      setError(err?.response?.data?.detail ?? "Failed to accept invite");
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "Failed to accept invite"));
     } finally {
       setSubmitting(false);
     }

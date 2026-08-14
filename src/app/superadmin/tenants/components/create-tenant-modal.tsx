@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Button from "@/components/ui/button/button";
 import { createTenant } from "@/app/superadmin/tenants/services/tenants.service";
+import { getApiErrorMessage } from "@/utils/api-error";
+import { isValidEmail } from "@/utils/validation";
 import type { CreateTenantModalProps } from "./create-tenant-modal.types";
 
 export default function CreateTenantModal({ onClose, onSuccess }: CreateTenantModalProps) {
@@ -13,6 +15,10 @@ export default function CreateTenantModal({ onClose, onSuccess }: CreateTenantMo
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!orgName.trim() || !adminName.trim() || !adminEmail.trim()) return;
+    if (!isValidEmail(adminEmail)) {
+      setError("Please enter a valid admin email");
+      return;
+    }
 
     setSubmitting(true);
     setError(null);
@@ -23,8 +29,8 @@ export default function CreateTenantModal({ onClose, onSuccess }: CreateTenantMo
         admin_email: adminEmail.trim(),
       });
       onSuccess({ admin_email: data.admin_email, invite_token: data.invite_token });
-    } catch (err: any) {
-      setError(err?.response?.data?.detail ?? "Failed to create tenant");
+    } catch (err: unknown) {
+      setError(getApiErrorMessage(err, "Failed to create tenant"));
     } finally {
       setSubmitting(false);
     }

@@ -3,6 +3,7 @@ import { BE_API_BASE_URL } from "@/constants/constants";
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/app/auth/hooks/auth.constants";
 import { AUTH_STORAGE_KEY } from "@/app/auth/hooks/auth.constants";
 import { storage } from "@/utils/storage";
+import { getApiErrorMessage } from "@/utils/api-error";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 
@@ -71,7 +72,7 @@ httpClient.interceptors.response.use(
     // ── Handle 423 (locked/disabled) ────────────────────────────────
     if (error.response?.status === 423) {
       useToastStore.getState().addToast(
-        error.response?.data?.detail || "Your account has been disabled. Please contact support.",
+        getApiErrorMessage(error, "Your account has been disabled. Please contact support."),
         ToastType.ERROR,
       );
       storage.remove(ACCESS_TOKEN_KEY);
@@ -123,12 +124,10 @@ httpClient.interceptors.response.use(
       return httpClient(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError, null);
-      const message =
-        error.response?.data?.error ||
-        error.response?.data?.detail ||
-        error.message ||
-        "Session expired. Please sign in again.";
-      useToastStore.getState().addToast(message, ToastType.ERROR);
+      useToastStore.getState().addToast(
+        getApiErrorMessage(error, "Session expired. Please sign in again."),
+        ToastType.ERROR,
+      );
       storage.remove(ACCESS_TOKEN_KEY);
       storage.remove(REFRESH_TOKEN_KEY);
       storage.remove(AUTH_STORAGE_KEY);

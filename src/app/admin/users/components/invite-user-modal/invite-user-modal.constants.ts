@@ -15,6 +15,7 @@ export const INVITE_MODAL_LABELS = {
   SEARCH_HINT: "Start typing to search your directory",
   CLEAR_SELECTION: "Clear selection",
   ERR_EMAIL_REQUIRED: "Email is required",
+  ERR_EMAIL_INVALID: "Please enter a valid email",
   ERR_PICK_EMPLOYEE: "Select an employee to invite",
   ERR_GENERIC: "Failed to send invite",
   TOAST_SUCCESS: "Invitation sent successfully",

@@ -28,6 +28,7 @@ export const EDIT_EMPLOYEE_LABELS = {
   CANCEL: "Cancel",
   SAVE: "Save Changes",
   SAVING: "Saving...",
+  ERROR_EMAIL_INVALID: "Please enter a valid email",
   ERROR_FALLBACK: "Failed to update employee",
 } as const;
 

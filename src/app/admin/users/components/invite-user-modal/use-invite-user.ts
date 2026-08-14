@@ -4,6 +4,7 @@ import { QUERY_KEYS } from "@/constants/constants";
 import { createInvite } from "@/app/admin/users/services/users-admin.service";
 import { fetchUsers } from "@/services/users/users";
 import { useDebounce } from "@/hooks/use-debounce";
+import { isValidEmail } from "@/utils/validation";
 import { useToast } from "@/hooks/use-toast";
 import {
   INVITE_MODAL_LABELS,
@@ -54,9 +55,11 @@ export function useInviteUser({ mode, tenantId, onSuccess }: UseInviteUserArgs) 
 
   const resolvedEmail =
     tab === "existing" && selected ? selected.email : email.trim();
+  const isManualEmailValid = tab !== "manual" || isValidEmail(resolvedEmail);
   const canSubmit =
     !inviteMutation.isPending &&
     !!resolvedEmail &&
+    isManualEmailValid &&
     (tab === "manual" ? true : !!selected);
 
   const submit = () => {
@@ -67,6 +70,10 @@ export function useInviteUser({ mode, tenantId, onSuccess }: UseInviteUserArgs) 
           ? INVITE_MODAL_LABELS.ERR_PICK_EMPLOYEE
           : INVITE_MODAL_LABELS.ERR_EMAIL_REQUIRED,
       );
+      return;
+    }
+    if (!isManualEmailValid) {
+      setError(INVITE_MODAL_LABELS.ERR_EMAIL_INVALID);
       return;
     }
     inviteMutation.mutate({ email: resolvedEmail, role, tenant_id: tenantId });

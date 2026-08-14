@@ -1,5 +1,6 @@
 import httpClient from "@/services/http-client";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
+import { getApiErrorMessage } from "@/utils/api-error";
 import type {
   NotificationsApiResponse,
   UnreadCountApiResponse,
@@ -75,13 +76,7 @@ export const sendReminder = async (
     );
     return data;
   } catch (err: unknown) {
-    const axiosErr = err as { response?: { data?: { detail?: string; error?: string; message?: string } } };
-    const msg =
-      axiosErr.response?.data?.detail ||
-      axiosErr.response?.data?.error ||
-      axiosErr.response?.data?.message ||
-      "Notification failed";
-    throw new Error(msg, { cause: err });
+    throw new Error(getApiErrorMessage(err, "Notification failed"), { cause: err });
   }
 };
 
@@ -94,12 +89,6 @@ export const sendReminderByForm = async (formId: string): Promise<NotifyFormResp
     );
     return data;
   } catch (err: unknown) {
-    const axiosErr = err as { response?: { data?: { detail?: string; error?: string; message?: string } } };
-    const msg =
-      axiosErr.response?.data?.detail ||
-      axiosErr.response?.data?.error ||
-      axiosErr.response?.data?.message ||
-      "Reminder failed";
-    throw new Error(msg, { cause: err });
+    throw new Error(getApiErrorMessage(err, "Reminder failed"), { cause: err });
   }
 };

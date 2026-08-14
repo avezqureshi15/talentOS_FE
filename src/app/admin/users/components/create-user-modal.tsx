@@ -4,6 +4,7 @@ import Button from "@/components/ui/button/button";
 import Select from "@/components/ui/select/select";
 import { createUser } from "@/app/admin/users/services/users-admin.service";
 import { ROLE_OPTIONS } from "@/constants/role-options";
+import { isValidEmail } from "@/utils/validation";
 import "./admin-modal.css";
 
 type Props = {
@@ -25,6 +26,7 @@ export default function CreateUserModal({ onClose, onSuccess, tenantId }: Props)
     setError("");
     if (!name.trim()) { setError("Name is required"); return; }
     if (!email.trim()) { setError("Email is required"); return; }
+    if (!isValidEmail(email)) { setError("Please enter a valid email"); return; }
     if (password.length < 8) { setError("Password must be at least 8 characters"); return; }
     setLoading(true);
     try {
