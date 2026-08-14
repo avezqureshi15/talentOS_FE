@@ -43,15 +43,15 @@ export default function CreateUserModal({ onClose, onSuccess, tenantId }: Props)
     <BaseModal open title="Create User" onClose={onClose}>
       <form className="admin-modal-form" onSubmit={handleSubmit}>
         <div className="admin-field">
-          <label className="admin-label">Full Name</label>
+          <label className="admin-label">Full Name<span className="admin-required" aria-hidden="true">*</span></label>
           <input type="text" className="admin-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" autoFocus />
         </div>
         <div className="admin-field">
-          <label className="admin-label">Email</label>
+          <label className="admin-label">Email<span className="admin-required" aria-hidden="true">*</span></label>
           <input type="email" className="admin-input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="user@company.com" />
         </div>
         <div className="admin-field">
-          <label className="admin-label">Password</label>
+          <label className="admin-label">Password<span className="admin-required" aria-hidden="true">*</span></label>
           <input type="password" className="admin-input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min. 8 characters" />
         </div>
         <div className="admin-field">

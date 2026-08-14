@@ -74,6 +74,7 @@ export default function InviteUserModal({
           <div className="ium-field">
             <label className="ium-label" htmlFor="ium-email">
               {INVITE_MODAL_LABELS.EMAIL_LABEL}
+              <span className="ium-required" aria-hidden="true">*</span>
             </label>
             <input
               id="ium-email"

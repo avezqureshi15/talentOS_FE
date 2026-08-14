@@ -64,7 +64,7 @@ export default function EditAppModal({ open, app, onClose, onSubmit }: EditAppMo
         <div className="ap-modal-body">
           {error && <div className="ap-error">{error}</div>}
           <div className="ap-field">
-            <label>App Name</label>
+            <label>App Name<span className="ap-required" aria-hidden="true">*</span></label>
             <input
               type="text"
               value={name}

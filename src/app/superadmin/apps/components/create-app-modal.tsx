@@ -78,7 +78,7 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
           <div className="ap-modal-body">
             {error && <div className="ap-error">{error}</div>}
             <div className="ap-field">
-              <label>App Name</label>
+              <label>App Name<span className="ap-required" aria-hidden="true">*</span></label>
               <input
                 type="text"
                 value={name}
@@ -89,7 +89,7 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
             </div>
             {tenants && tenants.length > 0 && (
               <div className="ap-field">
-                <label>Tenant</label>
+                <label>Tenant<span className="ap-required" aria-hidden="true">*</span></label>
                 <select
                   value={tenantId}
                   onChange={(e) => setTenantId(e.target.value === "" ? "" : Number(e.target.value))}
@@ -122,7 +122,7 @@ export default function CreateAppModal({ open, onClose, onSuccess, tenants }: Cr
             </div>
             {roleOptions.length > 0 && (
               <div className="ap-field">
-                <label>Role</label>
+                <label>Role<span className="ap-required" aria-hidden="true">*</span></label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}

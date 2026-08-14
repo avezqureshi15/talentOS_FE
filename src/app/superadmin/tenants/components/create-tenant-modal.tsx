@@ -47,7 +47,7 @@ export default function CreateTenantModal({ onClose, onSuccess }: CreateTenantMo
           <div className="modal-body">
             {error && <div className="modal-error">{error}</div>}
             <div className="modal-field">
-              <label>Organization Name</label>
+              <label>Organization Name<span className="modal-required" aria-hidden="true">*</span></label>
               <input
                 type="text"
                 value={orgName}
@@ -57,7 +57,7 @@ export default function CreateTenantModal({ onClose, onSuccess }: CreateTenantMo
               />
             </div>
             <div className="modal-field">
-              <label>Admin Name</label>
+              <label>Admin Name<span className="modal-required" aria-hidden="true">*</span></label>
               <input
                 type="text"
                 value={adminName}
@@ -67,7 +67,7 @@ export default function CreateTenantModal({ onClose, onSuccess }: CreateTenantMo
               />
             </div>
             <div className="modal-field">
-              <label>Admin Email</label>
+              <label>Admin Email<span className="modal-required" aria-hidden="true">*</span></label>
               <input
                 type="email"
                 value={adminEmail}

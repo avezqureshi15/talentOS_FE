@@ -90,7 +90,7 @@ export default function AcceptInvite() {
           {error && <div className="ai-error">{error}</div>}
 
           <div className="ai-field">
-            <label>Full Name</label>
+            <label>Full Name<span className="ai-required" aria-hidden="true">*</span></label>
             <input
               type="text"
               value={fullName}
@@ -101,7 +101,7 @@ export default function AcceptInvite() {
           </div>
 
           <div className="ai-field">
-            <label>Password</label>
+            <label>Password<span className="ai-required" aria-hidden="true">*</span></label>
             <input
               type="password"
               value={password}

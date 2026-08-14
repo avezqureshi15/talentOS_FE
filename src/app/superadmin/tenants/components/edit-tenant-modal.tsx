@@ -42,7 +42,7 @@ export default function EditTenantModal({ tenant, onClose, onSuccess }: EditTena
           <div className="modal-body">
             {error && <div className="modal-error">{error}</div>}
             <div className="modal-field">
-              <label>Organization Name</label>
+              <label>Organization Name<span className="modal-required" aria-hidden="true">*</span></label>
               <input
                 type="text"
                 value={name}

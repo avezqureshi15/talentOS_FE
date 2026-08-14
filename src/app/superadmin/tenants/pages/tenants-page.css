@@ -187,6 +187,11 @@
   margin-bottom: 6px;
 }
 
+.modal-required {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
 .modal-field input,
 .modal-field select {
   width: 100%;

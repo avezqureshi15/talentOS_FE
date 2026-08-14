@@ -49,6 +49,11 @@
   color: var(--text-secondary);
 }
 
+.ium-required {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
 .ium-input {
   width: 100%;
   padding: 10px 12px;

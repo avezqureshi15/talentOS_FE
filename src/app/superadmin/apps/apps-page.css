@@ -119,6 +119,11 @@
   margin-bottom: 6px;
 }
 
+.ap-required {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
 .ap-field input,
 .ap-field textarea,
 .ap-field select {
