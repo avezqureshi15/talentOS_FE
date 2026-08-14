@@ -11,6 +11,8 @@ import {
 import {
   getKnownComparisonFields,
   filterKnownRejectionDetails,
+  getRejectedCriterionKeys,
+  isComparisonFieldRejected,
 } from "./normal-round-template.utils";
 import type { RejectionDetailItem } from "@/utils/review-comparison/review-comparison.utils.types";
 
@@ -123,6 +125,7 @@ const AiContent = ({ entity }: { entity: ReviewEntity }) => {
     ? (entity.rejection_details as RejectionDetailItem[])
     : [];
   const rejectionDetails = filterKnownRejectionDetails(rejectionRaw);
+  const rejectedCriteria = getRejectedCriterionKeys(rejectionDetails);
   const hasBullets = strongMatches.length > 0 || gapsAndConcerns.length > 0;
   const hasComparisons = comparisonFields.length > 0;
   const hasDetails = rejectionDetails.length > 0;
@@ -141,15 +144,18 @@ const AiContent = ({ entity }: { entity: ReviewEntity }) => {
         <div className="nrt-compact-section">
           <span className="nrt-compact-label">JD vs Candidate Comparison</span>
           <div className="nrt-compare-grid">
-            {comparisonFields.map((f, i) => (
-              <div key={i} className="nrt-compare-field">
-                <span className="nrt-compare-title">{COMPARISON_LABELS[f.label] ?? f.label}</span>
-                <div className="nrt-compare-pair">
-                  <span className="nrt-compare-exp">JD: {f.expected}</span>
-                  <span className="nrt-compare-act">Candidate: {f.actual}</span>
+            {comparisonFields.map((f, i) => {
+              const rejected = isComparisonFieldRejected(f, rejectedCriteria);
+              return (
+                <div key={i} className={`nrt-compare-field${rejected ? " nrt-compare-field--reject" : " nrt-compare-field--pass"}`}>
+                  <span className="nrt-compare-title">{COMPARISON_LABELS[f.label] ?? f.label}</span>
+                  <div className="nrt-compare-pair">
+                    <span className="nrt-compare-exp">JD: {f.expected}</span>
+                    <span className="nrt-compare-act">Candidate: {f.actual}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}

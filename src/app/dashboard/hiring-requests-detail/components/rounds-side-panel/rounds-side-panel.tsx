@@ -4,6 +4,7 @@ import Chip from "@/components/ui/chip/chip";
 import PanelSkeleton from "./panel-skeleton";
 import ReadMoreText from "./read-more-text";
 import ExpandableAiSummary from "./expandable-ai-summary";
+import { getRejectedCriterionKeys, isComparisonFieldRejected } from "@/utils/review-comparison/review-comparison.utils";
 import ReviewPhasesAccordion from "@/app/dashboard/hiring-requests-detail/components/review-phases-accordion/review-phases-accordion";
 import { useRoundDetail } from "./use-round-detail";
 import { toISTDisplay, toISTTimeRange } from "@/utils/date";
@@ -63,6 +64,7 @@ function EntityAiContent({ entity }: { entity: ReviewEntity }) {
   const hasDetails = entity.rejectionDetails.length > 0;
   const hasAiContent = entity.summary || hasBullets || hasComparisons || hasDetails;
   if (!hasAiContent) return null;
+  const rejectedCriteria = getRejectedCriterionKeys(entity.rejectionDetails);
 
   return (
     <div className="rp-ai-summary md-content">
@@ -75,21 +77,24 @@ function EntityAiContent({ entity }: { entity: ReviewEntity }) {
         <>
           <span className="rp-ai-subheading">JD vs Candidate Comparison</span>
           <div className="rp-comparison-fields">
-            {entity.comparisonFields.map((f, i) => (
-              <div key={i} className="rp-comparison-field">
-                <span className="rp-comparison-label">{COMPARISON_LABELS[f.label] ?? f.label}</span>
-                <div className="rp-comparison-compare">
-                  <div className="rp-comparison-col">
-                    <span className="rp-comparison-col-label">JD</span>
-                    <span className="rp-comparison-value rp-comparison-value--expected">{f.expected}</span>
-                  </div>
-                  <div className="rp-comparison-col">
-                    <span className="rp-comparison-col-label">Candidate</span>
-                    <span className="rp-comparison-value rp-comparison-value--actual">{f.actual}</span>
+            {entity.comparisonFields.map((f, i) => {
+              const rejected = isComparisonFieldRejected(f, rejectedCriteria);
+              return (
+                <div key={i} className={`rp-comparison-field${rejected ? " rp-comparison-field--reject" : " rp-comparison-field--pass"}`}>
+                  <span className="rp-comparison-label">{COMPARISON_LABELS[f.label] ?? f.label}</span>
+                  <div className="rp-comparison-compare">
+                    <div className="rp-comparison-col">
+                      <span className="rp-comparison-col-label">JD</span>
+                      <span className="rp-comparison-value rp-comparison-value--expected">{f.expected}</span>
+                    </div>
+                    <div className="rp-comparison-col">
+                      <span className="rp-comparison-col-label">Candidate</span>
+                      <span className="rp-comparison-value rp-comparison-value--actual">{f.actual}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}

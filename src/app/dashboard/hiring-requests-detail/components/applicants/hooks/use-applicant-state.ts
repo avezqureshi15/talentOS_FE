@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { STATE_CONFIGS, INFO_CHIP_STATUSES } from "../applicants.constants";
 import { computeHiringState } from "../state-registry";
+import { isScreeningCallCompleted } from "@/app/dashboard/hiring-requests-detail/components/candidate-table/screening-actions/screening-actions.utils";
 import type { Applicant, StateConfig } from "../applicants.types";
 
 export function useApplicantState(
@@ -13,7 +14,9 @@ export function useApplicantState(
     return {
       ...config,
       actions: config.actions.filter(
-        (a) => !(a.handler === "onCancelInterview" && applicant.stage === "AI_SCREENING"),
+        (a) =>
+          !(a.handler === "onCancelInterview" && applicant.stage === "AI_SCREENING") &&
+          !(a.handler === "onCallNow" && isScreeningCallCompleted(applicant)),
       ),
       showInfoChips: INFO_CHIP_STATUSES.has(hiringState),
     };

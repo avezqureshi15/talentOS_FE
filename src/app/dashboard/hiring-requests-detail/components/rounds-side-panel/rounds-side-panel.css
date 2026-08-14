@@ -489,6 +489,14 @@
   border-radius: var(--radius-sm);
 }
 
+.rp-comparison-field--pass {
+  border-color: var(--success-border, var(--border-subtle));
+}
+
+.rp-comparison-field--reject {
+  border-color: var(--danger-light-border, var(--border-subtle));
+}
+
 .rp-comparison-label {
   font-size: 10.5px;
   font-weight: 600;
@@ -528,6 +536,14 @@
 }
 
 .rp-comparison-value--actual {
+  color: var(--text-secondary);
+}
+
+.rp-comparison-field--pass .rp-comparison-value--actual {
+  color: var(--success-light);
+}
+
+.rp-comparison-field--reject .rp-comparison-value--actual {
   color: var(--danger);
 }
 

@@ -9,4 +9,6 @@ export {
   getKnownComparisonFields,
   filterKnownRejectionDetails,
   isUnknownCandidateValue,
+  getRejectedCriterionKeys,
+  isComparisonFieldRejected,
 } from "@/utils/review-comparison/review-comparison.utils";

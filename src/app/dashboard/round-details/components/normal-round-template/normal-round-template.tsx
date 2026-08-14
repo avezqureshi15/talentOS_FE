@@ -1,10 +1,15 @@
 import ReadMoreText from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/read-more-text";
 import { toISTDisplay, toISTTimeRange } from "@/utils/date";
 import { useAiScreeningResult } from "@/hooks/use-ai-screening";
-import type { RoundDetailApiResponse } from "@/services/applications/applications.types";
+import type { AiScreeningResult } from "@/services/ai/ai.types";
+import type { RoundDetailApiResponse, ReviewEntity } from "@/services/applications/applications.types";
 import type { TranscriptSection, TranscriptUtterance } from "../../pages/round-details.types";
 import AiScreeningPanel from "../ai-screening-panel/ai-screening-panel";
-import { AI_SCREENING_ROUND_TYPES } from "../ai-screening-panel/ai-screening-panel.constants";
+import {
+  AI_SCREENING_EXTRACTED_FIELDS,
+  AI_SCREENING_ROUND_TYPES,
+  AI_SCREENING_TERMINAL_STATUSES,
+} from "../ai-screening-panel/ai-screening-panel.constants";
 import ReviewSection from "./review-section";
 import TranscriptPanel from "../transcript-panel/transcript-panel";
 import "./normal-round-template.css";
@@ -28,6 +33,51 @@ const pickInterviewTypeIcon = (interviewType: string | null | undefined) => {
 };
 
 const SPEAKER_LINE = /^(AI|User):\s*(.*)$/i;
+
+const asNullableString = (value: unknown): string | null =>
+  typeof value === "string" && value ? value : null;
+
+const asNullableBoolean = (value: unknown): boolean | null =>
+  typeof value === "boolean" ? value : null;
+
+const buildStoredScreeningResult = (reviews: ReviewEntity[]): AiScreeningResult | null => {
+  const entity = reviews.find((r) => r.entity_type === "ai_screening");
+  if (!entity) return null;
+
+  const retryRating = entity.ratings?.find((r) => r.label === "retry_count");
+  const retry_count = retryRating ? Math.round(retryRating.score) : 0;
+
+  return {
+    screening_call_id: asNullableString(entity.screening_call_id) ?? "",
+    call_status: asNullableString(entity.call_status) ?? "",
+    result: asNullableString(entity.result),
+    availability: asNullableString(entity.availability),
+    employment_status: asNullableString(entity.employment_status),
+    relevant_experience: asNullableString(entity.relevant_experience),
+    current_ctc: asNullableString(entity.current_ctc),
+    expected_ctc: asNullableString(entity.expected_ctc),
+    notice_period: asNullableString(entity.notice_period),
+    location_preference: asNullableString(entity.location_preference),
+    communication_quality: asNullableString(entity.communication_quality),
+    willingness_to_proceed: asNullableBoolean(entity.willingness_to_proceed),
+    summary: asNullableString(entity.summary),
+    transcript: asNullableString(entity.transcript),
+    call_outcome: asNullableString(entity.call_outcome),
+    retry_count,
+    created_at: asNullableString(entity.created_at) ?? "",
+  };
+};
+
+const hasScreeningContent = (result: AiScreeningResult | null | undefined): boolean => {
+  if (!result) return false;
+  const status = (result.call_status || "").toLowerCase();
+  if (AI_SCREENING_TERMINAL_STATUSES.has(status)) return true;
+  if (result.summary || (result.transcript ?? "").trim()) return true;
+  return (
+    AI_SCREENING_EXTRACTED_FIELDS.some((f) => !!result[f.key]) ||
+    result.willingness_to_proceed !== null
+  );
+};
 
 const buildScreeningTranscriptSections = (transcript: string): TranscriptSection[] => {
   const utterances: TranscriptUtterance[] = [];
@@ -65,13 +115,20 @@ const NormalRoundTemplate = ({ data, candidateId, hiringRequestId }: NormalRound
     ? { flag_reason: typeof screeningFlag.flag_reason === "string" ? screeningFlag.flag_reason : null }
     : null;
 
+  const storedScreening = buildStoredScreeningResult(data.reviews);
+  const hasUsableStored = hasScreeningContent(storedScreening);
+  const needLivePull = isAiScreeningRound && !flagged && !hasUsableStored;
+
   const { data: screeningResult, isLoading, isError, isFetching } = useAiScreeningResult(
     hiringRequestId,
     data.candidate_id ?? undefined,
-    { poll: true, enabled: isAiScreeningRound && !flagged },
+    { poll: true, enabled: needLivePull },
   );
-  const screeningTranscript = isAiScreeningRound && !flagged && screeningResult?.transcript
-    ? buildScreeningTranscriptSections(screeningResult.transcript)
+
+  const screeningSource: AiScreeningResult | undefined =
+    hasUsableStored ? (storedScreening ?? undefined) : (screeningResult ?? storedScreening ?? undefined);
+  const screeningTranscript = isAiScreeningRound && !flagged && screeningSource?.transcript
+    ? buildScreeningTranscriptSections(screeningSource.transcript)
     : null;
 
   return (
@@ -94,7 +151,12 @@ const NormalRoundTemplate = ({ data, candidateId, hiringRequestId }: NormalRound
               hiringRequestId={hiringRequestId}
               candidateId={data.candidate_id}
               flagged={flagged}
-              result={{ data: screeningResult, isLoading, isError, isFetching }}
+              result={{
+                data: screeningSource,
+                isLoading: hasUsableStored ? false : isLoading,
+                isError: hasUsableStored ? false : isError,
+                isFetching: hasUsableStored ? false : isFetching,
+              }}
             />
           )}
 
@@ -116,7 +178,13 @@ const NormalRoundTemplate = ({ data, candidateId, hiringRequestId }: NormalRound
         </div>
 
         <aside className="nrt-sidebar">
-          <section className="nrt-card">
+          {screeningTranscript && (
+            <div className="nrt-transcript">
+              <TranscriptPanel sections={screeningTranscript} collapsible={false} showSectionHeader={false} showBadge={false} />
+            </div>
+          )}
+
+          <section className="nrt-card nrt-overview-card">
             <div className="nrt-card-header">
               <i className="bx bx-info-circle" />
               <span>Interview Overview</span>
@@ -131,12 +199,6 @@ const NormalRoundTemplate = ({ data, candidateId, hiringRequestId }: NormalRound
               {data.status && <OverviewItem icon="bx bx-flag" label="Status" value={data.status} />}
             </div>
           </section>
-
-          {screeningTranscript && (
-            <div className="nrt-transcript">
-              <TranscriptPanel sections={screeningTranscript} collapsible={false} showSectionHeader={false} showBadge={false} />
-            </div>
-          )}
         </aside>
       </div>
     </div>

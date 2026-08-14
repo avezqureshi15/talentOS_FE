@@ -85,3 +85,25 @@ export const filterKnownRejectionDetails = (
     if (candidate === null) return false;
     return !isUnknownCandidateValue(candidate);
   });
+
+/** Maps a comparison field label to its corresponding rejection-detail criterion. */
+const COMPARISON_TO_REJECTION_CRITERION: Record<string, string> = {
+  YOE: "YOE",
+  CTC: "BUDGET",
+  LOCATION: "LOCATION",
+  NOTICE_PERIOD: "NOTICE_PERIOD",
+};
+
+/** Collects the set of criteria actually listed as rejection reasons. */
+export const getRejectedCriterionKeys = (
+  details: RejectionDetailItem[],
+): Set<string> => new Set(details.map((item) => Object.keys(item)[0]));
+
+/** Whether a comparison field maps to a criterion the candidate actually failed. */
+export const isComparisonFieldRejected = (
+  field: ComparisonField,
+  rejectedCriteria: Set<string>,
+): boolean => {
+  const criterion = COMPARISON_TO_REJECTION_CRITERION[field.label];
+  return criterion !== undefined && rejectedCriteria.has(criterion);
+};

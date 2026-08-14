@@ -48,7 +48,7 @@
 }
 
 .nrt-sidebar {
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -91,9 +91,19 @@
 }
 
 /* ─── Overview Sidebar ─── */
+.nrt-overview-card {
+  flex: 1 1 50%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .nrt-overview-body {
   padding: 10px 16px;
   gap: 0;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .nrt-overview-row {
@@ -140,9 +150,25 @@
 
 /* ─── Transcript ─── */
 .nrt-transcript {
-  max-height: 480px;
-  overflow-y: auto;
+  flex: 1 1 50%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border-radius: 6px;
+}
+
+.nrt-transcript .tp-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.nrt-transcript .tp-section {
+  overflow-y: auto;
+  min-height: 0;
+  flex: 1;
 }
 
 .nrt-transcript .tp-utterance {
@@ -375,6 +401,14 @@
   gap: 3px;
 }
 
+.nrt-compare-field--pass {
+  border-color: var(--success-border, var(--border-subtle));
+}
+
+.nrt-compare-field--reject {
+  border-color: var(--danger-light-border, var(--border-subtle));
+}
+
 .nrt-compare-title {
   font-size: 10px;
   font-weight: 600;
@@ -398,6 +432,13 @@
 .nrt-compare-act {
   font-size: 11.5px;
   font-weight: 500;
+}
+
+.nrt-compare-field--pass .nrt-compare-act {
+  color: var(--success-light, var(--text-primary));
+}
+
+.nrt-compare-field--reject .nrt-compare-act {
   color: var(--danger);
 }
 

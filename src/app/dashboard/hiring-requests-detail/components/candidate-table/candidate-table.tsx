@@ -212,6 +212,17 @@ const CandidateTable = ({
     ),
   };
 
+  const isRowDisabled = (c: Applicant): boolean =>
+    isInterviewStatus(c.status) ||
+    activeStage === "waiting-evaluation" ||
+    !onRowClick ||
+    (activeStage === "resume-shortlisting" && c.score == null);
+
+  const handleRowClick = (c: Applicant) => {
+    if (isRowDisabled(c)) return;
+    onRowClick?.(c);
+  };
+
   const gridTemplate = columns.map((col) => `${col.flex}fr`).join(" ");
 
   return (
@@ -238,14 +249,14 @@ const CandidateTable = ({
       keyExtractor={(c) => c.id}
       emptyMessage="No candidates match the current filters."
       gridTemplateColumns={gridTemplate}
-      onRowClick={onRowClick}
+      onRowClick={onRowClick ? handleRowClick : undefined}
       selection={
         showBulkSelection && selectedIds && onToggleSelect
           ? { selectedIds, onToggleSelect, onToggleSelectAll: onToggleSelectAll ?? (() => {}), allSelected: allSelected ?? false }
           : undefined
       }
       rowClassName={(c) =>
-        isInterviewStatus(c.status) || activeStage === "waiting-evaluation" || !onRowClick ? "dt-row--disabled" : ""
+        isRowDisabled(c) ? "dt-row--disabled" : ""
       }
       animated
     />

@@ -42,6 +42,11 @@ function isSuccessfulCall(candidate: Applicant): boolean {
   return review.result === "pass" || review.result === "fail" || review.result === "needs_review";
 }
 
+/** Whether the candidate's screening call has already completed successfully. */
+export function isScreeningCallCompleted(candidate: Applicant): boolean {
+  return isSuccessfulCall(candidate);
+}
+
 /** ISO 3166-1 alpha-2 → E.164 calling code — mirrors the POC's REGION_DIAL_CODES (backend/app/services/phone_validation.py). */
 const REGION_DIAL_CODES: Record<string, string> = {
   IN: "91",
@@ -104,6 +109,7 @@ function dialAttemptsExhausted(candidate: Applicant, maxRetries: number): boolea
  * - no phone, or phone not matching any allowed region dial-code when geography
  *   is enforced (or zero configured regions → nothing can be called) → hidden
  * - live call (initiated/in_progress) → hidden
+ * - already-completed call → hidden
  * - config/technical failure (transport, Vapi 401/403, api key) → hidden
  * - flagged/completed disposition → shown
  * - pending → shown only when there is no call record yet, a scheduled retry,
@@ -122,6 +128,7 @@ export function canTriggerScreeningCall(
   }
 
   if (isLiveCall(candidate)) return false;
+  if (isSuccessfulCall(candidate)) return false;
   if (isTechnicalFailure(candidate) && isConfigFailure(candidate)) return false;
 
   const review = candidate.screeningReview;
@@ -134,8 +141,6 @@ export function canTriggerScreeningCall(
     (isConnectFailure(candidate) && dialAttemptsExhausted(candidate, s.screening_max_retries));
 
   if (flagged) return true;
-
-  if (isSuccessfulCall(candidate)) return true;
 
   if (!review) return true;
   if (review.callStatus === "pending" && (review.retryCount ?? 0) > 0) return true;
