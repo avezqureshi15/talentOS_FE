@@ -34,7 +34,7 @@ export default function DataTable<T>({
         </div>
       )}
       {columns.map((col, i) => (
-        <div key={i} className={col.className} style={col.style}>
+        <div key={i} className={col.headerClassName ?? col.className} style={col.style}>
           {col.header}
         </div>
       ))}

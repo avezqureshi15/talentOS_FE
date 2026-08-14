@@ -5,12 +5,16 @@ import { PERMISSIONS } from "@/constants/permissions";
 import "./detail.css";
 
 import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
+import ApplicantActionModals from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-action-modals";
 import ApplicantFilters from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-filters";
 import PipelineStages from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages";
 import { PIPELINE_STAGES, NAME_SCORE_STATUS, SUFFIX_COLUMNS } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.constants";
 import type { StageColumn } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table";
 import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
+import AiInterviewScheduleModal from "@/app/dashboard/hiring-requests-detail/components/applicants/ai-interview-schedule-modal/ai-interview-schedule-modal";
+import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/interviews/cancel-interview-modal";
+import { useApplicantActionHandlers } from "@/app/dashboard/hiring-requests-detail/components/applicants/hooks/use-applicant-action-handlers";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
@@ -40,9 +44,6 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [interviewScheduleFilter, setInterviewScheduleFilter] = useState<InterviewScheduleFilter>(null);
   const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
   const [screeningSubFilter, setScreeningSubFilter] = useState<"pending" | "completed" | "flagged">("pending");
-  // UI-only: candidate whose Schedule Round modal is open, opened from table row action.
-  const [scheduleCandidate, setScheduleCandidate] = useState<Applicant | null>(null);
-
   const jobId = hiringRequest.id;
   const isRemote =
     isRemoteLocation(hiringRequest.location) || hiringRequest.type?.toLowerCase() === "remote";
@@ -76,6 +77,17 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     applicants, activeStage, interviewSubFilter, evaluatedSubFilter, screeningSubFilter,
     interviewScheduleFilter,
   });
+
+  const {
+    modalProps,
+    scheduleProps,
+    rescheduleProps,
+    aiScheduleProps,
+    cancelProps,
+    handleAction,
+    handleMenuAction,
+    getLocalApplicant,
+  } = useApplicantActionHandlers({ data: filteredApplicants, jdId: jobId, onRefresh: refresh });
 
   const BULK_STAGE_ACTIONS: Record<string, { screening: boolean; interview: boolean }> = {
     "resume-shortlisting": { screening: true, interview: true },
@@ -137,9 +149,8 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     if (activeStage === "screening") {
       return [
         { key: "name", label: "Candidate", flex: 2 },
-        { key: "phone", label: "Phone", flex: 1.1 },
         { key: "status", label: "Status", flex: 1 },
-        { key: "actions", label: "Actions", flex: 1 },
+        { key: "actions", label: "Actions", flex: 2.5 },
       ];
     }
     if (activeStage === "interview") {
@@ -369,11 +380,12 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           ) : (
             <motion.div variants={fadeSlideUp}>
               <CandidateTable
-                data={filteredApplicants}
+                data={filteredApplicants.map(getLocalApplicant)}
                 columns={columns}
                 onRowClick={activeStage !== "waiting-evaluation" ? (candidate) => handleRowClick(candidate as Applicant) : undefined}
                 onInfoClick={(candidate) => handleInfoClick(candidate as Applicant)}
-                onScheduleClick={canWorkflow ? (candidate) => setScheduleCandidate(candidate as Applicant) : undefined}
+                onAction={handleAction}
+                onMenuAction={handleMenuAction}
                 onTimelineOpen={(candidate) => setTimelineId(candidate.candidateId)}
                 showBulkSelection={showBulkSelection}
                 selectedIds={bulkSelection.selectedIds}
@@ -415,18 +427,51 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
 
         <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 
+        <ApplicantActionModals {...modalProps} />
+
         <ScheduleRoundModal
-          open={!!scheduleCandidate}
-          candidateName={scheduleCandidate?.name ?? ""}
-          candidateId={scheduleCandidate?.id ?? ""}
-          candidateNumberId={scheduleCandidate?.candidateId ?? 0}
+          open={!!scheduleProps.candidateId}
+          candidateName={scheduleProps.candidateName}
+          candidateId={scheduleProps.candidateId ?? ""}
+          candidateNumberId={scheduleProps.candidateNumberId}
           jdId={jobId}
           hiringRequestId={jobId}
-          onClose={() => setScheduleCandidate(null)}
-          onScheduled={() => {
-            setScheduleCandidate(null);
-            refresh();
-          }}
+          onClose={scheduleProps.onClose}
+          onScheduled={scheduleProps.onScheduled}
+        />
+
+        <ScheduleRoundModal
+          open={!!rescheduleProps.target}
+          rescheduleMode
+          candidateName={rescheduleProps.target?.name ?? ""}
+          candidateId={rescheduleProps.target?.id ?? ""}
+          interviewId={rescheduleProps.target?.interviewId}
+          interviewerEmpId={rescheduleProps.target?.interviewerEmpId}
+          interviewerName={rescheduleProps.target?.interviewerName}
+          roundName={rescheduleProps.target?.roundName}
+          jdId={jobId}
+          hiringRequestId={jobId}
+          onClose={rescheduleProps.onClose}
+          onScheduled={rescheduleProps.onScheduled}
+        />
+
+        <AiInterviewScheduleModal
+          key={aiScheduleProps.target?.id ?? "ai-schedule-closed"}
+          open={!!aiScheduleProps.target}
+          candidateName={aiScheduleProps.target?.name ?? ""}
+          candidateId={aiScheduleProps.target?.candidateId ?? 0}
+          hiringRequestId={jobId}
+          currentSlot={aiScheduleProps.target?.currentSlot}
+          onClose={aiScheduleProps.onClose}
+          onScheduled={aiScheduleProps.onScheduled}
+        />
+
+        <CancelInterviewModal
+          open={!!cancelProps.target}
+          interviewId={cancelProps.target?.interviewId ?? ""}
+          candidateName={cancelProps.target?.name ?? ""}
+          onClose={cancelProps.onClose}
+          onConfirm={cancelProps.onConfirm}
         />
       </motion.div>
     </div>

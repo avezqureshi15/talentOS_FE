@@ -7,6 +7,7 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { useApplicantState } from "./hooks/use-applicant-state";
 import CardExpandedContent from "./card-expanded-content";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
+import ApplicantMenuButton from "./applicant-menu-button/applicant-menu-button";
 import type { ApplicantCardProps } from "./applicants.types";
 import { MENU_ACTION_PERMISSIONS } from "./applicants.constants";
 
@@ -32,8 +33,6 @@ const ApplicantCard = ({
 }: ApplicantCardProps) => {
   const stateConfig = useApplicantState(a, isScreening);
   const { can } = usePermissions();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const [tooltip, setTooltip] = useState<{ lines: string[]; rect: DOMRect; className?: string } | null>(null);
   const tooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -50,17 +49,6 @@ const ApplicantCard = ({
   useEffect(() => {
     return () => { if (tooltipTimerRef.current) clearTimeout(tooltipTimerRef.current); };
   }, []);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    const handleClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [menuOpen]);
 
   const canExpand = readOnly || true;
   const showExpanded = isOpen && (stateConfig.showExpandedContent || readOnly);
@@ -150,34 +138,12 @@ const ApplicantCard = ({
           {showMenu && onMenuAction && (
             <>
               <span className="header-action-divider" />
-              <div className="three-dots-wrapper" ref={menuRef}>
-                <button
-                  className="three-dots-btn"
-                  onClick={(e) => { e.stopPropagation(); if (!isOpen) onToggleOpen(a.id); setMenuOpen((v) => !v); }}
-                  type="button"
-                >
-                  <i className="bx bx-dots-vertical-rounded"></i>
-                </button>
-                {menuOpen && (
-                  <div className="three-dots-menu">
-                    {visibleMenuActions.includes("select") && (
-                      <button className="menu-item menu-item-select" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onMenuAction("select", a.id); }} type="button">
-                        {APPLICANT_LABELS.SELECT_CANDIDATE}
-                      </button>
-                    )}
-                    {visibleMenuActions.includes("reject") && (
-                      <button className="menu-item menu-item-reject" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onMenuAction("reject", a.id); }} type="button">
-                        {APPLICANT_LABELS.REJECT_CANDIDATE}
-                      </button>
-                    )}
-                    {visibleMenuActions.includes("hold") && (
-                      <button className="menu-item" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); onMenuAction("hold", a.id); }} type="button">
-                        Hold
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
+              <ApplicantMenuButton
+                menuActions={visibleMenuActions}
+                onMenuAction={onMenuAction}
+                id={a.id}
+                onBeforeOpen={() => { if (!isOpen) onToggleOpen(a.id); }}
+              />
             </>
           )}
         </div>

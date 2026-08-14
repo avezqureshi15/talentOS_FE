@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { ReactNode } from "react";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
 
 export type HeaderViewOption = {
@@ -39,6 +40,7 @@ export type HeaderActionConfig = {
   className?: string;
   tooltipLines?: string[];
   error?: string | null;
+  render?: () => ReactNode;
 };
 
 export type HeaderMetaItem = {

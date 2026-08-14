@@ -31,11 +31,11 @@ const CopyableRow = ({ label, value }: CopyableRowProps) => {
       <button
         type="button"
         className={`person-tip-copy${copied ? " person-tip-copy--copied" : ""}`}
-        onClick={() => copy(value)}
+        onClick={(e) => { e.stopPropagation(); copy(value); }}
         aria-label={`${PERSON_TOOLTIP_LABELS.COPY_ARIA_PREFIX}${label}`}
         title={copied ? PERSON_TOOLTIP_LABELS.COPIED : PERSON_TOOLTIP_LABELS.COPY}
       >
-        <i className={`bx ${copied ? "bx-check" : "bx-copy-alt"}`} />
+        <i className={`bx ${copied ? "bx-check" : "bx-copy"}`} />
       </button>
     </div>
   );

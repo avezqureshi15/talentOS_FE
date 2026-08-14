@@ -4,6 +4,8 @@ export type Column<T> = {
   header: string;
   render: (row: T, index: number) => ReactNode;
   className?: string;
+  /** Class applied to the header cell; falls back to `className` when omitted. */
+  headerClassName?: string;
   style?: CSSProperties;
   width?: string;
   /**

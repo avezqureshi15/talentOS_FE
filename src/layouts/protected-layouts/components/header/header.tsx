@@ -209,7 +209,9 @@ const JobsToolbar = ({ onOpenPalette, sidebarOpen }: { onOpenPalette?: () => voi
 
         {inlineActions?.map((action) => (
           <React.Fragment key={action.key}>
-            {action.variant === "primary" ? (
+            {action.render ? (
+              action.render()
+            ) : action.variant === "primary" ? (
               <motion.button
                 className={`jobs-add-btn${action.className ? ` ${action.className}` : ""}${action.disabled ? " jobs-add-btn--disabled" : ""}${action.tooltipLines ? " jobs-add-btn--icon-only" : ""}`}
                 onClick={action.onClick}

@@ -13,7 +13,7 @@ import { useInterviewPlanData } from "@/app/dashboard/hiring-requests-detail/com
 import { InterviewDesignPlanner } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/interview-design-planner/interview-design-planner";
 
 import { useExportInterviewDesignPdf } from "@/app/dashboard/hiring-requests-detail/components/interview-design/hooks/use-export-interview-design-pdf";
-import { INTERVIEW_DESIGN_EXPORT_OPTIONS } from "@/app/dashboard/hiring-requests-detail/components/interview-design/export/export-kinds";
+import { ExportSplitButton } from "@/app/dashboard/hiring-requests-detail/components/interview-design/components/export-split-button/export-split-button";
 import { formatMinutes } from "@/app/dashboard/hiring-requests-detail/components/interview-design/interview-design.utils";
 import CallWindowModal from "@/app/dashboard/hiring-requests-detail/components/call-window/call-window-modal";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -139,19 +139,19 @@ const InterviewDesignPage = () => {
         },
       ]
     : [
-        ...INTERVIEW_DESIGN_EXPORT_OPTIONS.map((opt) => {
-          const isThisExporting = exportingKind === opt.kind;
-          return {
-            key: opt.key,
-            label: isThisExporting ? "Exporting..." : opt.label,
-            icon: isThisExporting ? "bx-loader-alt bx-spin" : opt.icon,
-            variant: "primary" as const,
-            onClick: () => void handleExport(opt.kind),
-            disabled: isExporting || isLoading,
-            loading: isThisExporting,
-            loadingText: "Exporting...",
-          };
-        }),
+        {
+          key: "split-export",
+          variant: "outline",
+          label: "Export",
+          render: () => (
+            <ExportSplitButton
+              handleExport={handleExport}
+              exportingKind={exportingKind}
+              isExporting={isExporting}
+              disabled={isLoading}
+            />
+          ),
+        },
         ...(canEditPlan
           ? [{
               key: "edit",

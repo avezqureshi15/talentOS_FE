@@ -25,6 +25,7 @@ const HiringRequests = () => {
   const [filters, setFilters] = useState<HiringRequestsFilters>({
     page: 1,
     per_page: 10,
+    is_active: true,
   });
   const { data, isLoading, error } = useHiringRequests(filters);
   const queryClient = useQueryClient();

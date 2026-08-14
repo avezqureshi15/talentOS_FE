@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import DataTable from "@/components/ui/data-table/data-table";
-import CandidateActionsMenu from "./candidate-actions-menu/candidate-actions-menu";
+import CandidateRowActions from "./candidate-row-actions/candidate-row-actions";
 import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell";
 import "./candidate-table.css";
@@ -81,7 +81,7 @@ const isInterviewStatus = (s: string) =>
   s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled" || s === "screening_round_scheduled" || s === "ongoing";
 
 const CandidateTable = ({
-  data, columns, onRowClick, onInfoClick, onScheduleClick, onTimelineOpen,
+  data, columns, onRowClick, onInfoClick, onAction, onMenuAction, onTimelineOpen,
   showBulkSelection,
   selectedIds,
   onToggleSelect, onToggleSelectAll, allSelected,
@@ -89,7 +89,7 @@ const CandidateTable = ({
   hiringRequestId,
   onScreeningTriggered,
 }: CandidateTableProps) => {
-  const CELL_RENDERERS: Record<string, (c: Applicant, onInfo?: (c: Applicant) => void) => ReactNode> = {
+  const CELL_RENDERERS: Record<string, (c: Applicant) => ReactNode> = {
     name: (c) => (
       <div className="applicant-table-cell--name">
         <PersonAvatar
@@ -104,7 +104,10 @@ const CandidateTable = ({
               <span className="attempt-badge--inline">attempt {c.screeningReview.attempt}</span>
             )}
           </div>
-          {c.email && <TruncatedCell text={c.email} className="candidate-email" />}
+          {c.score != null
+            ? <span className={`ats-score ${getScoreClass(c.score)}`}>Score: {c.score}</span>
+            : c.email && <TruncatedCell text={c.email} className="candidate-email" />
+          }
         </div>
       </div>
     ),
@@ -165,11 +168,12 @@ const CandidateTable = ({
         <i className="bx bx-timeline" />
       </button>
     ),
-    info: (c, onInfo) => (
-      <CandidateActionsMenu
+    info: (c) => (
+      <CandidateRowActions
         candidate={c}
-        onViewProfile={(cand) => onInfo?.(cand)}
-        onScheduleRound={onScheduleClick}
+        onAction={onAction ?? (() => {})}
+        onMenuAction={onMenuAction ?? (() => {})}
+        onViewProfile={(cand) => onInfoClick?.(cand)}
       />
     ),
     startDate: (c) =>
@@ -190,18 +194,19 @@ const CandidateTable = ({
       ) : (
         <span className="text-muted">—</span>
       ),
-    actions: (c, onInfo) => (
+    actions: (c) => (
       <div className="screening-actions-cell">
         <ScreeningActions
           candidate={c}
           hiringRequestId={hiringRequestId ?? ""}
           onScreeningTriggered={onScreeningTriggered}
         />
-        <CandidateActionsMenu
+        <CandidateRowActions
           candidate={c}
-          compact
-          onViewProfile={(cand) => onInfo?.(cand)}
-          onScheduleRound={onScheduleClick}
+          onAction={onAction ?? (() => {})}
+          onMenuAction={onMenuAction ?? (() => {})}
+          onViewProfile={(cand) => onInfoClick?.(cand)}
+          hideCallNow={activeStage === "screening"}
         />
       </div>
     ),
@@ -214,14 +219,18 @@ const CandidateTable = ({
       columns={columns.map((col) => ({
         header: col.label,
         className:
-          col.key === "actions"
-            ? "dt-cell-right"
-            : col.key === "info" || col.key === "timeline" || col.key === "cv"
-              ? "dt-cell-center"
+          col.key === "timeline" || col.key === "cv"
+            ? "dt-cell-center"
+            : col.key === "actions" || col.key === "info"
+              ? "dt-cell-right"
               : undefined,
+        headerClassName:
+          col.key === "actions" || col.key === "info"
+            ? "dt-cell-center"
+            : undefined,
         render: (c: Applicant) => {
           const render = CELL_RENDERERS[col.key];
-          return render ? render(c, onInfoClick) : null;
+          return render ? render(c) : null;
         },
       }))}
       data={data}

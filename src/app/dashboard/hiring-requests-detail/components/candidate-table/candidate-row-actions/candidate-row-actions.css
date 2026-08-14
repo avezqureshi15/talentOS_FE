@@ -1,0 +1,19 @@
+.cra {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+.cra-btn {
+  white-space: nowrap;
+}
+
+.cra--flattened {
+  width: 100%;
+  justify-content: center;
+}
+
+.cra-dots {
+  flex-shrink: 0;
+}

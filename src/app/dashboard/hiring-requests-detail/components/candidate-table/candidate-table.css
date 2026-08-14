@@ -53,7 +53,7 @@
 .screening-actions-cell {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 6px;
   white-space: nowrap;
 }
@@ -66,29 +66,22 @@
 
 /* ATS score */
 .ats-score {
-  display: inline-flex;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 11px;
+  display: inline;
+  font-size: 10px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .ats-score.score-high {
-  background: var(--success-bg-strong);
   color: var(--success-light);
-  border: 1px solid var(--success-light-border);
 }
 
 .ats-score.score-mid {
-  background: var(--score-mid-bg);
   color: var(--score-mid);
-  border: 1px solid var(--score-mid-border);
 }
 
 .ats-score.score-low {
-  background: var(--danger-bg-strong);
   color: var(--danger-light);
-  border: 1px solid var(--danger-light-border);
 }
 
 /* status chip */
