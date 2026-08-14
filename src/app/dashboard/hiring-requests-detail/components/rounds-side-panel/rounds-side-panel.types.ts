@@ -1,8 +1,6 @@
-export type ComparisonField = {
-  label: string;
-  actual: string;
-  expected: string;
-};
+import type { ComparisonField } from "@/utils/review-comparison/review-comparison.utils.types";
+
+export type { ComparisonField };
 
 export type ReviewAnswerItem = {
   question: string;

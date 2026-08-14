@@ -8,7 +8,11 @@ import {
   RATING_LABELS, ENTITY_TITLE_LABELS, VERDICT_LABELS, VERDICT_ICONS,
   CRITERION_LABELS, COMPARISON_LABELS, ROUNDS_FALLBACK,
 } from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel.constants";
-import { extractComparisonFields } from "./normal-round-template.utils";
+import {
+  getKnownComparisonFields,
+  filterKnownRejectionDetails,
+} from "./normal-round-template.utils";
+import type { RejectionDetailItem } from "@/utils/review-comparison/review-comparison.utils.types";
 
 const AI_ENTITY_TYPES_HANDLED_ELSEWHERE = new Set<string>(["ai_screening", "ai_interview"]);
 
@@ -114,8 +118,11 @@ const AiContent = ({ entity }: { entity: ReviewEntity }) => {
   const summary = entity.summary as string | undefined;
   const strongMatches = Array.isArray(entity.strong_matches) ? entity.strong_matches as string[] : [];
   const gapsAndConcerns = Array.isArray(entity.gaps_and_concerns) ? entity.gaps_and_concerns as string[] : [];
-  const comparisonFields = extractComparisonFields(entity);
-  const rejectionDetails = Array.isArray(entity.rejection_details) ? entity.rejection_details as Array<Record<string, { JD: string; Candidate: string }>> : [];
+  const comparisonFields = getKnownComparisonFields(entity as Record<string, unknown>);
+  const rejectionRaw = Array.isArray(entity.rejection_details)
+    ? (entity.rejection_details as RejectionDetailItem[])
+    : [];
+  const rejectionDetails = filterKnownRejectionDetails(rejectionRaw);
   const hasBullets = strongMatches.length > 0 || gapsAndConcerns.length > 0;
   const hasComparisons = comparisonFields.length > 0;
   const hasDetails = rejectionDetails.length > 0;
