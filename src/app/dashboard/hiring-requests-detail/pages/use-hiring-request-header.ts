@@ -45,7 +45,6 @@ export function useHiringRequestHeader({
   onImport,
   onArchived,
   onCloseJob,
-  isJobClosing,
   title,
   titleIcon,
   subtitle,
