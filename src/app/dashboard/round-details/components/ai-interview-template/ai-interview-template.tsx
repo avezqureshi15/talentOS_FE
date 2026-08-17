@@ -19,26 +19,17 @@ const PILL_CLASS: Record<string, string> = {
   POTENTIAL_FIT: "rd-ai-pill--potential",
 };
 
+const TOPIC_ORDER: string[] = [
+  "technical_fit",
+  "communication",
+  "experience",
+  "problem_solving",
+  "role_alignment",
+];
+
 type Props = {
   data: CandidateEvaluationData;
 };
-
-const formatDateTime = (iso?: string) => {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleString(undefined, {
-    year: "numeric", month: "short", day: "numeric",
-    hour: "2-digit", minute: "2-digit",
-  });
-};
-
-const MetadataRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="rd-meta-row">
-    <span className="rd-meta-label">{label}</span>
-    <span className="rd-meta-value">{value}</span>
-  </div>
-);
 
 const RubricSection = ({ questionScores, rubricTotal }: { questionScores: QuestionScore[]; rubricTotal?: number | null }) => (
   <div className="rd-rubric-card">
@@ -91,6 +82,11 @@ const AiInterviewTemplate = ({ data }: Props) => {
   const hasStrengths = Array.isArray(data.strengths) && data.strengths.length > 0;
   const hasWeaknesses = Array.isArray(data.weaknesses) && data.weaknesses.length > 0;
   const hasRubric = Array.isArray(data.questionScores) && data.questionScores.length > 0;
+  const sortedTopics = [...data.topics].sort((a, b) => {
+    const ia = TOPIC_ORDER.indexOf(a.id);
+    const ib = TOPIC_ORDER.indexOf(b.id);
+    return (ia === -1 ? TOPIC_ORDER.length : ia) - (ib === -1 ? TOPIC_ORDER.length : ib);
+  });
 
   return (
     <div className="rd-split">
@@ -138,6 +134,15 @@ const AiInterviewTemplate = ({ data }: Props) => {
           </div>
         )}
 
+        {data.transcriptSummary && (
+          <div className="rd-topic-card">
+            <div className="rd-topic-header">
+              <h3 className="rd-topic-title">Transcript Summary</h3>
+            </div>
+            <p className="rd-transcript-summary-text">{data.transcriptSummary}</p>
+          </div>
+        )}
+
         {(hasStrengths || hasWeaknesses) && (
           <div className="rd-topic-card">
             <div className="rd-topic-header">
@@ -162,56 +167,17 @@ const AiInterviewTemplate = ({ data }: Props) => {
           </div>
         )}
 
-        {(data.createdAt || data.startedAt || data.completedAt || data.hrDecision || data.status) && (
-          <div className="rd-topic-card">
-            <div className="rd-topic-header">
-              <h3 className="rd-topic-title">Interview Details</h3>
-            </div>
-            <div className="rd-meta-grid">
-              {data.jobTitle && (
-                <MetadataRow label="Role" value={data.jobTitle} />
-              )}
-              {data.hrDecision && (
-                <MetadataRow label="HR Decision" value={data.hrDecision} />
-              )}
-              {data.status && (
-                <MetadataRow label="Status" value={data.status} />
-              )}
-              {data.createdAt && (
-                <MetadataRow label="Created" value={formatDateTime(data.createdAt)} />
-              )}
-              {data.startedAt && (
-                <MetadataRow label="Started" value={formatDateTime(data.startedAt)} />
-              )}
-              {data.completedAt && (
-                <MetadataRow label="Completed" value={formatDateTime(data.completedAt)} />
-              )}
-              {data.expiresAt && (
-                <MetadataRow label="Link Expires" value={formatDateTime(data.expiresAt)} />
-              )}
-            </div>
-          </div>
-        )}
+        {hasRubric && <RubricSection questionScores={data.questionScores!} rubricTotal={data.rubricTotal} />}
 
-        {data.topics.map((topic) => (
+        {sortedTopics.map((topic) => (
           <TopicCard key={topic.id} topic={topic} />
         ))}
-
-        {hasRubric && <RubricSection questionScores={data.questionScores!} rubricTotal={data.rubricTotal} />}
       </div>
 
       <div className="rd-right">
         <div className="rd-video-wrapper">
           <RecordingPanel ref={videoRef} recordingUrl={data.recordingUrl} />
         </div>
-        {data.transcriptSummary && (
-          <div className="rd-topic-card rd-transcript-summary-card">
-            <div className="rd-topic-header">
-              <h3 className="rd-topic-title">Transcript Summary</h3>
-            </div>
-            <p className="rd-transcript-summary-text">{data.transcriptSummary}</p>
-          </div>
-        )}
         <div className="rd-transcript-area">
           <TranscriptPanel sections={data.transcriptSections} onSeek={handleSeek} collapsible={false} showSectionHeader={false} showBadge={false} />
         </div>

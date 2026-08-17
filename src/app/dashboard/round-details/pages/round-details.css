@@ -383,6 +383,8 @@
 
 .rd-stamp--advance {
   background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--success-emerald) 12%, transparent), color-mix(in srgb, var(--success-900) 18%, transparent) 80%);
+  border: 2px solid var(--success-emerald);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success-emerald) 35%, transparent), 0 2px 12px color-mix(in srgb, var(--success-emerald) 20%, transparent);
 }
 .rd-stamp--advance .rd-stamp-ring--outer {
   stroke: color-mix(in srgb, var(--success-emerald) 50%, transparent);
@@ -425,7 +427,7 @@
   fill: color-mix(in srgb, var(--danger) 65%, transparent);
 }
 .rd-stamp--advance .rd-stamp-arc {
-  fill: color-mix(in srgb, var(--success-emerald) 65%, transparent);
+  fill: #ffffff;
 }
 .rd-stamp--potential .rd-stamp-arc {
   fill: color-mix(in srgb, var(--verdict-hold) 65%, transparent);
@@ -884,38 +886,6 @@
   color: var(--verdict-reject);
   border-color: var(--verdict-reject);
   background: color-mix(in srgb, var(--verdict-reject) 8%, transparent);
-}
-
-.rd-meta-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 16px;
-}
-
-.rd-meta-row {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.rd-meta-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.rd-meta-value {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  word-break: break-word;
-}
-
-.rd-transcript-summary-card {
-  margin-bottom: 12px;
 }
 
 .rd-transcript-summary-text {
