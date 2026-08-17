@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import { Sparkles, Info } from "lucide-react";
+import { Sparkles, Info, Check, X } from "lucide-react";
 import TranscriptPanel from "../transcript-panel/transcript-panel";
 import RecordingPanel from "./recording-panel";
 import TopicCard from "./topic-card";
-import type { CandidateEvaluationData } from "../../pages/round-details.types";
+import type { CandidateEvaluationData, QuestionScore } from "../../pages/round-details.types";
 import type { CustomVideoHandle } from "@/components/shared/custom-video/custom-video.types";
 import "./ai-interview-template.css";
 
@@ -23,12 +23,75 @@ type Props = {
   data: CandidateEvaluationData;
 };
 
+const formatDateTime = (iso?: string) => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleString(undefined, {
+    year: "numeric", month: "short", day: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  });
+};
+
+const MetadataRow = ({ label, value }: { label: string; value: string }) => (
+  <div className="rd-meta-row">
+    <span className="rd-meta-label">{label}</span>
+    <span className="rd-meta-value">{value}</span>
+  </div>
+);
+
+const RubricSection = ({ questionScores, rubricTotal }: { questionScores: QuestionScore[]; rubricTotal?: number | null }) => (
+  <div className="rd-rubric-card">
+    <div className="rd-topic-header">
+      <h3 className="rd-topic-title">Question Rubric</h3>
+      <span className="rd-rating-badge">
+        {rubricTotal ? `${rubricTotal} pts total` : `${questionScores.length} questions`}
+      </span>
+    </div>
+    <div className="rd-rubric-list">
+      {questionScores.map((qs) => {
+        const earned = typeof qs.earnedScore === "number" ? qs.earnedScore : qs.score;
+        const max = typeof qs.score === "number" ? qs.score : earned;
+        return (
+          <div key={qs.id || qs.question} className="rd-rubric-item">
+            <div className="rd-rubric-header">
+              <span className="rd-rubric-question">{qs.question}</span>
+              <span className="rd-rubric-score">
+                {typeof earned === "number" ? earned : "—"}{typeof max === "number" ? `/${max}` : ""}
+              </span>
+            </div>
+            {Array.isArray(qs.pointCoverage) && qs.pointCoverage.length > 0 && (
+              <ul className="rd-rubric-coverage">
+                {qs.pointCoverage.map((pc, i) => (
+                  <li key={i} className={`rd-rubric-point ${pc.covered ? "rd-rubric-point--covered" : "rd-rubric-point--missed"}`}>
+                    {pc.covered ? <Check className="rd-rubric-point-icon" /> : <X className="rd-rubric-point-icon" />}
+                    <span>{pc.point}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {qs.candidateAnswer && (
+              <p className="rd-rubric-answer"><span className="rd-rubric-answer-label">Candidate: </span>{qs.candidateAnswer}</p>
+            )}
+            {qs.notes && <p className="rd-rubric-notes"><span className="rd-rubric-notes-label">Notes: </span>{qs.notes}</p>}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+);
+
 const AiInterviewTemplate = ({ data }: Props) => {
   const videoRef = useRef<CustomVideoHandle>(null);
 
   const handleSeek = (time: number) => {
     videoRef.current?.seek(time);
   };
+
+  const hasStrengths = Array.isArray(data.strengths) && data.strengths.length > 0;
+  const hasWeaknesses = Array.isArray(data.weaknesses) && data.weaknesses.length > 0;
+  const hasRubric = Array.isArray(data.questionScores) && data.questionScores.length > 0;
+
   return (
     <div className="rd-split">
       <div className="rd-left">
@@ -66,15 +129,89 @@ const AiInterviewTemplate = ({ data }: Props) => {
           </div>
         </div>
 
+        {data.jdFit && (
+          <div className="rd-topic-card">
+            <div className="rd-topic-header">
+              <h3 className="rd-topic-title">Job Description Fit</h3>
+            </div>
+            <p className="rd-jd-fit-text">{data.jdFit}</p>
+          </div>
+        )}
+
+        {(hasStrengths || hasWeaknesses) && (
+          <div className="rd-topic-card">
+            <div className="rd-topic-header">
+              <h3 className="rd-topic-title">Strengths &amp; Weaknesses</h3>
+            </div>
+            {hasStrengths && (
+              <div className="rd-chips-group">
+                <span className="rd-chips-label rd-chips-label--positive">Strengths</span>
+                <div className="rd-chips">
+                  {data.strengths!.map((s, i) => <span key={i} className="rd-chip rd-chip--positive">{s}</span>)}
+                </div>
+              </div>
+            )}
+            {hasWeaknesses && (
+              <div className="rd-chips-group">
+                <span className="rd-chips-label rd-chips-label--negative">Weaknesses</span>
+                <div className="rd-chips">
+                  {data.weaknesses!.map((w, i) => <span key={i} className="rd-chip rd-chip--negative">{w}</span>)}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {(data.createdAt || data.startedAt || data.completedAt || data.hrDecision || data.status) && (
+          <div className="rd-topic-card">
+            <div className="rd-topic-header">
+              <h3 className="rd-topic-title">Interview Details</h3>
+            </div>
+            <div className="rd-meta-grid">
+              {data.jobTitle && (
+                <MetadataRow label="Role" value={data.jobTitle} />
+              )}
+              {data.hrDecision && (
+                <MetadataRow label="HR Decision" value={data.hrDecision} />
+              )}
+              {data.status && (
+                <MetadataRow label="Status" value={data.status} />
+              )}
+              {data.createdAt && (
+                <MetadataRow label="Created" value={formatDateTime(data.createdAt)} />
+              )}
+              {data.startedAt && (
+                <MetadataRow label="Started" value={formatDateTime(data.startedAt)} />
+              )}
+              {data.completedAt && (
+                <MetadataRow label="Completed" value={formatDateTime(data.completedAt)} />
+              )}
+              {data.expiresAt && (
+                <MetadataRow label="Link Expires" value={formatDateTime(data.expiresAt)} />
+              )}
+            </div>
+          </div>
+        )}
+
         {data.topics.map((topic) => (
           <TopicCard key={topic.id} topic={topic} />
         ))}
+
+        {hasRubric && <RubricSection questionScores={data.questionScores!} rubricTotal={data.rubricTotal} />}
       </div>
 
       <div className="rd-right">
         <div className="rd-video-wrapper">
           <RecordingPanel ref={videoRef} recordingUrl={data.recordingUrl} />
         </div>
+        {data.transcriptSummary && (
+          <div className="rd-topic-card rd-transcript-summary-card">
+            <div className="rd-topic-header">
+              <h3 className="rd-topic-title">Transcript Summary</h3>
+            </div>
+            <p className="rd-transcript-summary-text">{data.transcriptSummary}</p>
+          </div>
+        )}
         <div className="rd-transcript-area">
           <TranscriptPanel sections={data.transcriptSections} onSeek={handleSeek} collapsible={false} showSectionHeader={false} showBadge={false} />
         </div>

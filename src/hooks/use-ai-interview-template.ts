@@ -12,8 +12,15 @@ type UseAiInterviewTemplateOptions = {
   poll?: boolean;
 };
 
+const hasReportData = (data: CandidateEvaluationData) =>
+  (typeof data.overallScore === "number" && data.overallScore > 0) ||
+  (Array.isArray(data.questionScores) && data.questionScores.length > 0) ||
+  Boolean(data.jdFit) ||
+  Boolean(data.transcriptSummary);
+
 const shouldKeepPolling = (data: CandidateEvaluationData | undefined) => {
   if (!data) return true;
+  if (hasReportData(data)) return false;
   const status = (data.status || "").toLowerCase();
   return !AI_INTERVIEW_TERMINAL_STATUSES.has(status);
 };

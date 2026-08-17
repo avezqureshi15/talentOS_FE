@@ -824,3 +824,191 @@
   justify-content: center;
   min-height: 200px;
 }
+
+/* ─── JD Fit / Strengths / Weaknesses / Metadata / Rubric ─── */
+
+.rd-jd-fit-text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.rd-chips-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rd-chips-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rd-chips-label--positive {
+  color: var(--verdict-advance);
+}
+
+.rd-chips-label--negative {
+  color: var(--verdict-reject);
+}
+
+.rd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-elevated);
+  color: var(--text-secondary);
+}
+
+.rd-chip--positive {
+  color: var(--verdict-advance);
+  border-color: var(--verdict-advance);
+  background: color-mix(in srgb, var(--verdict-advance) 8%, transparent);
+}
+
+.rd-chip--negative {
+  color: var(--verdict-reject);
+  border-color: var(--verdict-reject);
+  background: color-mix(in srgb, var(--verdict-reject) 8%, transparent);
+}
+
+.rd-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+}
+
+.rd-meta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rd-meta-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.rd-meta-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.rd-transcript-summary-card {
+  margin-bottom: 12px;
+}
+
+.rd-transcript-summary-text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.rd-rubric-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rd-rubric-item {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rd-rubric-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rd-rubric-question {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.rd-rubric-score {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: 2px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.rd-rubric-coverage {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rd-rubric-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.rd-rubric-point--covered {
+  color: var(--verdict-advance);
+}
+
+.rd-rubric-point--missed {
+  color: var(--text-muted);
+}
+
+.rd-rubric-point-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.rd-rubric-answer,
+.rd-rubric-notes {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.rd-rubric-answer-label,
+.rd-rubric-notes-label {
+  font-weight: 700;
+  color: var(--text-secondary);
+}

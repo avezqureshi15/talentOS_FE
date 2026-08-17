@@ -197,10 +197,11 @@ export const AI_SCREENING_TERMINAL_STATUSES = new Set<string>([
 
 export const AI_INTERVIEW_POLL_INTERVAL_MS = 15_000;
 
+// POC keeps polling even at "completed": the transcript lands first and the
+// assessment report (status -> "assessed") is generated async afterwards.
 export const AI_INTERVIEW_TERMINAL_STATUSES = new Set<string>([
   "assessed",
   "assessment_failed",
-  "completed",
 ]);
 
 export const EXPORT_LABELS = {
