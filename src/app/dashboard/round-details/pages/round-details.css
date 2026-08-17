@@ -303,6 +303,7 @@
   justify-content: center;
   flex-shrink: 0;
   border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--text-faint) 35%, transparent);
   transform: rotate(-3deg);
   overflow: hidden;
   transition: transform 0.25s ease, box-shadow 0.25s ease;

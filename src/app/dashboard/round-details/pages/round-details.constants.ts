@@ -6,11 +6,11 @@ export const MOCK_EVALUATION: CandidateEvaluationData = {
   status: "Complete",
   jobTitle: "Senior GCP Architect",
   appliedDate: "1d ago",
-  aiRecommendation: "REJECT",
+  aiRecommendation: "ADVANCE",
   aiSummary:
-    "The candidate confused GCP services with other cloud providers, deferred basic network troubleshooting to other teams, and recommended access policies that would compromise the security of our infrastructure.",
-  overallScore: 1.5,
-  criteriaMet: 1,
+    "The candidate demonstrated strong IAM governance and security knowledge, correctly applying least-privilege principles and leveraging GCP-native controls like Secret Manager, Cloud Armor, and Cloud Load Balancing. Minor gaps remain in hybrid networking, but overall the candidate is a solid fit for the role.",
+  overallScore: 4.2,
+  criteriaMet: 5,
   totalCriteria: 6,
   topics: [
     {
