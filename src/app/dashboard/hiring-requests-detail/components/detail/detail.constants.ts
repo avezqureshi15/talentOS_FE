@@ -38,7 +38,8 @@ export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean>
   "ai-incoming": (a) =>
     a.stage === "AI_INTERVIEW" &&
     (a.status?.toLowerCase() === "interview_scheduled" ||
-     a.status?.toLowerCase() === "interview_rescheduled"),
+     a.status?.toLowerCase() === "interview_rescheduled" ||
+     a.status?.toLowerCase() === "ongoing"),
   "regular-incoming": (a) =>
     a.stage === "INTERVIEW" &&
     (a.status?.toLowerCase() === "interview_scheduled" ||

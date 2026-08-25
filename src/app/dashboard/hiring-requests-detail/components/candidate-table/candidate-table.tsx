@@ -70,10 +70,11 @@ function toLabel(raw: string): string {
 }
 
 function getDisplayStatus(rawStatus: string): { label: string; cssClass: string; tooltip: string } {
+  const status = rawStatus?.toLowerCase() ?? "";
   return {
-    label: STATUS_LABELS[rawStatus] ?? toLabel(rawStatus),
-    cssClass: rawStatus,
-    tooltip: STATUS_TOOLTIPS[rawStatus] ?? STATUS_LABELS[rawStatus] ?? toLabel(rawStatus),
+    label: STATUS_LABELS[status] ?? toLabel(status),
+    cssClass: status,
+    tooltip: STATUS_TOOLTIPS[status] ?? STATUS_LABELS[status] ?? toLabel(status),
   };
 }
 

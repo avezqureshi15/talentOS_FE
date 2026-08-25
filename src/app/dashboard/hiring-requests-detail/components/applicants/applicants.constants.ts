@@ -153,7 +153,7 @@ export const INTERVIEW_RESCHEDULED_CONFIG: StateConfig = {
 
 export const INTERVIEW_ONGOING_CONFIG: StateConfig = {
   state: "ongoing",
-  chip: { label: "Interview Ongoing", variant: "info" },
+  chip: { label: "Ongoing", variant: "info" },
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],
