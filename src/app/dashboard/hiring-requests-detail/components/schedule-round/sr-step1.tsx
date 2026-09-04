@@ -26,6 +26,9 @@ type SrStep1Props = {
   isSearching: boolean;
   hideSearch?: boolean;
   sectionAction?: ReactNode;
+  showAiOption?: boolean;
+  isAiSelected?: boolean;
+  onSelectAi?: () => void;
 };
 
 const slotsLabel = (count: number): string => {
@@ -44,7 +47,7 @@ const groupSlots = (items: CommandItem[]) => {
   return [...map.entries()].sort(([a], [b]) => sortKey(a) - sortKey(b)).map(([group, items]) => ({ group, items }));
 };
 
-const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch, sectionAction }: SrStep1Props) => {
+const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, onSelectInterviewer, tabs, activeTab, onTabChange, activeSlots, selectedSlotId, onSlotSelect, isLoading, isSearching, hideSearch, sectionAction, showAiOption, isAiSelected, onSelectAi }: SrStep1Props) => {
   const isSelected = (iv: Interviewer) => selectedInterviewers.some((s) => s.id === iv.id);
   // justification: stores tooltip state for ask-slots button hover
   const [askTooltip, setAskTooltip] = useState<{ lines: string[]; rect: DOMRect } | null>(null);
@@ -116,6 +119,22 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
           onChange={onSearchChange}
         />
         <div className="sr-interviewer-list">
+          {showAiOption && (
+            <button
+              className={`sr-interviewer-item sr-interviewer-item--ai ${isAiSelected ? "sr-interviewer-item--selected" : ""}`}
+              onClick={onSelectAi}
+              type="button"
+            >
+              <span className="sr-interviewer-avatar sr-interviewer-avatar--ai">
+                <i className="bx bx-bot" />
+              </span>
+              <div className="sr-interviewer-info">
+                <span className="sr-interviewer-name">{SR_LABELS.AI_INTERVIEWER_NAME}</span>
+                <span className="sr-interviewer-slots sr-interviewer-slots--ai">{SR_LABELS.AI_INTERVIEWER_SUBLABEL}</span>
+              </div>
+              {isAiSelected && <i className="bx bx-check sr-interviewer-check" />}
+            </button>
+          )}
           {isSearching ? (
             <div className="sr-empty-slots">{SR_LABELS.SEARCH_LOADING}</div>
           ) : (
@@ -140,7 +159,15 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
       </div>}
       <div className="sr-right-col">
         <div className="sr-right-col-scroll">
-          {selectedInterviewers.length > 0 ? (
+          {isAiSelected ? (
+            <div className="sr-slot-section">
+              <div className="sr-ai-selected-panel">
+                <i className="bx bx-bot sr-ai-selected-icon" />
+                <span className="sr-ai-selected-title">{SR_LABELS.AI_SELECTED_TITLE}</span>
+                <span className="sr-ai-selected-desc">{SR_LABELS.AI_SELECTED_DESC}</span>
+              </div>
+            </div>
+          ) : selectedInterviewers.length > 0 ? (
             <div className="sr-slot-section">
               <div className="sr-section-header">
                 <span className="sr-section-label">{SR_LABELS.SELECT_SLOT}</span>

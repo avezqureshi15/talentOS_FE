@@ -25,7 +25,7 @@ export function useInviteUser({ mode, tenantId, onSuccess }: UseInviteUserArgs) 
   // UI-only state: form fields + tab + selected picker item + async error.
   const [tab, setTab] = useState<InviteTab>(mode === "existing-and-email" ? "existing" : "manual");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("recruiter");
+  const [role, setRole] = useState("reviewer");
   const [selected, setSelected] = useState<SelectedEmployee | null>(null);
   const [search, setSearch] = useState("");
   const [error, setError] = useState("");

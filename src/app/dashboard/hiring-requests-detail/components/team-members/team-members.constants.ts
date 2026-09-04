@@ -19,7 +19,6 @@ export const ROLE_LABELS: Record<string, string> = {
   superadmin: "Super Admin",
   account_admin: "Account Admin",
   job_owner: "Job Owner",
-  recruiter: "Recruiter",
   reviewer: "Reviewer",
 };
 

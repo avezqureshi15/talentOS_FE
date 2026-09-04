@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
 
   {
     errorElement: <ErrorFallback title={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_TITLE} message={ERROR_FALLBACK_LABELS.APPLICATION_ERROR_MESSAGE} />,
-    element: <ProtectedRoute allowedRoles={["account_admin", "job_owner", "recruiter", "reviewer"]} permissions={["chat"]} redirectPath="/roles" />,
+    element: <ProtectedRoute allowedRoles={["account_admin", "job_owner", "reviewer"]} permissions={["chat"]} redirectPath="/roles" />,
     children: [
       {
         element: <ProtectedLayout />,
@@ -119,8 +119,8 @@ export const router = createBrowserRouter([
           { index: true, element: <Navigate to={ROUTES.ADMIN_USERS} replace /> },
           { path: "users", element: <RequirePermission permission="user.invite"><UsersPage /></RequirePermission> },
           { path: "users/:userId", element: <RequirePermission permission="user.manage" allowedRoles={["account_admin"]}><UserJobsPage /></RequirePermission> },
-          { path: "employees", element: <RequirePermission permission="employee.view" allowedRoles={["account_admin", "job_owner", "recruiter", "reviewer"]}><EmployeesPage /></RequirePermission> },
-          { path: "employees/:empId", element: <RequirePermission permission="employee.view" allowedRoles={["account_admin", "job_owner", "recruiter", "reviewer"]}><EmployeeDetailPage /></RequirePermission> },
+          { path: "employees", element: <RequirePermission permission="employee.view" allowedRoles={["account_admin", "job_owner", "reviewer"]}><EmployeesPage /></RequirePermission> },
+          { path: "employees/:empId", element: <RequirePermission permission="employee.view" allowedRoles={["account_admin", "job_owner", "reviewer"]}><EmployeeDetailPage /></RequirePermission> },
           { path: "organization", element: <RequirePermission permission="settings.view"><OrganizationPage /></RequirePermission> },
           { path: "apps", element: <RequirePermission permission="api_key.manage"><AppsPage scope="admin" /></RequirePermission> },
           { path: "apps/:appId", element: <RequirePermission permission="api_key.manage"><AppDetailPage scope="admin" /></RequirePermission> },

@@ -4,12 +4,6 @@ import TenantActionsMenu from "./tenant-actions-menu";
 import type { Tenant } from "@/app/superadmin/tenants/services/tenants.service";
 import type { TenantTableProps } from "./tenant-table.types";
 
-const STATUS_CONFIG: Record<string, { badge: string; label: string }> = {
-  approved: { badge: "active", label: "Approved" },
-  pending: { badge: "pending", label: "Pending" },
-  rejected: { badge: "inactive", label: "Rejected" },
-};
-
 export default function TenantTable({
   tenants,
   loading,
@@ -43,13 +37,6 @@ export default function TenantTable({
           },
         },
         { header: "Users", className: "dt-cell-muted", render: (t: Tenant) => t.user_count },
-        {
-          header: "Verification",
-          render: (t: Tenant) => {
-            const cfg = STATUS_CONFIG[t.verification_status] ?? { badge: "neutral", label: t.verification_status };
-            return <span className={`dt-badge dt-badge--${cfg.badge}`}>{cfg.label}</span>;
-          },
-        },
         { header: "Created", className: "dt-cell-date", render: (t: Tenant) => new Date(t.created_at).toLocaleDateString() },
         {
           header: "Actions",
@@ -73,7 +60,7 @@ export default function TenantTable({
       loading={loading}
       keyExtractor={(t) => t.id}
       emptyMessage="No tenants found"
-      gridTemplateColumns="40px 2fr 1fr 60px 1fr 1fr 60px"
+      gridTemplateColumns="40px 2fr 1fr 60px 1fr 60px"
       onRowClick={onRowClick}
     />
   );

@@ -1,9 +1,8 @@
 export const SLOT_GROUP_ORDER = ["Today", "Tomorrow"];
 export const SLOT_FALLBACK_GROUP = "Other";
 
-// export const AI_ID = "ai";
-// export const AI_SCREENING_ID = "ai-screening";
-// export const AI_AUTO_SLOT_ID = "ai-auto-slot";
+export const AI_ID = "ai";
+export const AI_AUTO_SLOT_ID = "ai-auto-slot";
 
 export const SR_LABELS = {
   ROUND_TITLE_DEFAULT: "Untitled Round",
@@ -11,6 +10,10 @@ export const SR_LABELS = {
   STEP_1_DESC: "Select a time slot from the interviewer's availability.",
   INTERVIEWER_PLACEHOLDER: "Search interviewer...",
   NO_INTERVIEWER: "Select interviewers to see their availability.",
+  AI_INTERVIEWER_NAME: "AI Interviewer",
+  AI_INTERVIEWER_SUBLABEL: "Automated · no slot needed",
+  AI_SELECTED_TITLE: "AI Interviewer selected",
+  AI_SELECTED_DESC: "No time slot needed — the candidate gets an AI-conducted interview invite immediately.",
   NO_SLOTS: "No available slots.",
   SEARCH_LOADING: "Loading...",
   SELECT_SLOT: "Select a time slot",
@@ -36,14 +39,18 @@ export const SR_LABELS = {
 
   STEP_3_SUCCESS: "Round 1 Scheduled Successfully!",
   STEP_3_RESCHEDULE_SUCCESS: "Interview Rescheduled Successfully!",
+  STEP_3_AI_SUCCESS: "AI Interview Invite Sent!",
   STEP_3_SUBTEXT: "Google Meet link and calendar invites have been sent to {candidate} and {interviewer}.",
+  STEP_3_AI_SUBTEXT: "{candidate} will receive an AI-conducted interview invite shortly. You can reschedule it anytime from the interview's Reschedule action.",
   DONE: "Done",
 
   BACK: "Back",
   NEXT: "Next",
   SEND_INVITE: "Send Invite",
+  SEND_AI_INVITE: "Send AI Interview Invite",
   RESCHEDULE_CONFIRM: "Reschedule Interview",
   RESCHEDULING_LABEL: "Rescheduling...",
+  SENDING_AI_LABEL: "Sending...",
 };
 
 

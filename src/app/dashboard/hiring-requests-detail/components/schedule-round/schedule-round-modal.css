@@ -337,6 +337,35 @@
   50% { box-shadow: 0 0 0 4px transparent; }
 }
 
+.sr-ai-selected-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  padding: 40px 24px;
+  margin: 0 auto;
+}
+
+.sr-ai-selected-icon {
+  font-size: 28px;
+  color: var(--accent-indigo-light);
+  margin-bottom: 4px;
+}
+
+.sr-ai-selected-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sr-ai-selected-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 320px;
+  line-height: 1.5;
+}
+
 .sr-interviewer-avatar {
   width: 32px;
   height: 32px;
