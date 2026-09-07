@@ -21,6 +21,8 @@ export type Tenant = {
   gst_number: string | null;
   created_at: string;
   updated_at: string;
+  last_active_at: string | null;
+  is_inactive: boolean;
 };
 
 export type PaginatedTenants = {
