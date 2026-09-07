@@ -16,7 +16,14 @@ import type {
 import { useInterviewPlanData } from "./use-interview-plan-data";
 
 export const useInterviewPlanner = (hiringRequestId: string) => {
-  const { data, isLoading, error, refetch, save } = useInterviewPlanData(hiringRequestId);
+  // Auto-generation only ever runs from the page's view-mode call to
+  // useInterviewPlanData (see interview-design-page.tsx) — by the time a
+  // user is here in the planner, either that already ran, or they jumped
+  // straight into edit mode and can use the manual "Generate" button.
+  // Passing true here too would risk a second, independent auto-generate
+  // loop firing for the same hiring request if the user opens the planner
+  // while the page's own auto-fill is still mid-flight.
+  const { data, isLoading, error, refetch, save } = useInterviewPlanData(hiringRequestId, false);
 
   const activeKind = useInterviewPlannerStore((s) => s.activeKind);
   const interviewPlan = useInterviewPlannerStore((s) => s.interviewPlan);

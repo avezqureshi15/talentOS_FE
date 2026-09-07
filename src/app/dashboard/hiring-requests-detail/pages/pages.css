@@ -502,6 +502,20 @@
   color: var(--text-faint);
 }
 
+.id-autogen-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 24px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--accent-indigo-bg);
+  border: 1px solid var(--accent-indigo-border);
+  color: var(--accent-indigo-light);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
 .id-tabs {
   display: flex;
   align-items: center;
@@ -509,6 +523,20 @@
   border-bottom: 1px solid var(--border-subtle);
   margin-top: 20px;
   padding: 0 24px;
+}
+
+.id-tab-generating-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-indigo-light);
+  flex-shrink: 0;
+  animation: id-tab-generating-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes id-tab-generating-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
 }
 
 .id-tab {

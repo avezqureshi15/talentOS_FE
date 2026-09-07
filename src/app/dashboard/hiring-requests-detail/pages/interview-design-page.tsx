@@ -76,7 +76,15 @@ const InterviewDesignPage = () => {
   const interviewPlan = useInterviewPlannerStore((s) => s.interviewPlan);
   const screeningPlan = useInterviewPlannerStore((s) => s.screeningPlan);
   const reviewPlan = useInterviewPlannerStore((s) => s.reviewPlan);
-  const { data: designData, isLoading, error, refetch, save } = useInterviewPlanData(id ?? "");
+  const {
+    data: designData,
+    isLoading,
+    error,
+    refetch,
+    save,
+    isAutoGenerating,
+    autoGeneratingKind,
+  } = useInterviewPlanData(id ?? "", canEditPlan);
   const { handleExport, exportingKind, isExporting } = useExportInterviewDesignPdf(
     id ?? "",
     data?.title ?? "Interview Design",
@@ -204,6 +212,15 @@ const InterviewDesignPage = () => {
             )}
           </div>
 
+          {isAutoGenerating && (
+            <div className="id-autogen-banner">
+              <LoadingSpinner size="sm" />
+              <span>
+                Generating {autoGeneratingKind ? TAB_KEYS.find((t) => t.key === autoGeneratingKind)?.label.toLowerCase() : "your interview"} with AI — this only happens once, feel free to keep browsing.
+              </span>
+            </div>
+          )}
+
           <div className="id-tabs">
             {TAB_KEYS.map((t) => (
               <button
@@ -215,6 +232,9 @@ const InterviewDesignPage = () => {
               >
                 {t.label}
                 <TabInfoTip tip={TAB_TOOLTIPS[t.key]} />
+                {isAutoGenerating && autoGeneratingKind === t.key && (
+                  <span className="id-tab-generating-dot" aria-label="Generating" />
+                )}
               </button>
             ))}
           </div>

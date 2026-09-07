@@ -30,6 +30,13 @@ export interface InterviewDesign {
   screening_sections: InterviewDesignSection[];
   interview_sections: InterviewDesignSection[];
   review_sections: InterviewDesignSection[];
+  // Whether each kind already has real AI-generated (or, for interview,
+  // already poc-linked) content. Drives the one-time auto-fill in
+  // use-auto-generate-design.ts — a kind is only ever auto-generated while
+  // its flag is false, and never again once true.
+  screening_ai_generated: boolean;
+  interview_ai_generated: boolean;
+  review_ai_generated: boolean;
   updated_at: string;
   sync_status: DesignSyncStatus;
   sync_errors: string[];
