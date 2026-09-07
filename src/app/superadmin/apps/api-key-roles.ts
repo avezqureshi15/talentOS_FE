@@ -1,4 +1,4 @@
-export type ApiKeyRole = "account_admin" | "job_owner" | "recruiter" | "reviewer";
+export type ApiKeyRole = "account_admin" | "job_owner" | "reviewer";
 
 export const API_KEY_ROLES: { value: ApiKeyRole; label: string; hint: string }[] = [
   {
@@ -10,11 +10,6 @@ export const API_KEY_ROLES: { value: ApiKeyRole; label: string; hint: string }[]
     value: "job_owner",
     label: "Job Owner",
     hint: "Create and manage jobs and their applications, reviews, and interviews.",
-  },
-  {
-    value: "recruiter",
-    label: "Recruiter",
-    hint: "Work on assigned jobs — evaluate, shortlist, review, and schedule.",
   },
   {
     value: "reviewer",

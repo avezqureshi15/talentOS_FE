@@ -2,7 +2,6 @@ export const ROLES = [
   "superadmin",
   "account_admin",
   "job_owner",
-  "recruiter",
   "reviewer",
 ] as const;
 export type Role = (typeof ROLES)[number];
@@ -11,7 +10,6 @@ export const ROLE_HIERARCHY: Record<Role, number> = {
   superadmin: 50,
   account_admin: 40,
   job_owner: 35,
-  recruiter: 30,
   reviewer: 25,
 };
 

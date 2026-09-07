@@ -65,7 +65,7 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
       ],
     },
     scenario:
-      "Rahul is a recruiter. Without Evaluate Applications he can read every profile, but the Shortlist button simply doesn't exist for him — so his team lead has to do the shortlisting.",
+      "Rahul is a job owner. Without Evaluate Applications he can read every profile, but the Shortlist button simply doesn't exist for him — so his team lead has to do the shortlisting.",
     related: ["application.view", "application.reject", "application.workflow"],
   },
 
@@ -88,7 +88,7 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
       ],
     },
     scenario:
-      "If a recruiter loses Reject Applications, they can see every profile and shortlist, but they have to leave rejection notes for an account admin to process.",
+      "If a job owner loses Reject Applications, they can see every profile and shortlist, but they have to leave rejection notes for an account admin to process.",
     related: ["application.view", "application.evaluate"],
   },
 
@@ -124,7 +124,7 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
     ],
     disabled: {
       blurb:
-        "This permission is reserved for fine-grained control. Today editing a job is governed by the role's access level (recruiter and above can edit), so switching this off does not change the screens yet.",
+        "This permission is reserved for fine-grained control. Today editing a job is governed by the role's access level (job_owner and above can edit), so switching this off does not change the screens yet.",
       lostActions: [
         "No immediate UI change — edit access is currently based on role level, not this switch",
       ],
@@ -202,7 +202,7 @@ export const PERMISSION_EFFECTS: Record<string, PermissionEffect> = {
       ],
     },
     scenario:
-      "You want only the account admin to bring people in. Switch off Invite Users for recruiter roles — their User Management entry simply vanishes, so no one can bypass the invite process.",
+      "You want only the account admin to bring people in. Switch off Invite Users for job_owner roles — their User Management entry simply vanishes, so no one can bypass the invite process.",
     related: ["user.manage"],
   },
 
