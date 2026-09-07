@@ -109,15 +109,6 @@ export function useJobDetail({
     [applicantParam, appsLoading, applicants, page, totalPages, goToPage, setSearchParams, setOpenId],
   );
 
-  const handleRowClick = useCallback(
-    (candidate: Applicant) => {
-      if (candidate.status === "interview_scheduled" || candidate.status === "interview_rescheduled" || candidate.status === "interview_cancelled" || candidate.status === "screening_round_scheduled" || candidate.status === "ongoing") return;
-      const roundId = candidate.currentRoundId ?? candidate.id;
-      window.open(`/hiring-requests/${jobId}/round-details/${roundId}?candidateId=${candidate.id}`, "_blank");
-    },
-    [jobId],
-  );
-
   const handleInfoClick = useCallback(
     (candidate: Applicant) => {
       scrollAttemptedRef.current = false;
@@ -125,6 +116,21 @@ export function useJobDetail({
       setSearchParams({ applicant: candidate.id, view: "card" });
     },
     [setSearchParams],
+  );
+
+  const handleRowClick = useCallback(
+    (candidate: Applicant) => {
+      if (candidate.status === "interview_scheduled" || candidate.status === "interview_rescheduled" || candidate.status === "interview_cancelled" || candidate.status === "screening_round_scheduled" || candidate.status === "ongoing") return;
+      // No round yet (e.g. still in resume shortlisting): the round-details page
+      // has nothing to show and its :roundId is typed as a UUID, so open the
+      // in-page profile card instead of navigating to a URL that 422s.
+      if (!candidate.currentRoundId) {
+        handleInfoClick(candidate);
+        return;
+      }
+      window.open(`/hiring-requests/${jobId}/round-details/${candidate.currentRoundId}?candidateId=${candidate.id}`, "_blank");
+    },
+    [jobId, handleInfoClick],
   );
 
   return {

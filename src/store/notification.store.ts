@@ -2,7 +2,14 @@ import { create } from "zustand";
 import { fetchNotifications, markNotificationRead, markAllNotificationsRead } from "@/services/notifications/notifications";
 import { queryClient } from "@/services/query-client";
 import { QUERY_KEYS } from "@/constants/constants";
+import { ACCESS_TOKEN_KEY } from "@/app/auth/hooks/auth.constants";
+import { storage } from "@/utils/storage";
 import type { NotificationApiItem } from "@/services/notifications/notifications.types";
+
+// The poll outlives a session (it keeps running on /login and after logout).
+// Without a token the request goes out unauthenticated and the API answers 422,
+// so skip the round trip until one is available.
+const isAuthenticated = (): boolean => !!storage.get(ACCESS_TOKEN_KEY);
 
 const BASE_INTERVAL_MS = 60_000;
 const MAX_INTERVAL_MS = 300_000;
@@ -36,7 +43,7 @@ function invalidateOnCountChange() {
 }
 
 async function tick(): Promise<void> {
-  if (document.hidden) {
+  if (document.hidden || !isAuthenticated()) {
     schedule();
     return;
   }
@@ -85,7 +92,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   },
 
   refreshNow: async () => {
-    if (document.hidden) return;
+    if (document.hidden || !isAuthenticated()) return;
     try {
       const res = await fetchNotifications({ page: 1, perPage: LATEST_PER_PAGE, isRead: false });
       const count = res.data.pagination.total_records;

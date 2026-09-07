@@ -131,7 +131,25 @@ export function useApplicantActionHandlers({
     setIsShortlisting(true);
     try {
       const applicant = data.find((a) => a.id === shortlistCandidateId);
-      if (!applicant?.currentRoundId) { setShortlistStep(2); return; }
+      if (!applicant) { setShortlistStep(2); return; }
+      if (!applicant.currentRoundId) {
+        // No round exists yet (candidate is still in Resume Shortlisting, pre-round) —
+        // persist the stage/status transition directly instead of a per-round review.
+        try {
+          await updateCandidateRoundStatusMut({
+            candidateId: applicant.candidateId,
+            stage: "SCREENING",
+            status: "SHORTLISTED",
+            current_round_id: "",
+          });
+          overrideStatus(applicant.id, "shortlisted");
+          onRefresh?.();
+        } catch {
+          useToastStore.getState().addToast("Failed to shortlist candidate", ToastType.ERROR);
+        }
+        setShortlistStep(2);
+        return;
+      }
       try {
         await updateReviewByRound(applicant.currentRoundId, {
           entity_type: "hr",
@@ -139,7 +157,7 @@ export function useApplicantActionHandlers({
           verdict: "shortlisted",
         });
       } catch { /* optimistic fallthrough */ }
-      if (shortlistCandidateId) overrideStatus(shortlistCandidateId, "shortlisted");
+      overrideStatus(applicant.id, "shortlisted");
       setShortlistStep(2);
     } finally {
       setIsShortlisting(false);
@@ -147,14 +165,31 @@ export function useApplicantActionHandlers({
   };
 
   // Step 2 of shortlist modal: "Move to Next Round" button
-  const handleMoveToNextRound = () => {
-    if (shortlistCandidateId) {
-      // Optimistically advance to move_to_next_round so the row/card shows "Schedule Round"
-      overrideStatus(shortlistCandidateId, "move_to_next_round");
-      // Card-view side effect: open the accordion in scheduling mode
-      onMoveToNextRoundSideEffect?.(shortlistCandidateId);
-    }
+  const handleMoveToNextRound = async () => {
+    const candidateId = shortlistCandidateId;
     setShortlistCandidateId(null);
+    if (!candidateId) return;
+    const applicant = data.find((a) => a.id === candidateId);
+    if (!applicant) return;
+    try {
+      await updateCandidateRoundStatusMut({
+        candidateId: applicant.candidateId,
+        // Always SCREENING, not applicant.stage — "Move to Next Round" always
+        // follows the shortlist step (handleShortlistOk), which just set the
+        // stage server-side; `applicant` here can still be the pre-refetch,
+        // stale object (e.g. RESUME_SHORTLISTING), which would otherwise
+        // silently revert the stage while the status moves on.
+        stage: "SCREENING",
+        status: "MOVE_TO_NEXT_ROUND",
+        current_round_id: applicant.currentRoundId ?? "",
+      });
+      overrideStatus(candidateId, "move_to_next_round");
+      // Card-view side effect: open the accordion in scheduling mode
+      onMoveToNextRoundSideEffect?.(candidateId);
+      onRefresh?.();
+    } catch {
+      useToastStore.getState().addToast("Failed to move to next round", ToastType.ERROR);
+    }
   };
 
   const handleOpenFinalSelectionWarning = () => {
