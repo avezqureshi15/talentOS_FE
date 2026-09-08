@@ -1,0 +1,62 @@
+.create-employee-modal {
+  width: min(480px, calc(100vw - 32px));
+}
+
+.cem-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.cem-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cem-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.cem-required {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
+.cem-optional {
+  margin-left: 6px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.cem-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 8px);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cem-input:focus {
+  border-color: var(--border-strong);
+  box-shadow: var(--chr-focus-ring, 0 0 0 2px var(--border-default));
+}
+
+.cem-error {
+  margin: 0;
+  font-size: 12px;
+  color: var(--danger);
+}
+
+.cem-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}

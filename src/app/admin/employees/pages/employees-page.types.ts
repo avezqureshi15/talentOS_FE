@@ -50,6 +50,14 @@ export type EmployeeImportSummary = {
   failed: EmployeeImportRowError[];
 };
 
+export type CreateEmployeePayload = {
+  emp_id: string;
+  email: string;
+  name: string;
+  designation?: string;
+  department?: string;
+};
+
 export type UpdateEmployeePayload = {
   name?: string | null;
   email?: string | null;

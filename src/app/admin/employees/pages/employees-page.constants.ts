@@ -1,5 +1,6 @@
 export const EMPLOYEES_PAGE_LABELS = {
   PAGE_TITLE: "Employees",
+  ACTION_ADD: "Add employee",
   ACTION_IMPORT: "Import Employees",
   ACTION_EDIT: "Edit",
   SEARCH_PLACEHOLDER: "Search employees by name, email, or emp ID",
