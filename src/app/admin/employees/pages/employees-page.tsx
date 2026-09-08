@@ -13,6 +13,7 @@ import { PERMISSIONS } from "@/constants/permissions";
 import { useEmployees } from "@/app/admin/employees/hooks/use-employees";
 import { buildEmployeesColumns } from "@/app/admin/employees/pages/employees-columns";
 import ImportEmployeesModal from "@/app/admin/employees/components/import-employees-modal/import-employees-modal";
+import CreateEmployeeModal from "@/app/admin/employees/components/create-employee-modal/create-employee-modal";
 import EditEmployeeModal from "@/app/admin/employees/components/edit-employee-modal/edit-employee-modal";
 import {
   EMPLOYEES_PAGE_GRID,
@@ -30,6 +31,7 @@ const EmployeesPage = () => {
   const { can } = usePermissions();
   const canEdit = can(PERMISSIONS.USER_MANAGE);
   const [isImportOpen, setIsImportOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const { data, isLoading, isFetching, isRefetching, isError, page, search, setPage, onSearch, refetch } =
     useEmployees();
@@ -53,6 +55,13 @@ const EmployeesPage = () => {
   const actions: NonNullable<HeaderConfig["actions"]> = [
     ...(canImport
       ? [
+          {
+            key: "add-employee",
+            label: EMPLOYEES_PAGE_LABELS.ACTION_ADD,
+            variant: "primary" as const,
+            icon: "bx bx-user-plus",
+            onClick: () => setIsCreateOpen(true),
+          },
           {
             key: "import-employees",
             label: EMPLOYEES_PAGE_LABELS.ACTION_IMPORT,
@@ -109,7 +118,17 @@ const EmployeesPage = () => {
         </div>
 
         {canImport && (
-          <ImportEmployeesModal open={isImportOpen} onClose={() => setIsImportOpen(false)} />
+          <>
+            <CreateEmployeeModal
+              open={isCreateOpen}
+              onClose={() => setIsCreateOpen(false)}
+              onSuccess={() => {
+                setIsCreateOpen(false);
+                void refetch();
+              }}
+            />
+            <ImportEmployeesModal open={isImportOpen} onClose={() => setIsImportOpen(false)} />
+          </>
         )}
 
         {editingEmployee && (
