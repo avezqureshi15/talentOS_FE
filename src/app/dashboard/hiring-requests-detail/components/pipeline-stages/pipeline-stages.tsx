@@ -41,7 +41,7 @@ const PipelineStages = ({ stages, activeKey, onStageChange }: PipelineStagesProp
 
           <span className="pipeline-label">{stage.label}</span>
 
-          {stage.key === "evaluated" ? (
+          {stage.key === "evaluation" ? (
             <div className="pipeline-metrics-row">
               <span className="pipeline-count">{stage.count}</span>
               {stage.subItems && stage.subItems.length > 0 && (

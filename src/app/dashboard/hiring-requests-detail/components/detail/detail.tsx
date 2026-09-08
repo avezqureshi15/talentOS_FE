@@ -27,10 +27,10 @@ import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/c
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
-import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATED_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import ViewToggle from "@/app/dashboard/hiring-requests-detail/components/detail/view-toggle";
 import InterviewFilterBar, { type InterviewScheduleFilter } from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
-import EvaluatedFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
+import EvaluatedFilterBar, { type EvaluationSubFilter } from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
 import ScreeningFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/screening-filter-bar";
 import PaginationBar from "@/components/ui/pagination-bar/pagination-bar";
 import { fadeSlideUp, staggerContainer } from "@/utils/motion";
@@ -43,7 +43,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const applicantParam = searchParams.get("applicant");
   const [interviewSubFilter, setInterviewSubFilter] = useState<"ai-incoming" | "regular-incoming" | "no-show">("ai-incoming");
   const [interviewScheduleFilter, setInterviewScheduleFilter] = useState<InterviewScheduleFilter>(null);
-  const [evaluatedSubFilter, setEvaluatedSubFilter] = useState<"ai" | "regular">("ai");
+  const [evaluationSubFilter, setEvaluationSubFilter] = useState<EvaluationSubFilter>("evaluated");
   const [screeningSubFilter, setScreeningSubFilter] = useState<"pending" | "completed" | "flagged">("pending");
   const jobId = hiringRequest.id;
   const isRemote =
@@ -76,7 +76,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   });
 
   const filteredApplicants = useFilteredApplicants({
-    applicants, activeStage, interviewSubFilter, evaluatedSubFilter, screeningSubFilter,
+    applicants, activeStage, interviewSubFilter, evaluationSubFilter, screeningSubFilter,
     interviewScheduleFilter,
   });
 
@@ -127,14 +127,22 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   };
 
   const stagesWithCounts = useMemo(() =>
-    PIPELINE_STAGES.map((s) => ({
-      ...s,
-      // "decision" isn't part of the main applicants list's stage grouping —
-      // it's a separately-fetched dataset (finalized candidates), so its
-      // count comes from that fetch's total instead of stageCounts.
-      count: s.key === "decision" ? finalizedTotal : (stageCounts[s.key] ?? 0),
-      archivedCount: archivedStageCounts[s.key] ?? 0,
-    })),
+    PIPELINE_STAGES.map((s) => {
+      const evaluationCount =
+        (stageCounts["waiting-evaluation"] ?? 0) + (stageCounts["evaluated"] ?? 0);
+      const evaluationArchived =
+        (archivedStageCounts["waiting-evaluation"] ?? 0) + (archivedStageCounts["evaluated"] ?? 0);
+      return {
+        ...s,
+        count:
+          s.key === "decision"
+            ? finalizedTotal
+            : s.key === "evaluation"
+              ? evaluationCount
+              : (stageCounts[s.key] ?? 0),
+        archivedCount: s.key === "evaluation" ? evaluationArchived : (archivedStageCounts[s.key] ?? 0),
+      };
+    }),
     [stageCounts, archivedStageCounts, finalizedTotal],
   );
 
@@ -176,35 +184,21 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
         ];
       }
     }
-    if (activeStage === "evaluated") {
-      if (evaluatedSubFilter === "ai") {
-        return [
-          ...NAME_SCORE_STATUS,
-          { key: "startDate", label: "Start Date", flex: 0.9 },
-          { key: "time", label: "Time", flex: 0.7 },
-          ...SUFFIX_COLUMNS,
-        ];
-      }
-      if (evaluatedSubFilter === "regular") {
-        return [
-          ...NAME_SCORE_STATUS,
-          { key: "startDate", label: "Start Date", flex: 0.9 },
-          { key: "time", label: "Time", flex: 0.7 },
-          ...SUFFIX_COLUMNS,
-        ];
-      }
+    if (activeStage === "evaluation") {
+      return [
+        ...NAME_SCORE_STATUS,
+        { key: "startDate", label: "Start Date", flex: 0.9 },
+        { key: "time", label: "Time", flex: 0.7 },
+        ...SUFFIX_COLUMNS,
+      ];
     }
     const base = PIPELINE_STAGES.find((s) => s.key === activeStage)?.columns ?? [];
     return base;
-  }, [activeStage, interviewSubFilter, evaluatedSubFilter, PIPELINE_STAGES]);
+  }, [activeStage, interviewSubFilter, PIPELINE_STAGES]);
 
-  const evaluatedSubCounts = useMemo(() => ({
-    ai: applicants.filter(
-      (a) => STAGE_FILTER_MAP["evaluated"](a) && EVALUATED_SUB_FILTER_MAP["ai"](a),
-    ).length,
-    regular: applicants.filter(
-      (a) => STAGE_FILTER_MAP["evaluated"](a) && EVALUATED_SUB_FILTER_MAP["regular"](a),
-    ).length,
+  const evaluationSubCounts = useMemo(() => ({
+    evaluated: applicants.filter(STAGE_FILTER_MAP.evaluated).length,
+    pending: applicants.filter(STAGE_FILTER_MAP["waiting-evaluation"]).length,
   }), [applicants]);
 
   const screeningSubCounts = useMemo(() => ({
@@ -323,10 +317,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
             />
           )}
           {activeStage === "interview" && <div className="filter-chips" />}
-          {activeStage === "evaluated" && (
-            <EvaluatedFilterBar value={evaluatedSubFilter} onChange={setEvaluatedSubFilter} counts={evaluatedSubCounts} />
+          {activeStage === "evaluation" && (
+            <EvaluatedFilterBar value={evaluationSubFilter} onChange={setEvaluationSubFilter} counts={evaluationSubCounts} />
           )}
-          {activeStage === "evaluated" && <div className="filter-chips" />}
+          {activeStage === "evaluation" && <div className="filter-chips" />}
 
           {viewMode === "card" ? (
             <>
@@ -392,7 +386,11 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
               <CandidateTable
                 data={filteredApplicants.map(getLocalApplicant)}
                 columns={columns}
-                onRowClick={activeStage !== "waiting-evaluation" ? (candidate) => handleRowClick(candidate as Applicant) : undefined}
+                onRowClick={
+                  activeStage === "evaluation" && evaluationSubFilter === "pending"
+                    ? undefined
+                    : (candidate) => handleRowClick(candidate as Applicant)
+                }
                 onInfoClick={(candidate) => handleInfoClick(candidate as Applicant)}
                 onAction={handleAction}
                 onMenuAction={handleMenuAction}

@@ -20,6 +20,8 @@ export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
   evaluated: (a) =>
     includesStage(a, "evaluated") &&
     a.status?.toLowerCase() === "under_evaluation",
+  evaluation: (a) =>
+    STAGE_FILTER_MAP["waiting-evaluation"](a) || STAGE_FILTER_MAP.evaluated(a),
   // The "decision" tab renders <FinalVerdict> directly (its own data source,
   // not filtered from the main applicants list) — this entry exists only to
   // satisfy Record<StageKey, ...> and is never actually invoked.
@@ -59,9 +61,9 @@ export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean>
   ongoing: (a) => a.stage === "INTERVIEW" && a.status?.toLowerCase() === "ongoing",
 };
 
-export const EVALUATED_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
-  ai: (a) => a.stage === "AI_INTERVIEW" && a.status?.toLowerCase() === "under_evaluation",
-  regular: (a) => a.stage === "INTERVIEW" && a.status?.toLowerCase() === "under_evaluation",
+export const EVALUATION_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
+  evaluated: (a) => STAGE_FILTER_MAP.evaluated(a),
+  pending: (a) => STAGE_FILTER_MAP["waiting-evaluation"](a),
 };
 
 export const SCREENING_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
@@ -94,6 +96,8 @@ export const UI_INTERVIEW_SCHEDULED = "Scheduled";
 export const UI_INTERVIEW_ONGOING = "Ongoing";
 export const UI_EVALUATED_AI = "AI";
 export const UI_EVALUATED_REGULAR = "Regular";
+export const UI_EVALUATION_DONE = "Evaluated";
+export const UI_EVALUATION_PENDING = "Pending Eval";
 export const UI_SCREENING_PENDING = "Pending";
 export const UI_SCREENING_COMPLETED = "Completed";
 export const UI_SCREENING_FLAGGED = "Flagged";

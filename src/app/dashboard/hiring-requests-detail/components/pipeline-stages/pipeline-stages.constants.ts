@@ -19,7 +19,6 @@ export const PIPELINE_STAGES: StageData[] = [
   { key: "resume-shortlisting", label: "RESUME SHORTLISTING", count: 0, columns: [...NAME_SCORE_VERDICT, ...SUFFIX_COLUMNS] },
   { key: "screening",           label: "SCREENING",            count: 0, columns: [...NAME_SCORE_STATUS, ...SUFFIX_COLUMNS] },
   { key: "interview",           label: "INTERVIEW",            count: 0, columns: [...NAME_SCORE_STATUS, ...SUFFIX_COLUMNS] },
-  { key: "waiting-evaluation",  label: "WAITING FOR EVALUATION", count: 0, columns: [...NAME_SCORE_STATUS, { key: "startDate", label: "Start Date", flex: 0.9 }, { key: "time", label: "Time", flex: 0.7 }, ...SUFFIX_COLUMNS] },
-  { key: "evaluated",           label: "EVALUATED",             count: 0, columns: [...NAME_SCORE_STATUS, ...SUFFIX_COLUMNS] },
+  { key: "evaluation",         label: "EVALUATION",           count: 0, columns: [...NAME_SCORE_STATUS, { key: "startDate", label: "Start Date", flex: 0.9 }, { key: "time", label: "Time", flex: 0.7 }, ...SUFFIX_COLUMNS] },
   { key: "decision",            label: "FINAL VERDICT",         count: 0, columns: [] },
 ];

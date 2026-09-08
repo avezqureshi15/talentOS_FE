@@ -1,9 +1,11 @@
-import { UI_EVALUATED_AI, UI_EVALUATED_REGULAR } from "./detail.constants";
+import { UI_EVALUATION_DONE, UI_EVALUATION_PENDING } from "./detail.constants";
+
+export type EvaluationSubFilter = "evaluated" | "pending";
 
 type Props = {
-  value: "ai" | "regular";
-  onChange: (v: "ai" | "regular") => void;
-  counts: { ai: number; regular: number };
+  value: EvaluationSubFilter;
+  onChange: (v: EvaluationSubFilter) => void;
+  counts: { evaluated: number; pending: number };
 };
 
 const EvaluatedFilterBar = ({ value, onChange, counts }: Props) => (
@@ -11,16 +13,16 @@ const EvaluatedFilterBar = ({ value, onChange, counts }: Props) => (
     <div className="filter-section filter-section-status">
       <div className="status-toggle-group">
         <button
-          className={`status-toggle-btn${value === "ai" ? " active" : ""}`}
-          onClick={() => onChange("ai")}
+          className={`status-toggle-btn${value === "evaluated" ? " active" : ""}`}
+          onClick={() => onChange("evaluated")}
         >
-          {UI_EVALUATED_AI} <span className="status-toggle-count">{counts.ai}</span>
+          {UI_EVALUATION_DONE} <span className="status-toggle-count">{counts.evaluated}</span>
         </button>
         <button
-          className={`status-toggle-btn${value === "regular" ? " active" : ""}`}
-          onClick={() => onChange("regular")}
+          className={`status-toggle-btn${value === "pending" ? " active" : ""}`}
+          onClick={() => onChange("pending")}
         >
-          {UI_EVALUATED_REGULAR} <span className="status-toggle-count">{counts.regular}</span>
+          {UI_EVALUATION_PENDING} <span className="status-toggle-count">{counts.pending}</span>
         </button>
       </div>
     </div>

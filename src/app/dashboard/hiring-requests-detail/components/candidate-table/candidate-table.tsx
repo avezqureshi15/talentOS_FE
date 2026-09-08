@@ -6,7 +6,7 @@ import { TruncatedCell } from "@/components/shared/truncated-cell/truncated-cell
 import "./candidate-table.css";
 import type { CandidateTableProps } from "./candidate-table.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
-import { SCREENING_STATUS_LABELS } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { SCREENING_STATUS_LABELS, UI_EVALUATED_AI, UI_EVALUATED_REGULAR } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import ScreeningActions from "./screening-actions/screening-actions";
 import ScreeningStatusBadge from "./screening-actions/screening-status-badge";
 import { formatPhoneDisplay } from "./screening-actions/screening-actions.utils";
@@ -96,6 +96,11 @@ const CandidateTable = ({
           <div className="candidate-name-line">
             <TruncatedCell text={c.name} className="candidate-name" />
             {c.candidateType === "REFERRAL" && <span className="candidate-type-tag">Referral</span>}
+            {activeStage === "evaluation" && (
+              <span className="candidate-type-tag">
+                {c.stage === "AI_INTERVIEW" ? UI_EVALUATED_AI : UI_EVALUATED_REGULAR}
+              </span>
+            )}
             {activeStage === "screening" && c.screeningReview?.attempt != null && (
               <span className="attempt-badge--inline">attempt {c.screeningReview.attempt}</span>
             )}
@@ -211,7 +216,6 @@ const CandidateTable = ({
 
   const isRowDisabled = (c: Applicant): boolean =>
     isInterviewStatus(c.status) ||
-    activeStage === "waiting-evaluation" ||
     !onRowClick ||
     (activeStage === "resume-shortlisting" && c.score == null);
 
