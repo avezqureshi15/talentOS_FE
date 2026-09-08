@@ -4,6 +4,7 @@ import { QUERY_KEYS } from "@/constants/constants";
 import { createInvite } from "@/app/admin/users/services/users-admin.service";
 import { fetchUsers } from "@/services/users/users";
 import { useDebounce } from "@/hooks/use-debounce";
+import { getApiErrorMessage } from "@/utils/api-error";
 import { isValidEmail } from "@/utils/validation";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -35,7 +36,7 @@ export function useInviteUser({ mode, tenantId, onSuccess }: UseInviteUserArgs) 
   const employeesQuery = useQuery({
     queryKey: [QUERY_KEYS.EMPLOYEES, "invite-picker", debouncedSearch],
     queryFn: () =>
-      fetchUsers(debouncedSearch || undefined, 1, INVITE_SEARCH_LIMIT, false).then((r) => r.data),
+      fetchUsers(debouncedSearch || undefined, 1, INVITE_SEARCH_LIMIT, false, false, true).then((r) => r.data),
     enabled: mode === "existing-and-email" && tab === "existing",
     placeholderData: keepPreviousData,
   });
@@ -48,7 +49,7 @@ export function useInviteUser({ mode, tenantId, onSuccess }: UseInviteUserArgs) 
       onSuccess();
     },
     onError: (err: unknown) => {
-      const msg = err instanceof Error ? err.message : INVITE_MODAL_LABELS.ERR_GENERIC;
+      const msg = getApiErrorMessage(err, INVITE_MODAL_LABELS.ERR_GENERIC);
       setError(msg);
     },
   });
