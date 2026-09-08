@@ -20,6 +20,10 @@ export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
   evaluated: (a) =>
     includesStage(a, "evaluated") &&
     a.status?.toLowerCase() === "under_evaluation",
+  // The "decision" tab renders <FinalVerdict> directly (its own data source,
+  // not filtered from the main applicants list) — this entry exists only to
+  // satisfy Record<StageKey, ...> and is never actually invoked.
+  decision: () => false,
   selected: () => false,
   rejected: () => false,
   "on-hold": () => false,

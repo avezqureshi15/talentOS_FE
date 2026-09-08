@@ -16,6 +16,7 @@ import AiInterviewScheduleModal from "@/app/dashboard/hiring-requests-detail/com
 import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/interviews/cancel-interview-modal";
 import { useApplicantActionHandlers } from "@/app/dashboard/hiring-requests-detail/components/applicants/hooks/use-applicant-action-handlers";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
+import FinalVerdict from "@/app/dashboard/hiring-requests-detail/components/final-verdict/final-verdict";
 
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
@@ -67,6 +68,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     setActiveStage,
     stageCounts,
     archivedStageCounts,
+    finalizedTotal,
   } = useApplicationsContext();
 
   const { viewMode, setViewMode, openId, setOpenId, handleRowClick, handleInfoClick, isSearchingForApplicant, applicantNotFound } = useJobDetail({
@@ -127,10 +129,13 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const stagesWithCounts = useMemo(() =>
     PIPELINE_STAGES.map((s) => ({
       ...s,
-      count: stageCounts[s.key] ?? 0,
+      // "decision" isn't part of the main applicants list's stage grouping —
+      // it's a separately-fetched dataset (finalized candidates), so its
+      // count comes from that fetch's total instead of stageCounts.
+      count: s.key === "decision" ? finalizedTotal : (stageCounts[s.key] ?? 0),
       archivedCount: archivedStageCounts[s.key] ?? 0,
     })),
-    [stageCounts, archivedStageCounts],
+    [stageCounts, archivedStageCounts, finalizedTotal],
   );
 
   const interviewSubCounts = useMemo(() => ({
@@ -218,6 +223,11 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     <div className="job-page">
       <PipelineStages stages={stagesWithCounts} activeKey={activeStage} onStageChange={setActiveStage} />
       <motion.div className="tab-content" variants={staggerContainer} initial="hidden" animate="visible">
+        {activeStage === "decision" ? (
+        <ErrorBoundary>
+          <FinalVerdict jobId={jobId} />
+        </ErrorBoundary>
+        ) : (
         <ErrorBoundary>
           {showBulkSelection && bulkSelection.selectionCount > 0 && (
             <div className="bulk-action-bar">
@@ -408,6 +418,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
             </motion.div>
           )}
         </ErrorBoundary>
+        )}
 
         <BulkRemarksModal
           open={pendingBulkRemarks !== null}
