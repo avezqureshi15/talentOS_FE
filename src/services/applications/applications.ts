@@ -122,6 +122,13 @@ export type UpdateCandidateArchiveResponse = {
   archived: boolean;
 };
 
+export const resumeCandidateFromHold = async (candidateId: number): Promise<{ id: number; final_verdict: string | null }> => {
+  const { data } = await httpClient.post<{ id: number; final_verdict: string | null }>(
+    API_ENDPOINTS.APPLICATION_RESUME.replace("{candidate_id}", String(candidateId)),
+  );
+  return data;
+};
+
 export const updateCandidateArchive = async (
   candidateId: number,
   payload: UpdateCandidateArchivePayload,

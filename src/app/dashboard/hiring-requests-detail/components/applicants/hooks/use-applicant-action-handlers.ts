@@ -7,6 +7,7 @@ import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import { useApplicantActions } from "./use-applicant-actions";
 import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
+import { resumeCandidateFromHold } from "@/services/applications/applications";
 import type { Applicant, ApplicantStatus, ApplicantActionModalsProps, MenuAction } from "../applicants.types";
 
 type LocalOverride = { status?: ApplicantStatus; finalVerdict?: string };
@@ -322,6 +323,20 @@ export function useApplicantActionHandlers({
     }
   }, [data]);
 
+  const handleResumeFromHold = useCallback(async (id: string) => {
+    const applicant = data.find((a) => a.id === id);
+    if (!applicant) return;
+    try {
+      await resumeCandidateFromHold(applicant.candidateId);
+      overrideFinalVerdict(id, "");
+      overrideStatus(id, "move_to_next_round");
+      useToastStore.getState().addToast("Candidate resumed from hold", ToastType.SUCCESS);
+      onRefresh?.();
+    } catch {
+      useToastStore.getState().addToast("Failed to resume candidate", ToastType.ERROR);
+    }
+  }, [data, onRefresh]);
+
   const handleMoveToScreening = useCallback(async (id: string) => {
     const applicant = data.find((a) => a.id === id);
     if (!applicant) return;
@@ -351,6 +366,7 @@ export function useApplicantActionHandlers({
     onRescheduleInterview: handleRescheduleInterview,
     onRetryAiScreening: handleRetryAiScreening,
     onCallNow: handleCallNow,
+    onResumeFromHold: handleResumeFromHold,
     onMenuSelect: (id) => { setFinalCandidateId(id); setFinalDecision("selected"); },
     onMenuReject: (id) => { setFinalCandidateId(id); setFinalDecision("rejected"); },
     onMenuHold: (id) => { setFinalCandidateId(id); setFinalDecision("on-hold"); },

@@ -11,6 +11,7 @@ export type ActionHandlers = {
   onRescheduleInterview: (id: string) => void;
   onRetryAiScreening: (id: string) => void;
   onCallNow: (id: string) => void;
+  onResumeFromHold: (id: string) => void;
   onMenuSelect: (id: string) => void;
   onMenuReject: (id: string) => void;
   onMenuHold: (id: string) => void;
@@ -29,6 +30,7 @@ export function useApplicantActions(handlers: ActionHandlers) {
         onRescheduleInterview: handlers.onRescheduleInterview,
         onRetryAiScreening: handlers.onRetryAiScreening,
         onCallNow: handlers.onCallNow,
+        onResumeFromHold: handlers.onResumeFromHold,
       };
       map[handlerKey]?.(id);
     },

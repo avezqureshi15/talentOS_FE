@@ -7,6 +7,8 @@ import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/
 import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
 import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
 import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
+import ApplicantActionModals from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-action-modals";
+import { useApplicantActionHandlers } from "@/app/dashboard/hiring-requests-detail/components/applicants/hooks/use-applicant-action-handlers";
 import { FINAL_VERDICT_SUB_TABS } from "./final-verdict.constants";
 import { useFinalVerdictsData } from "./hooks/use-final-verdicts-data";
 import type { FinalVerdictProps, FinalVerdictSubTab } from "./final-verdict.types";
@@ -23,7 +25,15 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
   const [detailsId, setDetailsId] = useState<string | null>(null);
   const [selectedRound, setSelectedRound] = useState<string | null>(null);
 
-  const { candidates, isLoading, isLoadingMore, hasMore, fetchNext } = useFinalVerdictsData(subTab, jobId);
+  const { candidates, isLoading, isLoadingMore, hasMore, fetchNext, refresh } = useFinalVerdictsData(subTab, jobId);
+
+  const { modalProps, handleAction, handleMenuAction, getLocalApplicant } = useApplicantActionHandlers({
+    data: candidates,
+    jdId: jobId,
+    onRefresh: refresh,
+  });
+
+  const isOnHold = subTab === "on-hold";
 
   return (
     <div className="final-verdict">
@@ -51,9 +61,11 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
             {candidates.map((a) => (
               <ApplicantCard
                 key={a.id}
-                applicant={a}
+                applicant={isOnHold ? getLocalApplicant(a) : a}
                 isOpen={openId === a.id}
-                readOnly
+                readOnly={!isOnHold}
+                onAction={isOnHold ? handleAction : undefined}
+                onMenuAction={isOnHold ? handleMenuAction : undefined}
                 accordionTab={accordionTab}
                 onToggleOpen={(id) => {
                   if (openId === id) { setOpenId(null); } else { setOpenId(id); setAccordionTab("details"); }
@@ -72,6 +84,8 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
               </Button>
             )}
           </div>
+
+          {isOnHold && <ApplicantActionModals {...modalProps} />}
 
           <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 

@@ -203,7 +203,9 @@ export const ON_HOLD_CONFIG: StateConfig = {
   chip: { label: "On Hold", variant: "warning" },
   showInfoChips: false,
   showExpandedContent: true,
-  actions: [],
+  actions: [
+    { label: "Resume", icon: "bx bx-play-circle", variant: "move", handler: "onResumeFromHold", permission: "application.evaluate" },
+  ],
   menuActions: ["select", "reject"],
   footerBadge: { text: "Candidate put on hold", className: "onhold-text" },
 };

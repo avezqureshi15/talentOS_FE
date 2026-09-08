@@ -21,7 +21,7 @@ export function useFinalVerdictsData(
   subTab: FinalVerdictSubTab,
   jobId: string,
 ): UseFinalVerdictsResult {
-  const candidateStatus = subTab === "selected" ? "selected" : "rejected";
+  const candidateStatus = subTab === "selected" ? "selected" : subTab === "on-hold" ? "on_hold" : "rejected";
 
   const query = useInfiniteQuery({
     queryKey: [QUERY_KEYS.FINAL_VERDICTS, candidateStatus, jobId],
@@ -109,6 +109,6 @@ function mapFinalVerdictCandidate(app: {
     howDidYouHear: app.how_did_you_hear ?? undefined,
     willingToRelocate: app.willing_to_relocate ?? undefined,
     currentRoundId: app.current_round_id ?? undefined,
-    finalVerdict: app.final_verdict?.toLowerCase() ?? undefined,
+    finalVerdict: app.final_verdict?.toLowerCase().replace(/_/g, "-") ?? undefined,
   };
 }
