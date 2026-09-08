@@ -156,6 +156,6 @@
 }
 
 /* width adjustments */
-.pipeline-stage--waiting-evaluation {
-  flex: 1.4;
+.pipeline-stage--evaluation {
+  flex: 1.2;
 }

@@ -6,6 +6,7 @@ export const STAGE_TO_BACKEND_STAGE: Record<StageKey, readonly string[]> = {
   "resume-shortlisting": ["RESUME_SHORTLISTING", "RESUME_SHORTLISTED"],
   screening: ["SCREENING", "AI_SCREENING"],
   interview: ["INTERVIEW", "AI_INTERVIEW"],
+  evaluation: ["WAITING_FOR_EVALUATION", "INTERVIEW", "AI_INTERVIEW"],
   "waiting-evaluation": ["WAITING_FOR_EVALUATION"],
   evaluated: ["INTERVIEW", "AI_INTERVIEW"],
   decision: ["DECISION"],
@@ -15,8 +16,8 @@ export const STAGE_TO_BACKEND_STAGE: Record<StageKey, readonly string[]> = {
 };
 
 export const HIRING_STATE_TO_PIPELINE_STAGE: Record<HiringState, StageKey> = {
-  waiting_for_review: "waiting-evaluation",
-  under_evaluation: "evaluated",
+  waiting_for_review: "evaluation",
+  under_evaluation: "evaluation",
   shortlisted: "screening",
   move_to_next_round: "screening",
   interview_scheduled: "interview",
@@ -36,6 +37,7 @@ export const STAGE_TO_HIRING_STATES: Record<StageKey, readonly HiringState[]> = 
   "resume-shortlisting": [],
   screening: ["shortlisted", "move_to_next_round", "screening_round_scheduled", "ai_screening_evaluation_failed", "ai_screening_flagged"],
   interview: ["interview_scheduled", "interview_rescheduled", "interview_cancelled", "ongoing", "no_show"],
+  evaluation: ["waiting_for_review", "under_evaluation"],
   "waiting-evaluation": ["waiting_for_review"],
   evaluated: ["under_evaluation"],
   decision: [],

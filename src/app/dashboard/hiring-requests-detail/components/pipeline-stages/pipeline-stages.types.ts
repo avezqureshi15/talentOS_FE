@@ -1,4 +1,4 @@
-export type StageKey = "resume-shortlisting" | "screening" | "interview" | "waiting-evaluation" | "evaluated" | "decision" | "selected" | "rejected" | "on-hold";
+export type StageKey = "resume-shortlisting" | "screening" | "interview" | "evaluation" | "waiting-evaluation" | "evaluated" | "decision" | "selected" | "rejected" | "on-hold";
 
 export type SubItem = {
   label: string;
