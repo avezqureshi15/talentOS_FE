@@ -10,6 +10,8 @@ import { SCREENING_STATUS_LABELS } from "@/app/dashboard/hiring-requests-detail/
 import ScreeningActions from "./screening-actions/screening-actions";
 import ScreeningStatusBadge from "./screening-actions/screening-status-badge";
 import { formatPhoneDisplay } from "./screening-actions/screening-actions.utils";
+import { canShowAtsScore } from "./ats-score";
+import { AtsScoreChip } from "./ats-score-chip";
 
 const formatDate = (iso?: string): string => {
   if (!iso) return "";
@@ -23,13 +25,6 @@ const formatTime = (iso?: string): string => {
   try {
     return new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
   } catch { return ""; }
-};
-
-const getScoreClass = (score?: number) => {
-  if (score == null) return "";
-  if (score >= 70) return "score-high";
-  if (score >= 40) return "score-mid";
-  return "score-low";
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -105,16 +100,17 @@ const CandidateTable = ({
               <span className="attempt-badge--inline">attempt {c.screeningReview.attempt}</span>
             )}
           </div>
-          {c.score != null
-            ? <span className={`ats-score ${getScoreClass(c.score)}`}>Score: {c.score}</span>
-            : c.email && <TruncatedCell text={c.email} className="candidate-email" />
-          }
+          {canShowAtsScore(activeStage, c.score) ? (
+            <AtsScoreChip score={c.score} labeled />
+          ) : (
+            c.email && <TruncatedCell text={c.email} className="candidate-email" />
+          )}
         </div>
       </div>
     ),
     score: (c) =>
-      c.score != null ? (
-        <span className={`ats-score ${getScoreClass(c.score)}`}>{c.score}</span>
+      canShowAtsScore(activeStage, c.score) ? (
+        <AtsScoreChip score={c.score} />
       ) : (
         <span className="text-muted">—</span>
       ),
