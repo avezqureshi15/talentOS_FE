@@ -10,6 +10,12 @@ import {
   useAddTeamMember,
   useJobTeam,
 } from "@/app/dashboard/hiring-requests-detail/components/team-members/use-team-members";
+import {
+  assignableJobTeamUsers,
+  employeeIdForJobTeamApi,
+  isUserOnJobTeam,
+  jobTeamMemberIdSet,
+} from "@/app/dashboard/hiring-requests-detail/components/team-members/job-team-ids";
 import type { HiringRequest } from "@/services/hiring-requests/hiring-requests.types";
 import { ASSIGN_MEMBER_MODAL } from "./assign-member-modal.constants";
 import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
@@ -34,7 +40,7 @@ export default function AssignMemberModal({ job, onClose }: Props) {
 
   const loadingUsers = usersStatus === "loading";
 
-  const memberIds = useMemo(() => new Set(team?.data.map((m) => m.user_id) ?? []), [team]);
+  const teamEmployeeIds = useMemo(() => jobTeamMemberIdSet(team?.data ?? []), [team]);
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
@@ -61,7 +67,22 @@ export default function AssignMemberModal({ job, onClose }: Props) {
     };
   }, [search]);
 
-  const candidates = users.filter((u) => u.id !== user?.id);
+  const unassigned = assignableJobTeamUsers(users, { teamEmployeeIds });
+  const candidates =
+    user?.id == null ? unassigned : unassigned.filter((u) => u.id !== user.id);
+
+  useEffect(() => {
+    const excludeUserId = user?.id;
+    setSelected((prev) => {
+      const next = prev.filter((id) => {
+        const match = users.find((u) => u.id === id);
+        if (!match) return false;
+        if (excludeUserId != null && match.id === excludeUserId) return false;
+        return !isUserOnJobTeam(match, teamEmployeeIds);
+      });
+      return next.length === prev.length ? prev : next;
+    });
+  }, [users, teamEmployeeIds, user?.id]);
 
   const toggle = (id: number) => {
     setSelected((prev) =>
@@ -79,7 +100,7 @@ export default function AssignMemberModal({ job, onClose }: Props) {
       const u = userMap.get(userId);
       try {
         await addMutation.mutateAsync({
-          user_id: u?.employee_id ?? userId,
+          user_id: u ? employeeIdForJobTeamApi(u) : userId,
           is_owner: false,
         });
       } catch {
@@ -128,46 +149,42 @@ export default function AssignMemberModal({ job, onClose }: Props) {
 
         {loadingUsers && <p className="am-hint">{ASSIGN_MEMBER_MODAL.LOADING}</p>}
         {!loadingUsers && candidates.length === 0 && (
-          <p className="am-hint">{ASSIGN_MEMBER_MODAL.EMPTY}</p>
+          <p className="am-hint">
+            {users.length === 0
+              ? ASSIGN_MEMBER_MODAL.EMPTY
+              : unassigned.length === 0
+                ? ASSIGN_MEMBER_MODAL.EMPTY_ON_TEAM
+                : ASSIGN_MEMBER_MODAL.EMPTY_ONLY_YOU}
+          </p>
         )}
 
         <div className="am-list">
-          {candidates.map((u) => {
-            const isMember = memberIds.has(u.id);
-            const disabled = isMember;
-            return (
-              <div
-                key={u.id}
-                className={`am-row${selected.includes(u.id) ? " am-row--selected" : ""}`}
-              >
-                <input
-                  type="checkbox"
-                  className="am-check"
-                  checked={selected.includes(u.id)}
-                  disabled={disabled}
-                  onChange={() => toggle(u.id)}
-                />
-                <PersonAvatar
-                  className="am-avatar"
-                  person={{ name: u.name, email: u.email, designation: u.designation || undefined }}
-                />
-                <span className="am-info">
-                  <span className="am-name-row">
-                    <span className="am-name">{u.name}</span>
-                    <span className="am-primary-role" title={ASSIGN_MEMBER_MODAL.PRIMARY_ROLE}>
-                      {ROLE_DISPLAY[u.role]?.label ?? u.role}
-                    </span>
+          {candidates.map((u) => (
+            <div
+              key={u.id}
+              className={`am-row${selected.includes(u.id) ? " am-row--selected" : ""}`}
+            >
+              <input
+                type="checkbox"
+                className="am-check"
+                checked={selected.includes(u.id)}
+                onChange={() => toggle(u.id)}
+              />
+              <PersonAvatar
+                className="am-avatar"
+                person={{ name: u.name, email: u.email, designation: u.designation || undefined }}
+              />
+              <span className="am-info">
+                <span className="am-name-row">
+                  <span className="am-name">{u.name}</span>
+                  <span className="am-primary-role" title={ASSIGN_MEMBER_MODAL.PRIMARY_ROLE}>
+                    {ROLE_DISPLAY[u.role]?.label ?? u.role}
                   </span>
-                  <span className="am-email">{u.email}</span>
                 </span>
-                {isMember ? (
-                  <span className="am-role am-role--member">{ASSIGN_MEMBER_MODAL.ON_TEAM}</span>
-                ) : (
-                  <span className="am-role am-role--none">{ASSIGN_MEMBER_MODAL.NOT_ASSIGNED}</span>
-                )}
-              </div>
-            );
-          })}
+                <span className="am-email">{u.email}</span>
+              </span>
+            </div>
+          ))}
         </div>
 
         {error && <p className="am-error">{error}</p>}

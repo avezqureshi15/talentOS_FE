@@ -4,6 +4,7 @@ import Button from "@/components/ui/button/button";
 import { fetchSystemUsers, type UserItem } from "@/services/users/users";
 import { useAddTeamMember } from "./use-team-members";
 import { type JobTeamMember } from "./team-members.types";
+import { assignableJobTeamUsers, employeeIdForJobTeamApi, isUserOnJobTeam, jobTeamMemberIdSet } from "./job-team-ids";
 import { PersonAvatar } from "@/components/shared/person-avatar/person-avatar";
 import { ROLE_DISPLAY } from "@/constants/role-display";
 import "./add-team-member-modal.css";
@@ -23,7 +24,7 @@ export default function AddTeamMemberModal({ open, onClose, hiringRequestId, exi
   const [error, setError] = useState("");
   const addMutation = useAddTeamMember(hiringRequestId);
 
-  const existingIds = useMemo(() => new Set(existing.map((m) => m.user_id)), [existing]);
+  const teamEmployeeIds = useMemo(() => jobTeamMemberIdSet(existing), [existing]);
 
   useEffect(() => {
     if (!open) return;
@@ -51,7 +52,13 @@ export default function AddTeamMemberModal({ open, onClose, hiringRequestId, exi
     };
   }, [open, search]);
 
-  const candidates = users.filter((u) => !existingIds.has(u.id));
+  const candidates = assignableJobTeamUsers(users, { teamEmployeeIds });
+
+  useEffect(() => {
+    if (selected && isUserOnJobTeam(selected, teamEmployeeIds)) {
+      setSelected(null);
+    }
+  }, [selected, teamEmployeeIds]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +67,7 @@ export default function AddTeamMemberModal({ open, onClose, hiringRequestId, exi
       return;
     }
     addMutation.mutate(
-      { user_id: selected.employee_id ?? selected.id, is_owner: false },
+      { user_id: employeeIdForJobTeamApi(selected), is_owner: false },
       {
         onSuccess: () => onClose(),
         onError: (err: Error) => setError(err.message || "Failed to add member"),
