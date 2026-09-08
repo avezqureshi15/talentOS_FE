@@ -3,7 +3,6 @@ export const HEADER_SEARCH_PLACEHOLDER = "Search candidates...";
 export const HEADER_HAMBURGER_TITLE = "Ctrl+Shift+S";
 
 export const HEADER_VIEW_OPTIONS = [
-  { key: "board", label: "Decision Board", icon: "bx bx-columns" },
   { key: "pipeline", label: "Pipeline", icon: "bx bx-filter" },
 ] as const;
 

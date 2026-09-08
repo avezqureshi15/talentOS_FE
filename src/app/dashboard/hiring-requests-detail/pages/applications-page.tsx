@@ -27,9 +27,7 @@ const ApplicationsPage = () => {
     onCloseJob: () => setPendingClose(true),
     isJobClosing: closeMutation.isPending,
     onBack: () => navigate("/hiring-requests"),
-    onViewChange: (key: string) => {
-      if (key === "board") navigate(`/hiring-requests/${id}/board`);
-    },
+    onViewChange: () => {},
   });
 
   return (

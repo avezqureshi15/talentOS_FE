@@ -77,11 +77,11 @@ export function useHiringRequestHeader({
     totalCount: totalCountOverride ?? totalCount,
     hiringRequestName: data.title,
     hiringRequest: data,
-    viewSwitcher: {
-      options: [...HEADER_VIEW_OPTIONS],
-      active: activeView,
-      onChange: onViewChange,
-    },
+    // A single-option switcher has nothing to switch between — omit it
+    // entirely rather than render a pointless one-button toggle.
+    viewSwitcher: HEADER_VIEW_OPTIONS.length > 1
+      ? { options: [...HEADER_VIEW_OPTIONS], active: activeView, onChange: onViewChange }
+      : undefined,
     actions: [
       {
         key: "export",

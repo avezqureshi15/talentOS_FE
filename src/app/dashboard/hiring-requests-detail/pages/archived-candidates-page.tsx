@@ -45,8 +45,7 @@ const ArchivedCandidatesPage = () => {
     onBack: () => navigate(-1),
     onArchived: undefined,
     onViewChange: (key: string) => {
-      if (key === "board") navigate(`/hiring-requests/${id}/board`);
-      else if (key === "pipeline") navigate(`/hiring-requests/${id}/applications`);
+      if (key === "pipeline") navigate(`/hiring-requests/${id}/applications`);
     },
   });
 
