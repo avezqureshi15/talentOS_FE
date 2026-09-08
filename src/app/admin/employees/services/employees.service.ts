@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from "@/constants/api-endpoints";
 import type {
   Employee,
   EmployeeImportSummary,
+  CreateEmployeePayload,
   EmployeesListParams,
   ImportTemplateResult,
   PaginatedEmployees,
@@ -22,6 +23,9 @@ export const getEmployees = (params: EmployeesListParams) =>
 
 export const getEmployee = (empId: string) =>
   httpClient.get<Employee>(`${API_ENDPOINTS.EMPLOYEES}${empId}`);
+
+export const createEmployee = (payload: CreateEmployeePayload) =>
+  httpClient.post<Employee>(API_ENDPOINTS.EMPLOYEES, payload);
 
 export const updateEmployee = (empId: string, payload: UpdateEmployeePayload) =>
   httpClient.patch<Employee>(`${API_ENDPOINTS.EMPLOYEES}${empId}`, payload);

@@ -174,5 +174,6 @@ export const useWizard = (
     handleMultiSelectConfirm,
     executeWizard,
     handleResetTokens,
+    clearSelection,
   };
 };

@@ -41,12 +41,6 @@ export const ROOT_MENU: CommandEntry[] = [
     ],
   },
   {
-    id: "alerts",
-    label: "Notifications",
-    icon: "bx bx-bell",
-    isWizardAction: true,
-  },
-  {
     id: "send-mail",
     label: "Send Mail",
     icon: "bx bx-envelope",

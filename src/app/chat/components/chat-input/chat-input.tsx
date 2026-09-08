@@ -5,6 +5,7 @@ import "./chat-input.css";
 import type { ChatInputProps } from "./chat-input.types";
 import { useMentionEngine } from "@/components/shared/mentions/hooks/use-mention-engine";
 import { useCommandMenu } from "@/components/shared/mentions/hooks/use-command-menu";
+import { useMentionDismiss } from "@/components/shared/mentions/hooks/use-mention-dismiss";
 import MentionPopup from "@/components/shared/mentions/components/mention-popup";
 import { COMMON_SLOTS_TAB_ID } from "@/components/shared/mentions/components/slot-tabs/slot-tabs.constants";
 import { WIZARD_LABELS } from "@/components/shared/mentions/constants";
@@ -49,13 +50,22 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const {
     multiSelectedIds, isMultiSelectStage, isFullyTokenized, isWizardActive,
     handleWizardSelect, handleToggleMultiSelect, handleMultiSelectConfirm,
-    executeWizard, handleResetTokens,
+    executeWizard, handleResetTokens, clearSelection,
   } = wizard;
 
   const {
     isListView, listItems, filteredEntries, activeEntry,
     moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
   } = menu;
+
+  const dismissMentions = useMentionDismiss({
+    input,
+    setInput,
+    resetEngine: reset,
+    resetMenu: resetToRoot,
+    clearSelection,
+    focusTarget: textareaRef,
+  });
 
   const handleInterviewerChange = useCallback((tabId: string) => {
     const interviewerTokens = tokens.filter((t) => t.type === "interviewer");
@@ -74,9 +84,10 @@ const ChatInput: React.FC<ChatInputProps> = ({
     show, isWizardActive, isMultiSelectStage, isFullyTokenized,
     input, setInput, onSend, executeWizard, wizardStage,
     isListView, listItems, filteredEntries, activeEntry,
-    moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
-    reset, insert, handleChange, handleResetTokens,
+    moveDown, moveUp, selectCurrentItem, navigateTo,
+    insert, handleChange, handleResetTokens,
     handleWizardSelect, handleMultiSelectConfirm,
+    onDismissMentions: dismissMentions,
   });
 
   return (
@@ -120,6 +131,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             tokens={tokens}
             anchorRef={containerRef}
             onInterviewerChange={handleInterviewerChange}
+            onDismiss={dismissMentions}
           />
         </div>
       </div>
