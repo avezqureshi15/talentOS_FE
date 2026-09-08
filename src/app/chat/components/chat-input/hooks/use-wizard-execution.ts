@@ -25,13 +25,11 @@ export const useWizardExecution = ({
     const interviewerToken = tokens.find(t => t.type === "interviewer");
     const slotToken = tokens.find(t => t.type === "slot");
     const interviewToken = tokens.find(t => t.type === "interview");
-    const alertToken = tokens.find(t => t.type === "alert");
     const roundToken = tokens.find(t => t.type === "round");
 
     const mode = entityToken ? "entity"
       : roundToken ? "round"
       : interviewToken ? "interview"
-      : alertToken ? "alerts"
       : wizardActionId === "employees-ask-slots" ? "ask-slots"
       : wizardActionId === "send-mail" ? "send-mail"
       : wizardActionId === "book-interview" ? "book-interview"
@@ -56,13 +54,6 @@ export const useWizardExecution = ({
         onWizardComplete?.(
           { message_type: "COMMAND_EXECUTION" as const, intent: "interviews", payload: { interview_id: interviewToken?.id ?? "", interview_label: interviewToken?.label ?? "", hiring_request_id: "", applicant_id: interviewToken?.relationalId ?? interviewToken?.id ?? "", interviewer_id: "", slot_id: "", raw_text_context: rawText } },
           { applicantName: interviewToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
-        );
-        break;
-      }
-      case "alerts": {
-        onWizardComplete?.(
-          { message_type: "COMMAND_EXECUTION" as const, intent: "alerts", payload: { alert_id: alertToken?.id ?? "", alert_label: alertToken?.label ?? "", alert_type: alertToken?.meta?.type ?? "", userId: alertToken?.meta?.employee_id ?? "", raw_text_context: rawText } },
-          { applicantName: alertToken?.label ?? "", interviewerName: "", slotLabel: "", rawText, selectedEmployeeCount: 0 },
         );
         break;
       }

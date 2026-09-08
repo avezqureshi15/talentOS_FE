@@ -162,26 +162,6 @@ const CommandCard = ({ data, hybrid }: CommandCardProps) => {
         </div>
       );
     }
-    case "alerts":
-      return (
-        <div className="command-card">
-          <div className="command-card__header">
-            <i className="bx bx-bell" />
-            <span>{pay.alert_label ?? pay.alert_id}</span>
-          </div>
-          <div className="command-card__body">
-            {pay.alert_type && (
-              <div className="command-card__row">
-                <span className="command-card__label">Type</span>
-                <span className="command-card__value">{pay.alert_type}</span>
-              </div>
-            )}
-            {pay.raw_text_context && (
-              <blockquote className="command-card__context">{pay.raw_text_context}</blockquote>
-            )}
-          </div>
-        </div>
-      );
     case "rounds":
       return (
         <div className="command-card">

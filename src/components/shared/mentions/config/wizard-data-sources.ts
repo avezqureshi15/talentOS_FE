@@ -3,7 +3,6 @@ import { fetchHiringRequestsForMentions } from "@/services/hiring-requests/hirin
 import { fetchCandidatesForMentions } from "@/services/applications/candidate-mentions-fetcher";
 import { fetchUsersForMentions } from "@/services/users/user-mentions-fetcher";
 import { fetchInterviewsForMentions } from "@/services/interviews/interview-mentions-fetcher";
-import { fetchNotificationsForMentions } from "@/services/notifications/notification-mentions-fetcher";
 import { fetchRoundsForMentions } from "@/services/rounds/round-mentions-fetcher";
 
 type FetcherFn = (query: string, page: number) => Promise<{ items: CommandItem[]; hasMore: boolean }>;
@@ -90,10 +89,6 @@ function createRoundsByCandidateEntry(context?: Record<string, string>): Command
   );
 }
 
-function createAlertEntry(): CommandEntry {
-  return createPaginatableEntry("alert-search", "Notifications", "Search notifications...", fetchNotificationsForMentions);
-}
-
 export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceEntry>> = {
   "book-interview": {
     0: { createEntry: createHiringRequestEntry },
@@ -118,9 +113,6 @@ export const WIZARD_REAL_DATA_SOURCES: Record<string, Record<number, DataSourceE
   "interviews": {
     0: { createEntry: createCandidateEntry },
     1: { createEntry: createInterviewsByCandidateEntry },
-  },
-  "alerts": {
-    0: { createEntry: createAlertEntry },
   },
   "rounds": {
     0: { createEntry: createCandidateEntry },

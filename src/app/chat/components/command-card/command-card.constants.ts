@@ -13,7 +13,6 @@ export const INTENT_HEADER_ICONS: Record<string, string> = {
   "ask slots availability": "bx bx-clock",
   "SEND_MAIL": "bx bx-envelope",
   "interviews": "bx bx-calendar-check",
-  "alerts": "bx bx-bell",
   "rounds": "bx bx-calendar-check",
   "send-mail": "bx bx-envelope",
   "hr-request": "bx bx-briefcase",
@@ -48,7 +47,6 @@ export const INTENT_LABELS: Record<string, string> = {
   "ask slots availability": "Slot Booking Request",
   "SEND_MAIL": "Send Mail",
   "interviews": "Interviews",
-  "alerts": "Notifications",
   "rounds": "Rounds",
   "send-mail": "Send Mail",
   // "Hiring Requests" renamed to "Job Listings"
