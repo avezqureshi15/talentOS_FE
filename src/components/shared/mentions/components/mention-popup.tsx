@@ -5,6 +5,8 @@ import { MENTIONS_LABELS } from "../constants";
 import { COMMON_SLOTS_TAB_ID } from "./slot-tabs/slot-tabs.constants";
 import type { CommandItem, CommandEntry, WizardStage, Token, MenuController } from "../types";
 import { resolveMenuSelection } from "../utils";
+import { useOutsideDismiss } from "@/hooks/use-outside-dismiss";
+import { useEscapeDismiss } from "@/hooks/use-escape-dismiss";
 import MentionPopupHeader from "./mention-popup-header/mention-popup-header";
 import MentionPopupList from "./mention-popup-list/mention-popup-list";
 import MentionPopupSearch from "./mention-popup-search";
@@ -31,8 +33,19 @@ const POPUP_WIDTH = 300;
 const GAP = 8;
 const ANIM_DURATION = 200;
 
-  const MentionPopup = ({
-  show, onInsert, onWizardSelect, multiSelectedIds, onToggleMultiSelect, menu, wizardStage, isMultiSelectStage, tokens, anchorRef, onInterviewerChange,
+const MentionPopup = ({
+  show,
+  onInsert,
+  onWizardSelect,
+  multiSelectedIds,
+  onToggleMultiSelect,
+  menu,
+  wizardStage,
+  isMultiSelectStage,
+  tokens,
+  anchorRef,
+  onInterviewerChange,
+  onDismiss,
 }: MentionPopupProps) => {
   const popupRef = useRef<HTMLDivElement>(null);
   // justification: tracks popup position computed from anchor rect
@@ -50,6 +63,10 @@ const ANIM_DURATION = 200;
     [tokens],
   );
   const showSidebar = interviewerTokens.length > 1 && wizardStage === 4;
+
+  useOutsideDismiss(show, onDismiss, [popupRef, anchorRef]);
+  useEscapeDismiss(show, onDismiss);
+
   // justification: locks popup scroll when sidebar mounts to prevent double scroll
   useEffect(() => {
     const el = popupRef.current;
@@ -108,6 +125,11 @@ const ANIM_DURATION = 200;
 
   const handleSearchKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     switch (e.key) {
+      case "Escape":
+        e.preventDefault();
+        e.stopPropagation();
+        onDismiss();
+        break;
       case "ArrowDown": e.preventDefault(); moveDown(); break;
       case "ArrowUp": e.preventDefault(); moveUp(); break;
       case "Enter":
@@ -118,7 +140,7 @@ const ANIM_DURATION = 200;
         }
         break;
     }
-  }, [moveDown, moveUp, selectCurrentItem, handleSelect]);
+  }, [moveDown, moveUp, selectCurrentItem, handleSelect, onDismiss]);
 
   // justification: computes popup position relative to the anchor element
   useLayoutEffect(() => {
