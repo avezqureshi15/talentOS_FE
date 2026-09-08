@@ -24,6 +24,7 @@ type MentionPopupProps = {
   tokens: Token[];
   anchorRef: React.RefObject<HTMLDivElement | null>;
   onInterviewerChange?: (interviewerId: string) => void;
+  onDismiss: () => void;
 };
 
 const POPUP_WIDTH = 300;

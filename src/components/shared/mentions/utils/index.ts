@@ -1,8 +1,17 @@
 import type { CommandItem, CommandEntry, WizardStage, Token, MenuSelection } from "../types";
 import { WIZARD_ACTIONS } from "../config/wizard.config";
 import { ICON_RULES, WIZARD_LABELS, SLOT_GROUP_ORDER, SLOT_FALLBACK_GROUP } from "../constants";
+import { MENTION_REGEX } from "../hooks/use-mention-engine";
 
 export type { MenuSelection };
+
+/** Removes an unfinished `@trigger` at `cursorPos` (defaults to end of value). */
+export function stripMentionTrigger(value: string, cursorPos?: number): string {
+  const pos = cursorPos ?? value.length;
+  const before = value.slice(0, pos);
+  const after = value.slice(pos);
+  return before.replace(MENTION_REGEX, "") + after;
+}
 
 export function resolveMenuSelection(
   current: CommandEntry | CommandItem,

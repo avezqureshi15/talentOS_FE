@@ -20,24 +20,30 @@ type Deps = {
   moveUp: () => void;
   selectCurrentItem: () => CommandEntry | CommandItem | null;
   navigateTo: (entry: CommandEntry) => void;
-  resetToRoot: () => void;
-  reset: () => void;
   insert: (text: string, value: string, setValue: (v: string) => void) => void;
   handleChange: (value: string, cursorPos: number) => void;
   handleWizardSelect: (stage: WizardStage, item: CommandItem) => void;
   handleMultiSelectConfirm: () => void;
   handleResetTokens: () => void;
+  onDismissMentions: () => void;
 };
 
 export const useChatKeydown = ({
   show, isWizardActive, isMultiSelectStage, isFullyTokenized,
   input, setInput, onSend, executeWizard, wizardStage,
   isListView, listItems, filteredEntries, activeEntry,
-  moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
-  reset, insert, handleChange,
+  moveDown, moveUp, selectCurrentItem, navigateTo,
+  insert, handleChange,
   handleWizardSelect, handleMultiSelectConfirm, handleResetTokens,
+  onDismissMentions,
 }: Deps) => {
   return useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (show && e.key === "Escape") {
+      e.preventDefault();
+      onDismissMentions();
+      return;
+    }
+
     if (show && !isWizardActive) {
       const items = isListView ? listItems : filteredEntries;
       if (items.length === 0) return;
@@ -68,7 +74,6 @@ export const useChatKeydown = ({
           case "ArrowDown": e.preventDefault(); moveDown(); return;
           case "ArrowUp": e.preventDefault(); moveUp(); return;
           case "Enter": if (!e.shiftKey) { e.preventDefault(); handleMultiSelectConfirm(); } return;
-          case "Escape": e.preventDefault(); reset(); resetToRoot(); return;
         }
         return;
       }
@@ -83,7 +88,6 @@ export const useChatKeydown = ({
               if (item) handleWizardSelect(wizardStage, item as CommandItem);
             }
             return;
-          case "Escape": e.preventDefault(); reset(); resetToRoot(); return;
         }
       }
       return;
@@ -109,7 +113,7 @@ export const useChatKeydown = ({
     handleChange(input, input.length);
   }, [
     show, isWizardActive, isMultiSelectStage, isFullyTokenized, input, setInput, onSend, executeWizard, wizardStage,
-    isListView, listItems, filteredEntries, activeEntry, moveDown, moveUp, selectCurrentItem, navigateTo, resetToRoot,
-    reset, insert, handleChange, handleWizardSelect, handleMultiSelectConfirm, handleResetTokens,
+    isListView, listItems, filteredEntries, activeEntry, moveDown, moveUp, selectCurrentItem, navigateTo,
+    insert, handleChange, handleWizardSelect, handleMultiSelectConfirm, handleResetTokens, onDismissMentions,
   ]);
 };
