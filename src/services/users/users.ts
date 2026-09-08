@@ -158,11 +158,13 @@ export const fetchUsers = async (
   per_page: number = 20,
   slotsInfo?: boolean,
   authorizedOnly?: boolean,
+  inviteEligible?: boolean,
 ): Promise<PaginatedUsersResponse> => {
   const params: Record<string, string | number> = { page, per_page };
   if (q) params.q = q;
   if (slotsInfo) params.slotsInfo = "true";
   if (authorizedOnly) params.authorized_only = "true";
+  if (inviteEligible) params.invite_eligible = "true";
   const { data } = await httpClient.get<PaginatedEmployeesApi>(API_ENDPOINTS.EMPLOYEES, { params });
   const items = data.data.map(toUserItem);
   return {
