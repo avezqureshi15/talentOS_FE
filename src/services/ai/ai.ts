@@ -1,5 +1,5 @@
 import httpClient from "@/services/http-client";
-import { API_ENDPOINTS } from "@/constants/api-endpoints";
+import { API_ENDPOINTS, AI_MOVE_TO_INTERVIEW_TIMEOUT_MS } from "@/constants/api-endpoints";
 import type { AiScreeningResult, AiInterviewItem, AiInterviewDetail, MoveToScreeningResponse, MoveToScreeningPayload, MoveToInterviewPayload, MoveToInterviewResponse, AiRetryResponse, AiInterviewRecordingResponse, AiInterviewSchedulePayload, AiInterviewScheduleResponse, AiInterviewUnscheduleResponse, AiScreenTriggerResponse } from "./ai.types";
 import type { CandidateEvaluationData } from "@/app/dashboard/round-details/pages/round-details.types";
 
@@ -42,7 +42,9 @@ export const moveToScreening = async (hiringRequestId: string, candidateId: numb
 
 export const moveToInterview = async (hiringRequestId: string, candidateId: number, payload: MoveToInterviewPayload): Promise<MoveToInterviewResponse> => {
   const url = API_ENDPOINTS.AI_MOVE_TO_INTERVIEW.replace("{hiring_request_id}", hiringRequestId).replace("{candidate_id}", String(candidateId));
-  const { data } = await httpClient.post<MoveToInterviewResponse>(url, payload);
+  const { data } = await httpClient.post<MoveToInterviewResponse>(url, payload, {
+    timeout: AI_MOVE_TO_INTERVIEW_TIMEOUT_MS,
+  });
   return data;
 };
 

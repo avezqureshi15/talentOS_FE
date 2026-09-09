@@ -9,16 +9,10 @@ type UseJobDetailOptions = {
   page: number;
   totalPages: number;
   goToPage: (page: number) => void;
-  jobId: string;
+  onExpand: (id: string) => void;
 };
 
 type UseJobDetailReturn = {
-  viewMode: "table" | "card";
-  setViewMode: (v: "table" | "card") => void;
-  openId: string | null;
-  setOpenId: (v: string | null) => void;
-  handleRowClick: (candidate: Applicant) => void;
-  handleInfoClick: (candidate: Applicant) => void;
   isSearchingForApplicant: boolean;
   applicantNotFound: boolean;
 };
@@ -30,13 +24,9 @@ export function useJobDetail({
   page,
   totalPages,
   goToPage,
-  jobId,
+  onExpand,
 }: UseJobDetailOptions): UseJobDetailReturn {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [viewMode, setViewMode] = useState<"table" | "card">(
-    (searchParams.get("view") as "table" | "card") ?? "table"
-  );
-  const [openId, setOpenId] = useState<string | null>(applicantParam ?? null);
+  const [, setSearchParams] = useSearchParams();
   const scrollAttemptedRef = useRef(false);
   const [searchStatus, setSearchStatus] = useState<"idle" | "searching" | "not-found">(
     applicantParam ? "searching" : "idle",
@@ -44,49 +34,33 @@ export function useJobDetail({
   const [prevApplicantParam, setPrevApplicantParam] = useState<string | null>(applicantParam);
   if (applicantParam !== prevApplicantParam) {
     setPrevApplicantParam(applicantParam);
+    scrollAttemptedRef.current = false;
     setSearchStatus(applicantParam ? "searching" : "idle");
   }
 
-  useEffect(
-    () => {
-      const view = searchParams.get("view");
-      if (view === "card" || view === "table") setViewMode(view);
-      const app = searchParams.get("applicant");
-      if (app) setOpenId(app);
-    },
-    // Sync URL search params into local state when they change
-    [searchParams],
-  );
+  const clearApplicantParams = useCallback(() => {
+    setSearchParams((prev) => {
+      prev.delete("applicant");
+      prev.delete("view");
+      return prev;
+    });
+  }, [setSearchParams]);
 
   useEffect(
     () => {
       if (!applicantParam || scrollAttemptedRef.current) return;
       if (appsLoading) return;
 
-      const found = applicants.some((a) => a.id === applicantParam);
+      const match = applicants.find(
+        (a) => a.id === applicantParam || String(a.candidateId) === applicantParam,
+      );
 
-      if (found) {
+      if (match) {
         scrollAttemptedRef.current = true;
         setSearchStatus("idle");
-        setOpenId(applicantParam);
-
-        const scrollTimer = setTimeout(() => {
-          const el = document.querySelector(`[data-applicant-id="${applicantParam}"]`);
-          el?.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 150);
-
-        const clearTimer = setTimeout(() => {
-          setSearchParams((prev) => {
-            prev.delete("applicant");
-            prev.delete("view");
-            return prev;
-          });
-        }, 3000);
-
-        return () => {
-          clearTimeout(scrollTimer);
-          clearTimeout(clearTimer);
-        };
+        onExpand(match.id);
+        clearApplicantParams();
+        return;
       }
 
       if (page < totalPages) {
@@ -96,50 +70,15 @@ export function useJobDetail({
         setSearchStatus("not-found");
         scrollAttemptedRef.current = true;
         const clearTimer = setTimeout(() => {
-          setSearchParams((prev) => {
-            prev.delete("applicant");
-            prev.delete("view");
-            return prev;
-          });
+          clearApplicantParams();
         }, 4000);
         return () => clearTimeout(clearTimer);
       }
     },
-    // Scroll to a candidate when applicantParam is present in URL
-    [applicantParam, appsLoading, applicants, page, totalPages, goToPage, setSearchParams, setOpenId],
-  );
-
-  const handleInfoClick = useCallback(
-    (candidate: Applicant) => {
-      scrollAttemptedRef.current = false;
-      setSearchStatus("searching");
-      setSearchParams({ applicant: candidate.id, view: "card" });
-    },
-    [setSearchParams],
-  );
-
-  const handleRowClick = useCallback(
-    (candidate: Applicant) => {
-      if (candidate.status === "interview_scheduled" || candidate.status === "interview_rescheduled" || candidate.status === "interview_cancelled" || candidate.status === "screening_round_scheduled" || candidate.status === "ongoing") return;
-      // No round yet (e.g. still in resume shortlisting): the round-details page
-      // has nothing to show and its :roundId is typed as a UUID, so open the
-      // in-page profile card instead of navigating to a URL that 422s.
-      if (!candidate.currentRoundId) {
-        handleInfoClick(candidate);
-        return;
-      }
-      window.open(`/hiring-requests/${jobId}/round-details/${candidate.currentRoundId}?candidateId=${candidate.id}`, "_blank");
-    },
-    [jobId, handleInfoClick],
+    [applicantParam, appsLoading, applicants, page, totalPages, goToPage, onExpand, clearApplicantParams],
   );
 
   return {
-    viewMode,
-    setViewMode,
-    openId,
-    setOpenId,
-    handleRowClick,
-    handleInfoClick,
     isSearchingForApplicant: searchStatus === "searching",
     applicantNotFound: searchStatus === "not-found",
   };

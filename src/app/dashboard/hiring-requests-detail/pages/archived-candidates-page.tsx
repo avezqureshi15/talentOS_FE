@@ -8,6 +8,7 @@ import Skeleton from "@/components/ui/skeleton/skeleton";
 import PaginationBar from "@/components/ui/pagination-bar/pagination-bar";
 import BulkArchiveModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-archive-modal";
 import { useHiringRequestHeader } from "@/app/dashboard/hiring-requests-detail/pages/use-hiring-request-header";
+import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { useApplicationsData } from "@/app/dashboard/hiring-requests-detail/components/detail/use-applications-data";
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -21,6 +22,7 @@ import "./archived-candidates-page.css";
 
 const ArchivedCandidatesPage = () => {
   const { data } = useOutletContext<HiringRequestContext>();
+  const { isRefreshing, refreshAll } = useApplicationsContext();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -47,6 +49,8 @@ const ArchivedCandidatesPage = () => {
     onViewChange: (key: string) => {
       if (key === "pipeline") navigate(`/hiring-requests/${id}/applications`);
     },
+    onRefresh: refreshAll,
+    isRefreshing,
   });
 
   const minimalHeaderConfig: HeaderConfig = {

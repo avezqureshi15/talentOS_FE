@@ -1,31 +1,37 @@
 import { useState } from "react";
-import ApplicantCard from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-card";
-import Button from "@/components/ui/button/button";
-import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import { motion } from "framer-motion";
+import CandidateTable from "@/app/dashboard/hiring-requests-detail/components/candidate-table/candidate-table";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
-import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
-import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
-import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
-import RoundsSidePanel from "@/app/dashboard/hiring-requests-detail/components/rounds-side-panel/rounds-side-panel";
 import ApplicantActionModals from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-action-modals";
 import { useApplicantActionHandlers } from "@/app/dashboard/hiring-requests-detail/components/applicants/hooks/use-applicant-action-handlers";
-import { FINAL_VERDICT_SUB_TABS } from "./final-verdict.constants";
+import { PIPELINE_STAGES } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.constants";
+import PaginationBar from "@/components/ui/pagination-bar/pagination-bar";
+import { fadeSlideUp } from "@/utils/motion";
+import FinalVerdictFilterBar from "./final-verdict-filter-bar";
 import { useFinalVerdictsData } from "./hooks/use-final-verdicts-data";
+import { useFinalVerdictCounts } from "./hooks/use-final-verdict-counts";
 import type { FinalVerdictProps, FinalVerdictSubTab } from "./final-verdict.types";
-import type { AccordionTab } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import "./final-verdict.css";
 
-const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
-  const [subTab, setSubTab] = useState<FinalVerdictSubTab>("selected");
-  const [openId, setOpenId] = useState<string | null>(null);
-  const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
-  const [timelineId, setTimelineId] = useState<number | null>(null);
-  const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
-  const [aiSummaryId, setAiSummaryId] = useState<string | null>(null);
-  const [detailsId, setDetailsId] = useState<string | null>(null);
-  const [selectedRound, setSelectedRound] = useState<string | null>(null);
+const DECISION_COLUMNS = PIPELINE_STAGES.find((s) => s.key === "decision")?.columns ?? [];
 
-  const { candidates, isLoading, isLoadingMore, hasMore, fetchNext, refresh } = useFinalVerdictsData(subTab, jobId);
+const FinalVerdict = ({ jobId, isRemote = false }: FinalVerdictProps) => {
+  const [subTab, setSubTab] = useState<FinalVerdictSubTab>("selected");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [timelineId, setTimelineId] = useState<number | null>(null);
+
+  const {
+    candidates,
+    isLoading,
+    total,
+    page,
+    totalPages,
+    pageSize,
+    goToPage,
+    setPageSize,
+    refresh,
+  } = useFinalVerdictsData(subTab, jobId);
+  const counts = useFinalVerdictCounts(jobId);
 
   const { modalProps, handleAction, handleMenuAction, getLocalApplicant } = useApplicantActionHandlers({
     data: candidates,
@@ -33,107 +39,45 @@ const FinalVerdict = ({ jobId }: FinalVerdictProps) => {
     onRefresh: refresh,
   });
 
-  const isOnHold = subTab === "on-hold";
+  const tableApplicants = candidates.map(getLocalApplicant);
 
   return (
     <div className="final-verdict">
-      <div className="fv-sub-tabs">
-        {FINAL_VERDICT_SUB_TABS.map((st) => (
-          <button
-            key={st.key}
-            className={`fv-sub-tab${subTab === st.key ? " fv-sub-tab--active" : ""}`}
-            onClick={() => { setSubTab(st.key); setOpenId(null); }}
-            type="button"
-          >
-            <i className={st.icon} />
-            {st.label}
-          </button>
-        ))}
-      </div>
+      <FinalVerdictFilterBar
+        value={subTab}
+        onChange={(next) => {
+          setSubTab(next);
+          setExpandedId(null);
+        }}
+        counts={counts}
+      />
 
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : candidates.length === 0 ? (
-        <div className="hr-tab-placeholder">No {subTab} candidates</div>
-      ) : (
-        <>
-          <div className="fv-card-grid">
-            {candidates.map((a) => (
-              <ApplicantCard
-                key={a.id}
-                applicant={isOnHold ? getLocalApplicant(a) : a}
-                isOpen={openId === a.id}
-                readOnly={!isOnHold}
-                onAction={isOnHold ? handleAction : undefined}
-                onMenuAction={isOnHold ? handleMenuAction : undefined}
-                accordionTab={accordionTab}
-                onToggleOpen={(id) => {
-                  if (openId === id) { setOpenId(null); } else { setOpenId(id); setAccordionTab("details"); }
-                }}
-                onTabChange={setAccordionTab}
-                onCoverLetterReadMore={setCoverLetterId}
-                onAiSummaryReadMore={setAiSummaryId}
-                onDetailsReadMore={setDetailsId}
-                onTimeline={setTimelineId}
-                onViewRound={setSelectedRound}
-              />
-            ))}
-            {hasMore && (
-              <Button className="screen-btn" onClick={fetchNext} loading={isLoadingMore}>
-                Load More
-              </Button>
-            )}
-          </div>
+      <motion.div variants={fadeSlideUp}>
+        <CandidateTable
+          data={tableApplicants}
+          columns={DECISION_COLUMNS}
+          onRowClick={(candidate) => setExpandedId((prev) => (prev === candidate.id ? null : candidate.id))}
+          onAction={handleAction}
+          onMenuAction={handleMenuAction}
+          onTimelineOpen={(candidate) => setTimelineId(candidate.candidateId)}
+          activeStage="decision"
+          loading={isLoading}
+          hiringRequestId={jobId}
+          expandedId={expandedId}
+          isRemote={isRemote}
+        />
+        <PaginationBar
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          pageSize={pageSize}
+          onPageChange={goToPage}
+          onPageSizeChange={setPageSize}
+        />
+      </motion.div>
 
-          {isOnHold && <ApplicantActionModals {...modalProps} />}
-
-          <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
-
-          {candidates.map((a) => (
-            <CoverLetterModal
-              key={`cl-${a.id}`}
-              open={coverLetterId === a.id}
-              applicantName={a.name}
-              coverLetter={a.coverLetter ?? ""}
-              onClose={() => setCoverLetterId(null)}
-            />
-          ))}
-
-          {candidates.map((a) => (
-            <AiSummaryModal
-              key={`ai-${a.id}`}
-              open={aiSummaryId === a.id}
-              applicantName={a.name}
-              aiSummary={a.aiSummary ?? ""}
-              onClose={() => setAiSummaryId(null)}
-            />
-          ))}
-
-          <RoundsSidePanel
-            open={!!selectedRound}
-            roundId={selectedRound}
-            onClose={() => setSelectedRound(null)}
-          />
-
-          {candidates.map((a) => (
-            <ApplicantDetailsModal
-              key={`det-${a.id}`}
-              open={detailsId === a.id}
-              applicantName={a.name}
-              details={{
-                currentCtc: a.currentCtc,
-                expectedCtc: a.expectedCtc,
-                location: a.location,
-                yearsOfExperience: a.yearsOfExperience,
-                noticePeriod: a.noticePeriod,
-                howDidYouHear: a.howDidYouHear,
-                willingToRelocate: a.willingToRelocate === true ? "Yes" : a.willingToRelocate === false ? "No" : undefined,
-              }}
-              onClose={() => setDetailsId(null)}
-            />
-          ))}
-        </>
-      )}
+      <ApplicantActionModals {...modalProps} />
+      <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
     </div>
   );
 };

@@ -20,7 +20,7 @@ export const STATUS_DISPLAY: Record<string, { label: string; cls: string }> = {
   resume_shortlisted: { label: "Resume Shortlisted", cls: "state-chip--success" },
   under_evaluation: { label: "Evaluating", cls: "state-chip--warning" },
   shortlisted: { label: "Shortlisted", cls: "state-chip--success" },
-  move_to_next_round: { label: "Move to Next", cls: "state-chip--success" },
+  move_to_next_round: { label: "Ready to schedule", cls: "state-chip--success" },
   rejected: { label: "Moved Out Of Pipeline", cls: "state-chip--danger" },
   scheduled: { label: "Scheduled", cls: "state-chip--info" },
   interview_scheduled: { label: "Interview Scheduled", cls: "state-chip--info" },

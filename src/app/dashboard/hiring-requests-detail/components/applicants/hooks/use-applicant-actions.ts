@@ -3,6 +3,7 @@ import type { MenuAction } from "../applicants.types";
 
 export type ActionHandlers = {
   onShortlist: (id: string) => void;
+  onAdvance: (id: string) => void;
   onRejectFromEvaluation: (id: string) => void;
   onMoveToNextRound: (id: string) => void;
   onScheduleInterview: (id: string) => void;
@@ -15,6 +16,7 @@ export type ActionHandlers = {
   onMenuSelect: (id: string) => void;
   onMenuReject: (id: string) => void;
   onMenuHold: (id: string) => void;
+  onMenuArchive: (id: string) => void;
 };
 
 export function useApplicantActions(handlers: ActionHandlers) {
@@ -22,6 +24,7 @@ export function useApplicantActions(handlers: ActionHandlers) {
     (handlerKey: string, id: string) => {
       const map: Record<string, (id: string) => void> = {
         onShortlist: handlers.onShortlist,
+        onAdvance: handlers.onAdvance,
         onRejectFromEvaluation: handlers.onRejectFromEvaluation,
         onMoveToNextRound: handlers.onMoveToNextRound,
         onScheduleInterview: handlers.onScheduleInterview,
@@ -42,6 +45,7 @@ export function useApplicantActions(handlers: ActionHandlers) {
       if (action === "select") handlers.onMenuSelect(id);
       if (action === "reject") handlers.onMenuReject(id);
       if (action === "hold") handlers.onMenuHold(id);
+      if (action === "archive") handlers.onMenuArchive(id);
     },
     [handlers],
   );

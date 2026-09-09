@@ -47,6 +47,12 @@ function buildApiHeader(
   };
 }
 
+function parseNumericCandidateId(raw: string | null): number | undefined {
+  if (!raw || !/^\d+$/.test(raw)) return undefined;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : undefined;
+}
+
 const RoundDetails = () => {
   const { id, roundId } = useParams<RoundDetailsParams>();
   const navigate = useNavigate();
@@ -102,21 +108,26 @@ const RoundDetails = () => {
   const mode: RoundDetailsMode | null = apiData ? detectMode(apiData) : null;
   const isAiInterviewMode = mode === "ai-interview";
 
-  const urlCandidateId = candidateIdParam ? Number(candidateIdParam) : undefined;
+  const urlCandidateId = parseNumericCandidateId(candidateIdParam);
   const candidateIdNum =
     apiData?.candidate_id ??
-    (urlCandidateId !== undefined && Number.isFinite(urlCandidateId) ? urlCandidateId : undefined);
+    urlCandidateId;
   const hasCandidate = candidateIdNum !== undefined && Number.isFinite(candidateIdNum);
 
-  const { data: interviews } = useAiInterviews(
+  const {
+    data: interviews,
+    isLoading: interviewsLoading,
+    isFetched: interviewsFetched,
+    isError: interviewsError,
+  } = useAiInterviews(
     isAiInterviewMode && hasCandidate ? id : undefined,
     isAiInterviewMode && hasCandidate ? candidateIdNum : undefined,
   );
   const interviewId = interviews && interviews.length > 0 ? interviews[0].id : undefined;
 
   const { data: interviewTemplate, isLoading: interviewLoading, isError: interviewError } = useAiInterviewTemplate(
-    isAiInterviewMode ? id : undefined,
-    isAiInterviewMode && hasCandidate ? candidateIdNum : undefined,
+    isAiInterviewMode && interviewId ? id : undefined,
+    isAiInterviewMode && hasCandidate && interviewId ? candidateIdNum : undefined,
     isAiInterviewMode ? interviewId : undefined,
     { poll: true },
   );
@@ -144,21 +155,33 @@ const RoundDetails = () => {
       )}
 
       {!isLoading && isAiInterviewMode && (
-        interviewLoading || !interviewTemplate ? (
+        interviewsError ? (
+          <div className="rd-split rd-center-row">
+            <p className="rd-error">Failed to load interview assessment.</p>
+          </div>
+        ) : (interviewsLoading && !interviewsFetched) || (interviewId && interviewLoading) ? (
           <AiInterviewSkeleton />
+        ) : !interviewId ? (
+          <div className="rd-split rd-center-row">
+            <p className="rd-error">No AI interview assessment found for this round.</p>
+          </div>
         ) : interviewError ? (
           <div className="rd-split rd-center-row">
             <p className="rd-error">Failed to load interview assessment.</p>
           </div>
-        ) : (
+        ) : interviewTemplate ? (
           <AiInterviewTemplate
             data={interviewTemplate}
           />
+        ) : (
+          <div className="rd-split rd-center-row">
+            <p className="rd-error">No AI interview assessment found for this round.</p>
+          </div>
         )
       )}
 
       {!isLoading && mode === "normal-round" && apiData && (
-        <NormalRoundTemplate data={apiData} candidateId={candidateIdParam} hiringRequestId={id} />
+        <NormalRoundTemplate data={apiData} candidateId={candidateIdNum != null ? String(candidateIdNum) : candidateIdParam} hiringRequestId={id} />
       )}
     </div>
   );

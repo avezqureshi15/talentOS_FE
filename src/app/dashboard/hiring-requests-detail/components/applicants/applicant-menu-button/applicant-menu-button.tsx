@@ -6,7 +6,7 @@ import "./applicant-menu-button.css";
 
 const MENU_ITEMS: Record<MenuAction, { label: string; icon: string; className?: string }> = {
   select: {
-    label: "Select",
+    label: "Select candidate",
     icon: "bx-user-check",
     className: "amb-item--select",
   },
@@ -19,6 +19,10 @@ const MENU_ITEMS: Record<MenuAction, { label: string; icon: string; className?: 
     label: "Hold",
     icon: "bx-pause-circle",
   },
+  archive: {
+    label: "Archive",
+    icon: "bx-archive",
+  },
 };
 
 const MENU_OFFSET_PX = 4;
@@ -28,6 +32,7 @@ const ApplicantMenuButton = ({
   onMenuAction,
   id,
   onViewProfile,
+  extraItems,
   className,
   onBeforeOpen,
 }: ApplicantMenuButtonProps) => {
@@ -122,6 +127,16 @@ const ApplicantMenuButton = ({
                 <i className="bx bx-user" /> View Profile
               </button>
             )}
+            {extraItems?.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                className="menu-item amb-item"
+                onClick={closeAnd(item.onSelect)}
+              >
+                <i className={`bx ${item.icon}`} /> {item.label}
+              </button>
+            ))}
           </div>,
           document.body,
         )}

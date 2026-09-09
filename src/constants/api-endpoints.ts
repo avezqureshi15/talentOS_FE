@@ -79,6 +79,7 @@ export const API_ENDPOINTS = {
   HIRING_REQUEST_EXPORT: "/hiring-requests/{hiring_request_id}/export",
   HIRING_REQUEST_IMPORT_CANDIDATES: "/hiring-requests/{hiring_request_id}/import-candidates",
   HIRING_REQUEST_IMPORT_TEMPLATE: "/hiring-requests/{hiring_request_id}/import-template",
+  HIRING_REQUEST_ADD_CANDIDATE: "/hiring-requests/{hiring_request_id}/candidates",
   JOB_TEAM: "/hiring-requests/{hiring_request_id}/team",
   JOB_TEAM_MEMBER: "/hiring-requests/{hiring_request_id}/team/{user_id}",
   ADMIN_ROLES: "/admin/roles",
@@ -96,6 +97,11 @@ export const PAGINATION = {
   APPLICATIONS_SEARCH_SIZE: 20,
   INTERVIEWS_PER_PAGE: 20,
 } as const;
+
+export const BULK_SELECTION_MAX = 10;
+export const BULK_SELECTION_MAX_TOAST = "You can select up to 10 candidates";
+export const BULK_SELECTION_MAX_TOAST_MS = 2500;
+export const AI_MOVE_TO_INTERVIEW_TIMEOUT_MS = 120_000;
 
 export const FILTER_DEFAULTS = {
   ALL: "all",

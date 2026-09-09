@@ -16,10 +16,11 @@ export const STAGE_TO_BACKEND_STAGE: Record<StageKey, readonly string[]> = {
 };
 
 export const HIRING_STATE_TO_PIPELINE_STAGE: Record<HiringState, StageKey> = {
+  resume_shortlisting: "resume-shortlisting",
   waiting_for_review: "evaluation",
   under_evaluation: "evaluation",
   shortlisted: "screening",
-  move_to_next_round: "screening",
+  move_to_next_round: "evaluation",
   interview_scheduled: "interview",
   interview_rescheduled: "interview",
   interview_cancelled: "interview",
@@ -34,12 +35,12 @@ export const HIRING_STATE_TO_PIPELINE_STAGE: Record<HiringState, StageKey> = {
 };
 
 export const STAGE_TO_HIRING_STATES: Record<StageKey, readonly HiringState[]> = {
-  "resume-shortlisting": [],
-  screening: ["shortlisted", "move_to_next_round", "screening_round_scheduled", "ai_screening_evaluation_failed", "ai_screening_flagged"],
+  "resume-shortlisting": ["resume_shortlisting"],
+  screening: ["shortlisted", "move_to_next_round", "under_evaluation", "screening_round_scheduled", "ai_screening_evaluation_failed", "ai_screening_flagged"],
   interview: ["interview_scheduled", "interview_rescheduled", "interview_cancelled", "ongoing", "no_show"],
-  evaluation: ["waiting_for_review", "under_evaluation"],
+  evaluation: ["waiting_for_review", "under_evaluation", "move_to_next_round", "shortlisted"],
   "waiting-evaluation": ["waiting_for_review"],
-  evaluated: ["under_evaluation"],
+  evaluated: ["under_evaluation", "move_to_next_round", "shortlisted"],
   decision: [],
   selected: ["selected"],
   rejected: ["rejected"],
@@ -49,7 +50,7 @@ export const STAGE_TO_HIRING_STATES: Record<StageKey, readonly HiringState[]> = 
 export const TRANSITIONS: Transition[] = [
   {
     action: "onShortlist",
-    from: ["under_evaluation"] as const,
+    from: ["under_evaluation", "waiting_for_review"] as const,
     to: "shortlisted",
     optimistic: (): Partial<{ status: ApplicantStatus; finalVerdict: string }> => ({
       status: "shortlisted",
@@ -57,7 +58,7 @@ export const TRANSITIONS: Transition[] = [
   },
   {
     action: "onRejectFromEvaluation",
-    from: ["under_evaluation", "ai_screening_flagged"] as const,
+    from: ["under_evaluation", "waiting_for_review", "ai_screening_flagged"] as const,
     to: "rejected",
     optimistic: (): Partial<{ status: ApplicantStatus; finalVerdict: string }> => ({
       status: "rejected",

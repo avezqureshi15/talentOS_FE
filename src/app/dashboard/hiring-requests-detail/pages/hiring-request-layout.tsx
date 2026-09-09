@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useParams, useSearchParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorFallback from "@/components/ui/error-fallback/error-fallback";
 import { useHiringRequest } from "@/app/dashboard/hiring-requests/hooks/use-hiring-requests";
@@ -7,6 +8,7 @@ import { useApplicationsData, useFinalizedData } from "@/app/dashboard/hiring-re
 import { useInterviewCount } from "@/app/dashboard/hiring-requests-detail/components/detail/use-interview-count";
 import { ApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { DEFAULT_FILTER, SCORE_FILTER_MAP } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { invalidateHiringRequestQueries } from "@/app/dashboard/hiring-requests-detail/pages/invalidate-hiring-queries";
 import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 
 export type HiringRequestContext = {
@@ -22,21 +24,33 @@ const HiringRequestLayout = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const { data, isLoading, error, refetch } = useHiringRequest(id);
+  const queryClient = useQueryClient();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const refreshAll = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await invalidateHiringRequestQueries(queryClient);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [queryClient]);
 
   const [filter, setFilter] = useState(DEFAULT_FILTER);
   const [scoreFilter, setScoreFilter] = useState(DEFAULT_SCORE_FILTER);
   const [rejectReason, setRejectReason] = useState(DEFAULT_REJECT_REASON);
   const [activeStage, setActiveStage] = useState<StageKey>("resume-shortlisting");
 
-  const scoreRange = SCORE_FILTER_MAP[scoreFilter] ?? {};
+  const isAtsStage = activeStage === "resume-shortlisting";
+  const scoreRange = isAtsStage ? (SCORE_FILTER_MAP[scoreFilter] ?? {}) : {};
   const appsData = useApplicationsData(
     id,
-    filter,
+    isAtsStage ? filter : DEFAULT_FILTER,
     true,
     scoreRange.min,
     scoreRange.max,
     searchParams.get("applicant") ? undefined : activeStage,
-    activeStage === "resume-shortlisting" ? rejectReason : undefined,
+    isAtsStage ? rejectReason : undefined,
   );
   const interviewCount = useInterviewCount(id);
   const finalizedData = useFinalizedData(id, !!id);
@@ -60,6 +74,8 @@ const HiringRequestLayout = () => {
   const contextValue = useMemo(
     () => ({
       ...appsData,
+      isRefreshing,
+      refreshAll,
       interviewCount,
       filter,
       scoreFilter,
@@ -77,7 +93,7 @@ const HiringRequestLayout = () => {
       finalizedLoading: finalizedData.isLoading,
       finalizedRefresh: finalizedData.refresh,
     }),
-    [appsData, interviewCount, finalizedData, filter, scoreFilter, rejectReason, resetListFilters, activeStage],
+    [appsData, isRefreshing, refreshAll, interviewCount, finalizedData, filter, scoreFilter, rejectReason, resetListFilters, activeStage],
   );
 
   if (isLoading) return <LoadingSpinner fullPage />;

@@ -3,6 +3,7 @@ import type { Permission } from "@/constants/permissions";
 export type ApplicantStatus = "new" | "under_evaluation" | "shortlisted" | "resume_shortlisted" | "move_to_next_round" | "waiting_for_review" | "rejected" | "scheduled" | "interview_scheduled" | "interview_rescheduled" | "interview_cancelled" | "ongoing" | "no_show" | "SCREENING_ROUND_SCHEDULED" | "screening_round_scheduled" | "AI_SCREENING_EVALUATION_FAILED" | "ai_screening_evaluation_failed" | "AI_SCREENING_FLAGGED" | "ai_screening_flagged";
 
 export type HiringState =
+  | "resume_shortlisting"
   | "waiting_for_review"
   | "under_evaluation"
   | "shortlisted"
@@ -34,7 +35,7 @@ export type ChipConfig = {
   variant: "success" | "danger" | "warning" | "info" | "neutral" | "yellow";
 };
 
-export type MenuAction = "select" | "reject" | "hold";
+export type MenuAction = "select" | "reject" | "hold" | "archive";
 
 export type StateConfig = {
   state: HiringState;
@@ -46,11 +47,7 @@ export type StateConfig = {
   footerBadge?: {
     text: string;
     className: string;
-  isConfirmingFinalDecision?: boolean;
-  isConfirmingReject?: boolean;
-  isShortlisting?: boolean;
-  isConfirmingHire?: boolean;
-};
+  };
 };
 
 export type ApplicantCardProps = {
@@ -150,6 +147,7 @@ export type ApplicantsProps = {
   onRefresh?: () => void;
   jdId: string;
   isRemote: boolean;
+  isScreening?: boolean;
   showBulkSelection?: boolean;
   selectedIds?: Set<string>;
   onToggleSelect?: (id: string) => void;
@@ -185,12 +183,9 @@ export type ApplicantActionModalsProps = {
   onCloseReject: () => void;
   onConfirmReject: () => void;
   shortlistCandidateId: string | null;
-  shortlistStep: 1 | 2;
   shortlistRemarks: string;
   onShortlistRemarksChange: (value: string) => void;
   onShortlistOk: () => void;
-  onMoveToNextRound: () => void;
-  onOpenFinalSelectionWarning: () => void;
   onCloseShortlist: () => void;
   finalConfirmId: string | null;
   onFinalConfirmAction: (decision: "selected" | "rejected" | "on-hold") => void;
@@ -207,9 +202,11 @@ export type CardExpandedContentProps = {
   accordionTab: AccordionTab;
   onTabChange: (tab: AccordionTab) => void;
   onTimeline: (id: number) => void;
-  onDetailsReadMore: (id: string) => void;
+  onDetailsReadMore?: (id: string) => void;
   onCoverLetterReadMore: (id: string) => void;
-  onAiSummaryReadMore: (id: string) => void;
+  onAiSummaryReadMore?: (id: string) => void;
   jdId?: string;
   isRemote?: boolean;
+  showAllDetails?: boolean;
+  currentRoundHref?: string;
 };

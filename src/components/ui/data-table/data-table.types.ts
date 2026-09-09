@@ -50,4 +50,6 @@ export type DataTableProps<T> = {
   onRetry?: () => void;
   rowClassName?: (row: T, index: number) => string;
   animated?: boolean;
+  expandedKey?: string | number | null;
+  renderExpanded?: (row: T) => ReactNode;
 };

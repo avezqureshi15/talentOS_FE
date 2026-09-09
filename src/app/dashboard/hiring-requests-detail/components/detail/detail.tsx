@@ -1,10 +1,10 @@
-import { useState, useMemo, useEffect } from "react";import { AnimatePresence, motion } from "framer-motion";
+import { useState, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/constants/permissions";
 import "./detail.css";
 
-import Applicants from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants";
 import ApplicantActionModals from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-action-modals";
 import ApplicantFilters from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-filters";
 import PipelineStages from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages";
@@ -17,25 +17,23 @@ import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/int
 import { useApplicantActionHandlers } from "@/app/dashboard/hiring-requests-detail/components/applicants/hooks/use-applicant-action-handlers";
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import FinalVerdict from "@/app/dashboard/hiring-requests-detail/components/final-verdict/final-verdict";
+import AdvanceTargetModal from "@/app/dashboard/hiring-requests-detail/components/modal/advance-target-modal";
 
-import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import Skeleton from "@/components/ui/skeleton/skeleton";
-import BulkRemarksModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-remarks-modal";
 import BulkArchiveModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-archive-modal";
 import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
-import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP, UI_SEARCHING_APPLICANT, UI_APPLICANT_NOT_FOUND } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
-import ViewToggle from "@/app/dashboard/hiring-requests-detail/components/detail/view-toggle";
+import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { BULK_STAGE_CONFIG, isBulkAdvanceSubFilter, bulkSelectionKey } from "@/app/dashboard/hiring-requests-detail/components/detail/bulk-stage-config";
 import InterviewFilterBar, { type InterviewScheduleFilter } from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
 import EvaluatedFilterBar, { type EvaluationSubFilter } from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
 import ScreeningFilterBar from "@/app/dashboard/hiring-requests-detail/components/detail/screening-filter-bar";
 import PaginationBar from "@/components/ui/pagination-bar/pagination-bar";
 import { fadeSlideUp, staggerContainer } from "@/utils/motion";
 import type { JobDetailProps } from "./detail.types";
-import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import { isRemoteLocation } from "@/utils/format-locations";
 
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
@@ -51,6 +49,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const {
     applicants,
     isLoading: appsLoading,
+    isRefreshing,
     total,
     page,
     totalPages,
@@ -71,8 +70,10 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     finalizedTotal,
   } = useApplicationsContext();
 
-  const { viewMode, setViewMode, openId, setOpenId, handleRowClick, handleInfoClick, isSearchingForApplicant, applicantNotFound } = useJobDetail({
-    applicantParam, applicants, appsLoading, page, totalPages, goToPage, jobId,
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  useJobDetail({
+    applicantParam, applicants, appsLoading, page, totalPages, goToPage,
+    onExpand: setExpandedId,
   });
 
   const filteredApplicants = useFilteredApplicants({
@@ -89,42 +90,37 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     handleAction,
     handleMenuAction,
     getLocalApplicant,
+    hiddenApplicantIds,
+    advanceTargetProps,
   } = useApplicantActionHandlers({ data: filteredApplicants, jdId: jobId, onRefresh: refresh });
 
-  const BULK_STAGE_ACTIONS: Record<string, { screening: boolean; interview: boolean }> = {
-    "resume-shortlisting": { screening: true, interview: true },
-    "screening": { screening: false, interview: true },
-  };
   const { can } = usePermissions();
   const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
-  const showBulkSelection = canWorkflow;
-  const { screening: showBulkScreening, interview: showBulkInterview } = BULK_STAGE_ACTIONS[activeStage] ?? { screening: false, interview: false };
-  const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection);
+  const bulkFlags = BULK_STAGE_CONFIG[activeStage];
+  const showBulkSelection =
+    canWorkflow &&
+    !!bulkFlags &&
+    isBulkAdvanceSubFilter(activeStage, screeningSubFilter, evaluationSubFilter);
+  const bulkKey = bulkSelectionKey(activeStage, screeningSubFilter, evaluationSubFilter);
+  const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection, bulkKey);
   const [timelineId, setTimelineId] = useState<number | null>(null);
-  const [pendingBulkRemarks, setPendingBulkRemarks] = useState<"screening" | "interview" | null>(null);
   const [pendingArchive, setPendingArchive] = useState(false);
-  const [selectionStage, setSelectionStage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (showBulkSelection && bulkSelection.selectionCount > 0 && !selectionStage) {
-      setSelectionStage(activeStage);
-    } else if (bulkSelection.selectionCount === 0 && selectionStage) {
-      setSelectionStage(null);
-    }
-  }, [showBulkSelection, bulkSelection.selectionCount, activeStage, selectionStage]);
+    setExpandedId(null);
+  }, [activeStage]);
 
   useEffect(() => {
     if (page > 1) window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page]);
 
-  const stageLabel = selectionStage ? (PIPELINE_STAGES.find((s) => s.key === selectionStage)?.label ?? selectionStage) : "";
-
-  const handleBulkRemarksConfirm = (remarks: string) => {
-    const action = pendingBulkRemarks;
-    setPendingBulkRemarks(null);
-    if (action === "screening") void bulkSelection.handleBulkMoveToScreening(remarks);
-    else if (action === "interview") void bulkSelection.handleBulkMoveToInterview(remarks);
-  };
+  const tableApplicants = useMemo(
+    () =>
+      filteredApplicants
+        .map(getLocalApplicant)
+        .filter((a) => !hiddenApplicantIds.has(a.id)),
+    [filteredApplicants, getLocalApplicant, hiddenApplicantIds],
+  );
 
   const stagesWithCounts = useMemo(() =>
     PIPELINE_STAGES.map((s) => {
@@ -163,7 +159,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
       return [
         { key: "name", label: "Candidate", flex: 2 },
         { key: "status", label: "Status", flex: 1 },
-        { key: "actions", label: "Actions", flex: 2.5 },
+        { key: "actions", label: "Actions", flex: 1.6 },
       ];
     }
     if (activeStage === "interview") {
@@ -194,7 +190,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     }
     const base = PIPELINE_STAGES.find((s) => s.key === activeStage)?.columns ?? [];
     return base;
-  }, [activeStage, interviewSubFilter, PIPELINE_STAGES]);
+  }, [activeStage, interviewSubFilter]);
 
   const evaluationSubCounts = useMemo(() => ({
     evaluated: applicants.filter(STAGE_FILTER_MAP.evaluated).length,
@@ -213,60 +209,56 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     ).length,
   }), [applicants]);
 
+  const showBulkBar = showBulkSelection && bulkSelection.selectionCount > 0;
+
   return (
     <div className="job-page">
       <PipelineStages stages={stagesWithCounts} activeKey={activeStage} onStageChange={setActiveStage} />
       <motion.div className="tab-content" variants={staggerContainer} initial="hidden" animate="visible">
         {activeStage === "decision" ? (
         <ErrorBoundary>
-          <FinalVerdict jobId={jobId} />
+          <FinalVerdict jobId={jobId} isRemote={isRemote} />
         </ErrorBoundary>
         ) : (
         <ErrorBoundary>
-          {showBulkSelection && bulkSelection.selectionCount > 0 && (
+          {showBulkBar && (
             <div className="bulk-action-bar">
               {bulkSelection.isBulkProcessing ? (
                 <div className="bulk-action-skeleton">
                   <Skeleton variant="text" width="260px" height="14px" className="bulk-action-skeleton-count" />
                   <div className="bulk-action-skeleton-buttons">
-                    <Skeleton variant="rect" width="130px" height="34px" borderRadius="6px" />
-                    <Skeleton variant="rect" width="130px" height="34px" borderRadius="6px" />
+                    <Skeleton variant="rect" width="160px" height="34px" borderRadius="6px" />
+                    <Skeleton variant="rect" width="160px" height="34px" borderRadius="6px" />
                     <Skeleton variant="rect" width="98px" height="34px" borderRadius="6px" />
                   </div>
                 </div>
               ) : (
                 <>
-              <span className="bulk-action-count">{bulkSelection.selectionCount} candidate{bulkSelection.selectionCount !== 1 ? "s" : ""} selected in <span className="bulk-stage-chip">{stageLabel}</span> stage</span>
+              <span className="bulk-action-count">{bulkSelection.selectionCount} candidate{bulkSelection.selectionCount !== 1 ? "s" : ""} selected</span>
               <div className="bulk-action-buttons">
-                {canWorkflow && showBulkScreening && (
+                {canWorkflow && bulkFlags?.aiScreening && (
                   <button
                     className="btn screen-btn compact"
-                    onClick={() => {
-                      if (bulkSelection.hasCandidatesWithRound) setPendingBulkRemarks("screening");
-                      else bulkSelection.handleBulkMoveToScreening();
-                    }}
+                    onClick={() => { void bulkSelection.handleBulkMoveToScreening(); }}
                     disabled={bulkSelection.isBulkProcessing}
                     type="button"
                   >
                     {bulkSelection.activeAction === "screening" ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-phone" />}
-                    {" "}Move to AI Screening
+                    {" "}Move to AI screening
                   </button>
                 )}
-                {canWorkflow && showBulkInterview && (
+                {canWorkflow && bulkFlags?.aiInterview && (
                   <button
                     className="btn screen-btn compact"
-                    onClick={() => {
-                      if (bulkSelection.hasCandidatesWithRound) setPendingBulkRemarks("interview");
-                      else bulkSelection.handleBulkMoveToInterview();
-                    }}
+                    onClick={() => { void bulkSelection.handleBulkMoveToInterview(); }}
                     disabled={bulkSelection.isBulkProcessing}
                     type="button"
                   >
-                    {bulkSelection.activeAction === "interview" ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-bot" />}
-                    {" "}Move to AI Interview
+                    {bulkSelection.activeAction === "interview" ? <i className="bx bx-loader-alt bx-spin" /> : <i className="bx bx-calendar" />}
+                    {" "}Schedule AI interview
                   </button>
                 )}
-                {canWorkflow && (
+                {canWorkflow && bulkFlags?.archive && (
                   <button
                     className="btn screen-btn compact bulk-archive-btn"
                     onClick={() => setPendingArchive(true)}
@@ -291,8 +283,6 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
             </div>
           )}
 
-          <ViewToggle viewMode={viewMode} onChange={setViewMode} />
-
           {activeStage === "resume-shortlisting" && (
             <ApplicantFilters
               filter={filter} onFilterChange={setFilter}
@@ -303,7 +293,6 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           {activeStage === "screening" && (
             <ScreeningFilterBar value={screeningSubFilter} onChange={setScreeningSubFilter} counts={screeningSubCounts} />
           )}
-          {activeStage === "screening" && <div className="filter-chips" />}
           {activeStage === "interview" && (
             <InterviewFilterBar
               value={interviewSubFilter}
@@ -316,114 +305,45 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
               onScheduleFilterChange={setInterviewScheduleFilter}
             />
           )}
-          {activeStage === "interview" && <div className="filter-chips" />}
           {activeStage === "evaluation" && (
             <EvaluatedFilterBar value={evaluationSubFilter} onChange={setEvaluationSubFilter} counts={evaluationSubCounts} />
           )}
-          {activeStage === "evaluation" && <div className="filter-chips" />}
 
-          {viewMode === "card" ? (
-            <>
-              <AnimatePresence>
-                {isSearchingForApplicant && (
-                  <motion.div
-                    className="applicant-search-indicator"
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <i className="bx bx-search" />
-                    <span>{UI_SEARCHING_APPLICANT}</span>
-                  </motion.div>
-                )}
-                {applicantParam && applicantNotFound && (
-                  <motion.div
-                    className="applicant-search-indicator applicant-search-indicator--not-found"
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <i className="bx bx-x-circle" />
-                    <span>{UI_APPLICANT_NOT_FOUND}</span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              {appsLoading ? (
-                <motion.div variants={fadeSlideUp}><LoadingSpinner /></motion.div>
-              ) : (
-                <motion.div variants={fadeSlideUp}>
-                  <Applicants
-                    data={filteredApplicants} openId={openId} setOpenId={setOpenId}
-                    filter={filter} onFilterChange={setFilter}
-                    scoreFilter={scoreFilter} onScoreFilterChange={setScoreFilter}
-                    rejectReason={rejectReason} onRejectReasonChange={setRejectReason}
-                    applicantParam={applicantParam} onRefresh={refresh}
-                    jdId={hiringRequest.id} isRemote={isRemote}
-                    showBulkSelection={showBulkSelection}
-                    selectedIds={bulkSelection.selectedIds}
-                    onToggleSelect={bulkSelection.toggleSelect}
-                    onToggleSelectAll={bulkSelection.toggleSelectAll}
-                    allSelected={bulkSelection.allSelected}
-                    selectionCount={bulkSelection.selectionCount}
-                    timelineId={timelineId}
-                    onTimeline={setTimelineId}
-                  />
-                </motion.div>
-              )}
-              <PaginationBar
-                page={page}
-                totalPages={totalPages}
-                total={total}
-                pageSize={pageSize}
-                onPageChange={goToPage}
-                onPageSizeChange={setPageSize}
-              />
-            </>
-          ) : (
-            <motion.div variants={fadeSlideUp}>
-              <CandidateTable
-                data={filteredApplicants.map(getLocalApplicant)}
-                columns={columns}
-                onRowClick={
-                  activeStage === "evaluation" && evaluationSubFilter === "pending"
-                    ? undefined
-                    : (candidate) => handleRowClick(candidate as Applicant)
-                }
-                onInfoClick={(candidate) => handleInfoClick(candidate as Applicant)}
-                onAction={handleAction}
-                onMenuAction={handleMenuAction}
-                onTimelineOpen={(candidate) => setTimelineId(candidate.candidateId)}
-                showBulkSelection={showBulkSelection}
-                selectedIds={bulkSelection.selectedIds}
-                onToggleSelect={bulkSelection.toggleSelect}
-                onToggleSelectAll={bulkSelection.toggleSelectAll}
-                allSelected={bulkSelection.allSelected}
-                activeStage={activeStage}
-                loading={appsLoading}
-                hiringRequestId={jobId}
-                onScreeningTriggered={refresh}
-              />
-              <PaginationBar
-                page={page}
-                totalPages={totalPages}
-                total={total}
-                pageSize={pageSize}
-                onPageChange={goToPage}
-                onPageSizeChange={setPageSize}
-              />
-            </motion.div>
-          )}
+          <motion.div
+            variants={fadeSlideUp}
+            className={isRefreshing ? "candidate-list--refreshing" : undefined}
+          >
+            <CandidateTable
+              data={tableApplicants}
+              columns={columns}
+              onRowClick={(candidate) => setExpandedId((prev) => (prev === candidate.id ? null : candidate.id))}
+              onAction={handleAction}
+              onMenuAction={handleMenuAction}
+              onTimelineOpen={(candidate) => setTimelineId(candidate.candidateId)}
+              showBulkSelection={showBulkSelection}
+              selectedIds={bulkSelection.selectedIds}
+              onToggleSelect={bulkSelection.toggleSelect}
+              onToggleSelectAll={bulkSelection.toggleSelectAll}
+              allSelected={bulkSelection.allSelected}
+              activeStage={activeStage}
+              loading={appsLoading}
+              hiringRequestId={jobId}
+              onScreeningTriggered={refresh}
+              expandedId={expandedId}
+              isRemote={isRemote}
+            />
+            <PaginationBar
+              page={page}
+              totalPages={totalPages}
+              total={total}
+              pageSize={pageSize}
+              onPageChange={goToPage}
+              onPageSizeChange={setPageSize}
+            />
+          </motion.div>
         </ErrorBoundary>
         )}
 
-        <BulkRemarksModal
-          open={pendingBulkRemarks !== null}
-          onClose={() => setPendingBulkRemarks(null)}
-          onConfirm={handleBulkRemarksConfirm}
-          title={pendingBulkRemarks === "screening" ? "HR Remarks — Move to AI Screening" : "HR Remarks — Move to AI Interview"}
-        />
         <BulkArchiveModal
           open={pendingArchive}
           count={bulkSelection.selectionCount}
@@ -437,6 +357,13 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
         <ApplicantTimelineSheet openId={timelineId} onClose={() => setTimelineId(null)} />
 
         <ApplicantActionModals {...modalProps} />
+
+        <AdvanceTargetModal
+          open={advanceTargetProps.open}
+          candidateName={advanceTargetProps.candidateName}
+          onClose={advanceTargetProps.onClose}
+          onChoose={advanceTargetProps.onChoose}
+        />
 
         <ScheduleRoundModal
           open={!!scheduleProps.candidateId}

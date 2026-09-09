@@ -1,6 +1,9 @@
 import type { Applicant, HiringState } from "./applicants.types";
+import { isScreeningCallCompleted } from "@/app/dashboard/hiring-requests-detail/components/candidate-table/screening-actions/screening-actions.utils";
 
 type StateMatcher = (applicant: Applicant, isScreening: boolean) => HiringState | null;
+
+const ATS_STAGES = new Set(["RESUME_SHORTLISTING", "RESUME_SHORTLISTED"]);
 
 const matchers: StateMatcher[] = [
   // Terminal states — finalVerdict overrides status
@@ -8,15 +11,29 @@ const matchers: StateMatcher[] = [
   (a) => (a.finalVerdict === "rejected" ? "rejected" : null),
   (a) => (a.finalVerdict === "on-hold" ? "on-hold" : null),
 
+  (a) => (ATS_STAGES.has(a.stage ?? "") ? "resume_shortlisting" : null),
+
+  (a) => {
+    const status = a.status?.toLowerCase() ?? "";
+    const flagged =
+      status === "ai_screening_flagged" ||
+      status === "ai_screening_evaluation_failed" ||
+      a.screeningReview?.disposition === "flagged";
+    if (!flagged && isScreeningCallCompleted(a) && status === "screening_round_scheduled") {
+      return "under_evaluation";
+    }
+    return null;
+  },
+
   // Status-based states
   (a) => {
     const status = a.status?.toLowerCase();
     return status === "under_evaluation" ? "under_evaluation" : null;
   },
-  (a, isScreening) => {
+  (a) => {
     const status = a.status?.toLowerCase();
-    if (status === "resume_shortlisted" || status === "shortlisted") {
-      return isScreening ? "move_to_next_round" : "shortlisted";
+    if (status === "shortlisted" || status === "resume_shortlisted") {
+      return "move_to_next_round";
     }
     return null;
   },
