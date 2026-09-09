@@ -11,10 +11,12 @@ export function useApplicantState(
   return useMemo(() => {
     const hiringState = computeHiringState(applicant, isScreening);
     const config = STATE_CONFIGS[hiringState] ?? STATE_CONFIGS.under_evaluation;
+    const hideAtsAdvance = hiringState === "resume_shortlisting" && applicant.score == null;
     return {
       ...config,
       actions: config.actions.filter(
         (a) =>
+          !(hideAtsAdvance && a.handler === "onAdvance") &&
           !(a.handler === "onCancelInterview" && applicant.stage === "AI_SCREENING") &&
           !(a.handler === "onCallNow" && isScreeningCallCompleted(applicant)),
       ),

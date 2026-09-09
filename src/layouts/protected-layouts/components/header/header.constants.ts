@@ -17,8 +17,16 @@ export const HEADER_IMPORT_ICON = "bx bx-archive-arrow-up";
 export const HEADER_IMPORT_TOOLTIP = ["Import candidates", "Bulk-add candidates from an Excel template."];
 export const HEADER_IMPORT_FILENAME = "candidates_template.xlsx";
 
+export const HEADER_ADD_CANDIDATE_LABEL = "Add candidate";
+export const HEADER_ADD_CANDIDATE_ICON = "bx bx-user-plus";
+export const HEADER_ADD_CANDIDATE_TOOLTIP = [
+  "Add candidate",
+  "Add one person with a PDF resume. They are queued for AI evaluation like a careers apply.",
+];
+
 export const HEADER_REFRESH_LABEL = "Refresh";
 export const HEADER_REFRESH_ICON = "bx bx-refresh-cw-alt";
+export const HEADER_REFRESH_LOADING = "Refreshing...";
 
 export const HEADER_ARCHIVE_LABEL = "Archived Candidates";
 export const HEADER_ARCHIVE_ICON = "bx bx-trash-x";

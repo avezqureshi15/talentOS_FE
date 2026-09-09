@@ -120,3 +120,26 @@ export const downloadImportTemplate = async (id: string): Promise<ExportHiringRe
     filenameFromContentDisposition(response.headers["content-disposition"]) ?? FALLBACK_TEMPLATE_FILENAME;
   return { blob: response.data, filename };
 };
+
+export type AddCandidateResponse = {
+  id: string;
+  status: string;
+};
+
+export const addCandidate = async (
+  id: string,
+  payload: { name: string; email: string; phone: string; referral: boolean; resume: File },
+): Promise<AddCandidateResponse> => {
+  const formData = new FormData();
+  formData.append("name", payload.name);
+  formData.append("email", payload.email);
+  formData.append("phone", payload.phone);
+  formData.append("referral", payload.referral ? "true" : "false");
+  formData.append("resume", payload.resume);
+  const { data } = await httpClient.post<AddCandidateResponse>(
+    API_ENDPOINTS.HIRING_REQUEST_ADD_CANDIDATE.replace("{hiring_request_id}", id),
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" }, timeout: 120_000, toastOnError: false },
+  );
+  return data;
+};

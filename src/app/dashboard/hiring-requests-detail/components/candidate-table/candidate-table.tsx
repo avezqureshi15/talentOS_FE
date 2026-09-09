@@ -10,8 +10,10 @@ import { SCREENING_STATUS_LABELS, UI_EVALUATED_AI, UI_EVALUATED_REGULAR } from "
 import ScreeningActions from "./screening-actions/screening-actions";
 import ScreeningStatusBadge from "./screening-actions/screening-status-badge";
 import { formatPhoneDisplay } from "./screening-actions/screening-actions.utils";
+import { STATE_CONFIGS } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.constants";
 import { canShowAtsScore } from "./ats-score";
 import { AtsScoreChip } from "./ats-score-chip";
+import CandidateExpandedPanel from "./candidate-expanded-panel";
 
 const formatDate = (iso?: string): string => {
   if (!iso) return "";
@@ -34,7 +36,7 @@ const STATUS_LABELS: Record<string, string> = {
   resume_shortlisted: "Shortlisted",
   rejected: "Rejected",
   scheduled: "Scheduled",
-  move_to_next_round: "Move to Next",
+  move_to_next_round: "Ready to schedule",
   waiting_for_review: "Waiting",
   selected: "Selected",
   screening_round_scheduled: "Scheduled",
@@ -49,7 +51,7 @@ const STATUS_LABELS: Record<string, string> = {
 const STATUS_TOOLTIPS: Record<string, string> = {
   resume_shortlisted: "Resume Shortlisted",
   rejected: "Moved Out Of Pipeline",
-  move_to_next_round: "Move to Next Round",
+  move_to_next_round: "Ready to schedule",
   selected: "Selected And Closed",
   screening_round_scheduled: "Screening Round Scheduled",
   ai_screening_evaluation_failed: "AI Screening Failed — retry or reject from the screening pipeline",
@@ -64,6 +66,21 @@ function toLabel(raw: string): string {
   return raw.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+const FINAL_VERDICT_TABLE_LABELS: Record<"selected" | "rejected" | "on-hold", string> = {
+  selected: "Selected",
+  rejected: "Rejected",
+  "on-hold": "On Hold",
+};
+
+function getFinalVerdictChip(verdict?: string): { label: string; cssClass: string; tooltip: string } | null {
+  if (verdict !== "selected" && verdict !== "rejected" && verdict !== "on-hold") return null;
+  return {
+    label: FINAL_VERDICT_TABLE_LABELS[verdict],
+    cssClass: verdict,
+    tooltip: STATE_CONFIGS[verdict].chip.label,
+  };
+}
+
 function getDisplayStatus(rawStatus: string): { label: string; cssClass: string; tooltip: string } {
   const status = rawStatus?.toLowerCase() ?? "";
   return {
@@ -73,17 +90,16 @@ function getDisplayStatus(rawStatus: string): { label: string; cssClass: string;
   };
 }
 
-const isInterviewStatus = (s: string) =>
-  s === "interview_scheduled" || s === "interview_rescheduled" || s === "interview_cancelled" || s === "screening_round_scheduled" || s === "ongoing";
-
 const CandidateTable = ({
-  data, columns, onRowClick, onInfoClick, onAction, onMenuAction, onTimelineOpen,
+  data, columns, onRowClick, onAction, onMenuAction, onTimelineOpen,
   showBulkSelection,
   selectedIds,
   onToggleSelect, onToggleSelectAll, allSelected,
   activeStage, loading,
   hiringRequestId,
   onScreeningTriggered,
+  expandedId,
+  isRemote,
 }: CandidateTableProps) => {
   const CELL_RENDERERS: Record<string, (c: Applicant) => ReactNode> = {
     name: (c) => (
@@ -129,6 +145,14 @@ const CandidateTable = ({
         <span className="text-muted">—</span>
       ),
     status: (c) => {
+      const verdictChip = getFinalVerdictChip(c.finalVerdict);
+      if (verdictChip) {
+        return (
+          <span className={`status-chip status-chip--${verdictChip.cssClass}`} title={verdictChip.tooltip}>
+            {verdictChip.label}
+          </span>
+        );
+      }
       if (activeStage === "resume-shortlisting" && c.score != null) {
         const selected = c.score >= 70;
         return (
@@ -171,12 +195,13 @@ const CandidateTable = ({
       </button>
     ),
     info: (c) => (
-      <CandidateRowActions
-        candidate={c}
-        onAction={onAction ?? (() => {})}
-        onMenuAction={onMenuAction ?? (() => {})}
-        onViewProfile={(cand) => onInfoClick?.(cand)}
-      />
+        <CandidateRowActions
+          candidate={c}
+          isScreening={activeStage === "screening"}
+          onAction={onAction ?? (() => {})}
+          onMenuAction={onMenuAction ?? (() => {})}
+          onTimeline={onTimelineOpen}
+        />
     ),
     startDate: (c) =>
       c.scheduledAt ? (
@@ -205,22 +230,17 @@ const CandidateTable = ({
         />
         <CandidateRowActions
           candidate={c}
+          isScreening={activeStage === "screening"}
           onAction={onAction ?? (() => {})}
           onMenuAction={onMenuAction ?? (() => {})}
-          onViewProfile={(cand) => onInfoClick?.(cand)}
+          onTimeline={onTimelineOpen}
           hideCallNow={activeStage === "screening"}
         />
       </div>
     ),
   };
 
-  const isRowDisabled = (c: Applicant): boolean =>
-    isInterviewStatus(c.status) ||
-    !onRowClick ||
-    (activeStage === "resume-shortlisting" && c.score == null);
-
   const handleRowClick = (c: Applicant) => {
-    if (isRowDisabled(c)) return;
     onRowClick?.(c);
   };
 
@@ -251,13 +271,22 @@ const CandidateTable = ({
       emptyMessage="No candidates match the current filters."
       gridTemplateColumns={gridTemplate}
       onRowClick={onRowClick ? handleRowClick : undefined}
+      expandedKey={expandedId}
+      renderExpanded={(c) => (
+        <CandidateExpandedPanel
+          applicant={c}
+          jdId={hiringRequestId}
+          isRemote={isRemote}
+          isScreening={activeStage === "screening"}
+          onTimeline={(id) => {
+            onTimelineOpen?.({ ...c, candidateId: id });
+          }}
+        />
+      )}
       selection={
         showBulkSelection && selectedIds && onToggleSelect
           ? { selectedIds, onToggleSelect, onToggleSelectAll: onToggleSelectAll ?? (() => {}), allSelected: allSelected ?? false }
           : undefined
-      }
-      rowClassName={(c) =>
-        isRowDisabled(c) ? "dt-row--disabled" : ""
       }
       animated
     />

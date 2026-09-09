@@ -19,12 +19,9 @@ const ApplicantActionModals = ({
   onCloseReject,
   onConfirmReject,
   shortlistCandidateId,
-  shortlistStep,
   shortlistRemarks,
   onShortlistRemarksChange,
   onShortlistOk,
-  onMoveToNextRound,
-  onOpenFinalSelectionWarning,
   onCloseShortlist,
   finalConfirmId,
   onFinalConfirmAction,
@@ -35,7 +32,6 @@ const ApplicantActionModals = ({
   isConfirmingHire,
 }: ApplicantActionModalsProps) => {
   const { can } = usePermissions();
-  const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
   const canEvaluate = can(PERMISSIONS.APPLICATION_EVALUATE);
   const canReject = can(PERMISSIONS.APPLICATION_REJECT);
 
@@ -72,7 +68,6 @@ const ApplicantActionModals = ({
         </div>
       </BaseModal>
 
-      {/* Reject — Step 1: HR Remarks */}
       <BaseModal
         open={!!rejectConfirmId && rejectStep === 1}
         onClose={onCloseReject}
@@ -102,7 +97,6 @@ const ApplicantActionModals = ({
         </div>
       </BaseModal>
 
-      {/* Reject — Step 2: Confirmation */}
       <BaseModal
         open={!!rejectConfirmId && rejectStep === 2}
         onClose={onCloseReject}
@@ -119,19 +113,19 @@ const ApplicantActionModals = ({
         </div>
       </BaseModal>
 
-      {/* Shortlist — Step 1: HR Remarks */}
       <BaseModal
-        open={!!shortlistCandidateId && shortlistStep === 1}
+        open={!!shortlistCandidateId}
         onClose={onCloseShortlist}
-        title={APPLICANT_LABELS.HR_REMARKS_TITLE}
+        title={APPLICANT_LABELS.HR_SHORTLIST}
       >
         <div className="confirm-body">
+          <p>Advance {data.find((a) => a.id === shortlistCandidateId)?.name ?? "this candidate"} and schedule the next round?</p>
           <textarea
             className="remarks-textarea"
             placeholder={APPLICANT_LABELS.HR_REMARKS_PLACEHOLDER}
             value={shortlistRemarks}
             onChange={(e) => onShortlistRemarksChange(e.target.value)}
-            rows={4}
+            rows={3}
           />
           <div className="confirm-actions">
             <button className="confirm-btn confirm-cancel" onClick={onCloseShortlist} type="button">
@@ -139,39 +133,12 @@ const ApplicantActionModals = ({
             </button>
             <Button
               className="confirm-btn confirm-proceed"
-              disabled={shortlistRemarks.trim() === ""}
               onClick={onShortlistOk}
               loading={isShortlisting}
-              loadingText="Shortlisting..."
+              loadingText="Advancing..."
             >
-              OK
+              Advance
             </Button>
-          </div>
-        </div>
-      </BaseModal>
-
-      {/* Shortlist — Step 2: Choose outcome */}
-      <BaseModal
-        open={!!shortlistCandidateId && shortlistStep === 2}
-        onClose={onCloseShortlist}
-        title={APPLICANT_LABELS.HR_SHORTLIST}
-      >
-        <div className="confirm-body">
-          <p>Proceed with {data.find((a) => a.id === shortlistCandidateId)?.name ?? "candidate"}?</p>
-          <div className="confirm-actions">
-            <button className="confirm-btn confirm-cancel" onClick={onCloseShortlist} type="button">
-              Cancel
-            </button>
-            {canWorkflow ? (
-              <button className="confirm-btn confirm-proceed" onClick={onMoveToNextRound} type="button">
-                {APPLICANT_LABELS.MOVE_TO_NEXT_ROUND}
-              </button>
-            ) : null}
-            {canEvaluate || canReject ? (
-              <button className="confirm-btn confirm-danger" onClick={onOpenFinalSelectionWarning} type="button">
-                {APPLICANT_LABELS.FINAL_SELECTION}
-              </button>
-            ) : null}
           </div>
         </div>
       </BaseModal>

@@ -8,11 +8,12 @@ import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/component
 import AiInterviewScheduleModal from "@/app/dashboard/hiring-requests-detail/components/applicants/ai-interview-schedule-modal/ai-interview-schedule-modal";
 import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/interviews/cancel-interview-modal";
 import { useApplicantActionHandlers } from "./hooks/use-applicant-action-handlers";
+import AdvanceTargetModal from "@/app/dashboard/hiring-requests-detail/components/modal/advance-target-modal";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/constants/permissions";
 import type { AccordionTab, ApplicantsProps } from "./applicants.types";
 
-function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefresh, jdId, isRemote, showBulkSelection = false, selectedIds, onToggleSelect, onToggleSelectAll, allSelected, selectionCount = 0, onTimeline }: ApplicantsProps) {
+function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefresh, jdId, isRemote, isScreening = false, showBulkSelection = false, selectedIds, onToggleSelect, onToggleSelectAll, allSelected, selectionCount = 0, onTimeline }: ApplicantsProps) {
   const { can } = usePermissions();
   const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
@@ -32,6 +33,8 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
     handleMenuAction,
     getLocalApplicant,
     retryingScreeningId,
+    hiddenApplicantIds,
+    advanceTargetProps,
   } = useApplicantActionHandlers({
     data,
     jdId,
@@ -54,7 +57,7 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
             )}
           </div>
         )}
-        {data.map((a) => {
+        {data.filter((a) => !hiddenApplicantIds.has(a.id)).map((a) => {
           const isOpen = openId === a.id;
           const merged = getLocalApplicant(a);
           return (
@@ -74,7 +77,7 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
               <ApplicantCard
                 applicant={merged}
                 isOpen={isOpen}
-                isScreening={false}
+                isScreening={isScreening}
                 showCheckbox={showBulkSelection}
                 isSelected={selectedIds?.has(a.id)}
                 onToggleSelect={onToggleSelect}
@@ -97,6 +100,13 @@ function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefre
         })}
 
         <ApplicantActionModals {...modalProps} />
+
+        <AdvanceTargetModal
+          open={advanceTargetProps.open}
+          candidateName={advanceTargetProps.candidateName}
+          onClose={advanceTargetProps.onClose}
+          onChoose={advanceTargetProps.onChoose}
+        />
 
         <ScheduleRoundModal
           open={!!scheduleProps.candidateId}

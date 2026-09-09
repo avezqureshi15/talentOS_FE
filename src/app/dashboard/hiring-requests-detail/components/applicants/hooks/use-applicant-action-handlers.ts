@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useMoveToScreening } from "@/hooks/use-move-to-screening";
 import { useAiRetryScreening, useTriggerScreeningCall } from "@/hooks/use-ai-retry";
 import { useUpdateCandidateRoundStatus } from "@/hooks/use-update-candidate-round-status";
@@ -7,7 +8,8 @@ import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
 import { useApplicantActions } from "./use-applicant-actions";
 import { updateReviewByRound, updateFinalVerdict } from "@/services/reviews/reviews";
-import { resumeCandidateFromHold } from "@/services/applications/applications";
+import { resumeCandidateFromHold, updateCandidateArchive } from "@/services/applications/applications";
+import { QUERY_KEYS } from "@/constants/constants";
 import type { Applicant, ApplicantStatus, ApplicantActionModalsProps, MenuAction } from "../applicants.types";
 
 type LocalOverride = { status?: ApplicantStatus; finalVerdict?: string };
@@ -58,7 +60,14 @@ export type UseApplicantActionHandlersReturn = {
   handleAction: (handlerKey: string, id: string) => void;
   handleMenuAction: (action: MenuAction, id: string) => void;
   getLocalApplicant: (a: Applicant) => Applicant;
+  hiddenApplicantIds: Set<string>;
   retryingScreeningId: string | null;
+  advanceTargetProps: {
+    open: boolean;
+    candidateName: string;
+    onClose: () => void;
+    onChoose: (target: "screening" | "interview") => void;
+  };
 };
 
 export function useApplicantActionHandlers({
@@ -74,7 +83,6 @@ export function useApplicantActionHandlers({
 }): UseApplicantActionHandlersReturn {
   const [localOverrides, setLocalOverrides] = useState<Record<string, LocalOverride>>({});
   const [shortlistCandidateId, setShortlistCandidateId] = useState<string | null>(null);
-  const [shortlistStep, setShortlistStep] = useState<1 | 2>(1);
   const [shortlistRemarks, setShortlistRemarks] = useState("");
   const [rejectConfirmId, setRejectConfirmId] = useState<string | null>(null);
   const [rejectRemarks, setRejectRemarks] = useState("");
@@ -91,6 +99,14 @@ export function useApplicantActionHandlers({
   const [isConfirmingHire, setIsConfirmingHire] = useState(false);
   const [finalConfirmId, setFinalConfirmId] = useState<string | null>(null);
   const [retryingScreeningId, setRetryingScreeningId] = useState<string | null>(null);
+  const [advanceCandidateId, setAdvanceCandidateId] = useState<string | null>(null);
+  const [locallyArchived, setLocallyArchived] = useState<Set<string>>(new Set());
+  const queryClient = useQueryClient();
+
+  const refreshAfterFinalVerdict = useCallback(() => {
+    onRefresh?.();
+    void queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.FINAL_VERDICTS] });
+  }, [onRefresh, queryClient]);
 
   const { mutateAsync: moveToScreeningMut } = useMoveToScreening();
   const { mutateAsync: retryScreeningMut } = useAiRetryScreening();
@@ -122,7 +138,7 @@ export function useApplicantActionHandlers({
       overrideFinalVerdict(finalCandidateId, finalDecision);
       setFinalCandidateId(null);
       setFinalDecision(null);
-      onRefresh?.();
+      refreshAfterFinalVerdict();
     } finally {
       setIsConfirmingFinalDecision(false);
     }
@@ -132,70 +148,28 @@ export function useApplicantActionHandlers({
     setIsShortlisting(true);
     try {
       const applicant = data.find((a) => a.id === shortlistCandidateId);
-      if (!applicant) { setShortlistStep(2); return; }
-      if (!applicant.currentRoundId) {
-        // No round exists yet (candidate is still in Resume Shortlisting, pre-round) —
-        // persist the stage/status transition directly instead of a per-round review.
-        try {
-          await updateCandidateRoundStatusMut({
-            candidateId: applicant.candidateId,
-            stage: "SCREENING",
-            status: "SHORTLISTED",
-            current_round_id: "",
-          });
-          overrideStatus(applicant.id, "shortlisted");
-          onRefresh?.();
-        } catch {
-          useToastStore.getState().addToast("Failed to shortlist candidate", ToastType.ERROR);
-        }
-        setShortlistStep(2);
+      if (!applicant) {
+        setShortlistCandidateId(null);
         return;
       }
-      try {
-        await updateReviewByRound(applicant.currentRoundId, {
-          entity_type: "hr",
-          reviews: { remarks: shortlistRemarks },
-          verdict: "shortlisted",
-        });
-      } catch { /* optimistic fallthrough */ }
-      overrideStatus(applicant.id, "shortlisted");
-      setShortlistStep(2);
+      if (applicant.currentRoundId) {
+        try {
+          await updateReviewByRound(applicant.currentRoundId, {
+            entity_type: "hr",
+            reviews: { remarks: shortlistRemarks },
+            verdict: "shortlisted",
+          });
+        } catch { /* optimistic fallthrough — backend hr.shortlisted still applies on success */ }
+      }
+      overrideStatus(applicant.id, "move_to_next_round");
+      setShortlistCandidateId(null);
+      setShortlistRemarks("");
+      setScheduleCandidateId(applicant.id);
+      onMoveToNextRoundSideEffect?.(applicant.id);
+      onRefresh?.();
     } finally {
       setIsShortlisting(false);
     }
-  };
-
-  // Step 2 of shortlist modal: "Move to Next Round" button
-  const handleMoveToNextRound = async () => {
-    const candidateId = shortlistCandidateId;
-    setShortlistCandidateId(null);
-    if (!candidateId) return;
-    const applicant = data.find((a) => a.id === candidateId);
-    if (!applicant) return;
-    try {
-      await updateCandidateRoundStatusMut({
-        candidateId: applicant.candidateId,
-        // Always SCREENING, not applicant.stage — "Move to Next Round" always
-        // follows the shortlist step (handleShortlistOk), which just set the
-        // stage server-side; `applicant` here can still be the pre-refetch,
-        // stale object (e.g. RESUME_SHORTLISTING), which would otherwise
-        // silently revert the stage while the status moves on.
-        stage: "SCREENING",
-        status: "MOVE_TO_NEXT_ROUND",
-        current_round_id: applicant.currentRoundId ?? "",
-      });
-      overrideStatus(candidateId, "move_to_next_round");
-      // Card-view side effect: open the accordion in scheduling mode
-      onMoveToNextRoundSideEffect?.(candidateId);
-      onRefresh?.();
-    } catch {
-      useToastStore.getState().addToast("Failed to move to next round", ToastType.ERROR);
-    }
-  };
-
-  const handleOpenFinalSelectionWarning = () => {
-    setFinalConfirmId(shortlistCandidateId);
-    setShortlistCandidateId(null);
   };
 
   const handleFinalConfirmAction = async (decision: "selected" | "rejected" | "on-hold") => {
@@ -211,7 +185,7 @@ export function useApplicantActionHandlers({
         setScheduleCandidateId(null);
       }
       setFinalConfirmId(null);
-      onRefresh?.();
+      refreshAfterFinalVerdict();
     } finally {
       setIsConfirmingHire(false);
     }
@@ -243,7 +217,7 @@ export function useApplicantActionHandlers({
       setRejectConfirmId(null);
       setRejectRemarks("");
       setRejectStep(1);
-      onRefresh?.();
+      refreshAfterFinalVerdict();
     } finally {
       setIsConfirmingReject(false);
     }
@@ -331,9 +305,31 @@ export function useApplicantActionHandlers({
       overrideFinalVerdict(id, "");
       overrideStatus(id, "move_to_next_round");
       useToastStore.getState().addToast("Candidate resumed from hold", ToastType.SUCCESS);
-      onRefresh?.();
+      refreshAfterFinalVerdict();
     } catch {
       useToastStore.getState().addToast("Failed to resume candidate", ToastType.ERROR);
+    }
+  }, [data, refreshAfterFinalVerdict]);
+
+  const handleMenuArchive = useCallback(async (id: string) => {
+    const applicant = data.find((a) => a.id === id);
+    if (!applicant) return;
+    setLocallyArchived((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    try {
+      await updateCandidateArchive(applicant.candidateId, { archived: true });
+      useToastStore.getState().addToast(`${applicant.name} archived`, ToastType.SUCCESS);
+      onRefresh?.();
+    } catch {
+      setLocallyArchived((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+      useToastStore.getState().addToast(`Failed to archive ${applicant.name}`, ToastType.ERROR);
     }
   }, [data, onRefresh]);
 
@@ -348,18 +344,22 @@ export function useApplicantActionHandlers({
         email: applicant.email ?? "",
         phone: applicant.phone,
         resume_url: applicant.cvUrl,
+        round_name: "AI Screening Round",
+        round_type: "AI_SCREENING_ROUND",
       });
       useToastStore.getState().addToast("Screening call triggered", ToastType.SUCCESS);
-      overrideStatus(id, "under_evaluation");
+      overrideStatus(id, "screening_round_scheduled");
+      onRefresh?.();
     } catch {
       useToastStore.getState().addToast("Failed to trigger screening", ToastType.ERROR);
     }
-  }, [data, jdId, moveToScreeningMut]);
+  }, [data, jdId, moveToScreeningMut, onRefresh]);
 
   const { handleAction, handleMenuAction } = useApplicantActions({
-    onShortlist: (id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); },
+    onShortlist: (id) => { setShortlistCandidateId(id); setShortlistRemarks(""); },
+    onAdvance: (id) => setAdvanceCandidateId(id),
     onRejectFromEvaluation: confirmRejectFromEvaluation,
-    onMoveToNextRound: (id) => { setShortlistCandidateId(id); setShortlistStep(1); setShortlistRemarks(""); },
+    onMoveToNextRound: (id) => setScheduleCandidateId(id),
     onScheduleInterview: (id) => setScheduleCandidateId(id),
     onMoveToScreening: handleMoveToScreening,
     onCancelInterview: handleCancelInterview,
@@ -370,9 +370,11 @@ export function useApplicantActionHandlers({
     onMenuSelect: (id) => { setFinalCandidateId(id); setFinalDecision("selected"); },
     onMenuReject: (id) => { setFinalCandidateId(id); setFinalDecision("rejected"); },
     onMenuHold: (id) => { setFinalCandidateId(id); setFinalDecision("on-hold"); },
+    onMenuArchive: handleMenuArchive,
   });
 
   const scheduleCandidate = data.find((a) => a.id === scheduleCandidateId);
+  const advanceCandidate = data.find((a) => a.id === advanceCandidateId);
 
   const modalProps: ApplicantActionModalsProps = {
     data,
@@ -388,13 +390,10 @@ export function useApplicantActionHandlers({
     onCloseReject: () => { setRejectConfirmId(null); setRejectRemarks(""); setRejectStep(1); },
     onConfirmReject: confirmReject,
     shortlistCandidateId,
-    shortlistStep,
     shortlistRemarks,
     onShortlistRemarksChange: setShortlistRemarks,
     onShortlistOk: handleShortlistOk,
-    onMoveToNextRound: handleMoveToNextRound,
-    onOpenFinalSelectionWarning: handleOpenFinalSelectionWarning,
-    onCloseShortlist: () => setShortlistCandidateId(null),
+    onCloseShortlist: () => { setShortlistCandidateId(null); setShortlistRemarks(""); },
     finalConfirmId,
     onFinalConfirmAction: handleFinalConfirmAction,
     onCloseFinalConfirm: () => setFinalConfirmId(null),
@@ -431,6 +430,22 @@ export function useApplicantActionHandlers({
     handleAction,
     handleMenuAction,
     getLocalApplicant,
+    hiddenApplicantIds: locallyArchived,
     retryingScreeningId,
+    advanceTargetProps: {
+      open: !!advanceCandidateId,
+      candidateName: advanceCandidate?.name ?? "",
+      onClose: () => setAdvanceCandidateId(null),
+      onChoose: (target) => {
+        const id = advanceCandidateId;
+        setAdvanceCandidateId(null);
+        if (!id) return;
+        if (target === "screening") {
+          void handleMoveToScreening(id);
+          return;
+        }
+        setScheduleCandidateId(id);
+      },
+    },
   };
 }

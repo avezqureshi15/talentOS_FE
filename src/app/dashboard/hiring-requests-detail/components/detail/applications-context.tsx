@@ -12,6 +12,8 @@ export type ApplicationsData = {
   goToPage: (page: number) => void;
   setPageSize: (size: number) => void;
   refresh: () => void;
+  isRefreshing: boolean;
+  refreshAll: () => Promise<void>;
   interviewCount: number;
   filter: string;
   scoreFilter: string;

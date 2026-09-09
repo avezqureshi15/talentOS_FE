@@ -20,6 +20,8 @@ export default function DataTable<T>({
   onRetry,
   rowClassName,
   animated = true,
+  expandedKey,
+  renderExpanded,
 }: DataTableProps<T>) {
   const gridTemplate = selection ? `40px ${gridTemplateColumns}` : gridTemplateColumns;
 
@@ -126,30 +128,37 @@ export default function DataTable<T>({
               </>
             );
 
-            if (animated) {
-              return (
-                <motion.div
-                  key={key}
-                  className={className}
-                  style={{ gridTemplateColumns: gridTemplate }}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03, duration: 0.2 }}
-                  onClick={onRowClick ? () => onRowClick(row) : undefined}
-                >
-                  {cellContent}
-                </motion.div>
-              );
-            }
+            const isExpanded = expandedKey != null && String(expandedKey) === String(key);
 
-            return (
+            const rowEl = animated ? (
+              <motion.div
+                className={className}
+                style={{ gridTemplateColumns: gridTemplate }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.03, duration: 0.2 }}
+                onClick={onRowClick ? () => onRowClick(row) : undefined}
+              >
+                {cellContent}
+              </motion.div>
+            ) : (
               <div
-                key={key}
                 className={className}
                 style={{ gridTemplateColumns: gridTemplate, "--anim-delay": `${i * 30}ms` } as React.CSSProperties}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
                 {cellContent}
+              </div>
+            );
+
+            return (
+              <div key={key} className={`dt-row-block${isExpanded ? " dt-row-block--expanded" : ""}`}>
+                {rowEl}
+                {isExpanded && renderExpanded && (
+                  <div className="dt-row-expand" onClick={(e) => e.stopPropagation()}>
+                    {renderExpanded(row)}
+                  </div>
+                )}
               </div>
             );
           })

@@ -115,12 +115,12 @@ export const APPLICANT_LABELS = {
   NO_ROUNDS: "No interview rounds recorded yet.",
   LOADING_ROUNDS: "Loading rounds...",
   RETRY_ROUNDS: "Retry loading rounds",
-  HR_SHORTLIST: "Shortlist",
+  HR_SHORTLIST: "Advance",
   HR_REJECT: "Reject",
   SCHEDULE_ROUND_1: "Schedule Round 1",
   SCHEDULE_NEXT_ROUND: "Schedule Next Round",
   HR_REMARKS_TITLE: "HR Remarks",
-  HR_REMARKS_PLACEHOLDER: "Enter your remarks for this selection...",
+  HR_REMARKS_PLACEHOLDER: "Optional remarks (shown on the candidate profile)",
   MOVE_TO_NEXT_ROUND: "Move to Next Round",
   FINAL_SELECTION: "Final Selection",
   FINAL_SELECTION_WARNING: "This action is irreversible. Once confirmed, the candidate will be hired and removed from the pipeline.",
@@ -189,6 +189,9 @@ export const QUERY_CONFIG = {
 } as const;
 
 export const AI_SCREENING_POLL_INTERVAL_MS = 15_000;
+
+/** Wait for the careers INSERT webhook to persist a QUEUED ATS row, then refetch once. */
+export const ADD_CANDIDATE_LIST_REFETCH_DELAY_MS = 3_000;
 
 export const AI_SCREENING_TERMINAL_STATUSES = new Set<string>([
   "completed",

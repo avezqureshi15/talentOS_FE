@@ -78,7 +78,7 @@ const ApplicantCard = ({
           {a.currentRoundId && jdId && (
             <button
               className="current-round-btn"
-              onClick={(e) => { e.stopPropagation(); window.open(`/hiring-requests/${jdId}/round-details/${a.currentRoundId}?candidateId=${a.id}`, "_blank"); }}
+              onClick={(e) => { e.stopPropagation(); window.open(`/hiring-requests/${jdId}/round-details/${a.currentRoundId}?candidateId=${a.candidateId}`, "_blank"); }}
               title="View round details"
               type="button"
             >

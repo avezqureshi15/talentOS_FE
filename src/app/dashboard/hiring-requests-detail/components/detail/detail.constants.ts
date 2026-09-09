@@ -1,6 +1,7 @@
 import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import { STAGE_TO_BACKEND_STAGE } from "@/app/dashboard/hiring-requests-detail/components/applicants/fsm.constants";
+import { isScreeningCallCompleted } from "@/app/dashboard/hiring-requests-detail/components/candidate-table/screening-actions/screening-actions.utils";
 
 export const DEFAULT_FILTER = "all";
 
@@ -19,7 +20,7 @@ export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
     a.status?.toLowerCase() === "waiting_for_review",
   evaluated: (a) =>
     includesStage(a, "evaluated") &&
-    a.status?.toLowerCase() === "under_evaluation",
+    ["under_evaluation", "move_to_next_round", "shortlisted"].includes(a.status?.toLowerCase() ?? ""),
   evaluation: (a) =>
     STAGE_FILTER_MAP["waiting-evaluation"](a) || STAGE_FILTER_MAP.evaluated(a),
   // The "decision" tab renders <FinalVerdict> directly (its own data source,
@@ -66,29 +67,40 @@ export const EVALUATION_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean
   pending: (a) => STAGE_FILTER_MAP["waiting-evaluation"](a),
 };
 
+function isScreeningFlagged(a: Applicant): boolean {
+  const status = a.status?.toLowerCase() ?? "";
+  return (
+    status === "ai_screening_evaluation_failed" ||
+    status === "ai_screening_flagged" ||
+    a.screeningReview?.disposition === "flagged"
+  );
+}
+
+function isScreeningCompletedBucket(a: Applicant): boolean {
+  const status = a.status?.toLowerCase() ?? "";
+  return (
+    isScreeningCallCompleted(a) ||
+    status === "under_evaluation" ||
+    status === "shortlisted" ||
+    status === "move_to_next_round"
+  );
+}
+
 export const SCREENING_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
-  pending: (a) =>
-    a.status?.toLowerCase() === "shortlisted" ||
-    a.status?.toLowerCase() === "move_to_next_round" ||
-    a.status?.toLowerCase() === "screening_round_scheduled",
-  completed: (a) => a.status?.toLowerCase() === "under_evaluation",
-  flagged: (a) =>
-    a.status?.toLowerCase() === "ai_screening_evaluation_failed" ||
-    a.status?.toLowerCase() === "ai_screening_flagged",
+  flagged: isScreeningFlagged,
+  completed: (a) => !isScreeningFlagged(a) && isScreeningCompletedBucket(a),
+  pending: (a) => !isScreeningFlagged(a) && !isScreeningCompletedBucket(a),
 };
 
-export const UI_TABLE_VIEW = "Overview";
-
 export const SCREENING_STATUS_LABELS: Record<string, string> = {
-  shortlisted: "Pending",
-  move_to_next_round: "Pending",
+  shortlisted: "Ready to schedule",
+  move_to_next_round: "Ready to schedule",
   screening_round_scheduled: "Pending",
   under_evaluation: "Completed",
   ai_screening_evaluation_failed: "Flagged",
   ai_screening_flagged: "Flagged",
 };
 
-export const UI_CARD_VIEW = "Profile View";
 export const UI_INTERVIEW_AI_INCOMING = "AI Incoming";
 export const UI_INTERVIEW_REGULAR_INCOMING = "Regular Incoming";
 export const UI_INTERVIEW_NO_SHOW = "No Show";

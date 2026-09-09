@@ -1,10 +1,11 @@
-﻿import type { Permission } from "@/constants/permissions";
+import type { Permission } from "@/constants/permissions";
 import type { MenuAction, StateConfig } from "./applicants.types";
 
 export const MENU_ACTION_PERMISSIONS: Record<MenuAction, Permission> = {
   select: "application.evaluate",
   reject: "application.reject",
   hold: "application.evaluate",
+  archive: "application.workflow",
 };
 
 export const SCORE_FILTERS = [
@@ -54,8 +55,22 @@ export const WAITING_FOR_REVIEW_CONFIG: StateConfig = {
   chip: { label: "Awaiting Review", variant: "yellow" },
   showInfoChips: false,
   showExpandedContent: true,
-  actions: [],
-  menuActions: ["select", "reject", "hold"],
+  actions: [
+    { label: "Advance to interview", icon: "bx bx-calendar", variant: "schedule", handler: "onShortlist", permission: "application.evaluate" },
+    { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
+  ],
+  menuActions: ["select", "hold", "archive"],
+};
+
+export const RESUME_SHORTLISTING_CONFIG: StateConfig = {
+  state: "resume_shortlisting",
+  showInfoChips: false,
+  showExpandedContent: true,
+  actions: [
+    { label: "Advance", icon: "bx bx-right-arrow-alt", variant: "shortlist", handler: "onAdvance", permission: "application.workflow" },
+    { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
+  ],
+  menuActions: ["select", "hold", "archive"],
 };
 
 export const UNDER_EVALUATION_CONFIG: StateConfig = {
@@ -63,10 +78,10 @@ export const UNDER_EVALUATION_CONFIG: StateConfig = {
   showInfoChips: true,
   showExpandedContent: true,
   actions: [
-    { label: "Shortlist", icon: "bx bx-check", variant: "shortlist", handler: "onShortlist", permission: "application.evaluate" },
+    { label: "Advance to interview", icon: "bx bx-calendar", variant: "schedule", handler: "onShortlist", permission: "application.evaluate" },
     { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
   ],
-  menuActions: ["select", "reject", "hold"],
+  menuActions: ["select", "hold", "archive"],
 };
 
 export const SHORTLISTED_CONFIG: StateConfig = {
@@ -74,9 +89,10 @@ export const SHORTLISTED_CONFIG: StateConfig = {
   showInfoChips: true,
   showExpandedContent: true,
   actions: [
-    { label: "Move to Next Round", icon: "bx bx-right-arrow", variant: "move", handler: "onMoveToNextRound", permission: "application.workflow" },
+    { label: "Schedule Round", icon: "bx bx-calendar", variant: "schedule", handler: "onScheduleInterview", permission: "application.workflow" },
+    { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
   ],
-  menuActions: ["select", "reject", "hold"],
+  menuActions: ["select", "hold", "archive"],
 };
 
 export const MOVE_TO_NEXT_ROUND_CONFIG: StateConfig = {
@@ -85,8 +101,9 @@ export const MOVE_TO_NEXT_ROUND_CONFIG: StateConfig = {
   showExpandedContent: true,
   actions: [
     { label: "Schedule Round", icon: "bx bx-calendar", variant: "schedule", handler: "onScheduleInterview", permission: "application.workflow" },
+    { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
   ],
-  menuActions: ["select", "reject", "hold"],
+  menuActions: ["select", "hold", "archive"],
 };
 
 export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
@@ -97,8 +114,9 @@ export const INTERVIEW_SCHEDULED_CONFIG: StateConfig = {
   actions: [
     { label: "Reschedule", icon: "bx bx-calendar", variant: "reschedule", handler: "onRescheduleInterview", permission: "application.workflow" },
     { label: "Cancel", icon: "bx bx-x-circle", variant: "cancel", handler: "onCancelInterview", permission: "application.workflow" },
+    { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
   ],
-  menuActions: ["select", "reject", "hold"],
+  menuActions: ["select", "hold", "archive"],
 };
 
 export const SCREENING_ROUND_SCHEDULED_CONFIG: StateConfig = {
@@ -110,7 +128,7 @@ export const SCREENING_ROUND_SCHEDULED_CONFIG: StateConfig = {
     { label: "Call Now", icon: "bx bx-phone", variant: "call", handler: "onCallNow", permission: "application.workflow" },
     { label: "Cancel", icon: "bx bx-x-circle", variant: "cancel", handler: "onCancelInterview", permission: "application.workflow" },
   ],
-  menuActions: ["select", "reject", "hold"],
+  menuActions: ["select", "reject", "hold", "archive"],
 };
 
 export const AI_SCREENING_EVALUATION_FAILED_CONFIG: StateConfig = {
@@ -119,11 +137,11 @@ export const AI_SCREENING_EVALUATION_FAILED_CONFIG: StateConfig = {
   showInfoChips: false,
   showExpandedContent: true,
   actions: [
-    { label: "Call Now", icon: "bx bx-phone", variant: "call", handler: "onCallNow", permission: "application.workflow" },
     { label: "Re-run AI screening", icon: "bx bx-refresh", variant: "move", handler: "onRetryAiScreening", permission: "application.workflow" },
     { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
+    { label: "Call Now", icon: "bx bx-phone", variant: "call", handler: "onCallNow", permission: "application.workflow" },
   ],
-  menuActions: ["select", "reject", "hold"],
+  menuActions: ["select", "hold", "archive"],
 };
 
 export const AI_SCREENING_FLAGGED_CONFIG: StateConfig = {
@@ -132,11 +150,11 @@ export const AI_SCREENING_FLAGGED_CONFIG: StateConfig = {
   showInfoChips: false,
   showExpandedContent: true,
   actions: [
-    { label: "Call Now", icon: "bx bx-phone", variant: "call", handler: "onCallNow", permission: "application.workflow" },
     { label: "Re-run AI screening", icon: "bx bx-refresh", variant: "move", handler: "onRetryAiScreening", permission: "application.workflow" },
     { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
+    { label: "Call Now", icon: "bx bx-phone", variant: "call", handler: "onCallNow", permission: "application.workflow" },
   ],
-  menuActions: ["select", "reject", "hold"],
+  menuActions: ["select", "hold", "archive"],
 };
 
 export const INTERVIEW_RESCHEDULED_CONFIG: StateConfig = {
@@ -147,8 +165,9 @@ export const INTERVIEW_RESCHEDULED_CONFIG: StateConfig = {
   actions: [
     { label: "Reschedule", icon: "bx bx-calendar", variant: "reschedule", handler: "onRescheduleInterview", permission: "application.workflow" },
     { label: "Cancel", icon: "bx bx-x-circle", variant: "cancel", handler: "onCancelInterview", permission: "application.workflow" },
+    { label: "Reject", icon: "bx bx-x", variant: "reject", handler: "onRejectFromEvaluation", permission: "application.reject" },
   ],
-  menuActions: ["select", "reject", "hold"],
+  menuActions: ["select", "hold", "archive"],
 };
 
 export const INTERVIEW_ONGOING_CONFIG: StateConfig = {
@@ -157,7 +176,7 @@ export const INTERVIEW_ONGOING_CONFIG: StateConfig = {
   showInfoChips: false,
   showExpandedContent: true,
   actions: [],
-  menuActions: ["select", "reject", "hold"],
+  menuActions: ["select", "reject", "hold", "archive"],
 };
 
 export const INTERVIEW_CANCELLED_CONFIG: StateConfig = {
@@ -165,8 +184,10 @@ export const INTERVIEW_CANCELLED_CONFIG: StateConfig = {
   chip: { label: "Interview Cancelled", variant: "danger" },
   showInfoChips: false,
   showExpandedContent: true,
-  actions: [],
-  menuActions: ["select", "reject", "hold"],
+  actions: [
+    { label: "Reschedule", icon: "bx bx-calendar", variant: "reschedule", handler: "onRescheduleInterview", permission: "application.workflow" },
+  ],
+  menuActions: ["select", "reject", "hold", "archive"],
 };
 
 export const NO_SHOW_CONFIG: StateConfig = {
@@ -174,8 +195,10 @@ export const NO_SHOW_CONFIG: StateConfig = {
   chip: { label: "No Show", variant: "danger" },
   showInfoChips: false,
   showExpandedContent: true,
-  actions: [],
-  menuActions: ["select", "reject", "hold"],
+  actions: [
+    { label: "Reschedule", icon: "bx bx-calendar", variant: "reschedule", handler: "onRescheduleInterview", permission: "application.workflow" },
+  ],
+  menuActions: ["select", "reject", "hold", "archive"],
 };
 
 export const REJECTED_CONFIG: StateConfig = {
@@ -206,11 +229,12 @@ export const ON_HOLD_CONFIG: StateConfig = {
   actions: [
     { label: "Resume", icon: "bx bx-play-circle", variant: "move", handler: "onResumeFromHold", permission: "application.evaluate" },
   ],
-  menuActions: ["select", "reject"],
+  menuActions: ["select", "reject", "archive"],
   footerBadge: { text: "Candidate put on hold", className: "onhold-text" },
 };
 
 export const STATE_CONFIGS: Record<string, StateConfig> = {
+  resume_shortlisting: RESUME_SHORTLISTING_CONFIG,
   waiting_for_review: WAITING_FOR_REVIEW_CONFIG,
   under_evaluation: UNDER_EVALUATION_CONFIG,
   shortlisted: SHORTLISTED_CONFIG,

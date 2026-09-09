@@ -1,15 +1,31 @@
 import { truncateText } from "./applicants.utils";
 import { APPLICANT_LABELS } from "@/constants/constants";
+import MarkdownRenderer from "@/app/chat/components/chat-area/block-renderer/blocks/markdown/markdown";
 
 type Props = {
   aiSummary: string;
   applicantId: string;
-  onReadMore: (id: string) => void;
+  onReadMore?: (id: string) => void;
   reviews?: Record<string, unknown>;
+  showFull?: boolean;
 };
 
-const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore }: Props) => {
-  const aiSum = aiSummary ? truncateText(aiSummary, 50) : null;
+const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, showFull = false }: Props) => {
+  const trimmed = aiSummary.trim();
+
+  if (showFull) {
+    return (
+      <div className="cep-ai-summary">
+        {trimmed ? (
+          <MarkdownRenderer content={aiSummary} />
+        ) : (
+          <p className="cover-letter-text">{APPLICANT_LABELS.NO_AI_SUMMARY}</p>
+        )}
+      </div>
+    );
+  }
+
+  const aiSum = trimmed ? truncateText(aiSummary, 50) : null;
 
   return (
     <div className="cover-letter">
@@ -20,9 +36,11 @@ const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore }: Props) => {
       {aiSum ? (
         <p className="cover-letter-text">
           {aiSum.text}
-          <button className="read-more" onClick={(e) => { e.stopPropagation(); onReadMore(applicantId); }}>
-            {APPLICANT_LABELS.READ_MORE}
-          </button>
+          {onReadMore && (
+            <button className="read-more" onClick={(e) => { e.stopPropagation(); onReadMore(applicantId); }}>
+              {APPLICANT_LABELS.READ_MORE}
+            </button>
+          )}
         </p>
       ) : (
         <p className="cover-letter-text">{APPLICANT_LABELS.NO_AI_SUMMARY}</p>

@@ -1,94 +1,90 @@
-import { useMemo } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchFinalVerdicts } from "@/services/applications/applications";
+import type { EvaluatedCandidate } from "@/services/applications/applications.types";
 import { QUERY_KEYS, QUERY_CONFIG } from "@/constants/constants";
 import { PAGINATION } from "@/constants/api-endpoints";
 import type { Applicant, ApplicantStatus } from "../../applicants/applicants.types";
+import { FINAL_VERDICT_API_STATUS } from "../final-verdict.constants";
 import type { FinalVerdictSubTab } from "../final-verdict.types";
 
 type UseFinalVerdictsResult = {
   candidates: Applicant[];
   isLoading: boolean;
-  isLoadingMore: boolean;
-  hasMore: boolean;
-  fetchNext: () => void;
+  total: number;
+  page: number;
+  totalPages: number;
+  pageSize: number;
+  goToPage: (page: number) => void;
+  setPageSize: (size: number) => void;
   refresh: () => void;
 };
-
-const LIMIT = PAGINATION.APPLICATIONS_PER_PAGE;
 
 export function useFinalVerdictsData(
   subTab: FinalVerdictSubTab,
   jobId: string,
 ): UseFinalVerdictsResult {
-  const candidateStatus = subTab === "selected" ? "selected" : subTab === "on-hold" ? "on_hold" : "rejected";
+  const candidateStatus = FINAL_VERDICT_API_STATUS[subTab];
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSizeState] = useState(PAGINATION.APPLICATIONS_PER_PAGE);
 
-  const query = useInfiniteQuery({
-    queryKey: [QUERY_KEYS.FINAL_VERDICTS, candidateStatus, jobId],
-    queryFn: ({ pageParam }) =>
-      fetchFinalVerdicts(candidateStatus, LIMIT, pageParam as number, jobId),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
-      const nextOffset = (lastPageParam as number) + LIMIT;
-      return nextOffset < lastPage.total ? nextOffset : undefined;
-    },
+  const depsKey = `${jobId}|${candidateStatus}|${pageSize}`;
+  const [prevDepsKey, setPrevDepsKey] = useState(depsKey);
+  if (depsKey !== prevDepsKey) {
+    setPrevDepsKey(depsKey);
+    setPage(1);
+  }
+
+  const offset = (page - 1) * pageSize;
+
+  const query = useQuery({
+    queryKey: [QUERY_KEYS.FINAL_VERDICTS, candidateStatus, jobId, page, pageSize],
+    queryFn: () => fetchFinalVerdicts(candidateStatus, pageSize, offset, jobId),
     staleTime: QUERY_CONFIG.DEFAULT_STALE_TIME,
     retry: QUERY_CONFIG.DEFAULT_RETRY_COUNT,
-    select: (data) => ({
-      pages: data.pages,
-      pageParams: data.pageParams,
-      total: data.pages[data.pages.length - 1]?.total ?? 0,
-    }),
+    refetchOnWindowFocus: false,
   });
 
+  const total = query.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const goToPage = useCallback(
+    (nextPage: number) => {
+      setPage(Math.min(Math.max(1, nextPage), totalPages));
+    },
+    [totalPages],
+  );
+
+  const setPageSize = useCallback((size: number) => {
+    setPageSizeState(size);
+  }, []);
+
   const candidates = useMemo<Applicant[]>(
-    () =>
-      query.data?.pages.flatMap((page) =>
-        page.data.map(mapFinalVerdictCandidate),
-      ) ?? [],
-    [query.data],
+    () => query.data?.data.map((app) => mapFinalVerdictCandidate(app, subTab)) ?? [],
+    [query.data, subTab],
   );
 
   return {
     candidates,
-    isLoading: query.isFetching && !query.isFetchingNextPage,
-    isLoadingMore: query.isFetchingNextPage,
-    hasMore: query.hasNextPage,
-    fetchNext: query.fetchNextPage,
+    isLoading: query.isLoading,
+    total,
+    page,
+    totalPages,
+    pageSize,
+    goToPage,
+    setPageSize,
     refresh: query.refetch,
   };
 }
 
-function mapFinalVerdictCandidate(app: {
-  id: string;
-  candidate_id: number;
-  job_id: string;
-  name: string | null;
-  email: string | null;
-  phone: string | null;
-  cover_letter: string | null;
-  resume_url: string | null;
-  status: string | null;
-  fit_score: number | null;
-  summary_md: string | null;
-  evaluated_at: string | null;
-  current_ctc: string | null;
-  expected_ctc: string | null;
-  location: string | null;
-  years_of_experience: string | null;
-  notice_period: string | null;
-  how_did_you_hear: string | null;
-  linkedin_url: string | null;
-  willing_to_relocate?: boolean;
-  current_round_id?: string;
-  final_verdict?: string;
-}): Applicant {
+function mapFinalVerdictCandidate(app: EvaluatedCandidate, subTab: FinalVerdictSubTab): Applicant {
   return {
     id: app.id,
     candidateId: app.candidate_id,
     name: app.name ?? "",
     email: app.email ?? "",
     phone: app.phone ?? "",
+    candidateType: app.candidate_type ?? undefined,
     coverLetter: app.cover_letter ?? "",
     aiSummary: app.summary_md ?? undefined,
     experienceYears: 0,
@@ -109,6 +105,6 @@ function mapFinalVerdictCandidate(app: {
     howDidYouHear: app.how_did_you_hear ?? undefined,
     willingToRelocate: app.willing_to_relocate ?? undefined,
     currentRoundId: app.current_round_id ?? undefined,
-    finalVerdict: app.final_verdict?.toLowerCase().replace(/_/g, "-") ?? undefined,
+    finalVerdict: app.final_verdict?.toLowerCase().replace(/_/g, "-") ?? subTab,
   };
 }

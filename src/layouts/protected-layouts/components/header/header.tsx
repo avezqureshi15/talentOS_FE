@@ -18,6 +18,7 @@ import CandidateHeader from "./candidate-header";
 import TabDropdown from "./tab-dropdown";
 import NotificationBell from "./notification-bell/notification-bell";
 import HeaderMoreMenu from "./header-more-menu";
+import { BUTTON_LOADING_SPINNER_CLASS } from "@/components/ui/button/button.constants";
 import JdDetailModal from "@/app/dashboard/hiring-requests-detail/components/modal/jd-detail-modal/jd-detail-modal";
 import InfoChipTooltip from "@/components/shared/info-chip-tooltip/info-chip-tooltip";
 
@@ -68,7 +69,7 @@ const JobsToolbar = ({ onOpenPalette, sidebarOpen }: { onOpenPalette?: () => voi
   const isPaletteRoute = isCommandPaletteRoute(location.pathname);
   const [jdModalOpen, setJdModalOpen] = useState(false);
 
-  const MORE_MENU_KEYS = ["import", "export", "archive", "close-job"];
+  const MORE_MENU_KEYS = ["add-candidate", "import", "export", "archive", "close-job"];
   const isOverflowAction = (key: string) =>
     MORE_MENU_KEYS.includes(key) || key.startsWith("export-");
   const overflowActions = actions?.filter((a) => isOverflowAction(a.key)) ?? [];
@@ -213,17 +214,23 @@ const JobsToolbar = ({ onOpenPalette, sidebarOpen }: { onOpenPalette?: () => voi
               action.render()
             ) : action.variant === "primary" ? (
               <motion.button
-                className={`jobs-add-btn${action.className ? ` ${action.className}` : ""}${action.disabled ? " jobs-add-btn--disabled" : ""}${action.tooltipLines ? " jobs-add-btn--icon-only" : ""}`}
+                className={`jobs-add-btn${action.className ? ` ${action.className}` : ""}${action.disabled || action.loading ? " jobs-add-btn--disabled" : ""}${action.tooltipLines ? " jobs-add-btn--icon-only" : ""}`}
                 onClick={action.onClick}
-                disabled={action.disabled}
+                disabled={action.disabled || action.loading}
                 onMouseEnter={action.tooltipLines ? (e) => showTooltip(e, action.tooltipLines!) : undefined}
                 onMouseLeave={action.tooltipLines ? hideTooltip : undefined}
-                whileHover={action.disabled ? {} : { scale: 1.02 }}
-                whileTap={action.disabled ? {} : { scale: 0.97 }}
+                whileHover={action.disabled || action.loading ? {} : { scale: 1.02 }}
+                whileTap={action.disabled || action.loading ? {} : { scale: 0.97 }}
                 transition={springSnap}
               >
-                {action.icon && <i className={action.icon} />}
-                {!action.tooltipLines && <span className="btn-label">{action.label}</span>}
+                {action.loading ? (
+                  <i className={BUTTON_LOADING_SPINNER_CLASS} />
+                ) : (
+                  action.icon && <i className={action.icon} />
+                )}
+                {!action.tooltipLines && (
+                  <span className="btn-label">{action.loading && action.loadingText ? action.loadingText : action.label}</span>
+                )}
               </motion.button>
             ) : (
               <div

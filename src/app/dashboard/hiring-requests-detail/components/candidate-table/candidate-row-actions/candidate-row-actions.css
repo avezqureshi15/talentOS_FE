@@ -2,16 +2,16 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 .cra-btn {
   white-space: nowrap;
 }
 
-.cra--flattened {
-  width: 100%;
-  justify-content: center;
+.cra-btn--icon {
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .cra-dots {

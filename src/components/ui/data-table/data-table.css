@@ -17,6 +17,18 @@
 
 .dt-row:last-child { border-bottom: none; }
 
+.dt-row-block:last-child .dt-row { border-bottom: none; }
+
+.dt-row-block--expanded .dt-row { border-bottom: none; }
+
+.dt-row-expand {
+  padding: 8px 16px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+}
+
+.dt-row-block:last-child .dt-row-expand { border-bottom: none; }
+
 .dt-row-body:hover { background: var(--bg-hover); }
 
 .dt-header {
