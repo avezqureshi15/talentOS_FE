@@ -4,7 +4,7 @@ import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
 import { SETTINGS_MODAL } from "@/constants/constants";
 import { PERMISSIONS } from "@/constants/permissions";
-import { useThemeStore, type ThemeMode } from "@/store/theme.store";
+import { useThemeStore, THEME_BY_VALUE, THEME_DEFINITIONS } from "@/store/theme.store";
 import { useAuth, useRole } from "@/app/auth/hooks/use-auth";
 import { usePermissions } from "@/hooks/use-permissions";
 import { ROUTES } from "@/constants/routes";
@@ -19,12 +19,6 @@ type SettingsModalProps = {
 };
 
 type SettingsTab = "theme" | "api-keys" | "apps" | "role-docs" | "ai-screening";
-
-const THEME_OPTIONS: { value: ThemeMode; label: string; icon: string }[] = [
-  { value: "light", label: SETTINGS_MODAL.THEME_LIGHT, icon: "bx bx-sun" },
-  { value: "dark", label: SETTINGS_MODAL.THEME_DARK, icon: "bx bx-moon" },
-  { value: "system", label: SETTINGS_MODAL.THEME_SYSTEM, icon: "bx bx-desktop" },
-];
 
 const SETTINGS_TABS: { value: SettingsTab; label: string; icon: string }[] = [
   { value: "theme", label: "Theme", icon: "bx bx-palette" },
@@ -44,6 +38,7 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
   const [tab, setTab] = useState<SettingsTab>("theme");
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
+  const activeTheme = THEME_BY_VALUE[theme];
 
   // Per-tenant AI-screening settings — hidden for superadmin (no own tenant).
   const canViewAiScreening = !isSuperAdmin && !!user?.tenant_id && can(PERMISSIONS.SETTINGS_VIEW);
@@ -87,12 +82,12 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
             <div className="settings-modal__body">
               <div className="settings-theme-row">
                 <div className="settings-theme-label">
-                  <span className={theme === "dark" ? "bx bx-moon" : theme === "light" ? "bx bx-sun" : "bx bx-desktop"} />
+                  <span className={activeTheme.icon} />
                   {SETTINGS_MODAL.THEME_LABEL}
                 </div>
               </div>
               <div className="settings-segment" role="group" aria-label={SETTINGS_MODAL.THEME_LABEL}>
-                {THEME_OPTIONS.map((option) => (
+                {THEME_DEFINITIONS.map((option) => (
                   <button
                     key={option.value}
                     type="button"
@@ -105,9 +100,7 @@ const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
                 ))}
               </div>
               <div className="settings-theme-row settings-theme-hint">
-                <span>
-                  {theme === "system" ? SETTINGS_MODAL.THEME_FOLLOWING_SYSTEM : theme === "dark" ? SETTINGS_MODAL.THEME_DARK : SETTINGS_MODAL.THEME_LIGHT}
-                </span>
+                <span>{activeTheme.hint ?? activeTheme.label}</span>
               </div>
             </div>
           )}

@@ -7,11 +7,14 @@ Every component MUST follow these rules. Theming is **100% token-driven**. There
 - `src/index.css` is the **single source of truth** for all colors.
   - `:root` (top of file) = **dark theme defaults**.
   - `[data-theme="light"]` block (line ~316) = **light theme overrides**.
-- The theme store (`src/store/theme.store.ts`) controls which block is active:
-  - `theme: "system" | "dark" | "light"` — persisted in `localStorage` under key `talentos_theme` (`STORAGE_KEYS.THEME`).
+- The theme store (`src/store/theme.store.ts`) controls which block is active **and owns the theme registry**:
+  - `THEME_DEFINITIONS` — the **single place** to add/remove a theme (see §8).
+  - `theme` — persisted in `localStorage` under key `talentos_theme` (`STORAGE_KEYS.THEME`).
   - `setTheme(mode)` — the ONLY way to change the theme.
   - `system` resolves via `window.matchMedia("(prefers-color-scheme: dark)")` and **live-updates** when the OS theme changes (built-in matchMedia listener — do not add another one).
-  - Light mode = `data-theme="light"` attribute set on `<html>`. **Dark mode = attribute removed** (never `data-theme="dark"`).
+  - The store sets two attributes on `<html>`:
+    - `data-theme="dark" | "light"` — the active token **base** (from the theme's `base`). Dark is explicit now (`data-theme="dark"`), not "attribute removed".
+    - `data-brand="<brand>"` — only for branded themes that layer extra overrides on top of a base (e.g. `recruit41`).
 - Components never read/write localStorage, never touch `document.documentElement`, never call `applyTheme` directly. **Only** `useThemeStore` → `s.theme` / `s.setTheme` / `s.resolvedTheme`.
 
 ## 2. Hard rules (non-negotiable)
@@ -22,7 +25,7 @@ Every component MUST follow these rules. Theming is **100% token-driven**. There
 4. **Do not duplicate or redefine the `data-theme` mechanics.** Component CSS may only contain `[data-theme="light"] ...` *overrides* when a component genuinely needs different behavior per theme (e.g., killing a backdrop blur) — never to re-color things.
 5. **Light mode is flat — no glassmorphism.** Glass tokens are defined to be **opaque** in the light block. Do not introduce translucent surfaces, `backdrop-filter` blur on surfaces, or `rgba` backgrounds in light mode. Colored tints (pills/badges) and scrims (`--overlay*`) are exempt.
 6. **Dark mode keeps glassmorphism.** Glass tokens there are translucent by design — leave them alone.
-7. **Never add a new theme** ("sepia", "oled", ...). The store supports exactly `system | dark | light`.
+7. **Add themes only through the registry.** Adding a theme = **one entry** in `THEME_DEFINITIONS` (`src/store/theme.store.ts`) + an optional `[data-brand="…"]` block in `index.css`. Never hardcode theme names, labels, icons or CSS in components. See §8.
 
 ## 3. Token cheat sheet (use these)
 
@@ -94,8 +97,32 @@ If a needed color doesn't exist:
 
 - Lives in `settings-modal.tsx` (profile popover → Settings → Theme).
 - Uses the **segmented control** (`.settings-segment`), NOT a select/dropdown.
-- Options are `{ value: "light" | "dark" | "system", label, icon }` with Boxicons: `bx-sun`, `bx-moon`, `bx-desktop`.
-- Clicking calls `setTheme(value)`. Do not add toggles, radio rows, or extra theme options.
+- **Renders straight from `THEME_DEFINITIONS`** — do not hardcode options. Each entry supplies `{ value, label, icon }`.
+- Clicking calls `setTheme(value)`.
+
+## 8. Adding a new theme (the whole process)
+
+1. Add one entry to `THEME_DEFINITIONS` in `src/store/theme.store.ts`:
+
+   ```ts
+   { value: "midnight", label: "Midnight", icon: "bx bx-moon", base: "dark" }
+   ```
+
+   - `base: "dark" | "light"` reuses that token set.
+   - `base: "system"` follows the OS (only the `system` theme does this).
+   - Add `hint` if you want different helper text under the selector.
+2. **Only if** the theme needs brand overrides (accent/surfaces/buttons), add `brand: "midnight"` to the entry and a matching block to `index.css`:
+
+   ```css
+   [data-brand="midnight"] {
+     --accent: #7c3aed;
+     /* …only the tokens that differ from the base… */
+   }
+   ```
+
+   The block is placed **after** the base blocks so it wins; it applies together with `data-theme="light"|"dark"`.
+
+That's it — persistence, the Theme tab, `data-theme`/`data-brand`, and system-follow are handled by the store.
 
 ## 7. Verification (run before committing any styled change)
 

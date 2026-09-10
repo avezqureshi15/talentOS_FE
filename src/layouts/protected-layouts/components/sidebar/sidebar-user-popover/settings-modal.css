@@ -109,6 +109,7 @@
 /* segmented control */
 .settings-segment {
   display: flex;
+  flex-wrap: wrap;
   gap: 2px;
   padding: 4px;
   background: var(--bg-tertiary);
@@ -121,7 +122,8 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 120px;
   padding: 7px 10px;
   border: none;
   background: transparent;
@@ -131,6 +133,7 @@
   font-weight: 500;
   color: var(--text-muted);
   cursor: pointer;
+  text-align: center;
   transition: color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 

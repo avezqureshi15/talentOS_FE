@@ -268,11 +268,8 @@ export const PROFILE_MODAL = {
 export const SETTINGS_MODAL = {
   TITLE: "Settings",
   ICON: "bx bx-cog",
+  // Theme option labels/icons live in the theme registry: src/store/theme.store.ts
   THEME_LABEL: "Theme",
-  THEME_SYSTEM: "System",
-  THEME_DARK: "Dark",
-  THEME_LIGHT: "Light",
-  THEME_FOLLOWING_SYSTEM: "Following system preference",
   APPS_TAB: "Apps",
   APPS_TITLE: "Apps",
   APPS_DESCRIPTION: "Manage your connected apps, API keys, and integrations.",
