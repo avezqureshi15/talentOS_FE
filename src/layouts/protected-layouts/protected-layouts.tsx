@@ -23,7 +23,14 @@ import { STORAGE_KEYS } from "@/constants/constants";
 import { getUx, patchUx } from "@/utils/storage";
 import "@/app/chat/pages/chat.css";
 
+function isHiringRequestsPath(pathname: string): boolean {
+  return pathname === ROUTES.HIRING_REQUESTS || pathname.startsWith(`${ROUTES.HIRING_REQUESTS}/`);
+}
+
 function getInitialSidebarState(): boolean {
+  if (typeof window !== "undefined" && isHiringRequestsPath(window.location.pathname)) {
+    return false;
+  }
   return getUx(STORAGE_KEYS.UX).sb;
 }
 
@@ -101,6 +108,14 @@ export default function ProtectedLayout() {
     useNotificationStore.getState().startPolling();
     return () => useNotificationStore.getState().stopPolling();
   }, []);
+
+  useEffect(() => {
+    if (isHiringRequestsPath(location.pathname)) {
+      setSidebarOpen(false);
+      return;
+    }
+    setSidebarOpen(getUx(STORAGE_KEYS.UX).sb);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {

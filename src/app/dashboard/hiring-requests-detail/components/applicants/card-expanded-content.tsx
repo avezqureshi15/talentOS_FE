@@ -21,14 +21,11 @@ const CardExpandedContent = ({
   stateConfig,
   accordionTab,
   onTabChange,
-  onTimeline,
   onDetailsReadMore,
   onCoverLetterReadMore,
   onAiSummaryReadMore,
-  isRemote = false,
   jdId,
   showAllDetails = false,
-  currentRoundHref,
 }: CardExpandedContentProps) => (
   <div className="accordion-body">
     {a.status === "ai_screening_evaluation_failed" && a.screeningReview && (
@@ -52,34 +49,6 @@ const CardExpandedContent = ({
         </div>
       </div>
     )}
-    <div className="action-links">
-      {a.phone && <a href={`tel:${a.phone}`} className="action-link"><i className="bx bx-phone"></i> {a.phone}</a>}
-      {a.linkedinUrl && (
-        <a href={a.linkedinUrl} target="_blank" rel="noreferrer" className="action-link">
-          <i className="bx bx-link-alt"></i> {APPLICANT_LABELS.LINKEDIN}
-        </a>
-      )}
-      {a.cvUrl && (
-        <a href={a.cvUrl} target="_blank" rel="noreferrer" className="action-link">
-          <i className="bx bx-file"></i> {APPLICANT_LABELS.CV}
-        </a>
-      )}
-      <button className="action-link action-link-btn" onClick={(e) => { e.stopPropagation(); onTimeline(a.candidateId); }}>
-        <i className="bx bx-clock"></i> {APPLICANT_LABELS.TIMELINE}
-      </button>
-      {currentRoundHref && (
-        <a
-          className="cep-round-btn"
-          href={currentRoundHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <i className="bx bx-info-circle" /> Current round
-        </a>
-      )}
-    </div>
-
     <div className="accordion-tabs block">
       <button className={`accordion-tab ${accordionTab === "details" ? "accordion-tab--active" : ""}`} onClick={() => onTabChange("details")} type="button">
         <i className="bx bx-detail" /> {APPLICANT_LABELS.DETAILS}
@@ -100,7 +69,6 @@ const CardExpandedContent = ({
       <CardDetailsTab
         applicant={a}
         onDetailsReadMore={onDetailsReadMore}
-        isRemote={isRemote}
         showAll={showAllDetails}
       />
     )}

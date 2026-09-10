@@ -250,20 +250,34 @@
   color: var(--button-primary-text);
 }
 
-.cv-link {
+.round-link {
   color: var(--accent);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 12.5px;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 26px;
+  gap: 5px;
+  max-width: 100%;
+  min-width: 0;
   height: 26px;
+  padding: 0 8px;
   border-radius: var(--radius-sm);
   transition: background 0.15s ease;
 }
 
-.cv-link:hover {
+.round-link i {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.round-link-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.round-link:hover {
   background: var(--accent-bg);
 }
 

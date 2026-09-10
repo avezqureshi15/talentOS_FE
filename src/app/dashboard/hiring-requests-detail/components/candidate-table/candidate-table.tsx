@@ -81,6 +81,11 @@ function getFinalVerdictChip(verdict?: string): { label: string; cssClass: strin
   };
 }
 
+function currentRoundHref(hiringRequestId: string | undefined, c: Applicant): string | null {
+  if (!hiringRequestId || !c.currentRoundId) return null;
+  return `/hiring-requests/${hiringRequestId}/round-details/${c.currentRoundId}?candidateId=${c.candidateId}`;
+}
+
 function getDisplayStatus(rawStatus: string): { label: string; cssClass: string; tooltip: string } {
   const status = rawStatus?.toLowerCase() ?? "";
   return {
@@ -99,7 +104,6 @@ const CandidateTable = ({
   hiringRequestId,
   onScreeningTriggered,
   expandedId,
-  isRemote,
 }: CandidateTableProps) => {
   const CELL_RENDERERS: Record<string, (c: Applicant) => ReactNode> = {
     name: (c) => (
@@ -181,14 +185,23 @@ const CandidateTable = ({
         <span className={`status-chip status-chip--${ds.cssClass}`} title={ds.tooltip}>{ds.label}</span>
       );
     },
-    cv: (c) =>
-      c.cvUrl ? (
-        <a href={c.cvUrl} target="_blank" rel="noopener noreferrer" className="cv-link" onClick={(e) => e.stopPropagation()}>
-          <i className="bx bx-arrow-in-up-right-circle" />
+    round: (c) => {
+      const href = currentRoundHref(hiringRequestId, c);
+      if (!href) return <span className="text-muted">—</span>;
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="round-link"
+          title="View round details"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <i className="bx bx-git-branch" />
+          <span className="round-link-text">Current round</span>
         </a>
-      ) : (
-        <span className="text-muted">—</span>
-      ),
+      );
+    },
     timeline: (c) => (
       <button className="timeline-btn" onClick={(e) => { e.stopPropagation(); onTimelineOpen?.(c); }} type="button">
         <i className="bx bx-timeline" />
@@ -251,7 +264,7 @@ const CandidateTable = ({
       columns={columns.map((col) => ({
         header: col.label,
         className:
-          col.key === "timeline" || col.key === "cv"
+          col.key === "timeline"
             ? "dt-cell-center"
             : col.key === "actions" || col.key === "info"
               ? "dt-cell-right"
@@ -276,7 +289,6 @@ const CandidateTable = ({
         <CandidateExpandedPanel
           applicant={c}
           jdId={hiringRequestId}
-          isRemote={isRemote}
           isScreening={activeStage === "screening"}
           onTimeline={(id) => {
             onTimelineOpen?.({ ...c, candidateId: id });

@@ -29,7 +29,6 @@ const ApplicantCard = ({
   onDetailsReadMore,
   onTimeline,
   jdId,
-  isRemote = false,
 }: ApplicantCardProps) => {
   const stateConfig = useApplicantState(a, isScreening);
   const { can } = usePermissions();
@@ -160,7 +159,6 @@ const ApplicantCard = ({
           onCoverLetterReadMore={onCoverLetterReadMore}
           onAiSummaryReadMore={onAiSummaryReadMore}
           jdId={jdId}
-          isRemote={isRemote}
         />
       )}
       {tooltip && <InfoChipTooltip lines={tooltip.lines} rect={tooltip.rect} className={tooltip.className} />}
