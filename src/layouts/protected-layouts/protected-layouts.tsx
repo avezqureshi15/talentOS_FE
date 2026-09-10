@@ -100,6 +100,14 @@ export default function ProtectedLayout() {
     });
   }, []);
 
+  // On hiring-request pages, any interaction with the page content collapses
+  // the sidebar. Capture phase so descendant `stopPropagation()` can't block it.
+  const handleContentClick = useCallback(() => {
+    if (sidebarOpen && isHiringRequestsPath(location.pathname)) {
+      setSidebarOpen(false);
+    }
+  }, [sidebarOpen, location.pathname]);
+
   const handleNotifications = useCallback(() => {
     navigate(ROUTES.NOTIFICATIONS);
   }, [navigate]);
@@ -181,7 +189,7 @@ export default function ProtectedLayout() {
         Icon={Icon}
       />
 
-      <main className="chat-main">
+      <main className="chat-main" onClickCapture={handleContentClick}>
         {!location.pathname.startsWith("/chat") && <Header Icon={Icon} sidebarOpen={sidebarOpen} onOpenPalette={cmdOpenPalette} />}
         <ErrorBoundary>
           <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
