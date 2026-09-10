@@ -11,6 +11,7 @@ const ACTION_META: Record<
   edit: { label: "Edit", icon: "bx-pencil" },
   suspend: { label: "Suspend", icon: "bx-pause-circle" },
   reactivate: { label: "Reactivate", icon: "bx-play-circle" },
+  delete: { label: "Delete", icon: "bx-trash" },
 };
 
 const TenantActionsMenu = ({
@@ -21,6 +22,7 @@ const TenantActionsMenu = ({
   onEdit,
   onSuspend,
   onReactivate,
+  onDelete,
 }: TenantActionsMenuProps) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -43,12 +45,17 @@ const TenantActionsMenu = ({
     };
   }, [open]);
 
+  if (tenant.deleted_at) {
+    return null;
+  }
+
   const items: TenantAction[] = [
     ...(tenant.verification_status === "pending"
       ? (["approve", "reject"] as TenantAction[])
       : []),
     "edit",
     ...(tenant.is_active ? (["suspend"] as TenantAction[]) : (["reactivate"] as TenantAction[])),
+    "delete",
   ];
 
   const handleSelect = (key: TenantAction) => {
@@ -59,6 +66,7 @@ const TenantActionsMenu = ({
       edit: onEdit,
       suspend: onSuspend,
       reactivate: onReactivate,
+      delete: onDelete,
     };
     handler[key](key);
   };
@@ -88,7 +96,9 @@ const TenantActionsMenu = ({
               key={key}
               type="button"
               className={`tam-item${
-                key === "reject" ? " tam-item--danger" : key === "suspend" ? " tam-item--danger" : ""
+                key === "reject" || key === "suspend" || key === "delete"
+                  ? " tam-item--danger"
+                  : ""
               }`}
               onClick={() => handleSelect(key)}
             >

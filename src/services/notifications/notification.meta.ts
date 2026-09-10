@@ -18,6 +18,7 @@ export const NOTIFICATION_META: Record<string, NotificationMeta> = {
   EVALUATION_FAILED: { label: "Evaluation Failed", icon: "bx bx-badge-exclamation", tab: "process", tone: "failure" },
   INTERVIEW_SCHEDULED: { label: "Interview Scheduled", icon: "bx bx-calendar-event", tab: "process" },
   FINAL_VERDICT: { label: "Final Verdict", icon: "bx bx-trophy", tab: "process" },
+  ORG_INACTIVE: { label: "Inactive Organization", icon: "bx bx-time-five", tab: "process" },
 };
 
 export const NOTIFICATION_META_FALLBACK: NotificationMeta = {

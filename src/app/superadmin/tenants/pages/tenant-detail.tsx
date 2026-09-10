@@ -84,9 +84,9 @@ export default function TenantDetail() {
           <span className="td-tenant-slug">/{tenant.slug}</span>
         </div>
         <div className="td-badges">
-          <span className={`td-badge td-badge--${tenant.is_active ? "active" : "inactive"}`}>
+          <span className={`td-badge td-badge--${tenant.deleted_at || !tenant.is_active ? "inactive" : "active"}`}>
             <span className="td-badge-dot" />
-            {tenant.is_active ? "Active" : "Suspended"}
+            {tenant.deleted_at ? "Deleted" : tenant.is_active ? "Active" : "Suspended"}
           </span>
           <span className={`td-badge td-badge--${tenant.verification_status}`}>
             {verificationLabel}

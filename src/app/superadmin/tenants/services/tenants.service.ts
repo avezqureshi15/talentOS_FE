@@ -6,6 +6,7 @@ export type Tenant = {
   name: string;
   slug: string;
   is_active: boolean;
+  deleted_at: string | null;
   verification_status: string;
   user_count: number;
   logo_url: string | null;
