@@ -130,7 +130,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
               type="button"
             >
               <span className="sr-interviewer-avatar sr-interviewer-avatar--ai">
-                <i className="bx bx-bot" />
+                <i className="bx bx-robot" />
               </span>
               <div className="sr-interviewer-info">
                 <span className="sr-interviewer-name">{SR_LABELS.AI_INTERVIEWER_NAME}</span>
@@ -180,7 +180,7 @@ const SrStep1 = ({ search, onSearchChange, interviewers, selectedInterviewers, o
           {isExternalSelected ? externalPanel : isAiSelected ? (
             <div className="sr-slot-section">
               <div className="sr-ai-selected-panel">
-                <i className="bx bx-bot sr-ai-selected-icon" />
+                <i className="bx bx-robot sr-ai-selected-icon" />
                 <span className="sr-ai-selected-title">{SR_LABELS.AI_SELECTED_TITLE}</span>
                 <span className="sr-ai-selected-desc">{SR_LABELS.AI_SELECTED_DESC}</span>
               </div>

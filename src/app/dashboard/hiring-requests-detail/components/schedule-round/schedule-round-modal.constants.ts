@@ -20,7 +20,7 @@ export const SR_LABELS = {
   AI_SELECTED_DESC: "No time slot needed — the candidate gets an AI-conducted interview invite immediately.",
   NO_SLOTS: "No available slots.",
   ENTER_EMAIL_MANUALLY: "Enter email manually",
-  EXTERNAL_INTERVIEWER_SUBLABEL: "For an interviewer outside the org",
+  EXTERNAL_INTERVIEWER_SUBLABEL: "If employee isn't added to platform",
   EXTERNAL_EMAIL_LABEL: "Interviewer email",
   EXTERNAL_EMAIL_PLACEHOLDER: "interviewer@company.com",
   EXTERNAL_NAME_LABEL: "Interviewer name (optional)",

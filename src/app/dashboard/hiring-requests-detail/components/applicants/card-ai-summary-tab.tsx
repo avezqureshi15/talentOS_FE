@@ -20,7 +20,7 @@ const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, showFull = false
       return (
         <div className="cep-empty">
           <div className="cep-empty-icon">
-            <i className="bx bx-bot" aria-hidden />
+            <i className="bx bx-robot" aria-hidden />
           </div>
           <p className="cep-empty-title">{APPLICANT_LABELS.NO_AI_SUMMARY_TITLE}</p>
           <p className="cep-empty-desc">{APPLICANT_LABELS.NO_AI_SUMMARY_DESC}</p>

@@ -366,9 +366,9 @@
 
   /* text */
   --text-primary: rgba(0, 0, 0, 0.85);
-  --text-secondary: rgba(0, 0, 0, 0.6);
-  --text-muted: rgba(0, 0, 0, 0.45);
-  --text-faint: rgba(0, 0, 0, 0.25);
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --text-muted: rgba(0, 0, 0, 0.55);
+  --text-faint: rgba(0, 0, 0, 0.35);
   --text-white: #000000;
 
   /* borders */
@@ -618,7 +618,7 @@
 
   /* text & contrast */
   --text-primary: #0f172a;
-  --text-secondary: rgba(0, 0, 0, 0.6);
+  --text-secondary: rgba(0, 0, 0, 0.7);
   /* --text-white is the inverse "solid surface" token in this codebase
      (used as background for primary buttons/toggles), so it stays dark
      on the white base. Orange CTA text uses --button-primary-text. */

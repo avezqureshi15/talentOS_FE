@@ -450,7 +450,7 @@ export default function ScheduleRoundModal({ open, candidateName, candidateId, c
                     </div>
                   </div>
                   <div className="sr-summary-row">
-                    <div className="sr-summary-icon"><i className="bx bx-bot" /></div>
+                    <div className="sr-summary-icon"><i className="bx bx-robot" /></div>
                     <div className="sr-summary-content">
                       <span className="sr-summary-label">{SR_LABELS.INTERVIEWER_LABEL}</span>
                       <span className="sr-summary-value">{interviewerNames}</span>
