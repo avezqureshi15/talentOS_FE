@@ -21,9 +21,14 @@
   color: var(--text-secondary);
 }
 
+.add-candidate-modal .acm-label-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .add-candidate-modal .acm-required {
   color: var(--danger);
-  margin-left: 2px;
 }
 
 .add-candidate-modal .acm-input {
@@ -102,6 +107,12 @@
   padding: 8px 12px;
   background: var(--danger-bg);
   border-radius: 8px;
+}
+
+.add-candidate-modal .acm-field-error {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--danger);
 }
 
 .add-candidate-modal .acm-actions {

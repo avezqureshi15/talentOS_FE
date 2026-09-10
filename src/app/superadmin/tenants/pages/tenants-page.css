@@ -166,6 +166,27 @@
   line-height: 1.5;
 }
 
+.delete-confirm-label {
+  display: block;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.delete-confirm-input {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+}
+
 .modal-error {
   padding: 10px 12px;
   background: var(--danger-400-bg);

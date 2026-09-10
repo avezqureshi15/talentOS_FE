@@ -37,10 +37,12 @@ const HeaderMoreMenu = ({ actions }: HeaderMoreMenuProps) => {
         className={`jobs-more-btn${open ? " jobs-more-btn--active" : ""}`}
         onClick={() => setOpen((v) => !v)}
         title="More actions"
+        aria-label="More actions"
         aria-haspopup="menu"
         aria-expanded={open}
       >
         <i className="bx bx-dots-horizontal-rounded" />
+        <span className="jobs-more-btn-label">More</span>
       </button>
 
       <AnimatePresence>

@@ -652,14 +652,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
+  gap: 6px;
   height: 32px;
+  padding: 0 10px;
   border-radius: 8px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-hover);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.jobs-more-btn-label {
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
 }
 
 .jobs-more-btn i {
