@@ -9,7 +9,6 @@ import { invalidateHiringRequestQueries } from "@/app/dashboard/hiring-requests-
 import {
   HEADER_VIEW_OPTIONS,
   HEADER_EXPORT_LABEL, HEADER_EXPORT_ICON, HEADER_EXPORT_TOOLTIP,
-  HEADER_IMPORT_LABEL, HEADER_IMPORT_ICON, HEADER_IMPORT_TOOLTIP,
   HEADER_ADD_CANDIDATE_LABEL, HEADER_ADD_CANDIDATE_ICON, HEADER_ADD_CANDIDATE_TOOLTIP,
   HEADER_REFRESH_LABEL, HEADER_REFRESH_ICON, HEADER_REFRESH_LOADING, HEADER_EXPORT_FILENAME,
   HEADER_ARCHIVE_LABEL, HEADER_ARCHIVE_ICON, HEADER_ARCHIVE_TOOLTIP,
@@ -26,7 +25,6 @@ type UseHiringRequestHeaderOptions = {
   onViewChange: (key: string) => void;
   badge?: HeaderBadge;
   badges?: HeaderBadge[];
-  onImport?: () => void;
   onAddCandidate?: () => void;
   onArchived?: () => void;
   onCloseJob?: () => void;
@@ -47,7 +45,6 @@ export function useHiringRequestHeader({
   onViewChange,
   badge,
   badges,
-  onImport,
   onAddCandidate,
   onArchived,
   onCloseJob,
@@ -113,9 +110,6 @@ export function useHiringRequestHeader({
       ...(canImport && onAddCandidate
         ? [{ key: "add-candidate", label: HEADER_ADD_CANDIDATE_LABEL, icon: HEADER_ADD_CANDIDATE_ICON, variant: "primary" as const, tooltipLines: HEADER_ADD_CANDIDATE_TOOLTIP, onClick: onAddCandidate }]
         : []),
-      ...(canImport && onImport
-        ? [{ key: "import", label: HEADER_IMPORT_LABEL, icon: HEADER_IMPORT_ICON, variant: "primary" as const, tooltipLines: HEADER_IMPORT_TOOLTIP, onClick: onImport }]
-        : []),
       ...(canImport && onArchived
         ? [{ key: "archive", label: HEADER_ARCHIVE_LABEL, icon: HEADER_ARCHIVE_ICON, variant: "primary" as const, tooltipLines: HEADER_ARCHIVE_TOOLTIP, onClick: onArchived }]
         : []),
@@ -142,5 +136,5 @@ export function useHiringRequestHeader({
     ],
     badge,
     badges,
-  }), [totalCount, totalCountOverride, handleExport, isExporting, exportError, handleRefresh, isRefreshing, data, activeView, onViewChange, badge, badges, canImport, onImport, onAddCandidate, onArchived, onCloseJob, title, titleIcon, subtitle, onBack]);
+  }), [totalCount, totalCountOverride, handleExport, isExporting, exportError, handleRefresh, isRefreshing, data, activeView, onViewChange, badge, badges, canImport, onAddCandidate, onArchived, onCloseJob, title, titleIcon, subtitle, onBack]);
 }

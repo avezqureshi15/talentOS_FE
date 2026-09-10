@@ -9,6 +9,7 @@ import { addCandidate } from "@/services/hiring-requests/hiring-requests";
 import { getApiErrorMessage } from "@/utils/api-error";
 import { isValidEmail, isValidPhone } from "@/utils/validation";
 import { invalidateHiringRequestQueries } from "@/app/dashboard/hiring-requests-detail/pages/invalidate-hiring-queries";
+import ImportCandidatesTab from "@/app/dashboard/hiring-requests-detail/components/import-candidates/import-candidates-tab";
 import "./add-candidate-modal.css";
 
 type AddCandidateModalProps = {
@@ -19,6 +20,7 @@ type AddCandidateModalProps = {
 
 type FieldKey = "name" | "email" | "phone" | "resume";
 type FieldErrors = Partial<Record<FieldKey, string>>;
+type TabKey = "single" | "bulk";
 
 const MAX_RESUME_BYTES = 2 * 1024 * 1024;
 
@@ -46,6 +48,7 @@ const AddCandidateModal = ({ open, onClose, hiringRequestId }: AddCandidateModal
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tab, setTab] = useState<TabKey>("single");
   const refetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -66,6 +69,7 @@ const AddCandidateModal = ({ open, onClose, hiringRequestId }: AddCandidateModal
 
   const handleClose = () => {
     reset();
+    setTab("single");
     onClose();
   };
 
@@ -137,6 +141,28 @@ const AddCandidateModal = ({ open, onClose, hiringRequestId }: AddCandidateModal
 
   return (
     <BaseModal open={open} onClose={handleClose} title="Add candidate" icon="bx bx-user-plus" className="add-candidate-modal">
+      <div className="acm-tabs" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === "single"}
+          className={`acm-tab${tab === "single" ? " acm-tab--active" : ""}`}
+          onClick={() => setTab("single")}
+        >
+          <i className="bx bx-user-plus" /> Add single candidate
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === "bulk"}
+          className={`acm-tab${tab === "bulk" ? " acm-tab--active" : ""}`}
+          onClick={() => setTab("bulk")}
+        >
+          <i className="bx bx-upload" /> Bulk upload candidates
+        </button>
+      </div>
+
+      {tab === "single" ? (
       <form className="acm-form" onSubmit={handleSubmit}>
         <p className="acm-description">
           Add one person with a PDF resume. They are queued for AI evaluation the same way as a careers application.
@@ -223,6 +249,9 @@ const AddCandidateModal = ({ open, onClose, hiringRequestId }: AddCandidateModal
           </Button>
         </div>
       </form>
+      ) : (
+        <ImportCandidatesTab hiringRequestId={hiringRequestId} onClose={handleClose} />
+      )}
     </BaseModal>
   );
 };

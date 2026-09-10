@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import BaseModal from "@/components/ui/modal/base-modal";
 import Button from "@/components/ui/button/button";
 import { useToastStore } from "@/store/toast.store";
 import { ToastType } from "@/components/ui/toast/toast.types";
@@ -13,13 +12,12 @@ import {
 import { HEADER_IMPORT_FILENAME } from "@/layouts/protected-layouts/components/header/header.constants";
 import "./import-candidates-modal.css";
 
-type ImportCandidatesModalProps = {
-  open: boolean;
-  onClose: () => void;
+type ImportCandidatesTabProps = {
   hiringRequestId: string;
+  onClose: () => void;
 };
 
-const ImportCandidatesModal = ({ open, onClose, hiringRequestId }: ImportCandidatesModalProps) => {
+const ImportCandidatesTab = ({ hiringRequestId, onClose }: ImportCandidatesTabProps) => {
   const queryClient = useQueryClient();
   const [file, setFile] = useState<File | null>(null);
   const [isImporting, setIsImporting] = useState(false);
@@ -82,14 +80,8 @@ const ImportCandidatesModal = ({ open, onClose, hiringRequestId }: ImportCandida
     }
   };
 
-  const handleClose = () => {
-    setFile(null);
-    setResult(null);
-    onClose();
-  };
-
   return (
-    <BaseModal open={open} onClose={handleClose} title="Import Candidates" icon="bx bx-upload" className="import-candidates-modal">
+    <div className="import-candidates-modal">
       {!result ? (
         <div className="icm-step">
           <p className="icm-description">
@@ -119,7 +111,7 @@ const ImportCandidatesModal = ({ open, onClose, hiringRequestId }: ImportCandida
           </label>
 
           <div className="icm-actions">
-            <Button variant="ghost" onClick={handleClose}>
+            <Button variant="ghost" onClick={onClose}>
               Cancel
             </Button>
             <Button variant="primary" onClick={handleImport} disabled={!file} loading={isImporting} loadingText="Importing...">
@@ -160,14 +152,14 @@ const ImportCandidatesModal = ({ open, onClose, hiringRequestId }: ImportCandida
           )}
 
           <div className="icm-actions">
-            <Button variant="primary" onClick={handleClose}>
+            <Button variant="primary" onClick={onClose}>
               Done
             </Button>
           </div>
         </div>
       )}
-    </BaseModal>
+    </div>
   );
 };
 
-export default ImportCandidatesModal;
+export default ImportCandidatesTab;

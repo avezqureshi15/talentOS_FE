@@ -12,16 +12,13 @@ export const HEADER_EXPORT_LABEL = "Export";
 export const HEADER_EXPORT_ICON = "bx bx-archive-arrow-down";
 export const HEADER_EXPORT_TOOLTIP = ["Export candidates", "Download the candidate list for this job as an Excel file."];
 
-export const HEADER_IMPORT_LABEL = "Import";
-export const HEADER_IMPORT_ICON = "bx bx-archive-arrow-up";
-export const HEADER_IMPORT_TOOLTIP = ["Import candidates", "Bulk-add candidates from an Excel template."];
 export const HEADER_IMPORT_FILENAME = "candidates_template.xlsx";
 
 export const HEADER_ADD_CANDIDATE_LABEL = "Add candidate";
 export const HEADER_ADD_CANDIDATE_ICON = "bx bx-user-plus";
 export const HEADER_ADD_CANDIDATE_TOOLTIP = [
   "Add candidate",
-  "Add one person with a PDF resume. They are queued for AI evaluation like a careers apply.",
+  "Add a single candidate or bulk-upload from an Excel template.",
 ];
 
 export const HEADER_REFRESH_LABEL = "Refresh";
