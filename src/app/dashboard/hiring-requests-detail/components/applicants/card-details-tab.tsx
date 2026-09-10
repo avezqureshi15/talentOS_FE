@@ -4,34 +4,37 @@ import type { Applicant } from "./applicants.types";
 type Props = {
   applicant: Applicant;
   onDetailsReadMore?: (id: string) => void;
-  isRemote: boolean;
   showAll?: boolean;
 };
 
-const DETAILS_ROWS: { key: keyof Applicant; label: string; suffix?: string; }[] = [
+type DetailItem = {
+  key: string;
+  label: string;
+  value: string;
+  href?: string;
+  external?: boolean;
+  suffix?: string;
+};
+
+const FACT_ROWS: { key: keyof Applicant; label: string; suffix?: string }[] = [
+  { key: "location", label: APPLICANT_LABELS.LOCATION },
   { key: "currentCtc", label: APPLICANT_LABELS.CURRENT_CTC, suffix: " LPA" },
   { key: "expectedCtc", label: APPLICANT_LABELS.EXPECTED_CTC, suffix: " LPA" },
-  { key: "location", label: APPLICANT_LABELS.LOCATION },
   { key: "yearsOfExperience", label: APPLICANT_LABELS.YEARS_OF_EXPERIENCE, suffix: " yrs" },
   { key: "noticePeriod", label: APPLICANT_LABELS.NOTICE_PERIOD, suffix: " days" },
   { key: "howDidYouHear", label: APPLICANT_LABELS.HOW_DID_YOU_HEAR },
   { key: "willingToRelocate", label: APPLICANT_LABELS.WILLING_TO_RELOCATE },
 ];
 
-const DETAIL_VALUE_MAP = (a: Applicant, isRemote: boolean): Record<string, string | undefined> => ({
+const FACT_VALUE_MAP = (a: Applicant): Record<string, string | undefined> => ({
   currentCtc: a.currentCtc,
   expectedCtc: a.expectedCtc,
   location: a.location,
   yearsOfExperience: a.yearsOfExperience,
   noticePeriod: a.noticePeriod,
   howDidYouHear: a.howDidYouHear,
-  willingToRelocate: isRemote
-    ? APPLICANT_LABELS.JOB_IS_REMOTE
-    : a.willingToRelocate === true
-    ? "Yes"
-    : a.willingToRelocate === false
-      ? "No"
-      : undefined,
+  willingToRelocate:
+    a.willingToRelocate === true ? "Yes" : a.willingToRelocate === false ? "No" : undefined,
 });
 
 function formatDetailValue(value: string, suffix?: string): string {
@@ -39,9 +42,45 @@ function formatDetailValue(value: string, suffix?: string): string {
   return `${value}${suffix ?? ""}`;
 }
 
-const CardDetailsTab = ({ applicant: a, onDetailsReadMore, isRemote, showAll = false }: Props) => {
-  const map = DETAIL_VALUE_MAP(a, isRemote);
-  const filled = DETAILS_ROWS.filter((row) => !!map[row.key]);
+function buildDetailItems(a: Applicant): DetailItem[] {
+  const items: DetailItem[] = [];
+  if (a.phone) {
+    items.push({ key: "phone", label: APPLICANT_LABELS.PHONE_NUMBER, value: a.phone, href: `tel:${a.phone}` });
+  }
+  if (a.cvUrl) {
+    items.push({
+      key: "cv",
+      label: APPLICANT_LABELS.CV,
+      value: APPLICANT_LABELS.OPEN_CV,
+      href: a.cvUrl,
+      external: true,
+    });
+  }
+  if (a.linkedinUrl) {
+    items.push({
+      key: "linkedin",
+      label: APPLICANT_LABELS.LINKEDIN,
+      value: APPLICANT_LABELS.VIEW_PROFILE,
+      href: a.linkedinUrl,
+      external: true,
+    });
+  }
+
+  const facts = FACT_VALUE_MAP(a);
+  for (const row of FACT_ROWS) {
+    const value = facts[row.key];
+    if (!value) continue;
+    items.push({
+      key: String(row.key),
+      label: row.label,
+      value: formatDetailValue(value, row.suffix),
+    });
+  }
+  return items;
+}
+
+const CardDetailsTab = ({ applicant: a, onDetailsReadMore, showAll = false }: Props) => {
+  const filled = buildDetailItems(a);
   const visible = showAll ? filled : filled.slice(0, 2);
   const hasMore = !showAll && filled.length > 2;
 
@@ -55,18 +94,24 @@ const CardDetailsTab = ({ applicant: a, onDetailsReadMore, isRemote, showAll = f
       )}
       {visible.length > 0 ? (
         <div className="details-grid">
-          {visible.map((row) => {
-            const value = map[row.key];
-            if (!value) return null;
-            return (
-              <div className="details-row" key={row.key}>
-                <span className="details-label">{row.label}</span>
-                <span className={`details-value${value === APPLICANT_LABELS.JOB_IS_REMOTE ? " details-value--remote" : ""}`}>
-                  {formatDetailValue(value, row.suffix)}
-                </span>
-              </div>
-            );
-          })}
+          {visible.map((row) => (
+            <div className="details-row" key={row.key}>
+              <span className="details-label">{row.label}</span>
+              {row.href ? (
+                <a
+                  className="details-value details-value--link"
+                  href={row.href}
+                  target={row.external ? "_blank" : undefined}
+                  rel={row.external ? "noreferrer" : undefined}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {row.value}
+                </a>
+              ) : (
+                <span className="details-value">{row.value}</span>
+              )}
+            </div>
+          ))}
         </div>
       ) : (
         <p className="cover-letter-text">{APPLICANT_LABELS.NO_DETAILS}</p>

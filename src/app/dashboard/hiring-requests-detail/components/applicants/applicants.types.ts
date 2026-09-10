@@ -206,6 +206,5 @@ export type CardExpandedContentProps = {
   onCoverLetterReadMore: (id: string) => void;
   onAiSummaryReadMore?: (id: string) => void;
   jdId?: string;
-  isRemote?: boolean;
   showAllDetails?: boolean;
 };

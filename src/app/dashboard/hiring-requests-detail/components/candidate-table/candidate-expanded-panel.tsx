@@ -8,7 +8,6 @@ import "./candidate-expanded-panel.css";
 type CandidateExpandedPanelProps = {
   applicant: Applicant;
   jdId?: string;
-  isRemote?: boolean;
   isScreening?: boolean;
   onTimeline?: (candidateId: number) => void;
 };
@@ -16,7 +15,6 @@ type CandidateExpandedPanelProps = {
 const CandidateExpandedPanel = ({
   applicant,
   jdId,
-  isRemote = false,
   isScreening = false,
   onTimeline,
 }: CandidateExpandedPanelProps) => {
@@ -34,7 +32,6 @@ const CandidateExpandedPanel = ({
         onTimeline={(id) => onTimeline?.(id)}
         onCoverLetterReadMore={() => setCoverLetterOpen(true)}
         jdId={jdId}
-        isRemote={isRemote}
         showAllDetails
       />
       <CoverLetterModal

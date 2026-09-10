@@ -23,10 +23,14 @@ export default function DataTable<T>({
   expandedKey,
   renderExpanded,
 }: DataTableProps<T>) {
-  const gridTemplate = selection ? `40px ${gridTemplateColumns}` : gridTemplateColumns;
+  const expandable = Boolean(renderExpanded);
+  const gridTemplate = [expandable ? "28px" : null, selection ? "40px" : null, gridTemplateColumns]
+    .filter(Boolean)
+    .join(" ");
 
   const renderHeader = () => (
-    <div className="dt-row dt-header" style={{ gridTemplateColumns: gridTemplate }}>
+    <div className={`dt-row dt-header${expandable ? " dt-row--expandable" : ""}`} style={{ gridTemplateColumns: gridTemplate }}>
+      {expandable && <div className="dt-cell--expand" aria-hidden />}
       {selection && (
         <div className="dt-cell--checkbox">
           <i
@@ -67,7 +71,8 @@ export default function DataTable<T>({
 
         {loading ? (
           [1, 2, 3].map((n) => (
-            <div key={n} className="dt-row" style={{ gridTemplateColumns: gridTemplate }}>
+            <div key={n} className={`dt-row${expandable ? " dt-row--expandable" : ""}`} style={{ gridTemplateColumns: gridTemplate }}>
+              {expandable && <div className="dt-cell--expand" />}
               {selection && (
                 <div className="dt-cell--checkbox">
                   <span className="dt-skeleton dt-skeleton--box" />
@@ -85,10 +90,12 @@ export default function DataTable<T>({
         ) : (
           data.map((row, i) => {
             const key = keyExtractor(row, i);
+            const isExpanded = expandedKey != null && String(expandedKey) === String(key);
             const className = [
               "dt-row",
               "dt-row-body",
               onRowClick ? "dt-row--clickable" : "",
+              expandable ? "dt-row--expandable" : "",
               rowClassName?.(row, i) ?? "",
             ]
               .filter(Boolean)
@@ -96,6 +103,20 @@ export default function DataTable<T>({
 
             const cellContent = (
               <>
+                {expandable && (
+                  <button
+                    type="button"
+                    className={`dt-expand-toggle${isExpanded ? " dt-expand-toggle--open" : ""}`}
+                    aria-expanded={isExpanded}
+                    aria-label={isExpanded ? "Collapse row" : "Expand row"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRowClick?.(row);
+                    }}
+                  >
+                    <i className="bx bx-chevron-right" aria-hidden />
+                  </button>
+                )}
                 {selection && (
                   <div className="dt-cell--checkbox">
                     <i
@@ -127,8 +148,6 @@ export default function DataTable<T>({
                 })}
               </>
             );
-
-            const isExpanded = expandedKey != null && String(expandedKey) === String(key);
 
             const rowEl = animated ? (
               <motion.div

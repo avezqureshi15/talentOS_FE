@@ -104,7 +104,6 @@ const CandidateTable = ({
   hiringRequestId,
   onScreeningTriggered,
   expandedId,
-  isRemote,
 }: CandidateTableProps) => {
   const CELL_RENDERERS: Record<string, (c: Applicant) => ReactNode> = {
     name: (c) => (
@@ -290,7 +289,6 @@ const CandidateTable = ({
         <CandidateExpandedPanel
           applicant={c}
           jdId={hiringRequestId}
-          isRemote={isRemote}
           isScreening={activeStage === "screening"}
           onTimeline={(id) => {
             onTimelineOpen?.({ ...c, candidateId: id });
