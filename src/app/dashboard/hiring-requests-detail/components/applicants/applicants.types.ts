@@ -208,5 +208,4 @@ export type CardExpandedContentProps = {
   jdId?: string;
   isRemote?: boolean;
   showAllDetails?: boolean;
-  currentRoundHref?: string;
 };

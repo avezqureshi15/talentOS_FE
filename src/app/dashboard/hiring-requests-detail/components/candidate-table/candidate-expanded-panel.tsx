@@ -23,10 +23,6 @@ const CandidateExpandedPanel = ({
   const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
   const [coverLetterOpen, setCoverLetterOpen] = useState(false);
   const stateConfig = useApplicantState(applicant, isScreening);
-  const currentRoundHref =
-    applicant.currentRoundId && jdId
-      ? `/hiring-requests/${jdId}/round-details/${applicant.currentRoundId}?candidateId=${applicant.candidateId}`
-      : undefined;
 
   return (
     <div className="cep">
@@ -40,7 +36,6 @@ const CandidateExpandedPanel = ({
         jdId={jdId}
         isRemote={isRemote}
         showAllDetails
-        currentRoundHref={currentRoundHref}
       />
       <CoverLetterModal
         open={coverLetterOpen}

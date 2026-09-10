@@ -156,11 +156,12 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
 
   const columns = useMemo<StageColumn[]>(() => {
     if (activeStage === "screening") {
-      return [
-        { key: "name", label: "Candidate", flex: 2 },
-        { key: "status", label: "Status", flex: 1 },
-        { key: "actions", label: "Actions", flex: 1.6 },
-      ];
+        return [
+          { key: "name", label: "Candidate", flex: 2 },
+          { key: "status", label: "Status", flex: 1 },
+          { key: "round", label: "Current round", flex: 1.1 },
+          { key: "actions", label: "Actions", flex: 1.6 },
+        ];
     }
     if (activeStage === "interview") {
       if (interviewSubFilter === "ai-incoming") {

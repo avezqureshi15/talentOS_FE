@@ -28,7 +28,6 @@ const CardExpandedContent = ({
   isRemote = false,
   jdId,
   showAllDetails = false,
-  currentRoundHref,
 }: CardExpandedContentProps) => (
   <div className="accordion-body">
     {a.status === "ai_screening_evaluation_failed" && a.screeningReview && (
@@ -67,17 +66,6 @@ const CardExpandedContent = ({
       <button className="action-link action-link-btn" onClick={(e) => { e.stopPropagation(); onTimeline(a.candidateId); }}>
         <i className="bx bx-clock"></i> {APPLICANT_LABELS.TIMELINE}
       </button>
-      {currentRoundHref && (
-        <a
-          className="cep-round-btn"
-          href={currentRoundHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <i className="bx bx-info-circle" /> Current round
-        </a>
-      )}
     </div>
 
     <div className="accordion-tabs block">
