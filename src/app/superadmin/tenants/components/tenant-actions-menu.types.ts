@@ -1,6 +1,6 @@
 import type { Tenant } from "@/app/superadmin/tenants/services/tenants.service";
 
-export type TenantAction = "approve" | "reject" | "edit" | "suspend" | "reactivate";
+export type TenantAction = "approve" | "reject" | "edit" | "suspend" | "reactivate" | "delete";
 
 export type TenantActionsMenuProps = {
   tenant: Tenant;
@@ -10,4 +10,5 @@ export type TenantActionsMenuProps = {
   onEdit: (action: TenantAction) => void;
   onSuspend: (action: TenantAction) => void;
   onReactivate: (action: TenantAction) => void;
+  onDelete: (action: TenantAction) => void;
 };

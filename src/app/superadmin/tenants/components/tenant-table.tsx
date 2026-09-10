@@ -13,6 +13,7 @@ export default function TenantTable({
   onApprove,
   onReject,
   onReactivate,
+  onDelete,
   onRowClick,
 }: TenantTableProps) {
   return (
@@ -23,6 +24,9 @@ export default function TenantTable({
         {
           header: "Status",
           render: (t: Tenant) => {
+            if (t.deleted_at) {
+              return <span className="dt-badge dt-badge--inactive">Deleted</span>;
+            }
             if (!t.is_active && t.verification_status === "pending") {
               return <span className="dt-badge dt-badge--pending">Pending</span>;
             }
@@ -62,6 +66,7 @@ export default function TenantTable({
                 onApprove={() => onApprove(t)}
                 onReject={() => onReject(t)}
                 onReactivate={() => onReactivate(t)}
+                onDelete={() => onDelete(t)}
               />
             </div>
           ),

@@ -58,12 +58,24 @@ httpClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // ── Handle 403 (role denied / unverified org) ──────────────────────
+    // ── Handle 403 (role denied / unverified or locked org) ────────────
     if (error.response?.status === 403) {
+      const message = getApiErrorMessage(
+        error,
+        "You don't have permission to perform this action",
+      );
+      const isOrgLock =
+        message === "Your organization is suspended." ||
+        message === "Your organization is permanently deleted.";
+      if (isOrgLock) {
+        useToastStore.getState().addToast(message, ToastType.ERROR);
+        storage.remove(ACCESS_TOKEN_KEY);
+        storage.remove(REFRESH_TOKEN_KEY);
+        storage.remove(AUTH_STORAGE_KEY);
+        window.location.href = "/login";
+        return Promise.reject(error);
+      }
       if (!originalRequest?.skip403Toast) {
-        const message =
-          error.response?.data?.error ||
-          "You don't have permission to perform this action";
         useToastStore.getState().addToast(message, ToastType.ERROR);
       }
       return Promise.reject(error);

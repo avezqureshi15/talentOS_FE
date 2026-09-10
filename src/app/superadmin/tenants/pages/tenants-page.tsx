@@ -6,6 +6,7 @@ import TenantTable from "@/app/superadmin/tenants/components/tenant-table";
 import CreateTenantModal from "@/app/superadmin/tenants/components/create-tenant-modal";
 import EditTenantModal from "@/app/superadmin/tenants/components/edit-tenant-modal";
 import DeleteTenantDialog from "@/app/superadmin/tenants/components/delete-dialog";
+import PermanentDeleteTenantDialog from "@/app/superadmin/tenants/components/permanent-delete-dialog";
 import PageHeader from "@/layouts/protected-layouts/components/header/page-header";
 import { useCmdPaletteRegistration } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette-registration";
 
@@ -21,6 +22,7 @@ export default function TenantsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editTenant, setEditTenant] = useState<Tenant | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Tenant | null>(null);
+  const [permanentDeleteTarget, setPermanentDeleteTarget] = useState<Tenant | null>(null);
   const [inviteInfo, setInviteInfo] = useState<{ admin_email: string; invite_token: string } | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -147,6 +149,7 @@ export default function TenantsPage() {
               { value: "", label: "All Status" },
               { value: "active", label: "Active" },
               { value: "suspended", label: "Suspended" },
+              { value: "deleted", label: "Deleted" },
             ],
           },
         ]}
@@ -165,11 +168,12 @@ export default function TenantsPage() {
           tenants={tenants}
           loading={loading}
           busyTenantId={busyTenantId}
-          onEdit={(t) => setEditTenant(t)}
+          onEdit={(t) => { if (!t.deleted_at) setEditTenant(t); }}
           onSuspend={(t) => setDeleteTarget(t)}
           onApprove={handleApprove}
           onReject={handleReject}
           onReactivate={handleReactivate}
+          onDelete={(t) => setPermanentDeleteTarget(t)}
           onRowClick={(t) => navigate(`/superadmin/tenants/${t.id}`)}
         />
 
@@ -234,6 +238,14 @@ export default function TenantsPage() {
           tenant={deleteTarget}
           onClose={() => setDeleteTarget(null)}
           onSuccess={() => { setDeleteTarget(null); refresh(); }}
+        />
+      )}
+
+      {permanentDeleteTarget && (
+        <PermanentDeleteTenantDialog
+          tenant={permanentDeleteTarget}
+          onClose={() => setPermanentDeleteTarget(null)}
+          onSuccess={() => { setPermanentDeleteTarget(null); refresh(); }}
         />
       )}
     </div>

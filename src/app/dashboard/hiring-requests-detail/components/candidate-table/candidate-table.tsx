@@ -77,7 +77,7 @@ function getFinalVerdictChip(verdict?: string): { label: string; cssClass: strin
   return {
     label: FINAL_VERDICT_TABLE_LABELS[verdict],
     cssClass: verdict,
-    tooltip: STATE_CONFIGS[verdict].chip.label,
+    tooltip: STATE_CONFIGS[verdict]?.chip?.label ?? FINAL_VERDICT_TABLE_LABELS[verdict],
   };
 }
 

@@ -26,7 +26,7 @@ export function useFinalVerdictsData(
 ): UseFinalVerdictsResult {
   const candidateStatus = FINAL_VERDICT_API_STATUS[subTab];
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSizeState] = useState(PAGINATION.APPLICATIONS_PER_PAGE);
+  const [pageSize, setPageSizeState] = useState<number>(PAGINATION.APPLICATIONS_PER_PAGE);
 
   const depsKey = `${jobId}|${candidateStatus}|${pageSize}`;
   const [prevDepsKey, setPrevDepsKey] = useState(depsKey);
