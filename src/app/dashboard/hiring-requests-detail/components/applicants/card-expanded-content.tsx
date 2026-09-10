@@ -1,0 +1,93 @@
+import { APPLICANT_LABELS } from "@/constants/constants";
+import CardDetailsTab from "./card-details-tab";
+import CardCoverLetterTab from "./card-cover-letter-tab";
+import CardAiSummaryTab from "./card-ai-summary-tab";
+import CardRoundsTab from "./card-rounds-tab";
+import type { CardExpandedContentProps } from "./applicants.types";
+
+function screeningFailureLabel(callOutcome?: string): string {
+  switch (callOutcome) {
+    case "no_answer": return "Unable to reach candidate — no answer";
+    case "voicemail": return "Reached voicemail — candidate didn't pick up";
+    case "declined":  return "Candidate declined the call";
+    case "dropped":   return "Call was dropped before completing";
+    case "failed":    return "Call failed to connect";
+    default:          return "Screening call could not be completed";
+  }
+}
+
+const CardExpandedContent = ({
+  applicant: a,
+  stateConfig,
+  accordionTab,
+  onTabChange,
+  onDetailsReadMore,
+  onCoverLetterReadMore,
+  onAiSummaryReadMore,
+  jdId,
+  showAllDetails = false,
+}: CardExpandedContentProps) => (
+  <div className="accordion-body">
+    {a.status === "ai_screening_evaluation_failed" && a.screeningReview && (
+      <div className="screening-failure-banner">
+        <i className="bx bx-error-circle screening-failure-icon" />
+        <div className="screening-failure-content">
+          <p className="screening-failure-reason">{screeningFailureLabel(a.screeningReview.callOutcome)}</p>
+          {a.screeningReview.endedReason && (
+            <p className="screening-failure-detail">Call ended: {a.screeningReview.endedReason}</p>
+          )}
+        </div>
+      </div>
+    )}
+    {a.status === "ai_screening_flagged" && a.screeningReview && (
+      <div className="screening-failure-banner">
+        <i className="bx bx-error-circle screening-failure-icon" />
+        <div className="screening-failure-content">
+          <p className="screening-failure-reason">
+            {a.screeningReview.flagReason ?? a.screeningReview.summary ?? "AI screening flagged — review the candidate manually"}
+          </p>
+        </div>
+      </div>
+    )}
+    <div className="accordion-tabs block">
+      <button className={`accordion-tab ${accordionTab === "details" ? "accordion-tab--active" : ""}`} onClick={() => onTabChange("details")} type="button">
+        <i className="bx bx-detail" /> {APPLICANT_LABELS.DETAILS}
+      </button>
+      <button className={`accordion-tab ${accordionTab === "cover-letter" ? "accordion-tab--active" : ""}`} onClick={() => onTabChange("cover-letter")} type="button">
+        <i className="bx bx-notepad" /> {APPLICANT_LABELS.COVER_LETTER}
+      </button>
+      <button className={`accordion-tab ${accordionTab === "ai-summary" ? "accordion-tab--active" : ""}`} onClick={() => onTabChange("ai-summary")} type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5Z" /></svg>
+        {APPLICANT_LABELS.AI_SUMMARY}
+      </button>
+      <button className={`accordion-tab ${accordionTab === "rounds" ? "accordion-tab--active" : ""}`} onClick={() => onTabChange("rounds")} type="button">
+        <i className="bx bx-repeat" /> {APPLICANT_LABELS.ROUNDS}
+      </button>
+    </div>
+
+    {accordionTab === "details" && (
+      <CardDetailsTab
+        applicant={a}
+        onDetailsReadMore={onDetailsReadMore}
+        showAll={showAllDetails}
+      />
+    )}
+    {accordionTab === "cover-letter" && <CardCoverLetterTab coverLetter={a.coverLetter ?? ""} applicantId={a.id} onReadMore={onCoverLetterReadMore} />}
+    {accordionTab === "rounds" && <CardRoundsTab candidateId={a.candidateId} jdId={jdId} />}
+    {accordionTab === "ai-summary" && (
+      <CardAiSummaryTab
+        aiSummary={a.aiSummary ?? ""}
+        applicantId={a.id}
+        onReadMore={onAiSummaryReadMore}
+        reviews={a.reviews}
+        showFull={showAllDetails}
+      />
+    )}
+
+    {stateConfig.footerBadge && (
+      <div className={stateConfig.footerBadge.className}>{stateConfig.footerBadge.text}</div>
+    )}
+  </div>
+);
+
+export default CardExpandedContent;

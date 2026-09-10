@@ -1,0 +1,34 @@
+.info-chip-tooltip {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  max-width: 260px;
+  word-break: break-word;
+}
+
+.info-chip-tooltip--wide {
+  width: 200px;
+}
+
+.info-chip-tooltip--below {
+  white-space: nowrap;
+  width: auto;
+}
+
+.info-chip-tip-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-white);
+}
+
+.info-chip-tip-line {
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

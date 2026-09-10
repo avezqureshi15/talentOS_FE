@@ -1,0 +1,28 @@
+export const PERMISSIONS = {
+  APPLICATION_VIEW: "application.view",
+  APPLICATION_EVALUATE: "application.evaluate",
+  APPLICATION_REJECT: "application.reject",
+  HIRING_REQUEST_CREATE: "hiring_request.create",
+  HIRING_REQUEST_EDIT: "hiring_request.edit",
+  HIRING_REQUEST_VIEW: "hiring_request.view",
+  HIRING_REQUEST_DELETE: "hiring_request.delete",
+  USER_INVITE: "user.invite",
+  USER_MANAGE: "user.manage",
+  TENANT_VIEW: "tenant.view",
+  TENANT_EDIT: "tenant.edit",
+  SETTINGS_VIEW: "settings.view",
+  SETTINGS_EDIT: "settings.edit",
+  SLOT_SUBMIT: "slot.submit",
+  SLOT_VIEW_ALL: "slot.view_all",
+  REVIEW_SUBMIT: "review.submit",
+  REVIEW_VIEW_ALL: "review.view_all",
+  CHAT: "chat",
+  API_KEY_MANAGE: "api_key.manage",
+  REPORT_EXPORT: "report.export",
+  APPLICATION_WORKFLOW: "application.workflow",
+  INTERVIEW_PLAN_EDIT: "interview.plan_edit",
+  JOB_TEAM_MANAGE: "job.team_manage",
+  EMPLOYEE_VIEW: "employee.view",
+} as const;
+
+export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

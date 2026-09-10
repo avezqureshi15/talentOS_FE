@@ -1,36 +1,222 @@
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
+import { Outlet, useParams, useNavigate, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { pageTransition, springSnap } from "@/utils/motion";
 
-import { HISTORY_EARLIER, HISTORY_TODAY } from "@/constants/constants";
 import { Icon } from "@/components/ui/icons";
-import Header from "@/components/ui/header/header";
-import Sidebar from "@/components/ui/sidebar/sidebar";
+import Header from "@/layouts/protected-layouts/components/header/header";
+import Sidebar from "@/layouts/protected-layouts/components/sidebar/sidebar";
+import { useChatHistory } from "@/layouts/protected-layouts/components/sidebar/hooks/use-chat-history";
+import { useDeleteChat } from "@/layouts/protected-layouts/components/sidebar/hooks/use-delete-chat";
+import { useRenameChat } from "@/layouts/protected-layouts/components/sidebar/hooks/use-rename-chat";
+import { useChatStore } from "@/store/chat.store";
+import { useNotificationStore } from "@/store/notification.store";
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import CommandPalette from "@/layouts/protected-layouts/components/command-palette/command-palette";
+import { useCommandPalette } from "@/layouts/protected-layouts/components/command-palette/hooks/use-command-palette";
+import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import "./protected-layouts.css";
+import { ROUTES, HIRING_TABS } from "@/constants/routes";
+import { KEYBOARD_SHORTCUTS } from "@/constants/keyboard-shortcuts";
+import { useUiStore } from "@/store/ui.store";
+import { STORAGE_KEYS } from "@/constants/constants";
+import { getUx, patchUx } from "@/utils/storage";
+import "@/app/chat/pages/chat.css";
+
+function isHiringRequestsPath(pathname: string): boolean {
+  return pathname === ROUTES.HIRING_REQUESTS || pathname.startsWith(`${ROUTES.HIRING_REQUESTS}/`);
+}
+
+function getInitialSidebarState(): boolean {
+  if (typeof window !== "undefined" && isHiringRequestsPath(window.location.pathname)) {
+    return false;
+  }
+  return getUx(STORAGE_KEYS.UX).sb;
+}
 
 export default function ProtectedLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(getInitialSidebarState);
+  const location = useLocation();
+  const { chatId: paramsChatId } = useParams();
+  const storeChatId = useChatStore((s) => s.chatId);
+  const activeChatId = paramsChatId ?? storeChatId;
+  const { data: chats, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatHistory();
+  const navigate = useNavigate();
+  const resetChat = useChatStore((s) => s.reset);
+
+  const handleSelectChat = (id: string) => {
+    navigate(`${ROUTES.CHAT}/${id}`);
+  };
+
+  const handleSelectHiringRequest = useCallback(
+    (id: string) => {
+      navigate(`${ROUTES.HIRING_REQUESTS}/${id}`);
+    },
+    [navigate],
+  );
+
+  const handleSelectEmployee = useCallback(
+    (empId: string) => {
+      navigate(ROUTES.ADMIN_EMPLOYEE_DETAIL.replace(":empId", empId));
+    },
+    [navigate],
+  );
+
+  const deleteChatMutation = useDeleteChat();
+  const renameChatMutation = useRenameChat();
+
+  const handleRenameChat = useCallback(
+    (chatId: string, title: string) => {
+      renameChatMutation.mutate({ chatId, title });
+    },
+    [renameChatMutation],
+  );
+
+  const handleDeleteChat = useCallback(
+    (chatId: string) => {
+      deleteChatMutation.mutate(chatId);
+      if (activeChatId === chatId) {
+        resetChat();
+        navigate(ROUTES.CHAT);
+      }
+    },
+    [activeChatId, deleteChatMutation, resetChat, navigate],
+  );
+
+  const handleNewChat = useCallback(() => {
+    resetChat();
+    navigate(ROUTES.CHAT);
+  }, [navigate, resetChat]);
+
+  const handleHome = useCallback(() => {
+    navigate(ROUTES.HIRING_REQUESTS);
+  }, [navigate]);
+
+  const handleToggleSidebar = useCallback(() => {
+    setSidebarOpen((prev) => {
+      const next = !prev;
+      patchUx(STORAGE_KEYS.UX, { sb: next });
+      return next;
+    });
+  }, []);
+
+  const handleNotifications = useCallback(() => {
+    navigate(ROUTES.NOTIFICATIONS);
+  }, [navigate]);
+
+  useEffect(() => {
+    useNotificationStore.getState().startPolling();
+    return () => useNotificationStore.getState().stopPolling();
+  }, []);
+
+  useEffect(() => {
+    if (isHiringRequestsPath(location.pathname)) {
+      setSidebarOpen(false);
+      return;
+    }
+    setSidebarOpen(getUx(STORAGE_KEYS.UX).sb);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const k = KEYBOARD_SHORTCUTS;
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.HOME.code) {
+        e.preventDefault();
+        handleHome();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.NEW_CHAT.code) {
+        e.preventDefault();
+        handleNewChat();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.TOGGLE_SIDEBAR.code) {
+        e.preventDefault();
+        handleToggleSidebar();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === k.ALERTS.code) {
+        e.preventDefault();
+        handleNotifications();
+      }
+      if (e.altKey && e.code === k.SHORTCUTS.code) {
+        e.preventDefault();
+        useUiStore.getState().toggleShortcutsModal();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [handleNewChat, handleHome, handleToggleSidebar, handleNotifications]);
+
+  const layoutKey = useMemo(() => {
+    const p = location.pathname;
+    const base = p.replace(new RegExp(`\\/(${HIRING_TABS.join("|")})$`), "");
+    return base !== p ? base : p;
+  }, [location.pathname]);
+
+  const {
+    isOpen: cmdOpen,
+    query: cmdQuery,
+    setQuery: setCmdQuery,
+    sections: cmdSections,
+    selectedIndex: cmdSelectedIndex,
+    open: cmdOpenPalette,
+    close: cmdClose,
+    handleKeyDown: cmdHandleKeyDown,
+    loadMore: cmdLoadMore,
+    hasMore: cmdHasMore,
+    isLoadingMore: cmdIsLoadingMore,
+  } = useCommandPalette(handleSelectHiringRequest, handleNewChat, handleSelectEmployee);
 
   return (
     <div className="chat-root">
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
-        HISTORY_TODAY={HISTORY_TODAY}
-        HISTORY_EARLIER={HISTORY_EARLIER}
+        chats={chats ?? { today: [], earlier: [] }}
+        activeChatId={activeChatId}
+        onSelectChat={handleSelectChat}
+        onDeleteChat={handleDeleteChat}
+        onRenameChat={handleRenameChat}
+        onLoadMore={fetchNextPage}
+        hasMore={hasNextPage}
+        isLoadingMore={isFetchingNextPage}
         Icon={Icon}
       />
 
       <main className="chat-main">
-        <Header
-          mounted={false}
-          sidebarOpen={sidebarOpen}
-          setSidebarOpen={setSidebarOpen}
-          Icon={Icon}
-        />
+        {!location.pathname.startsWith("/chat") && <Header Icon={Icon} sidebarOpen={sidebarOpen} onOpenPalette={cmdOpenPalette} />}
         <ErrorBoundary>
-          <Outlet />
+          <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={layoutKey}
+                variants={pageTransition}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={springSnap}
+                className="protected-layout-content"
+              >
+                <Outlet />
+              </motion.div>
+            </AnimatePresence>
+          </Suspense>
         </ErrorBoundary>
       </main>
+
+      <CommandPalette
+        open={cmdOpen}
+        onClose={cmdClose}
+        query={cmdQuery}
+        onQueryChange={setCmdQuery}
+        sections={cmdSections}
+        selectedIndex={cmdSelectedIndex}
+        onKeyDown={cmdHandleKeyDown}
+        onSelectHiringRequest={handleSelectHiringRequest}
+        onSelectEmployee={handleSelectEmployee}
+        onNewChat={handleNewChat}
+        onLoadMore={cmdLoadMore}
+        hasMore={cmdHasMore}
+        isLoadingMore={cmdIsLoadingMore}
+      />
     </div>
   );
 }

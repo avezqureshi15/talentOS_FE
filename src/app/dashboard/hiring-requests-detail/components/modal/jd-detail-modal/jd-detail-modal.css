@@ -1,0 +1,98 @@
+.jd-modal-root {
+  width: 800px !important;
+}
+
+.jd-modal-body {
+  display: flex;
+  gap: 24px;
+  padding: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.jd-modal-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.jd-modal-right {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.jd-modal-section {
+  margin-bottom: 20px;
+}
+
+.jd-modal-section h3 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.jd-modal-section h3 i {
+  font-size: 14px;
+}
+
+.jd-modal-section p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.jd-modal-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.jd-modal-chip {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.jd-modal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.jd-modal-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jd-modal-detail-item .label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.jd-modal-detail-item .label i {
+  font-size: 13px;
+}
+
+.jd-modal-detail-item .value {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+}

@@ -1,0 +1,504 @@
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
+import { useInterviewerSlots } from "@/hooks/use-interviewer-slots";
+import { useInterviewerSearch } from "@/hooks/use-interviewer-search";
+import { useBookInterview } from "@/hooks/use-book-interview";
+import { useBookExternalInterview } from "@/hooks/use-book-external-interview";
+import { useRescheduleInterview } from "@/hooks/use-reschedule-interview";
+import { useMoveToInterview } from "@/hooks/use-move-to-interview";
+import SrStep1 from "./sr-step1";
+import SrStep2 from "./sr-step2";
+import SrAskSlotsButton from "./sr-ask-slots-button";
+import { SR_LABELS, AI_ID, AI_AUTO_SLOT_ID } from "./schedule-round-modal.constants";
+import type { ScheduleRoundModalProps, Interviewer, ScheduleStep } from "./schedule-round-modal.types";
+import "./schedule-round-modal.css";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export default function ScheduleRoundModal({ open, candidateName, candidateId, candidateNumberId, jdId, hiringRequestId, interviewId, interviewerEmpId, interviewerName, roundName, rescheduleMode, onClose, onScheduled }: ScheduleRoundModalProps) {
+  const [step, setStep] = useState<ScheduleStep>(1);
+  const [search, setSearch] = useState("");
+  // justification: stores multiple selected interviewers for a round
+  const [selectedInterviewers, setSelectedInterviewers] = useState<Interviewer[]>([]);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  // justification: tracks which interviewer tab is active for slot view
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [gmeetEnabled, setGmeetEnabled] = useState(true);
+  // justification: stores the user-editable round title
+  const [roundTitle, setRoundTitle] = useState(SR_LABELS.ROUND_TITLE_DEFAULT);
+  // justification: tracks whether the round title is being edited inline
+  const [editingTitle, setEditingTitle] = useState(false);
+  // justification: shows an inline confirmation when round name is still the default
+  const [showNameConfirm, setShowNameConfirm] = useState(false);
+  const titleInputRef = useRef<HTMLInputElement | null>(null);
+
+  // justification: "enter email manually" is a separate selection track from
+  // the employee interviewer list — no id, no slots, just a typed email + a
+  // scheduler-chosen time window.
+  const [isExternalSelected, setIsExternalSelected] = useState(false);
+  const [externalEmail, setExternalEmail] = useState("");
+  const [externalName, setExternalName] = useState("");
+  const [externalDate, setExternalDate] = useState("");
+  const [externalStartTime, setExternalStartTime] = useState("");
+  const [externalEndTime, setExternalEndTime] = useState("");
+
+  // justification: pre-populate the interviewer for reschedule mode — we use the emp_id from the existing interview
+  useEffect(() => {
+    if (!rescheduleMode || !interviewerEmpId) return;
+    setSelectedInterviewers([{
+      id: interviewerEmpId,
+      emp_id: interviewerEmpId,
+      name: interviewerName || "Existing Interviewer",
+      designation: "",
+      department: "",
+      email: "",
+      slots_count: 0,
+      has_slots: true,
+    }]);
+  }, [rescheduleMode, interviewerEmpId, interviewerName]);
+
+  const { data: searchData, isLoading: isSearching } = useInterviewerSearch(!rescheduleMode ? search : "");
+
+  const interviewers = useMemo(() => (searchData?.data ?? []).map((u) => ({
+    id: String(u.id),
+    emp_id: u.emp_id,
+    name: u.name,
+    designation: u.designation,
+    department: u.department,
+    email: u.email,
+    slots_count: u.slots_count ?? 0,
+    has_slots: u.has_slots ?? false,
+  })), [searchData]);
+
+  const tabs = useMemo(() => {
+    if (selectedInterviewers.length < 2) return [];
+    return selectedInterviewers.map((iv) => ({ id: iv.id, label: iv.name }));
+  }, [selectedInterviewers]);
+
+  const activeInterviewerId = selectedInterviewers[0]?.id ?? null;
+  const isAiSelected = activeInterviewerId === AI_ID;
+
+  const slotFetchId = isAiSelected ? null : activeInterviewerId;
+
+  const { data: activeSlots, isLoading, refetch: refetchSlots } = useInterviewerSlots(slotFetchId);
+
+  const allSlots = useMemo(() => activeSlots ?? [], [activeSlots]);
+
+  const selectedSlotData = selectedSlotId && allSlots ? allSlots.find((s) => s.id === selectedSlotId) : null;
+  const isExternalTimeValid = !!externalStartTime && !!externalEndTime && externalEndTime > externalStartTime;
+  const isExternalValid = isExternalSelected
+    && EMAIL_RE.test(externalEmail.trim())
+    && !!externalDate
+    && isExternalTimeValid;
+  const slotTime = isExternalSelected
+    ? (externalStartTime && externalEndTime ? `${externalStartTime} - ${externalEndTime}` : "")
+    : (selectedSlotData?.label ?? "");
+  const slotDate = isExternalSelected
+    ? (externalDate ? new Date(`${externalDate}T00:00:00`).toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric" }) : "")
+    : (selectedSlotData?.description ?? "");
+  const interviewerNames = isExternalSelected
+    ? (externalName.trim() || externalEmail.trim() || SR_LABELS.INTERVIEWER_LABEL)
+    : selectedInterviewers.map((iv) => iv.name).join(", ");
+
+  const invitePreview = SR_LABELS.INVITE_PREVIEW
+    .replace("{candidate}", candidateName)
+    .replace("{interviewer}", interviewerNames)
+    .replace("{date}", slotDate)
+    .replace("{time}", slotTime);
+
+  const canProceedTo2 = isExternalSelected ? isExternalValid : (selectedInterviewers.length > 0 && !!selectedSlotId);
+  const canProceedTo3 = canProceedTo2;
+  const stepDesc = step === 1 ? SR_LABELS.STEP_1_DESC : SR_LABELS.STEP_2_DESC;
+
+  const handleSlotSelect = (slotId: string) => {
+    setSelectedSlotId((prev) => (prev === slotId ? null : slotId));
+  };
+
+  const handleSelectInterviewer = (iv: Interviewer) => {
+    setIsExternalSelected(false);
+    const isAlreadySelected = selectedInterviewers.some((s) => s.id === iv.id);
+    if (isAlreadySelected) {
+      setSelectedInterviewers([]);
+      setSelectedSlotId(null);
+    } else {
+      setSelectedSlotId(null);
+      setSelectedInterviewers([iv]);
+    }
+    setSearch("");
+  };
+
+  const handleSelectExternal = () => {
+    setIsExternalSelected((prev) => {
+      const next = !prev;
+      if (next) {
+        setSelectedInterviewers([]);
+        setSelectedSlotId(null);
+      }
+      return next;
+    });
+    setSearch("");
+  };
+
+  const handleSelectAi = () => {
+    setIsExternalSelected(false);
+    if (isAiSelected) {
+      setSelectedInterviewers([]);
+      setSelectedSlotId(null);
+    } else {
+      setSelectedInterviewers([{
+        id: AI_ID,
+        emp_id: AI_ID,
+        name: SR_LABELS.AI_INTERVIEWER_NAME,
+        designation: "",
+        department: "",
+        email: "",
+        slots_count: 0,
+        has_slots: true,
+      }]);
+      setSelectedSlotId(AI_AUTO_SLOT_ID);
+    }
+    setSearch("");
+  };
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    setSelectedSlotId(null);
+  };
+
+  const startEditTitle = useCallback(() => {
+    setEditingTitle(true);
+    requestAnimationFrame(() => titleInputRef.current?.select());
+  }, []);
+
+  const finishEditTitle = useCallback(() => {
+    setEditingTitle(false);
+    setRoundTitle((prev) => prev.trim() || SR_LABELS.ROUND_TITLE_DEFAULT);
+  }, []);
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") finishEditTitle();
+    if (e.key === "Escape") { setRoundTitle(SR_LABELS.ROUND_TITLE_DEFAULT); setEditingTitle(false); }
+  };
+
+  const resetState = () => {
+    setStep(1);
+    setSearch("");
+    setSelectedInterviewers([]);
+    setSelectedSlotId(null);
+    setActiveTab(null);
+    setGmeetEnabled(true);
+    setShowNameConfirm(false);
+    setIsExternalSelected(false);
+    setExternalEmail("");
+    setExternalName("");
+    setExternalDate("");
+    setExternalStartTime("");
+    setExternalEndTime("");
+  };
+
+  const { mutateAsync: bookInterview, isPending: isBooking } = useBookInterview();
+  const { mutateAsync: bookExternalInterviewMut, isPending: isBookingExternal } = useBookExternalInterview();
+  const { mutateAsync: rescheduleInterviewMut, isPending: isRescheduling } = useRescheduleInterview();
+  const { mutateAsync: moveToInterviewMut, isPending: isSendingAiInvite } = useMoveToInterview();
+
+  const isPending = isBooking || isBookingExternal || isRescheduling || isSendingAiInvite;
+
+  const handleClose = () => { resetState(); onClose(); };
+  const handleDone = () => { onScheduled(candidateId); handleClose(); };
+  const nextStep = () => setStep((s) => (s + 1) as ScheduleStep);
+
+  const doReschedule = async () => {
+    if (!selectedSlotId || !interviewId) return;
+    try {
+      await rescheduleInterviewMut({ interviewId, slot_id: selectedSlotId });
+    } catch {
+      return;
+    }
+    setStep(3);
+  };
+
+  const doBook = async () => {
+    if (isExternalSelected) {
+      if (!isExternalValid || !jdId || !candidateNumberId) return;
+      try {
+        await bookExternalInterviewMut({
+          round_name: roundTitle,
+          jd_id: jdId,
+          candidate_id: candidateNumberId,
+          interviewer_email: externalEmail.trim(),
+          interviewer_name: externalName.trim() || undefined,
+          start_at: new Date(`${externalDate}T${externalStartTime}`).toISOString(),
+          end_at: new Date(`${externalDate}T${externalEndTime}`).toISOString(),
+          create_google_meet: gmeetEnabled,
+        });
+      } catch {
+        return;
+      }
+      setShowNameConfirm(false);
+      nextStep();
+      return;
+    }
+    if (!selectedSlotId || selectedInterviewers.length === 0) return;
+    const hrId = hiringRequestId ?? jdId;
+    if (isAiSelected) {
+      if (hrId && candidateNumberId) {
+        try {
+          await moveToInterviewMut({
+            hiringRequestId: hrId,
+            candidateId: candidateNumberId,
+            round_name: roundTitle,
+            interview_type: "AI_INTERVIEW",
+            round_type: "AI_INTERVIEW_ROUND",
+          });
+        } catch {
+          return;
+        }
+      }
+    } else if (jdId && candidateNumberId) {
+      try {
+        await bookInterview({
+          round_name: roundTitle,
+          slot_id: selectedSlotId,
+          jd_id: jdId,
+          candidate_id: candidateNumberId,
+          interviewer_ids: selectedInterviewers.map((iv) => Number(iv.id)),
+          create_google_meet: gmeetEnabled,
+        });
+      } catch {
+        return;
+      }
+    }
+    setShowNameConfirm(false);
+    nextStep();
+  };
+
+  const handleSendInvite = async () => {
+    if (isExternalSelected ? !isExternalValid : (!selectedSlotId || selectedInterviewers.length === 0)) return;
+    if (rescheduleMode) {
+      await doReschedule();
+      return;
+    }
+    if (roundTitle === SR_LABELS.ROUND_TITLE_DEFAULT) {
+      setShowNameConfirm(true);
+      return;
+    }
+    await doBook();
+  };
+
+  const successTitle = rescheduleMode
+    ? SR_LABELS.STEP_3_RESCHEDULE_SUCCESS
+    : isAiSelected
+      ? SR_LABELS.STEP_3_AI_SUCCESS
+      : SR_LABELS.STEP_3_SUCCESS;
+  const successSubtext = !rescheduleMode && isAiSelected
+    ? SR_LABELS.STEP_3_AI_SUBTEXT.replace("{candidate}", candidateName)
+    : SR_LABELS.STEP_3_SUBTEXT.replace("{candidate}", candidateName).replace("{interviewer}", interviewerNames);
+
+  const externalPanel = (
+    <div className="sr-slot-section">
+      <div className="sr-section-header">
+        <span className="sr-section-label">{SR_LABELS.EXTERNAL_EMAIL_LABEL}</span>
+      </div>
+      <div className="sr-form-field">
+        <input
+          type="email"
+          className="sr-text-input"
+          placeholder={SR_LABELS.EXTERNAL_EMAIL_PLACEHOLDER}
+          value={externalEmail}
+          onChange={(e) => setExternalEmail(e.target.value)}
+        />
+      </div>
+      <div className="sr-form-field">
+        <span className="sr-section-label">{SR_LABELS.EXTERNAL_NAME_LABEL}</span>
+        <input
+          type="text"
+          className="sr-text-input"
+          placeholder={SR_LABELS.EXTERNAL_NAME_PLACEHOLDER}
+          value={externalName}
+          onChange={(e) => setExternalName(e.target.value)}
+        />
+      </div>
+      <div className="sr-form-field">
+        <span className="sr-section-label">{SR_LABELS.EXTERNAL_DATE_LABEL}</span>
+        <input
+          type="date"
+          className="sr-ai-date-input"
+          value={externalDate}
+          min={new Date().toISOString().split("T")[0]}
+          onChange={(e) => setExternalDate(e.target.value)}
+        />
+      </div>
+      <div className="sr-ai-time-grid">
+        <div className="sr-form-field">
+          <span className="sr-section-label">{SR_LABELS.EXTERNAL_START_LABEL}</span>
+          <input
+            type="time"
+            className="sr-ai-time-input"
+            value={externalStartTime}
+            onChange={(e) => setExternalStartTime(e.target.value)}
+          />
+        </div>
+        <div className="sr-form-field">
+          <span className="sr-section-label">{SR_LABELS.EXTERNAL_END_LABEL}</span>
+          <input
+            type="time"
+            className="sr-ai-time-input"
+            value={externalEndTime}
+            onChange={(e) => setExternalEndTime(e.target.value)}
+          />
+        </div>
+      </div>
+      {externalStartTime && externalEndTime && !isExternalTimeValid && (
+        <div className="sr-form-error">{SR_LABELS.EXTERNAL_TIME_ERROR}</div>
+      )}
+    </div>
+  );
+
+  return (
+    <BaseModal open={open} onClose={handleClose} title="Schedule interview" className="sr-modal">
+      <div className="sr-body">
+        {!rescheduleMode && (
+          <div className="sr-title-row">
+            {editingTitle ? (
+              <input
+                ref={titleInputRef}
+                className="sr-round-title-input"
+                value={roundTitle}
+                onChange={(e) => setRoundTitle(e.target.value)}
+                onBlur={finishEditTitle}
+                onKeyDown={handleTitleKeyDown}
+                autoFocus
+              />
+            ) : (
+              <span className="sr-round-title" onClick={startEditTitle} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") startEditTitle(); }}>
+                {roundTitle} <i className="bx bx-pencil" />
+              </span>
+            )}
+          </div>
+        )}
+
+        {!rescheduleMode && (
+          <>
+            {!showNameConfirm && step < 3 && (
+              <div className="sr-step-indicator">
+                {([1, 2] as ScheduleStep[]).map((s) => (<div key={s} className={`sr-dot ${step === s ? "sr-dot--active" : ""}`} />))}
+              </div>
+            )}
+            {!showNameConfirm && step < 3 && <div className="sr-step-header"><span className="sr-step-desc">{stepDesc}</span></div>}
+          </>
+        )}
+
+        <div className="sr-content">
+          {showNameConfirm ? (
+            <div className="sr-scroll-content">
+              <div className="sr-name-confirm">
+                <div className="sr-name-confirm-icon"><i className="bx bx-info-circle" /></div>
+                <div className="sr-name-confirm-title">Confirm Round Name</div>
+                <div className="sr-name-confirm-desc">
+                  The round name is currently <strong>"{SR_LABELS.ROUND_TITLE_DEFAULT}"</strong>.
+                  Do you want to keep this name?
+                </div>
+                <div className="sr-name-confirm-actions">
+                  <button className="sr-btn sr-btn--back" onClick={() => { setShowNameConfirm(false); startEditTitle(); }} type="button">Edit Name</button>
+                  <Button className="sr-btn sr-btn--primary" onClick={doBook} loading={isPending} loadingText="Sending...">
+                    Keep & Send
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (<>
+            {step === 1 && rescheduleMode && (
+              <div className="sr-reschedule-layout">
+                <div className="sr-reschedule-left">
+                  <div className="sr-reschedule-title"><i className="bx bx-calendar" /> {roundName || "Interview"}</div>
+                  <div className="sr-participant-row">
+                    <span className="sr-participant-label">{SR_LABELS.INTERVIEWER_LABEL}</span>
+                    <span className="sr-participant-value"><i className="bx bx-user" /> {interviewerName || SR_LABELS.INTERVIEWER_LABEL}</span>
+                  </div>
+                  <div className="sr-participant-row">
+                    <span className="sr-participant-label">{SR_LABELS.CANDIDATE_LABEL}</span>
+                    <span className="sr-participant-value"><i className="bx bx-user" /> {candidateName}</span>
+                  </div>
+                </div>
+                <div className="sr-reschedule-right">
+                    <SrStep1 search={search} onSearchChange={setSearch} interviewers={interviewers}
+                      selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
+                      tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
+                      activeSlots={allSlots} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
+                      isLoading={isLoading} isSearching={false} hideSearch={true}
+                      sectionAction={interviewerEmpId ? <SrAskSlotsButton empId={interviewerEmpId} onRequested={refetchSlots} /> : undefined} />
+                </div>
+              </div>
+            )}
+            {step === 1 && !rescheduleMode && <SrStep1 search={search} onSearchChange={setSearch} interviewers={interviewers}
+              selectedInterviewers={selectedInterviewers} onSelectInterviewer={handleSelectInterviewer}
+              tabs={tabs} activeTab={activeTab} onTabChange={handleTabChange}
+              activeSlots={allSlots} selectedSlotId={selectedSlotId} onSlotSelect={handleSlotSelect}
+              isLoading={isLoading} isSearching={isSearching} hideSearch={false}
+              showExternalOption={true} isExternalSelected={isExternalSelected} onSelectExternal={handleSelectExternal}
+              externalPanel={externalPanel}
+              showAiOption={true} isAiSelected={isAiSelected} onSelectAi={handleSelectAi} />}
+            {step === 2 && !rescheduleMode && isAiSelected && (
+              <div className="sr-scroll-content">
+                <div className="sr-summary">
+                  <div className="sr-summary-row">
+                    <div className="sr-summary-icon"><i className="bx bx-user" /></div>
+                    <div className="sr-summary-content">
+                      <span className="sr-summary-label">{SR_LABELS.CANDIDATE_LABEL}</span>
+                      <span className="sr-summary-value">{candidateName}</span>
+                    </div>
+                  </div>
+                  <div className="sr-summary-row">
+                    <div className="sr-summary-icon"><i className="bx bx-bot" /></div>
+                    <div className="sr-summary-content">
+                      <span className="sr-summary-label">{SR_LABELS.INTERVIEWER_LABEL}</span>
+                      <span className="sr-summary-value">{interviewerNames}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="sr-ai-selected-panel" style={{ marginTop: 12 }}>
+                  <i className="bx bx-info-circle sr-ai-selected-icon" />
+                  <span className="sr-ai-selected-desc">{SR_LABELS.STEP_3_AI_SUBTEXT.replace("{candidate}", candidateName)}</span>
+                </div>
+              </div>
+            )}
+            {step === 2 && !rescheduleMode && !isAiSelected && (
+              <div className="sr-scroll-content"><SrStep2 candidateName={candidateName}
+                interviewerNames={interviewerNames} slotDate={slotDate} slotTime={slotTime}
+                gmeetEnabled={gmeetEnabled} onToggleGmeet={() => setGmeetEnabled((v) => !v)}
+                invitePreview={invitePreview} /></div>)}
+            {step === 3 && (
+              <div className="sr-scroll-content">
+                <div className="sr-success">
+                  <div className="sr-success-icon"><i className="bx bx-check" /></div>
+                  <div className="sr-success-title">{successTitle}</div>
+                  <div className="sr-success-sub">{successSubtext}</div>
+                </div>
+              </div>
+            )}
+          </>)}
+        </div>
+
+        <div className="sr-actions">
+          <div className="sr-actions-inner">
+            {!showNameConfirm && step === 2 && !rescheduleMode && <button className="sr-btn sr-btn--back" onClick={() => setStep(1)} type="button">{SR_LABELS.BACK}</button>}
+            {!showNameConfirm && step === 1 && (rescheduleMode ? (
+              <Button className="sr-btn sr-btn--primary" disabled={!canProceedTo2} onClick={handleSendInvite} loading={isPending} loadingText={SR_LABELS.RESCHEDULING_LABEL}>
+                {SR_LABELS.RESCHEDULE_CONFIRM}
+              </Button>
+            ) : (
+              <button className="sr-btn sr-btn--primary" disabled={!canProceedTo2} onClick={nextStep} type="button">{SR_LABELS.NEXT}</button>
+            ))}
+            {!showNameConfirm && step === 2 && !rescheduleMode && (
+              <Button className="sr-btn sr-btn--primary" disabled={!canProceedTo3} onClick={handleSendInvite} loading={isPending} loadingText={SR_LABELS.SENDING_AI_LABEL}>
+                {isAiSelected ? SR_LABELS.SEND_AI_INVITE : SR_LABELS.SEND_INVITE}
+              </Button>
+            )}
+            {!showNameConfirm && step === 3 && <button className="sr-btn sr-btn--done" onClick={handleDone} type="button"><i className="bx bx-check" /> {SR_LABELS.DONE}</button>}
+          </div>
+        </div>
+      </div>
+    </BaseModal>
+  );
+}

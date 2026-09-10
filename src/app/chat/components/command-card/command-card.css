@@ -1,0 +1,124 @@
+.command-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+  font-family: Sora, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.command-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.command-card__header i {
+  font-size: 18px;
+  color: var(--accent);
+}
+
+.command-card__status {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.command-card__status--upcoming {
+  color: var(--success);
+  background: var(--success-bg-strong);
+}
+
+.command-card__status--completed {
+  color: var(--warning-light);
+  background: var(--warning-bg-strong);
+}
+
+.command-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.command-card__row {
+  display: flex;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.command-card__row:last-child {
+  border-bottom: none;
+}
+
+.command-card__label {
+  flex: 0 0 120px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.command-card__value {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.command-card__context {
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--accent);
+  background: var(--bg-tertiary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 13px;
+  margin-inline: 0;
+}
+
+.command-card--hybrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.command-card__question {
+  color: var(--text-white);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.command-card__entity-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  padding: var(--space-1) var(--space-3);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.command-card__entity-chip i {
+  font-size: 15px;
+  color: var(--accent);
+}

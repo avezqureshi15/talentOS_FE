@@ -1,0 +1,142 @@
+.import-employees-modal {
+  width: min(560px, calc(100vw - 32px));
+}
+
+.iem-step {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.iem-description {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.iem-template-row {
+  display: flex;
+}
+
+.iem-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px dashed var(--border-default);
+  background: var(--surface-glass);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.iem-dropzone:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-glass-hover);
+}
+
+.iem-dropzone--filled {
+  border-style: solid;
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.iem-dropzone input[type="file"] {
+  display: none;
+}
+
+.iem-dropzone i {
+  font-size: 22px;
+}
+
+.iem-file-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.iem-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.iem-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.iem-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border-radius: 10px;
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+}
+
+.iem-summary-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.iem-summary-value--success {
+  color: var(--success-light);
+}
+
+.iem-summary-value--warning {
+  color: var(--warning-light);
+}
+
+.iem-summary-value--danger {
+  color: var(--danger);
+}
+
+.iem-summary-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.iem-errors {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: 10px;
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+}
+
+.iem-error-row {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--danger);
+}
+
+.iem-error-row__row {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.iem-error-row__msg {
+  color: var(--danger);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+  .iem-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

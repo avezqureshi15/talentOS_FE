@@ -1,8 +1,269 @@
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google'
+import { Eye, EyeOff, Mail, Lock, Sparkles, Shield, Zap } from 'lucide-react'
 
-const Login = () => {
-  return (
-    <div>Login</div>
-  )
+import { useAuth } from '@/app/auth/hooks/use-auth'
+import { ROUTES } from '@/constants/routes'
+import Logo from '@/components/shared/logo/logo'
+import { getApiErrorMessage } from '@/utils/api-error'
+import { LOGIN } from './login.constants'
+import './login.css'
+
+const schema = z.object({
+  email: z.string().min(1, 'Email is required').email('Please enter a valid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+})
+
+const getErrorMessage = (err: unknown, fallback: string): string =>
+  getApiErrorMessage(err, fallback)
+
+interface AuthForm {
+  email: string
+  password: string
 }
 
-export default Login
+const features = [
+  { icon: Sparkles, label: 'AI-Powered Candidate Screening' },
+  { icon: Shield, label: 'Enterprise-Grade Security' },
+  { icon: Zap, label: 'Automated Hiring Workflows' },
+]
+
+export default function Login() {
+  const { login, loginWithEmail, user } = useAuth()
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [mode, setMode] = useState<'google' | 'email'>('google')
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<AuthForm>({ resolver: zodResolver(schema) })
+
+  useEffect(() => {
+    if (user) {
+      const home = user.role === "superadmin" ? ROUTES.SUPERADMIN_TENANTS : ROUTES.CHAT
+      navigate(home, { replace: true })
+    }
+  }, [user, navigate])
+
+  const onSuccess = async (response: CredentialResponse) => {
+    if (!response.credential || loading) return
+    setLoading(true)
+    setError('')
+    try {
+      await login(response.credential)
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Google login failed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const onEmailSubmit = async (data: AuthForm) => {
+    if (loading) return
+    setError('')
+    setLoading(true)
+    try {
+      await loginWithEmail(data.email, data.password)
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Login failed'))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const switchMode = (m: 'google' | 'email') => {
+    setMode(m)
+    setError('')
+    reset()
+    setShowPassword(false)
+  }
+
+  return (
+    <div className="auth-page">
+      <div className="auth-left">
+        <div className="auth-left-bg" />
+        <div className="auth-left-grid" />
+        <div className="auth-left-glow" />
+
+        <div className="auth-left-content">
+          <div className="auth-left-logo">
+            <Logo />
+          </div>
+
+          <h1 className="auth-left-title">
+            Hire Smarter with
+            <br />
+            <span className="auth-left-title-bold">TalentOS</span>
+          </h1>
+
+          <p className="auth-left-subtitle">
+            The AI-driven hiring platform that screens, matches, and automates your
+            recruitment pipeline — so you can focus on finding the right people.
+          </p>
+
+          <div className="auth-left-features">
+            {features.map(({ icon: Icon, label }) => (
+              <div className="auth-feature-pill" key={label}>
+                <Icon size={12} />
+                <span>{label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="auth-left-preview">
+            <div className="auth-preview-header">
+              <div className="auth-preview-dot" />
+              <div className="auth-preview-dot" />
+              <div className="auth-preview-dot" />
+            </div>
+            <div className="auth-preview-body">
+              <div className="auth-preview-line auth-preview-line--title" />
+              <div className="auth-preview-line auth-preview-line--short" />
+              <div className="auth-preview-cards">
+                <div className="auth-preview-mini-card">
+                  <div className="auth-preview-mini-avatar" />
+                  <div className="auth-preview-mini-lines">
+                    <div className="auth-preview-line auth-preview-line--sm" />
+                    <div className="auth-preview-line auth-preview-line--xs" />
+                  </div>
+                </div>
+                <div className="auth-preview-mini-card">
+                  <div className="auth-preview-mini-avatar" />
+                  <div className="auth-preview-mini-lines">
+                    <div className="auth-preview-line auth-preview-line--sm" />
+                    <div className="auth-preview-line auth-preview-line--xs" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="auth-right">
+        <div className="auth-right-content">
+          <div className="auth-form-card">
+            <div className="auth-right-header">
+              <h2 className="auth-form-title">Welcome back</h2>
+              <p className="auth-form-subtitle">Sign in to access your hiring dashboard.</p>
+            </div>
+
+            {loading && mode === 'google' ? (
+              <div className="auth-loading">
+                <div className="auth-spinner" />
+                <p style={{ color: "var(--text-white)" }}>Signing you in...</p>
+              </div>
+            ) : (
+              <>
+                {mode === 'google' ? (
+                  <div className="auth-google-section">
+                    {error && <div className="auth-error">{error}</div>}
+                    <div className="auth-google-btn-wrapper">
+                      <GoogleLogin
+                        onSuccess={onSuccess}
+                        onError={() => setError('Google login failed')}
+                        theme="outline"
+                        size="large"
+                        text="continue_with"
+                        shape="pill"
+                        width={320}
+                      />
+                    </div>
+
+                    <div className="auth-divider">
+                      <span>or</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="auth-btn auth-btn--outline"
+                      onClick={() => switchMode('email')}
+                    >
+                      <Mail size={16} />
+                      Sign in with Email
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit(onEmailSubmit)} className="auth-form">
+                    <div className="auth-field">
+                      <div className="auth-input-wrap">
+                        <Mail size={16} className="auth-input-icon" />
+                        <input
+                          {...register('email')}
+                          type="email"
+                          className={`auth-input ${errors.email ? 'auth-input--error' : ''}`}
+                          placeholder="you@company.com"
+                        />
+                      </div>
+                      {errors.email && (
+                        <span className="auth-field-error">{errors.email.message}</span>
+                      )}
+                    </div>
+
+                    <div className="auth-field">
+                      <div className="auth-input-wrap">
+                        <Lock size={16} className="auth-input-icon" />
+                        <input
+                          {...register('password')}
+                          type={showPassword ? 'text' : 'password'}
+                          className={`auth-input ${errors.password ? 'auth-input--error' : ''}`}
+                          placeholder="Enter your password"
+                        />
+                        <button
+                          type="button"
+                          className="auth-eye-toggle"
+                          onClick={() => setShowPassword(!showPassword)}
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                      {errors.password && (
+                        <span className="auth-field-error">{errors.password.message}</span>
+                      )}
+                    </div>
+
+                    {error && <div className="auth-error">{error}</div>}
+
+                    <button
+                      type="submit"
+                      className="auth-btn auth-btn--primary"
+                      disabled={isSubmitting || loading}
+                    >
+                      {isSubmitting || loading ? 'Signing in...' : 'Sign In'}
+                    </button>
+
+                    <div className="auth-divider">
+                      <span>or</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="auth-btn auth-btn--outline"
+                      onClick={() => switchMode('google')}
+                    >
+                      Continue with Google
+                    </button>
+                  </form>
+                )}
+              </>
+            )}
+          </div>
+
+          <div className="auth-footer">
+            <p>{LOGIN.FOOTER}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

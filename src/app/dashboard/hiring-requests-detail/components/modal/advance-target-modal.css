@@ -1,0 +1,53 @@
+.atm-body {
+  padding: 20px 20px 24px;
+}
+
+.atm-desc {
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.atm-choices {
+  display: grid;
+  gap: 12px;
+}
+
+.atm-choice {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 2px;
+  align-items: start;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.atm-choice i {
+  grid-row: 1 / span 2;
+  font-size: 20px;
+  color: var(--accent, #60a5fa);
+  margin-top: 2px;
+}
+
+.atm-choice-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.atm-choice-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.atm-choice:hover {
+  border-color: var(--accent, #60a5fa);
+  background: var(--bg-hover);
+}

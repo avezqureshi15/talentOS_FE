@@ -1,10 +1,5 @@
 import "./loading-spinner.css";
-
-type LoadingSpinnerProps = {
-  size?: "sm" | "md" | "lg";
-  label?: string;
-  fullPage?: boolean;
-};
+import type { LoadingSpinnerProps } from "./loading-spinner.types";
 
 export default function LoadingSpinner({
   size = "md",

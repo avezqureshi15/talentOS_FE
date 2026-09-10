@@ -7,7 +7,7 @@
 
 .waveform-bar {
   width: 3px;
-  background: var(--waveform-color, #111);
+  background: var(--waveform-color, var(--bg-secondary));
   border-radius: 2px;
 
   animation: waveform-float 1.2s ease-in-out infinite;

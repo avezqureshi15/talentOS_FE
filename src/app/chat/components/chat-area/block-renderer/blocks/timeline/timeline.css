@@ -16,11 +16,11 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: gray;
+  background: var(--timeline-line);
 }
 
 .timeline-step .dot.active {
-  background: #4f46e5;
+  background: var(--timeline-active);
 }
 
 .timeline-step .current {

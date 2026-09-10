@@ -1,4 +1,9 @@
 
+export type StreamInput = {
+  text: string;
+  chatId?: string | null;
+};
+
 export type TextBlock = { type: "text"; text: string };
 export type ThinkingBlock = { type: "thinking"; text: string };
 export type CodeBlock = { type: "code"; code: string };

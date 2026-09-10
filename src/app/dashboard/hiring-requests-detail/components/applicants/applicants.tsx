@@ -1,170 +1,172 @@
 import { useState } from "react";
-import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
-import { APPLICANT_LABELS } from "@/constants/constants";
+import ApplicantCard from "./applicant-card";
+import ApplicantActionModals from "./applicant-action-modals";
+import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
+import AiSummaryModal from "@/app/dashboard/hiring-requests-detail/components/modal/ai-summary-modal";
+import ApplicantDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/applicant-details-modal";
+import ScheduleRoundModal from "@/app/dashboard/hiring-requests-detail/components/schedule-round/schedule-round-modal";
+import AiInterviewScheduleModal from "@/app/dashboard/hiring-requests-detail/components/applicants/ai-interview-schedule-modal/ai-interview-schedule-modal";
+import CancelInterviewModal from "@/app/dashboard/hiring-requests/components/interviews/cancel-interview-modal";
+import { useApplicantActionHandlers } from "./hooks/use-applicant-action-handlers";
+import AdvanceTargetModal from "@/app/dashboard/hiring-requests-detail/components/modal/advance-target-modal";
+import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/constants/permissions";
+import type { AccordionTab, ApplicantsProps } from "./applicants.types";
 
-export type ApplicantStatus =
-  | "new"
-  | "reviewing"
-  | "shortlisted"
-  | "rejected"
-  | "hired";
+function Applicants({ data: propData, openId, setOpenId, applicantParam, onRefresh, jdId, isRemote, isScreening = false, showBulkSelection = false, selectedIds, onToggleSelect, onToggleSelectAll, allSelected, selectionCount = 0, onTimeline }: ApplicantsProps) {
+  const { can } = usePermissions();
+  const canWorkflow = can(PERMISSIONS.APPLICATION_WORKFLOW);
+  const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
+  const [coverLetterId, setCoverLetterId] = useState<string | null>(null);
+  const [aiSummaryId, setAiSummaryId] = useState<string | null>(null);
+  const [detailsId, setDetailsId] = useState<string | null>(null);
 
-export type Applicant = {
-  id: string;
-  name: string;
-  email?: string;
-  experienceYears: number;
-  currentRole?: string;
-  currentCompany?: string;
-  linkedinUrl: string;
-  cvUrl: string;
-  status: ApplicantStatus;
-  score?: number;
-  appliedAt?: string;
-};
+  const data = propData ?? [];
 
-function Applicants({
-  data,
-  openId,
-  setOpenId,
-}: {
-  data: Applicant[];
-  openId: string | null;
-  setOpenId: (id: string | null) => void;
-}) {
-  const [localData, setLocalData] = useState(data);
-  const [screeningId, setScreeningId] = useState<string | null>(null);
-  const [timelineId, setTimelineId] = useState<string | null>(null);
-
-  const updateStatus = (id: string, status: ApplicantStatus) => {
-    setLocalData((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status } : a))
-    );
-  };
+  const {
+    modalProps,
+    scheduleProps,
+    rescheduleProps,
+    aiScheduleProps,
+    cancelProps,
+    handleAction,
+    handleMenuAction,
+    getLocalApplicant,
+    retryingScreeningId,
+    hiddenApplicantIds,
+    advanceTargetProps,
+  } = useApplicantActionHandlers({
+    data,
+    jdId,
+    onRefresh,
+    onMoveToNextRoundSideEffect: (id) => setOpenId(id),
+  });
 
   return (
-    <div className="accordion-list">
-      {localData.map((a) => {
-        const isOpen = openId === a.id;
-        const isScreening = screeningId === a.id;
-
-        return (
-          <div key={a.id} className="accordion-card">
-            {/* HEADER */}
-            <div className="accordion-header">
-              {/* LEFT (click area) */}
-              <div
-                className="header-left"
-                onClick={() => setOpenId(isOpen ? null : a.id)}
-              >
-                <div className="name">{a.name}</div>
-                <div className="meta">
-                  {a.experienceYears} yrs • {a.currentRole || "Engineer"}
-                </div>
-              </div>
-
-              {/* RIGHT ACTION AREA */}
-              <div className="header-right">
-                {a.status === "reviewing" && (
-                  <div className="queue-text mb-30">
-                    {APPLICANT_LABELS.QUEUING}
-                  </div>
-                )}
-                <div className={`status-dot ${a.status}`} />
-
-                {a.status === "new" && !isScreening && (
-                  <button
-                    className="screen-btn compact"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setScreeningId(a.id);
-                      setOpenId(a.id); // optional UX improvement
-                    }}
-                  >
-                    {APPLICANT_LABELS.START_SCREENING}
-                  </button>
-                )}
-
-                {a.status === "new" && isScreening && (
-                  <>
-                    <button
-                      className="btn reject compact"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateStatus(a.id, "rejected");
-                        setScreeningId(null);
-                      }}
-                    >
-                      {APPLICANT_LABELS.REJECT}
-                    </button>
-
-                    <button
-                      className="btn accept compact"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateStatus(a.id, "reviewing");
-                        setScreeningId(null);
-                      }}
-                    >
-                      {APPLICANT_LABELS.ACCEPT}
-                    </button>
-
-
-                  </>
-
-                )}
-
-              </div>
-            </div>
-
-            {/* BODY (unchanged, stable) */}
-            {isOpen && (
-              <div className="accordion-body ">
-                <div className="action-links">
-                  <a href={a.linkedinUrl} target="_blank" rel="noreferrer">
-                    {APPLICANT_LABELS.LINKEDIN}
-                  </a>
-
-                  <a href={a.cvUrl} download>
-                    {APPLICANT_LABELS.CV}
-                  </a>
-
-                  <button
-                    className="timeline-trigger cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setTimelineId(a.id);
-                    }}
-                  >
-                    <span className="bx bx-clock" ></span> {APPLICANT_LABELS.TIMELINE}
-                  </button>
-
-                </div>
-
-
-
-                {a.status === "rejected" && (
-                  <div className="rejected-text">
-                    {APPLICANT_LABELS.CANDIDATE_REJECTED}
-                  </div>
-                )}
-
-                {a.status === "hired" && (
-                  <div className="hired-text">
-                    {APPLICANT_LABELS.CANDIDATE_HIRED}
-                  </div>
-                )}
-              </div>
+    <>
+      <div className="accordion-list">
+        {showBulkSelection && (
+          <div className="bulk-select-header">
+            <i
+              className={`bx ${allSelected ? "bx-checkbox-checked" : "bx-checkbox"} applicant-checkbox`}
+              onClick={onToggleSelectAll}
+            />
+            <span className="bulk-select-label">Select All</span>
+            {selectionCount > 0 && (
+              <span className="bulk-select-count">{selectionCount} candidate{selectionCount !== 1 ? "s" : ""} selected</span>
             )}
           </div>
-        );
-      })}
+        )}
+        {data.filter((a) => !hiddenApplicantIds.has(a.id)).map((a) => {
+          const isOpen = openId === a.id;
+          const merged = getLocalApplicant(a);
+          return (
+            <div key={a.id} data-applicant-id={a.id} data-highlight={applicantParam === a.id ? "true" : undefined}>
+              {canWorkflow && merged.stage === "AI_SCREENING" && merged.status?.toLowerCase() !== "ai_screening_evaluation_failed" && merged.status?.toLowerCase() !== "ai_screening_flagged" && merged.status?.toLowerCase() !== "under_evaluation" && (
+                <div className="ai-retry-row">
+                  <button
+                    className="action-link action-link-btn"
+                    onClick={(e) => { e.stopPropagation(); handleAction("onRetryAiScreening", a.id); }}
+                    disabled={retryingScreeningId === a.id}
+                    type="button"
+                  >
+                    {retryingScreeningId === a.id ? "Re-running AI screening..." : "Re-run AI screening"}
+                  </button>
+                </div>
+              )}
+              <ApplicantCard
+                applicant={merged}
+                isOpen={isOpen}
+                isScreening={isScreening}
+                showCheckbox={showBulkSelection}
+                isSelected={selectedIds?.has(a.id)}
+                onToggleSelect={onToggleSelect}
+                accordionTab={accordionTab}
+                onToggleOpen={(id) => {
+                  if (isOpen) { setOpenId(null); } else { setOpenId(id); setAccordionTab("details"); }
+                }}
+                onAction={handleAction}
+                onMenuAction={handleMenuAction}
+                onTabChange={setAccordionTab}
+                onCoverLetterReadMore={setCoverLetterId}
+                onAiSummaryReadMore={setAiSummaryId}
+                onDetailsReadMore={setDetailsId}
+                onTimeline={onTimeline}
+                jdId={jdId}
+                isRemote={isRemote}
+              />
+            </div>
+          );
+        })}
 
-      <ApplicantTimelineSheet
-        openId={timelineId}
-        onClose={() => setTimelineId(null)}
-      />
-    </div>
+        <ApplicantActionModals {...modalProps} />
+
+        <AdvanceTargetModal
+          open={advanceTargetProps.open}
+          candidateName={advanceTargetProps.candidateName}
+          onClose={advanceTargetProps.onClose}
+          onChoose={advanceTargetProps.onChoose}
+        />
+
+        <ScheduleRoundModal
+          open={!!scheduleProps.candidateId}
+          candidateName={scheduleProps.candidateName}
+          candidateId={scheduleProps.candidateId ?? ""}
+          candidateNumberId={scheduleProps.candidateNumberId}
+          jdId={jdId}
+          hiringRequestId={jdId}
+          onClose={scheduleProps.onClose}
+          onScheduled={scheduleProps.onScheduled}
+        />
+
+        <ScheduleRoundModal
+          open={!!rescheduleProps.target}
+          rescheduleMode
+          candidateName={rescheduleProps.target?.name ?? ""}
+          candidateId={rescheduleProps.target?.id ?? ""}
+          interviewId={rescheduleProps.target?.interviewId}
+          interviewerEmpId={rescheduleProps.target?.interviewerEmpId}
+          interviewerName={rescheduleProps.target?.interviewerName}
+          roundName={rescheduleProps.target?.roundName}
+          jdId={jdId}
+          hiringRequestId={jdId}
+          onClose={rescheduleProps.onClose}
+          onScheduled={rescheduleProps.onScheduled}
+        />
+
+        <AiInterviewScheduleModal
+          key={aiScheduleProps.target?.id ?? "ai-schedule-closed"}
+          open={!!aiScheduleProps.target}
+          candidateName={aiScheduleProps.target?.name ?? ""}
+          candidateId={aiScheduleProps.target?.candidateId ?? 0}
+          hiringRequestId={jdId}
+          currentSlot={aiScheduleProps.target?.currentSlot}
+          onClose={aiScheduleProps.onClose}
+          onScheduled={aiScheduleProps.onScheduled}
+        />
+
+        <CancelInterviewModal
+          open={!!cancelProps.target}
+          interviewId={cancelProps.target?.interviewId ?? ""}
+          candidateName={cancelProps.target?.name ?? ""}
+          onClose={cancelProps.onClose}
+          onConfirm={cancelProps.onConfirm}
+        />
+
+        {data.map((a) => (<CoverLetterModal key={`cl-${a.id}`} open={coverLetterId === a.id} applicantName={a.name} coverLetter={a.coverLetter ?? ""} onClose={() => setCoverLetterId(null)} />))}
+        {data.map((a) => (<AiSummaryModal key={`ai-${a.id}`} open={aiSummaryId === a.id} applicantName={a.name} aiSummary={a.aiSummary ?? ""} onClose={() => setAiSummaryId(null)} />))}
+        {data.map((a) => (
+          <ApplicantDetailsModal
+            key={`det-${a.id}`}
+            open={detailsId === a.id}
+            applicantName={a.name}
+            details={{ currentCtc: a.currentCtc, expectedCtc: a.expectedCtc, location: a.location, yearsOfExperience: a.yearsOfExperience, noticePeriod: a.noticePeriod, howDidYouHear: a.howDidYouHear, willingToRelocate: a.willingToRelocate === true ? "Yes" : a.willingToRelocate === false ? "No" : undefined }}
+            onClose={() => setDetailsId(null)}
+            isRemote={isRemote}
+          />
+        ))}
+      </div>
+    </>
   );
 }
 

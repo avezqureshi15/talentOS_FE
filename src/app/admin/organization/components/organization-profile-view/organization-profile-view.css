@@ -1,0 +1,46 @@
+.org-view-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.org-view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 32px;
+}
+
+.org-view-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.org-view-field--full {
+  grid-column: 1 / -1;
+}
+
+.org-view-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.org-view-value {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.org-view-value--empty {
+  color: var(--text-muted);
+}

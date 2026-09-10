@@ -1,53 +1,8 @@
-.remark-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* BIG NOTEPAD STYLE MODAL */
-.remark-modal {
+.base-modal.remark-modal {
   width: 680px;
   height: 520px;
-
-  display: flex;
-  flex-direction: column;
-
-  border-radius: 14px;
-
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(22px);
-
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  overflow: hidden;
 }
 
-/* HEADER */
-.remark-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 14px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.remark-header .title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-/* BODY */
 .remark-body {
   flex: 1;
   padding: 14px;
@@ -66,35 +21,32 @@
   font-size: 13px;
   line-height: 1.6;
 
-  color: white;
+  color: var(--text-white);
 
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--overlay-subtle);
+  border: 1px solid var(--input-icon-bg);
 
   font-family: ui-sans-serif, system-ui;
 }
 
-/* FOOTER */
 .remark-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   padding: 12px 16px;
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid var(--input-icon-bg);
 }
 
-/* HINT TEXT */
 .hint {
   display: flex;
   align-items: center;
   gap: 6px;
 
   font-size: 11px;
-  color: rgba(255,255,255,0.5);
+  color: var(--input-icon-color);
 }
 
-/* ACTION BUTTONS */
 .actions {
   display: flex;
   gap: 10px;
@@ -102,8 +54,8 @@
 
 .ghost {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.2);
-  color: white;
+  border: 1px solid var(--border-strong);
+  color: var(--text-white);
 
   padding: 7px 12px;
   border-radius: 8px;
@@ -112,22 +64,13 @@
 }
 
 .primary {
-  background: #4f8ef7;
+  background: var(--button-primary-bg);
   border: none;
 
   padding: 7px 14px;
   border-radius: 8px;
 
-  color: white;
+  color: var(--button-primary-text);
   cursor: pointer;
   font-size: 12px;
-
-  box-shadow: 0 0 0 1px rgba(79,142,247,0.4);
-}
-
-.close-btn {
-  background: transparent;
-  border: none;
-  color: rgba(255,255,255,0.7);
-  cursor: pointer;
 }

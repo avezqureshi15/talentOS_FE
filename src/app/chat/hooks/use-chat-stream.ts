@@ -1,120 +1,118 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { streamChat } from "@/services/ai/chat-stream";
 import { useChatStore } from "@/store/chat.store";
 import { QUERY_KEYS } from "@/constants/constants";
-
-let threadId = `thread_${Date.now()}`;
-
-export const resetThread = () => {
-  threadId = `thread_${Date.now()}`;
-};
+import type { ContentBlock, StreamInput } from "@/app/chat/pages/chat.types";
+import {
+  INITIAL_THINKING,
+  GENERIC_ERROR_MESSAGE,
+} from "./use-chat-stream.constants";
 
 export const useChatStream = () => {
+  const queryClient = useQueryClient();
   const {
     addMessage,
     updateMessage,
     setStarted,
     setProcessing,
     setError,
+    setChatId,
+    chatId,
   } = useChatStore();
 
   return useMutation({
     mutationKey: [QUERY_KEYS.CHAT_STREAM],
 
-    mutationFn: async ({
-      text,
-    }: {
-      text: string;
-    }) => {
+    mutationFn: async ({ text, chatId: overrideId }: StreamInput) => {
       const baseId = Date.now();
       const aiMessageId = baseId + 1;
+
+      let toolArgsAccumulator = "";
+      let extractedRequest: string | null = null;
+      let responseContent = "";
 
       setProcessing(true);
       setError(null);
       setStarted();
 
-      // 1. Add user message
       addMessage({
         id: baseId,
         role: "user",
         content: [{ type: "text", text }],
       });
 
-      // 2. Add placeholder AI message
       addMessage({
         id: aiMessageId,
         role: "ai",
-        content: [{ type: "thinking", text: "Analyzing your request..." }],
+        content: [{ type: "thinking", text: INITIAL_THINKING }],
       });
 
-      let accumulatedContent = "";
-
-      const formatStepText = (step: { type: string; content: string }): string => {
-        if (step.type === "tool_name") {
-          return "Processing your request...";
+      const buildContent = (): ContentBlock[] => {
+        const blocks: ContentBlock[] = [
+          { type: "thinking", text: extractedRequest || INITIAL_THINKING },
+        ];
+        if (responseContent) {
+          blocks.push({ type: "markdown", content: responseContent });
         }
-        if (step.type === "tool_args") {
-          try {
-            const parsed = JSON.parse(step.content);
-            return parsed.request ?? "Analyzing...";
-          } catch {
-            return "Analyzing...";
-          }
-        }
-        return step.content;
+        return blocks;
       };
 
-      await streamChat(text, threadId, {
-        onStep: (step) => {
-          updateMessage(aiMessageId, (m) => ({
-            ...m,
-            content: [
-              { type: "thinking" as const, text: formatStepText(step) },
-            ],
-          }));
-        },
+      try {
+        const effectiveChatId = overrideId ?? chatId;
+        await streamChat(text, effectiveChatId, {
+          onChatId: (id) => {
+            setChatId(id);
+          },
 
-        onFinal: (block) => {
-          accumulatedContent += block.content;
+          onStep: (step) => {
+            if (step.type === "tool_args") {
+              toolArgsAccumulator += step.content;
+              try {
+                const parsed = JSON.parse(toolArgsAccumulator);
+                if (parsed?.request) {
+                  extractedRequest = parsed.request;
+                }
+              } catch {
+                // JSON not yet complete
+              }
+            }
+            updateMessage(aiMessageId, (m) => ({
+              ...m,
+              content: buildContent(),
+            }));
+          },
 
-          updateMessage(aiMessageId, (m) => ({
-            ...m,
-            content: [{
-              type: "markdown" as const,
-              content: accumulatedContent,
-            }],
-          }));
-        },
+          onFinal: (block) => {
+            responseContent += block.content;
+            updateMessage(aiMessageId, (m) => ({
+              ...m,
+              content: buildContent(),
+            }));
+          },
 
-        onError: (err) => {
-          setError(err.message);
-        },
-      });
-
-      // 3. Final update with all accumulated content
-      if (accumulatedContent) {
-        updateMessage(aiMessageId, (m) => ({
-          ...m,
-          content: [{
-            type: "markdown" as const,
-            content: accumulatedContent,
-          }],
-        }));
+          onError: (err) => {
+            setError(err.message);
+          },
+        });
+      } finally {
+        // no-op
       }
+    },
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CHAT_HISTORY] });
     },
 
     onError: (err) => {
       const errorMessage =
         err instanceof Error
           ? err.message
-          : "Something went wrong. Please try again.";
+          : GENERIC_ERROR_MESSAGE;
 
       setError(errorMessage);
 
-      const baseId = Date.now();
-
       addMessage({
-        id: baseId,
+        id: Date.now(),
         role: "ai",
         content: [{ type: "text", text: errorMessage }],
       });

@@ -1,7 +1,8 @@
 .chat-area {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding: 20px 0;
+  padding: 40px 0 24px;
 }
 
 .chat-area__action {
@@ -27,8 +28,8 @@
 
 /* Error banner */
 .chat-area__error {
-  background: #7f1d1d;
-  color: #fca5a5;
+  background: var(--danger-banner-bg);
+  color: var(--danger-banner-text);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 13px;
@@ -36,8 +37,39 @@
 }
 
 /* Typing indicator */
+.chat-area__loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
 .chat-area__typing {
   display: flex;
   align-items: center;
   padding: 12px 0;
 }
+
+.chat-copy-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+.chat-copy-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.chat-copy-btn--copied {
+  color: var(--green, var(--success)) !important;
+}
+

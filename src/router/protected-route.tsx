@@ -1,12 +1,42 @@
+import { Suspense } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
+import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import { ROUTES } from "@/constants/routes";
+import { useAuth, useRole } from "@/app/auth/hooks/use-auth";
+import { usePermissions } from "@/hooks/use-permissions";
+import type { ProtectedRouteProps } from "./protected-route.types";
 
-// replace this with your auth store later
-const isAuthenticated = true;
+export default function ProtectedRoute({ minimumRole, allowedRoles, permissions, redirectPath = ROUTES.CHAT }: ProtectedRouteProps = {}) {
+  const { user, isLoading } = useAuth();
+  const { hasRole } = useRole();
+  const { canAll } = usePermissions();
 
-export default function ProtectedRoute() {
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  if (isLoading) {
+    return <LoadingSpinner size="lg" fullPage />;
   }
 
-  return <Outlet />;
+  if (!user) {
+    return <Navigate to={ROUTES.LOGIN} replace />;
+  }
+
+  if (minimumRole && !hasRole(minimumRole)) {
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  if (permissions && !canAll(...permissions)) {
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={<LoadingSpinner size="lg" fullPage />}>
+        <Outlet />
+      </Suspense>
+    </ErrorBoundary>
+  );
 }

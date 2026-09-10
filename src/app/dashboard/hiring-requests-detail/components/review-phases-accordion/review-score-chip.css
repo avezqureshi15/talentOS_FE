@@ -1,0 +1,35 @@
+/* Score pills — same soft tint recipe as superadmin permission details (.pdp-enforcement). */
+
+.rpa-score-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.rpa-score-chip--high {
+  background: color-mix(in srgb, var(--success) 10%, var(--bg-primary));
+  border-color: color-mix(in srgb, var(--success) 30%, transparent);
+  color: var(--success);
+}
+
+.rpa-score-chip--mid {
+  background: color-mix(in srgb, var(--warning) 9%, var(--bg-primary));
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+  color: var(--warning);
+}
+
+.rpa-score-chip--low {
+  background: color-mix(in srgb, var(--danger) 10%, var(--bg-primary));
+  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+  color: var(--danger);
+}

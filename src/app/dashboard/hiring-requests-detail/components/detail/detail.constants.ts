@@ -1,0 +1,117 @@
+import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
+import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import { STAGE_TO_BACKEND_STAGE } from "@/app/dashboard/hiring-requests-detail/components/applicants/fsm.constants";
+import { isScreeningCallCompleted } from "@/app/dashboard/hiring-requests-detail/components/candidate-table/screening-actions/screening-actions.utils";
+
+export const DEFAULT_FILTER = "all";
+
+function includesStage(a: Applicant, stageKey: StageKey): boolean {
+  return STAGE_TO_BACKEND_STAGE[stageKey].includes(a.stage ?? "");
+}
+
+export const STAGE_FILTER_MAP: Record<StageKey, (a: Applicant) => boolean> = {
+  "resume-shortlisting": (a) => includesStage(a, "resume-shortlisting"),
+  screening: (a) => includesStage(a, "screening"),
+  interview: (a) =>
+    includesStage(a, "interview") &&
+    ["interview_scheduled", "interview_rescheduled", "interview_cancelled", "ongoing", "no_show"].includes(a.status?.toLowerCase() ?? ""),
+  "waiting-evaluation": (a) =>
+    includesStage(a, "waiting-evaluation") ||
+    a.status?.toLowerCase() === "waiting_for_review",
+  evaluated: (a) =>
+    includesStage(a, "evaluated") &&
+    ["under_evaluation", "move_to_next_round", "shortlisted"].includes(a.status?.toLowerCase() ?? ""),
+  evaluation: (a) =>
+    STAGE_FILTER_MAP["waiting-evaluation"](a) || STAGE_FILTER_MAP.evaluated(a),
+  // The "decision" tab renders <FinalVerdict> directly (its own data source,
+  // not filtered from the main applicants list) — this entry exists only to
+  // satisfy Record<StageKey, ...> and is never actually invoked.
+  decision: () => false,
+  selected: () => false,
+  rejected: () => false,
+  "on-hold": () => false,
+};
+
+export const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = {
+  all: {},
+  gte80: { min: 80 },
+  gte70: { min: 70 },
+  gte50: { min: 50 },
+  lt50: { max: 49 },
+  lt30: { max: 29 },
+};
+
+export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
+  "ai-incoming": (a) =>
+    a.stage === "AI_INTERVIEW" &&
+    (a.status?.toLowerCase() === "interview_scheduled" ||
+     a.status?.toLowerCase() === "interview_rescheduled" ||
+     a.status?.toLowerCase() === "ongoing"),
+  "regular-incoming": (a) =>
+    a.stage === "INTERVIEW" &&
+    (a.status?.toLowerCase() === "interview_scheduled" ||
+     a.status?.toLowerCase() === "interview_rescheduled" ||
+     a.status?.toLowerCase() === "ongoing"),
+  "no-show": (a) =>
+    a.status?.toLowerCase() === "interview_cancelled" ||
+    a.status?.toLowerCase() === "no_show",
+  scheduled: (a) =>
+    a.stage === "INTERVIEW" &&
+    (a.status?.toLowerCase() === "interview_scheduled" ||
+     a.status?.toLowerCase() === "interview_rescheduled"),
+  ongoing: (a) => a.stage === "INTERVIEW" && a.status?.toLowerCase() === "ongoing",
+};
+
+export const EVALUATION_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
+  evaluated: (a) => STAGE_FILTER_MAP.evaluated(a),
+  pending: (a) => STAGE_FILTER_MAP["waiting-evaluation"](a),
+};
+
+function isScreeningFlagged(a: Applicant): boolean {
+  const status = a.status?.toLowerCase() ?? "";
+  return (
+    status === "ai_screening_evaluation_failed" ||
+    status === "ai_screening_flagged" ||
+    a.screeningReview?.disposition === "flagged"
+  );
+}
+
+function isScreeningCompletedBucket(a: Applicant): boolean {
+  const status = a.status?.toLowerCase() ?? "";
+  return (
+    isScreeningCallCompleted(a) ||
+    status === "under_evaluation" ||
+    status === "shortlisted" ||
+    status === "move_to_next_round"
+  );
+}
+
+export const SCREENING_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
+  flagged: isScreeningFlagged,
+  completed: (a) => !isScreeningFlagged(a) && isScreeningCompletedBucket(a),
+  pending: (a) => !isScreeningFlagged(a) && !isScreeningCompletedBucket(a),
+};
+
+export const SCREENING_STATUS_LABELS: Record<string, string> = {
+  shortlisted: "Ready to schedule",
+  move_to_next_round: "Ready to schedule",
+  screening_round_scheduled: "Pending",
+  under_evaluation: "Completed",
+  ai_screening_evaluation_failed: "Flagged",
+  ai_screening_flagged: "Flagged",
+};
+
+export const UI_INTERVIEW_AI_INCOMING = "AI Incoming";
+export const UI_INTERVIEW_REGULAR_INCOMING = "Regular Incoming";
+export const UI_INTERVIEW_NO_SHOW = "No Show";
+export const UI_INTERVIEW_SCHEDULED = "Scheduled";
+export const UI_INTERVIEW_ONGOING = "Ongoing";
+export const UI_EVALUATED_AI = "AI";
+export const UI_EVALUATED_REGULAR = "Regular";
+export const UI_EVALUATION_DONE = "Evaluated";
+export const UI_EVALUATION_PENDING = "Pending Eval";
+export const UI_SCREENING_PENDING = "Pending";
+export const UI_SCREENING_COMPLETED = "Completed";
+export const UI_SCREENING_FLAGGED = "Flagged";
+export const UI_SEARCHING_APPLICANT = "Searching for applicant across pages...";
+export const UI_APPLICANT_NOT_FOUND = "Applicant not found in this hiring request.";

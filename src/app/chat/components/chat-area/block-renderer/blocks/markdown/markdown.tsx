@@ -60,7 +60,7 @@ const MarkdownRenderer: React.FC<Props> = ({ content }) => {
           td: ({ children }) => <td className="md-td">{children}</td>,
 
           // 🧠 Code blocks (IMPORTANT)
-          code: ({ inline, className, children }: any) => {
+          code: ({ inline, className, children }: { inline?: boolean; className?: string; children?: React.ReactNode }) => {
             if (inline) {
               return <code className="md-inline-code">{children}</code>;
             }

@@ -1,162 +1,90 @@
-import React, { useEffect, useRef, useState } from "react";
-
-import UserMessage from "@/components/ui/user-message/user-message";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./chat-area.css";
-import SuggestionChips from "./block-renderer/blocks/suggestion-chips/suggestion-chips";
-
-import { renderBlock } from "./block-renderer/block-factory";
-import type { ContentBlock, Message, AIMessage, Suggestion } from "@/app/chat/pages/chat.types";
-import { useChatStore } from "@/store/chat.store";
-import TextArea from "./block-renderer/blocks/text-area/text-area";
-import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import LoadingSpinner from "@/components/ui/loading-spinner/loading-spinner";
+import ChatBubble from "./chat-bubble";
+import { useChatStore } from "@/store/chat.store";
+import { useChatMessages } from "@/app/chat/hooks/use-chat-messages";
+import { extractAllText } from "./chat-area.utils";
+import { SCROLL_THRESHOLD, LOADING_MORE_LABEL, PROCESSING_LABEL } from "./chat-area.constants";
+import type { ChatAreaProps } from "./chat-area.types";
 
-type ChatAreaProps = {
-  onSend: (text: string) => void;
-};
-const ChatArea: React.FC<ChatAreaProps> = (props:ChatAreaProps) => {
-  const { messages, hasStarted, isProcessing, error } = useChatStore();
-
+const ChatArea: React.FC<ChatAreaProps> = (props: ChatAreaProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const prevScrollHeightRef = useRef(0);
+  const [copiedMsgId, setCopiedMsgId] = useState<number | null>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
-  // -----------------------------
-  // Scroll Handling
-  // -----------------------------
-  const handleScroll = () => {
+  const { messages, hasStarted, isProcessing, chatId, error } = useChatStore();
+
+  const { hasMore, loadMore, isLoadingMore } = useChatMessages(chatId);
+
+  const handleScroll = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
-
-    const threshold = 120;
-    const isNearBottom =
-      el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
-
+    if (el.scrollTop < 100 && hasMore && !isLoadingMore) {
+      prevScrollHeightRef.current = el.scrollHeight;
+      loadMore();
+    }
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < SCROLL_THRESHOLD;
     setAutoScroll(isNearBottom);
-  };
+  }, [hasMore, loadMore, isLoadingMore]);
 
   useEffect(() => {
-    if (autoScroll) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = containerRef.current;
+    if (!el || !prevScrollHeightRef.current) return;
+    const delta = el.scrollHeight - prevScrollHeightRef.current;
+    if (delta > 0) el.scrollTop += delta;
+    prevScrollHeightRef.current = 0;
+  }, [messages]);
+
+  useEffect(() => {
+    if (autoScroll && containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
   }, [messages, autoScroll]);
 
-  // -----------------------------
-  // Type Guards
-  // -----------------------------
-  const hasSuggestions = (
-    msg: Message
-  ): msg is AIMessage & { suggestions: Suggestion[] } => {
-    return msg.role === "ai" && Array.isArray(msg.suggestions);
-  };
-
-  const hasUIAction = (
-    msg: Message
-  ): msg is AIMessage & {
-    ui_action: {
-      type: "SHOW_JOB_PANEL";
-      payload: {
-        jobId: string;
-        role: string;
-      };
-    };
-  } => {
-    return msg.role === "ai" && msg.ui_action?.type === "SHOW_JOB_PANEL";
-  };
-
-  // -----------------------------
-  // Content Helpers
-  // -----------------------------
-  const extractMarkdown = (msg: Message): string => {
-    if (msg.role !== "ai") return "";
-    const block = msg.content.find((b) => b.type === "markdown");
-    return block?.content ?? "";
-  };
-
-  const extractText = (blocks: ContentBlock[]): string => {
-    for (const b of blocks) {
-      if (b.type === "text" || b.type === "thinking") {
-        return b.text;
-      }
-    }
-    return "";
-  };
+  const handleCopy = useCallback(async (id: number) => {
+    const msg = messages.find((m) => m.id === id);
+    if (!msg || msg.role !== "ai") return;
+    const text = extractAllText(msg.content);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedMsgId(id);
+      setTimeout(() => setCopiedMsgId(null), 1500);
+    } catch { /* silently ignore clipboard errors */ }
+  }, [messages]);
 
   if (!hasStarted) return null;
 
   return (
-    <div
-      ref={containerRef}
-      onScroll={handleScroll}
-      className="chat-area"
-    >
+    <div ref={containerRef} onScroll={handleScroll} className="chat-area">
       <div className="chat-area-container">
-        {messages.map((msg) => {
-          const isUI = hasUIAction(msg);
+        {isLoadingMore && (
+          <div className="chat-area__loading-more">
+            <LoadingSpinner size="sm" label={LOADING_MORE_LABEL} />
+          </div>
+        )}
 
-          // ✅ KEY FIX: filter markdown if UI action exists
-          const visibleBlocks =
-            msg.role === "ai" && isUI
-              ? msg.content.filter((b) => b.type !== "markdown")
-              : msg.content;
+        {messages.map((msg) => (
+          <ChatBubble
+            key={msg.id}
+            msg={msg}
+            copiedMsgId={copiedMsgId}
+            onCopy={handleCopy}
+            onSend={props.onSend}
+          />
+        ))}
 
-          return (
-            <ErrorBoundary key={msg.id}>
-            <div>
-              {msg.role === "user" ? (
-                <UserMessage text={extractText(msg.content)} />
-              ) : (
-                <div className="mb-10">
-                  {/* -----------------------------
-                      NORMAL CONTENT RENDER
-                  ----------------------------- */}
-                  {visibleBlocks.map((block, i) =>
-                    renderBlock(block, i)
-                  )}
-
-                  {/* -----------------------------
-                      UI ACTION (PURE SIDE EFFECT)
-                  ----------------------------- */}
-                  {isUI && (
-                    <div className="chat-area__action">
-                      <TextArea
-                        subject={`Job Posting: ${msg.ui_action.payload.role}`}
-                        name="HR System"
-                        meta={msg.ui_action.payload.jobId}
-                        content={extractMarkdown(msg)} // ONLY place markdown is used
-                      />
-                    </div>
-                  )}
-
-                  {/* -----------------------------
-                      SUGGESTIONS
-                  ----------------------------- */}
-                  {hasSuggestions(msg) && (
-                    <div className="chip-row">
-                      <SuggestionChips
-                        suggestions={msg.suggestions}
-                        onSend={props.onSend}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-            </ErrorBoundary>
-          );
-        })}
-
-        {/* Error banner */}
         {error && (
           <div className="chat-area__error">
             <span>{error}</span>
           </div>
         )}
 
-        {/* Typing indicator */}
         {isProcessing && (
           <div className="chat-area__typing">
-            <LoadingSpinner size="sm" label="AI is thinking..." />
+            <LoadingSpinner size="sm" label={PROCESSING_LABEL} />
           </div>
         )}
 

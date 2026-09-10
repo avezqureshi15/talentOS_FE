@@ -1,0 +1,47 @@
+import { useState } from "react";
+import { useApplicantState } from "@/app/dashboard/hiring-requests-detail/components/applicants/hooks/use-applicant-state";
+import CardExpandedContent from "@/app/dashboard/hiring-requests-detail/components/applicants/card-expanded-content";
+import CoverLetterModal from "@/app/dashboard/hiring-requests-detail/components/modal/cover-letter-modal";
+import type { AccordionTab, Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
+import "./candidate-expanded-panel.css";
+
+type CandidateExpandedPanelProps = {
+  applicant: Applicant;
+  jdId?: string;
+  isScreening?: boolean;
+  onTimeline?: (candidateId: number) => void;
+};
+
+const CandidateExpandedPanel = ({
+  applicant,
+  jdId,
+  isScreening = false,
+  onTimeline,
+}: CandidateExpandedPanelProps) => {
+  const [accordionTab, setAccordionTab] = useState<AccordionTab>("details");
+  const [coverLetterOpen, setCoverLetterOpen] = useState(false);
+  const stateConfig = useApplicantState(applicant, isScreening);
+
+  return (
+    <div className="cep">
+      <CardExpandedContent
+        applicant={applicant}
+        stateConfig={stateConfig}
+        accordionTab={accordionTab}
+        onTabChange={setAccordionTab}
+        onTimeline={(id) => onTimeline?.(id)}
+        onCoverLetterReadMore={() => setCoverLetterOpen(true)}
+        jdId={jdId}
+        showAllDetails
+      />
+      <CoverLetterModal
+        open={coverLetterOpen}
+        applicantName={applicant.name}
+        coverLetter={applicant.coverLetter ?? ""}
+        onClose={() => setCoverLetterOpen(false)}
+      />
+    </div>
+  );
+};
+
+export default CandidateExpandedPanel;

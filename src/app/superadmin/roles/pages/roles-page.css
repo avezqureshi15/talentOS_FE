@@ -1,0 +1,588 @@
+/* ───────────────────────────────────────────────
+   Role Management – Layout & Design System
+   ─────────────────────────────────────────────── */
+
+/* ── Page Root ── */
+
+.rp-root {
+  padding: 24px 32px 32px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Main Content Card ── */
+
+.rp-card {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Body Grid ── */
+
+.rp-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+
+@media (max-width: 900px) {
+  .rp-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Loading / Error ── */
+
+.rp-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ─────────────────────
+   Sidebar (Role List)
+   ───────────────────── */
+
+.rp-sidebar {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 100%;
+  min-height: 0;
+}
+
+.rp-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.rp-sidebar-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.rp-sidebar-count {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.rp-sidebar-list {
+  overflow-y: auto;
+  padding: 6px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ── Role Cards ── */
+
+.rp-role-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  font-family: inherit;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.rp-role-card:hover {
+  background: var(--bg-hover);
+}
+
+.rp-role-card:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Active state — left accent bar */
+.rp-role-card--active {
+  background: color-mix(in srgb, var(--accent) 6%, var(--bg-secondary));
+  border-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.rp-role-card--active::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 20%;
+  bottom: 20%;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent);
+}
+
+.rp-role-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.rp-role-card-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: capitalize;
+  line-height: 1.2;
+}
+
+.rp-role-card--active .rp-role-card-name {
+  color: var(--text-white);
+}
+
+.rp-role-card-stats {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rp-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  background: var(--bg-primary);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.rp-role-badge i {
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* ── Role Overflow Menu ── */
+
+.rp-role-menu {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.rp-role-card:hover .rp-role-menu {
+  opacity: 1;
+}
+
+.rp-role-menu:hover {
+  background: var(--bg-active);
+  color: var(--text-primary);
+}
+
+/* ─────────────────────
+   Detail Panel
+   ───────────────────── */
+
+.rp-detail {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Empty State ── */
+
+.rp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: var(--text-muted);
+  gap: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.rp-empty-icon {
+  font-size: 28px;
+  opacity: 0.3;
+}
+
+.rp-empty p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ─────────────────────
+   Permission Editor
+   ───────────────────── */
+
+.rpe-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  gap: 16px;
+}
+
+/* ── Role Summary Card ── */
+
+.rpe-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.rpe-summary-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.rpe-summary-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.rpe-summary-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rpe-summary-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rpe-summary-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-white);
+  text-transform: capitalize;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.rpe-summary-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 500;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  white-space: nowrap;
+}
+
+.rpe-summary-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Progress Bar ── */
+
+.rpe-summary-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.rpe-progress-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.rpe-progress-track {
+  width: 160px;
+  height: 4px;
+  background: var(--bg-primary);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.rpe-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* ── Permissions Grid ── */
+
+.rpe-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  align-content: start;
+}
+
+@media (max-width: 1100px) {
+  .rpe-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Permission Group Card ── */
+
+.rpe-group {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.rpe-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-hover);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.rpe-group-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.rpe-group-label i {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.rpe-group-count {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+  padding: 2px 7px;
+  border-radius: 6px;
+  line-height: 1.3;
+}
+
+/* ── Toggle Items ── */
+
+.rpe-group-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+}
+
+.rpe-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 5px 10px;
+  border-radius: 6px;
+  transition: background 0.12s;
+  outline: none;
+}
+
+.rpe-toggle:hover {
+  background: var(--bg-hover);
+}
+
+.rpe-toggle:focus-within {
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+/* Switch button */
+.rpe-toggle-switch {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  padding: 2px;
+  cursor: pointer;
+  border-radius: 99px;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.rpe-toggle-switch:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* Label + info button */
+.rpe-toggle-label-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-align: left;
+  transition: color 0.12s;
+  outline: none;
+  padding: 2px 0;
+}
+
+.rpe-toggle--on .rpe-toggle-label-btn {
+  color: var(--text-primary);
+}
+
+.rpe-toggle-label-btn:hover {
+  color: var(--text-white);
+}
+
+.rpe-toggle-label-btn i {
+  font-size: 13px;
+  opacity: 0.45;
+  flex-shrink: 0;
+  transition: opacity 0.12s, color 0.12s;
+}
+
+.rpe-toggle-label-btn:hover i {
+  opacity: 1;
+  color: var(--accent);
+}
+
+/* Switch track */
+.rpe-toggle-track {
+  position: relative;
+  width: 30px;
+  height: 18px;
+  border-radius: 99px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.rpe-toggle--on .rpe-toggle-track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Switch thumb */
+.rpe-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform 0.15s ease, background 0.15s;
+}
+
+.rpe-toggle--on .rpe-toggle-thumb {
+  transform: translateX(12px);
+  background: var(--static-white);
+}
+
+.rpe-toggle-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Not-yet-enforced dot (permission not gated in backend) */
+.rpe-toggle-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--warning);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warning) 22%, transparent);
+}
+
+/* ── Sticky Footer ── */
+
+.rpe-sticky-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  flex-shrink: 0;
+}

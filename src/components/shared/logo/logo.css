@@ -1,0 +1,23 @@
+.talent-logo-brand {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.talent-logo-name {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.talent-logo-talent {
+  color: var(--text-white);
+}
+
+.talent-logo-os {
+  background: var(--logo-brand-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

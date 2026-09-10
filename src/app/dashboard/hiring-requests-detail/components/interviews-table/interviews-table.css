@@ -1,0 +1,67 @@
+.interviews-table-wrapper {
+  width: 100%;
+}
+
+/* candidate cell */
+.it-candidate-cell {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* timing cell */
+.it-timing-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.it-date {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.it-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* actions cell */
+.it-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.it-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.it-action-btn--reschedule {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.it-action-btn--reschedule:hover {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+
+.it-action-btn--cancel {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.it-action-btn--cancel:hover {
+  background: var(--danger);
+  color: var(--text-white);
+}

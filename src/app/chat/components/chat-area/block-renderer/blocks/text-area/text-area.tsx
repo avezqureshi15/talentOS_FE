@@ -1,13 +1,7 @@
 import React from "react";
 import "./text-area.css";
 import MarkdownRenderer from "@/app/chat/components/chat-area/block-renderer/blocks/markdown/markdown";
-
-type Props = {
-  subject?: string;
-  name?: string;
-  meta?: string;
-  content?: string; // 🔥 AI GENERATED MARKDOWN
-};
+import type { Props } from "./text-area.types";
 
 const Divider = () => <div className="rl-divider" />;
 

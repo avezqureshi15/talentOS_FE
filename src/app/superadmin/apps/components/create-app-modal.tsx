@@ -1,0 +1,158 @@
+import { useEffect, useState } from "react";
+import BaseModal from "@/components/ui/modal/base-modal";
+import Button from "@/components/ui/button/button";
+import KeyDisplay from "./key-display";
+import { API_KEY_ROLES } from "../api-key-roles";
+import type { CreateAppModalProps } from "./create-app-modal.types";
+
+type Step = "form" | "result";
+
+const roleOptions = API_KEY_ROLES.map((r) => ({ value: r.value, label: r.label }));
+
+export default function CreateAppModal({ open, onClose, onSuccess, tenants }: CreateAppModalProps) {
+  const [step, setStep] = useState<Step>("form");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [tenantId, setTenantId] = useState<number | "">("");
+  const [role, setRole] = useState<string>("account_admin");
+  const [expiresAt, setExpiresAt] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [fullKey, setFullKey] = useState("");
+
+  useEffect(() => {
+    if (open) {
+      setStep("form");
+      setName("");
+      setDescription("");
+      setTenantId("");
+      setRole("account_admin");
+      setExpiresAt("");
+      setError(null);
+      setFullKey("");
+    }
+  }, [open]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    if (tenants && tenants.length > 0 && tenantId === "") return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const result = await onSuccess({
+        name: name.trim(),
+        description: description.trim() || undefined,
+        tenant_id: tenantId === "" ? null : tenantId,
+        role: role || null,
+        expires_at: expiresAt ? new Date(expiresAt + "T23:59:59").toISOString() : null,
+      });
+      setFullKey(result.full_key);
+      setStep("result");
+    } catch (err: unknown) {
+      const detail = err instanceof Error ? err.message : "Failed to create app";
+      setError(detail);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleClose = () => {
+    setName("");
+    setDescription("");
+    setError(null);
+    setStep("form");
+    setFullKey("");
+    onClose();
+  };
+
+  return (
+    <BaseModal
+      open={open}
+      onClose={handleClose}
+      title={step === "form" ? "Create New App" : "New Key Generated"}
+      icon={step === "form" ? "bx bx-code-alt" : "bx bx-check-shield"}
+    >
+      {step === "form" ? (
+        <form onSubmit={handleSubmit} style={{ display: "contents" }}>
+          <div className="ap-modal-body">
+            {error && <div className="ap-error">{error}</div>}
+            <div className="ap-field">
+              <label>App Name<span className="ap-required" aria-hidden="true">*</span></label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Recruitment Hub"
+                required
+              />
+            </div>
+            {tenants && tenants.length > 0 && (
+              <div className="ap-field">
+                <label>Tenant<span className="ap-required" aria-hidden="true">*</span></label>
+                <select
+                  value={tenantId}
+                  onChange={(e) => setTenantId(e.target.value === "" ? "" : Number(e.target.value))}
+                  required
+                >
+                  <option value="">Select tenant...</option>
+                  {tenants.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <div className="ap-field">
+              <label>Description</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Optional description for this app"
+                rows={3}
+              />
+            </div>
+            <div className="ap-field">
+              <label>Expires On <span style={{ opacity: 0.6, fontWeight: 400 }}>(optional)</span></label>
+              <input
+                type="date"
+                value={expiresAt}
+                onChange={(e) => setExpiresAt(e.target.value)}
+                min={new Date().toISOString().slice(0, 10)}
+              />
+            </div>
+            {roleOptions.length > 0 && (
+              <div className="ap-field">
+                <label>Role<span className="ap-required" aria-hidden="true">*</span></label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  required
+                >
+                  <option value="">Select role...</option>
+                  {roleOptions.map((r) => (
+                    <option key={r.value} value={r.value}>{r.label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+          <div className="ap-modal-footer">
+            <Button variant="ghost" onClick={handleClose}>Cancel</Button>
+            <Button variant="primary" type="submit" loading={submitting}>
+              {submitting ? "Creating..." : "Create App"}
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <>
+          <div className="ap-modal-body">
+            <KeyDisplay fullKey={fullKey} />
+          </div>
+          <div className="ap-modal-footer">
+            <Button variant="primary" onClick={handleClose}>I've Saved My Key</Button>
+          </div>
+        </>
+      )}
+    </BaseModal>
+  );
+}

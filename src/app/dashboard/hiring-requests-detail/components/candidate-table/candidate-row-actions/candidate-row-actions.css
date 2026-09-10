@@ -1,0 +1,19 @@
+.cra {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.cra-btn {
+  white-space: nowrap;
+}
+
+.cra-btn--icon {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.cra-dots {
+  flex-shrink: 0;
+}

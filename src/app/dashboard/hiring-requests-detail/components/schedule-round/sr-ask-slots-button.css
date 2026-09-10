@@ -1,0 +1,32 @@
+.sr-ask-slots-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.sr-ask-slots-btn:hover:not(:disabled) {
+  background: var(--surface-card);
+  border-color: var(--border-strong);
+  color: var(--accent-indigo-light);
+}
+
+.sr-ask-slots-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sr-ask-slots-btn i {
+  font-size: 14px;
+}

@@ -1,0 +1,333 @@
+/* ---------- Candidate cell content (shared with dt shell) ---------- */
+
+.applicant-table-cell--name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* candidate info */
+.candidate-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 2px solid var(--accent-border);
+}
+
+.candidate-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.candidate-name-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.attempt-badge--inline {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-subtle, rgba(0, 0, 0, 0.06));
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* merged actions cell (screening) */
+.screening-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.candidate-email {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* ATS score */
+.ats-score {
+  display: inline;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ats-score.score-high {
+  color: var(--success-light);
+}
+
+.ats-score.score-mid {
+  color: var(--score-mid);
+}
+
+.ats-score.score-low {
+  color: var(--danger-light);
+}
+
+/* status chip */
+.status-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-chip--info {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.status-chip--warning {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--new,
+.status-chip--waiting_for_review {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--under_evaluation {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.status-chip--shortlisted,
+.status-chip--resume_shortlisted,
+.status-chip--selected,
+.status-chip--move_to_next_round {
+  background: var(--success-bg-strong);
+  color: var(--success-light);
+}
+
+.status-chip--rejected {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+}
+
+.status-chip--ai_screening_evaluation_failed {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+}
+
+.status-chip--ai_screening_flagged {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+}
+
+.status-chip--scheduled,
+.status-chip--interview_scheduled,
+.status-chip--screening_round_scheduled {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.status-chip--interview_rescheduled {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--interview_cancelled {
+  background: var(--danger-bg-strong);
+  color: var(--danger-light);
+}
+
+.status-chip--ongoing {
+  background: var(--accent-indigo-bg);
+  color: var(--accent-indigo-light);
+}
+
+.status-chip--on-hold {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--pending {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+}
+
+.status-chip--completed {
+  background: var(--success-bg-strong);
+  color: var(--success-light);
+}
+
+.status-chip--flagged {
+  background: var(--danger-bg);
+  color: var(--danger-light);
+  border: 1px solid var(--danger-border);
+}
+
+.status-chip--interactive {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: help;
+}
+
+.status-chip--interactive:hover {
+  border-color: var(--danger-light-border);
+}
+
+.status-chip--flag-icon {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* candidate phone */
+.candidate-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.candidate-phone i {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.candidate-phone:hover {
+  color: var(--accent);
+}
+
+/* misc */
+.text-muted {
+  color: var(--text-muted);
+}
+
+.info-icon-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  margin-right: 12px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.info-icon-btn:hover {
+  background: var(--button-primary-bg);
+  border-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+
+.round-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  min-width: 0;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease;
+}
+
+.round-link i {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.round-link-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.round-link:hover {
+  background: var(--accent-bg);
+}
+
+.timeline-btn {
+  background: var(--yellow-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--yellow-border);
+  border-radius: var(--radius-sm);
+  color: var(--yellow);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  width: 26px;
+  height: 26px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-btn:hover {
+  background: var(--yellow-bg-strong);
+  border-color: var(--yellow-border-strong);
+}
+
+/* ---------- Interview date/time cells ---------- */
+.interview-date {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.interview-time {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.attempt-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg-subtle, rgba(0,0,0,.06));
+  color: var(--text-secondary);
+  white-space: nowrap;
+}

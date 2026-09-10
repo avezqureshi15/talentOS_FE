@@ -1,0 +1,6 @@
+.hiring-requests-page {
+  padding: 12px 18px 14px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
