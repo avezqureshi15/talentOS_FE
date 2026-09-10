@@ -21,7 +21,6 @@
 
 .dt-row-block--expanded {
   background: var(--bg-tertiary);
-  border-left: 3px solid var(--accent);
 }
 
 .dt-row-block--expanded .dt-row,

@@ -33,6 +33,7 @@ const CandidateExpandedPanel = ({
         onCoverLetterReadMore={() => setCoverLetterOpen(true)}
         jdId={jdId}
         showAllDetails
+        variant="panel"
       />
       <CoverLetterModal
         open={coverLetterOpen}

@@ -1,6 +1,7 @@
 import { truncateText } from "./applicants.utils";
 import { APPLICANT_LABELS } from "@/constants/constants";
 import MarkdownRenderer from "@/app/chat/components/chat-area/block-renderer/blocks/markdown/markdown";
+import type { CardVariant } from "./applicants.types";
 
 type Props = {
   aiSummary: string;
@@ -8,10 +9,30 @@ type Props = {
   onReadMore?: (id: string) => void;
   reviews?: Record<string, unknown>;
   showFull?: boolean;
+  variant?: CardVariant;
 };
 
-const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, showFull = false }: Props) => {
+const CardAiSummaryTab = ({ aiSummary, applicantId, onReadMore, showFull = false, variant = "inline" }: Props) => {
   const trimmed = aiSummary.trim();
+
+  if (variant === "panel") {
+    if (!trimmed) {
+      return (
+        <div className="cep-empty">
+          <div className="cep-empty-icon">
+            <i className="bx bx-bot" aria-hidden />
+          </div>
+          <p className="cep-empty-title">{APPLICANT_LABELS.NO_AI_SUMMARY_TITLE}</p>
+          <p className="cep-empty-desc">{APPLICANT_LABELS.NO_AI_SUMMARY_DESC}</p>
+        </div>
+      );
+    }
+    return (
+      <div className="cep-ai-summary">
+        <MarkdownRenderer content={aiSummary} />
+      </div>
+    );
+  }
 
   if (showFull) {
     return (

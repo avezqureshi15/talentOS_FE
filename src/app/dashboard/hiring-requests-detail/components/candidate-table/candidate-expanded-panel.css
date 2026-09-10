@@ -1,15 +1,33 @@
-.cep .accordion-body {
-  gap: 10px;
-  padding: 0;
-  border-top: none;
+.cep {
+  display: block;
 }
 
+/* ---------- Panel shell: seamless row extension ---------- */
+.cep .accordion-body {
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+/* ---------- Compact dismissible alert ---------- */
+.cep .accordion-body > .screening-failure-banner {
+  margin: 10px 16px 0;
+}
+
+/* ---------- Sticky tab bar (blends with the expanded row) ---------- */
 .cep .accordion-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   margin: 0;
+  padding: 0 16px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-default);
 }
 
 .cep .accordion-tab {
-  padding: 8px 14px;
+  padding: 10px 14px;
   font-size: 12px;
 }
 
@@ -17,87 +35,229 @@
   border-bottom-width: 2px;
 }
 
-.cep .cep-details {
-  margin-top: 2px;
+.cep .accordion-tab svg {
+  width: 14px;
+  height: 14px;
 }
 
-.cep .details-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+/* ---------- Content panel: fixed height, scrolls when content overflows ---------- */
+.cep .accordion-panel {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  height: 214px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 14px 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+  animation: cep-fade 0.15s ease;
+}
+
+.cep .accordion-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cep .accordion-panel::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+
+@keyframes cep-fade {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Details grid ---------- */
+.cep .accordion-panel .cep-details {
+  margin: 0;
+  padding: 0;
   background: none;
   border: none;
   border-radius: 0;
 }
 
-.cep .details-row {
+.cep .cep-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+}
+
+@media (min-width: 1024px) {
+  .cep .cep-details-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.cep .cep-field {
   display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 16px;
-  padding: 8px 0;
-  border: none;
-  border-bottom: 1px solid var(--border-subtle);
-  background: transparent;
-}
-
-.cep .details-row:last-child {
-  border-bottom: none;
-}
-
-.cep .details-label {
-  flex: 0 0 148px;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--text-muted);
-}
-
-.cep .details-label::after {
-  content: ":";
-}
-
-.cep .details-value {
-  flex: 1;
+  flex-direction: column;
+  gap: 6px;
   min-width: 0;
+}
+
+.cep .cep-field-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.cep .cep-field-value {
   font-size: 13px;
   color: var(--text-primary);
   word-break: break-word;
 }
 
-.cep .details-value--link {
-  color: var(--accent);
-  font-weight: 500;
+.cep .cep-field-empty {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-muted);
 }
 
-.cep .details-value--link:hover {
+/* ---------- Field value chips ---------- */
+.cep .cep-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.cep .cep-badge i {
+  font-size: 14px;
+}
+
+.cep .cep-badge--cv {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+}
+
+.cep .cep-badge--cv:hover {
+  background: var(--accent-border);
   color: var(--text-primary);
 }
 
-.cep .cep-details .cover-letter-text {
-  margin: 0;
-  padding: 12px 14px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+.cep .cep-badge--link {
+  background: var(--chip-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}
+
+.cep .cep-badge--link:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.cep .cep-tag {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 3px 9px;
+  border-radius: var(--radius-sm);
+  background: var(--chip-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+  font-size: 12px;
+}
+
+.cep .cep-pill {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.cep .cep-pill--success {
+  background: var(--success-bg);
+  color: var(--success-light);
+  border: 1px solid var(--success-border);
+}
+
+.cep .cep-pill--neutral {
+  background: var(--neutral-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+}
+
+/* ---------- Whole-tab empty state ---------- */
+.cep .cep-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 200px;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.cep .cep-empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--chip-bg);
   color: var(--text-muted);
+  font-size: 24px;
+}
+
+.cep .cep-empty-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.cep .cep-empty-desc {
+  margin: 0;
+  max-width: 320px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* ---------- Full content views ---------- */
+.cep .accordion-panel .cep-cover-letter {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+}
+
+.cep .cep-cover-letter .cover-letter-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
 }
 
 .cep .cep-ai-summary .md-root {
   padding: 14px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   line-height: 1.7;
   color: var(--text-secondary);
   word-break: break-word;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-subtle);
-}
-
-.cep .cep-ai-summary .cover-letter-text {
-  margin: 0;
-  padding: 12px 14px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  color: var(--text-muted);
 }

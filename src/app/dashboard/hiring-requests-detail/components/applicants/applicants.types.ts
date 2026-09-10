@@ -196,6 +196,8 @@ export type ApplicantActionModalsProps = {
   isConfirmingHire?: boolean;
 };
 
+export type CardVariant = "inline" | "panel";
+
 export type CardExpandedContentProps = {
   applicant: Applicant;
   stateConfig: StateConfig;
@@ -207,4 +209,5 @@ export type CardExpandedContentProps = {
   onAiSummaryReadMore?: (id: string) => void;
   jdId?: string;
   showAllDetails?: boolean;
+  variant?: CardVariant;
 };
