@@ -652,21 +652,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  width: 32px;
   height: 32px;
-  padding: 0 10px;
+  padding: 0;
   border-radius: 8px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-hover);
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
-}
-
-.jobs-more-btn-label {
-  font-size: 13px;
-  font-weight: 500;
-  font-family: inherit;
 }
 
 .jobs-more-btn i {
@@ -745,26 +739,26 @@
 
 .header-more-item--danger {
   margin-top: 4px;
-  border-top: 1px solid rgba(239, 68, 68, 0.15);
-  background: rgba(239, 68, 68, 0.06);
+  border-top: 1px solid var(--danger-border);
+  background: var(--danger-bg-subtle);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
 .header-more-item--danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.12);
+  background: var(--danger-bg);
 }
 
 .header-more-item--danger > i {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .header-more-item--danger .header-more-item-title {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .header-more-item--danger .header-more-item-desc {
-  color: rgba(239, 68, 68, 0.7);
+  color: var(--danger-light);
 }
 
 /* ── Responsive: collapse button text to icons ── */

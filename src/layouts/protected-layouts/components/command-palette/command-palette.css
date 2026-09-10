@@ -130,8 +130,8 @@
 }
 
 .cp-item-icon--employee {
-  background: var(--accent-green-bg, rgba(34, 197, 94, 0.12));
-  color: var(--accent-green, #22c55e);
+  background: var(--accent-green-bg);
+  color: var(--accent-green);
 }
 
 .cp-item-label {

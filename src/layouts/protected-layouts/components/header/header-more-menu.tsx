@@ -42,7 +42,6 @@ const HeaderMoreMenu = ({ actions }: HeaderMoreMenuProps) => {
         aria-expanded={open}
       >
         <i className="bx bx-dots-horizontal-rounded" />
-        <span className="jobs-more-btn-label">More</span>
       </button>
 
       <AnimatePresence>

@@ -313,6 +313,28 @@
 
   /* waveform */
   --waveform-color: var(--bg-secondary);
+
+  /* ─────────────────────────────────────────────────────────────
+     shared / migrated tokens (previously hardcoded or undefined)
+     ───────────────────────────────────────────────────────────── */
+  --bg-subtle: rgba(255, 255, 255, 0.06);
+  --border-color: var(--border-subtle);
+  --accent-green: var(--success);
+  --accent-green-bg: var(--success-bg);
+  --accent-danger: var(--danger);
+  --status-pill-info-bg-soft: var(--bg-hover);
+  --status-pill-info-text: var(--text-secondary);
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --focus-ring: 0 0 0 2px rgba(255, 255, 255, 0.9);
+
+  --success-600: #16a34a;
+  --success-600-bg: rgba(22, 163, 74, 0.12);
+  --success-600-bg-strong: rgba(22, 163, 74, 0.2);
+  --zinc-700: #27272a;
+
+  --gradient-aurora: linear-gradient(90deg, #6366f1, #a855f7, #ec4899, #06b6d4);
+  --skeleton-base: #e5e7eb;
+  --skeleton-highlight: #f3f4f6;
 }
 
 [data-theme="light"] {
@@ -552,4 +574,9 @@
   /* timeline */
   --timeline-line: #d1d5db;
   --timeline-active: #4f46e5;
+
+  /* ── shared / migrated tokens ── */
+  --bg-subtle: rgba(0, 0, 0, 0.06);
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.15);
+  --focus-ring: 0 0 0 2px rgba(0, 0, 0, 0.9);
 }

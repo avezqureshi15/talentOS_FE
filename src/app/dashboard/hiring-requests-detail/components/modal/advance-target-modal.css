@@ -33,7 +33,7 @@
 .atm-choice i {
   grid-row: 1 / span 2;
   font-size: 20px;
-  color: var(--accent, #60a5fa);
+  color: var(--accent);
   margin-top: 2px;
 }
 
@@ -48,6 +48,6 @@
 }
 
 .atm-choice:hover {
-  border-color: var(--accent, #60a5fa);
+  border-color: var(--accent);
   background: var(--bg-hover);
 }

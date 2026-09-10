@@ -41,25 +41,25 @@ export const SCORE_FILTER_MAP: Record<string, { min?: number; max?: number }> = 
   lt30: { max: 29 },
 };
 
+const INTERVIEW_INCOMING_STATUSES = ["interview_scheduled", "interview_rescheduled", "ongoing"];
+const isInterviewStage = (a: Applicant) =>
+  a.stage === "AI_INTERVIEW" || a.stage === "INTERVIEW";
+
 export const INTERVIEW_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
-  "ai-incoming": (a) =>
-    a.stage === "AI_INTERVIEW" &&
-    (a.status?.toLowerCase() === "interview_scheduled" ||
-     a.status?.toLowerCase() === "interview_rescheduled" ||
-     a.status?.toLowerCase() === "ongoing"),
-  "regular-incoming": (a) =>
-    a.stage === "INTERVIEW" &&
-    (a.status?.toLowerCase() === "interview_scheduled" ||
-     a.status?.toLowerCase() === "interview_rescheduled" ||
-     a.status?.toLowerCase() === "ongoing"),
+  incoming: (a) =>
+    isInterviewStage(a) && INTERVIEW_INCOMING_STATUSES.includes(a.status?.toLowerCase() ?? ""),
+  ai: (a) =>
+    a.stage === "AI_INTERVIEW" && INTERVIEW_INCOMING_STATUSES.includes(a.status?.toLowerCase() ?? ""),
+  regular: (a) =>
+    a.stage === "INTERVIEW" && INTERVIEW_INCOMING_STATUSES.includes(a.status?.toLowerCase() ?? ""),
   "no-show": (a) =>
     a.status?.toLowerCase() === "interview_cancelled" ||
     a.status?.toLowerCase() === "no_show",
   scheduled: (a) =>
-    a.stage === "INTERVIEW" &&
+    isInterviewStage(a) &&
     (a.status?.toLowerCase() === "interview_scheduled" ||
      a.status?.toLowerCase() === "interview_rescheduled"),
-  ongoing: (a) => a.stage === "INTERVIEW" && a.status?.toLowerCase() === "ongoing",
+  ongoing: (a) => isInterviewStage(a) && a.status?.toLowerCase() === "ongoing",
 };
 
 export const EVALUATION_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
@@ -106,6 +106,11 @@ export const UI_INTERVIEW_REGULAR_INCOMING = "Regular Incoming";
 export const UI_INTERVIEW_NO_SHOW = "No Show";
 export const UI_INTERVIEW_SCHEDULED = "Scheduled";
 export const UI_INTERVIEW_ONGOING = "Ongoing";
+export const UI_INTERVIEW_TAB_INCOMING = "Incoming";
+export const UI_INTERVIEW_TAB_NO_SHOW = UI_INTERVIEW_NO_SHOW;
+export const UI_INTERVIEW_TYPE_ALL = "All";
+export const UI_INTERVIEW_TYPE_AI = "AI";
+export const UI_INTERVIEW_TYPE_REGULAR = "Regular";
 export const UI_EVALUATED_AI = "AI";
 export const UI_EVALUATED_REGULAR = "Regular";
 export const UI_EVALUATION_DONE = "Evaluated";

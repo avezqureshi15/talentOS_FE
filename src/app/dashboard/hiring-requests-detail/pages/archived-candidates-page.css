@@ -12,11 +12,11 @@
   justify-content: center;
   gap: 8px;
   padding: 56px 24px;
-  border: 1px dashed var(--border-color, #e5e7eb);
+  border: 1px dashed var(--border-color);
   border-radius: 12px;
-  color: var(--text-faint, #9ca3af);
+  color: var(--text-faint);
   font-size: 13px;
-  background: var(--surface-card, #ffffff);
+  background: var(--surface-card);
 }
 
 .archived-page-empty i {
@@ -34,7 +34,7 @@
   align-items: center;
   gap: 14px;
   padding: 16px 18px;
-  background: var(--surface-card, #ffffff);
+  background: var(--surface-card);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
 }

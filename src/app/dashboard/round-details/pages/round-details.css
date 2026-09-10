@@ -428,7 +428,7 @@
   fill: color-mix(in srgb, var(--danger) 65%, transparent);
 }
 .rd-stamp--advance .rd-stamp-arc {
-  fill: #ffffff;
+  fill: var(--static-white);
 }
 .rd-stamp--potential .rd-stamp-arc {
   fill: color-mix(in srgb, var(--verdict-hold) 65%, transparent);

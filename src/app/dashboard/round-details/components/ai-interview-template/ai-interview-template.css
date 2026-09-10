@@ -51,10 +51,10 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  border: 1px solid var(--rd-border, #d1d5db);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: var(--rd-surface, #fff);
-  color: var(--rd-text, #1f2937);
+  background: var(--surface-card);
+  color: var(--text-primary);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -62,8 +62,8 @@
 }
 
 .rd-ai-action:hover:not(:disabled) {
-  background: var(--rd-surface-hover, #f3f4f6);
-  border-color: var(--rd-primary, #6366f1);
+  background: var(--bg-hover);
+  border-color: var(--accent-indigo);
 }
 
 .rd-ai-action:disabled {

@@ -96,12 +96,12 @@
 }
 
 .person-tip-copy--copied {
-  color: #16a34a;
-  background: rgba(22, 163, 74, 0.12);
+  color: var(--success-600);
+  background: var(--success-600-bg);
   border-radius: 4px;
 }
 
 .person-tip-copy--copied:hover {
-  color: #16a34a;
-  background: rgba(22, 163, 74, 0.2);
+  color: var(--success-600);
+  background: var(--success-600-bg-strong);
 }

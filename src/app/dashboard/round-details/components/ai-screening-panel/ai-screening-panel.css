@@ -122,8 +122,8 @@
   align-items: flex-start;
   gap: 12px;
   padding: 14px 16px;
-  background: var(--danger-bg, var(--surface-elevated));
-  border: 1px solid var(--danger-border, rgba(220, 38, 38, 0.25));
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
   border-radius: 10px;
 }
 
@@ -131,7 +131,7 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: var(--danger-bg, rgba(220, 38, 38, 0.12));
+  background: var(--danger-bg);
   color: var(--danger);
   display: inline-flex;
   align-items: center;

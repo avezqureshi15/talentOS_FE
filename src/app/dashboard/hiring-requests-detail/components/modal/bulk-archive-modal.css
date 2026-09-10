@@ -8,13 +8,13 @@
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 8px;
-  color: var(--text-primary, #1f2937);
+  color: var(--text-primary);
 }
 
 .bam-desc {
   font-size: 13px;
   line-height: 1.55;
-  color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary);
   margin: 0 0 20px;
 }
 
@@ -36,11 +36,11 @@
 
 .bam-btn--cancel {
   background: transparent;
-  border-color: var(--border-color, #e5e7eb);
-  color: var(--text-secondary, #6b7280);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
 }
 
 .bam-btn--confirm {
-  background: var(--accent-danger, #ef4444);
-  color: #fff;
+  background: var(--accent-danger);
+  color: var(--static-white);
 }

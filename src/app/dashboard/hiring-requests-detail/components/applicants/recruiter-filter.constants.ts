@@ -1,8 +1,8 @@
 import type { Recruiter } from "./recruiter-filter.types";
 
 export const RECRUITER_COLORS = [
-  "#4f8ef7", "#6366f1", "#22c55e", "#f59e0b",
-  "#ef4444", "#a855f7", "#06b6d4", "#ec4899",
+  "var(--accent)", "var(--accent-indigo)", "var(--success)", "var(--warning)",
+  "var(--danger)", "var(--accent-violet)", "var(--aurora-cyan)", "var(--aurora-pink)",
 ];
 
 export const MOCK_RECRUITERS: Recruiter[] = [

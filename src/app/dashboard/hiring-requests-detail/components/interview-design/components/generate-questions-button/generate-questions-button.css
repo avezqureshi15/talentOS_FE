@@ -11,10 +11,10 @@
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  border: 1px solid var(--border-subtle, #e2e2e2);
+  border: 1px solid var(--border-subtle);
   border-radius: 6px;
-  background: var(--bg-secondary, #fafafa);
-  color: var(--text-primary, #1a1a1a);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -22,8 +22,8 @@
 }
 
 .gqb-button:hover:not(:disabled) {
-  background: var(--bg-hover, #f0f0f0);
-  border-color: var(--border-strong, #c8c8c8);
+  background: var(--bg-hover);
+  border-color: var(--border-strong);
 }
 
 .gqb-button:disabled {
@@ -39,8 +39,8 @@
 .gqb-button-spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid var(--border-subtle, #e2e2e2);
-  border-top-color: var(--text-primary, #1a1a1a);
+  border: 2px solid var(--border-subtle);
+  border-top-color: var(--text-primary);
   border-radius: 50%;
   animation: gqb-spin 0.8s linear infinite;
 }
@@ -57,7 +57,7 @@
   gap: 10px;
   max-width: 480px;
   font-size: 12px;
-  color: var(--danger, #c0392b);
+  color: var(--danger);
 }
 
 .gqb-error-message {
@@ -68,16 +68,16 @@
 .gqb-retry-btn {
   flex-shrink: 0;
   padding: 2px 10px;
-  border: 1px solid var(--danger, #c0392b);
+  border: 1px solid var(--danger);
   border-radius: 4px;
   background: transparent;
-  color: var(--danger, #c0392b);
+  color: var(--danger);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .gqb-retry-btn:hover {
-  background: var(--danger, #c0392b);
-  color: #ffffff;
+  background: var(--danger);
+  color: var(--static-white);
 }

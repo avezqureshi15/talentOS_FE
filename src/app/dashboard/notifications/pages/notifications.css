@@ -5,8 +5,8 @@
   --notif-reviews-bg: var(--status-pill-success-bg-soft);
   --notif-assignments: var(--accent);
   --notif-assignments-bg: var(--accent-bg, var(--accent-indigo-subtle));
-  --notif-process: var(--accent-violet, #a78bfa);
-  --notif-process-bg: var(--accent-violet-bg, rgba(168, 85, 247, 0.1));
+  --notif-process: var(--accent-violet);
+  --notif-process-bg: var(--accent-violet-bg);
 
   padding: 24px;
   flex: 1;
@@ -105,7 +105,7 @@
 
 .notifications-segment__badge--active {
   background: var(--accent);
-  color: #ffffff;
+  color: var(--static-white);
 }
 
 .notifications-mark-all {
@@ -243,7 +243,7 @@
   height: 10px;
   border-radius: 999px;
   background: var(--item-accent, var(--accent));
-  box-shadow: 0 0 0 2px var(--surface-card, #111111);
+  box-shadow: 0 0 0 2px var(--surface-card);
 }
 
 .notifications-item__main {

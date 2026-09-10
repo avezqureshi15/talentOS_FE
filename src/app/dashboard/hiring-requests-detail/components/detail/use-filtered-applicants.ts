@@ -3,10 +3,14 @@ import type { Applicant } from "@/app/dashboard/hiring-requests-detail/component
 import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
 import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATION_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP } from "./detail.constants";
 
+export type InterviewTab = "incoming" | "no-show";
+export type InterviewType = "all" | "ai" | "regular";
+
 type UseFilteredApplicantsArgs = {
   applicants: Applicant[];
   activeStage: StageKey;
-  interviewSubFilter: string;
+  interviewTab: InterviewTab;
+  interviewType: InterviewType;
   evaluationSubFilter: string;
   screeningSubFilter: string;
   interviewScheduleFilter: string | null;
@@ -15,7 +19,8 @@ type UseFilteredApplicantsArgs = {
 export function useFilteredApplicants({
   applicants,
   activeStage,
-  interviewSubFilter,
+  interviewTab,
+  interviewType,
   evaluationSubFilter,
   screeningSubFilter,
   interviewScheduleFilter,
@@ -24,9 +29,14 @@ export function useFilteredApplicants({
     let filtered = applicants.filter(STAGE_FILTER_MAP[activeStage]);
 
     if (activeStage === "interview") {
-      filtered = filtered.filter(INTERVIEW_SUB_FILTER_MAP[interviewSubFilter]);
-      if (interviewScheduleFilter) {
-        filtered = filtered.filter(INTERVIEW_SUB_FILTER_MAP[interviewScheduleFilter]);
+      filtered = filtered.filter(INTERVIEW_SUB_FILTER_MAP[interviewTab]);
+      if (interviewTab === "incoming") {
+        if (interviewType !== "all") {
+          filtered = filtered.filter(INTERVIEW_SUB_FILTER_MAP[interviewType]);
+        }
+        if (interviewScheduleFilter) {
+          filtered = filtered.filter(INTERVIEW_SUB_FILTER_MAP[interviewScheduleFilter]);
+        }
       }
     }
 
@@ -39,5 +49,5 @@ export function useFilteredApplicants({
     }
 
     return filtered;
-  }, [applicants, activeStage, interviewSubFilter, evaluationSubFilter, screeningSubFilter, interviewScheduleFilter]);
+  }, [applicants, activeStage, interviewTab, interviewType, evaluationSubFilter, screeningSubFilter, interviewScheduleFilter]);
 }

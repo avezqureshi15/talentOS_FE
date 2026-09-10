@@ -7,51 +7,33 @@
   box-shadow: var(--shadow-xl);
   backdrop-filter: none;
 
-  /* monochrome tokens — default (dark) theme */
-  --chr-border: rgba(255, 255, 255, 0.12);
-  --chr-border-strong: rgba(255, 255, 255, 0.2);
-  --chr-border-subtle: rgba(255, 255, 255, 0.07);
-  --chr-bg-subtle: rgba(255, 255, 255, 0.04);
-  --chr-hover: rgba(255, 255, 255, 0.06);
-  --chr-focus-ring: 0 0 0 2px rgba(255, 255, 255, 0.9);
-  --chr-primary-bg: #ffffff;
-  --chr-primary-text: #0a0a0a;
-  --chr-primary-hover: #d4d4d4;
-  --chr-seg-track: rgba(255, 255, 255, 0.08);
-  --chr-seg-active-bg: #ffffff;
-  --chr-seg-active-text: #0a0a0a;
-  --chr-dot-active: #ffffff;
-  --chr-dot-done: rgba(255, 255, 255, 0.45);
-  --chr-dot-idle: rgba(255, 255, 255, 0.18);
-  --chr-badge-bg: #ffffff;
-  --chr-badge-text: #0a0a0a;
+  /* monochrome tokens — mapped to global design tokens */
+  --chr-border: var(--border-default);
+  --chr-border-strong: var(--border-strong);
+  --chr-border-subtle: var(--border-subtle);
+  --chr-bg-subtle: var(--surface-card);
+  --chr-hover: var(--bg-hover);
+  --chr-focus-ring: var(--focus-ring);
+  --chr-primary-bg: var(--button-primary-bg);
+  --chr-primary-text: var(--button-primary-text);
+  --chr-primary-hover: var(--button-primary-hover);
+  --chr-seg-track: var(--bg-tertiary);
+  --chr-seg-active-bg: var(--static-white);
+  --chr-seg-active-text: var(--static-black);
+  --chr-dot-active: var(--text-white);
+  --chr-dot-done: var(--text-muted);
+  --chr-dot-idle: var(--text-faint);
+  --chr-badge-bg: var(--text-white);
+  --chr-badge-text: var(--bg-primary);
 }
 
 [data-theme="light"] .base-modal.create-hr-modal {
-  background: #ffffff;
+  background: var(--surface-mist);
   border: 1px solid var(--chr-border);
-
-  --chr-border: rgba(0, 0, 0, 0.12);
-  --chr-border-strong: rgba(0, 0, 0, 0.22);
-  --chr-border-subtle: rgba(0, 0, 0, 0.08);
-  --chr-bg-subtle: #fafafa;
-  --chr-hover: rgba(0, 0, 0, 0.045);
-  --chr-focus-ring: 0 0 0 2px rgba(0, 0, 0, 0.9);
-  --chr-primary-bg: #0a0a0a;
-  --chr-primary-text: #ffffff;
-  --chr-primary-hover: #27272a;
-  --chr-seg-track: #f4f4f5;
-  --chr-seg-active-bg: #ffffff;
-  --chr-seg-active-text: #0a0a0a;
-  --chr-dot-active: #0a0a0a;
-  --chr-dot-done: rgba(0, 0, 0, 0.4);
-  --chr-dot-idle: rgba(0, 0, 0, 0.15);
-  --chr-badge-bg: #0a0a0a;
-  --chr-badge-text: #ffffff;
 }
 
 .create-hr-overlay {
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay);
   backdrop-filter: blur(12px);
 }
 
@@ -341,7 +323,7 @@
   height: 32px;
   border-radius: 50%;
   background: var(--avatar-gradient);
-  color: #fff;
+  color: var(--static-white);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -429,7 +411,7 @@
   height: 28px;
   border-radius: 50%;
   background: var(--avatar-gradient);
-  color: #fff;
+  color: var(--static-white);
   display: inline-flex;
   align-items: center;
   justify-content: center;

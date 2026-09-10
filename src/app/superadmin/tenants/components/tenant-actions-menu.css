@@ -40,10 +40,10 @@
   z-index: 30;
   min-width: 150px;
   padding: 4px;
-  background: var(--surface-card, #ffffff);
+  background: var(--surface-card);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.12));
+  box-shadow: var(--shadow-md);
 }
 
 .tam-item {

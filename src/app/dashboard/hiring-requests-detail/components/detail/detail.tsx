@@ -24,6 +24,7 @@ import Skeleton from "@/components/ui/skeleton/skeleton";
 import BulkArchiveModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-archive-modal";
 import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
+import type { InterviewTab, InterviewType } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
 import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
@@ -39,7 +40,8 @@ import { isRemoteLocation } from "@/utils/format-locations";
 const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [searchParams] = useSearchParams();
   const applicantParam = searchParams.get("applicant");
-  const [interviewSubFilter, setInterviewSubFilter] = useState<"ai-incoming" | "regular-incoming" | "no-show">("ai-incoming");
+  const [interviewTab, setInterviewTab] = useState<InterviewTab>("incoming");
+  const [interviewType, setInterviewType] = useState<InterviewType>("all");
   const [interviewScheduleFilter, setInterviewScheduleFilter] = useState<InterviewScheduleFilter>(null);
   const [evaluationSubFilter, setEvaluationSubFilter] = useState<EvaluationSubFilter>("evaluated");
   const [screeningSubFilter, setScreeningSubFilter] = useState<"pending" | "completed" | "flagged">("pending");
@@ -77,7 +79,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   });
 
   const filteredApplicants = useFilteredApplicants({
-    applicants, activeStage, interviewSubFilter, evaluationSubFilter, screeningSubFilter,
+    applicants, activeStage, interviewTab, interviewType, evaluationSubFilter, screeningSubFilter,
     interviewScheduleFilter,
   });
 
@@ -142,17 +144,17 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     [stageCounts, archivedStageCounts, finalizedTotal],
   );
 
-  const interviewSubCounts = useMemo(() => ({
-    "ai-incoming": applicants.filter(
-      (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["ai-incoming"](a),
-    ).length,
-    "regular-incoming": applicants.filter(
-      (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["regular-incoming"](a),
-    ).length,
-    "no-show": applicants.filter(
-      (a) => STAGE_FILTER_MAP["interview"](a) && INTERVIEW_SUB_FILTER_MAP["no-show"](a),
-    ).length,
-  }), [applicants]);
+  const interviewCounts = useMemo(() => {
+    const inStage = (a: (typeof applicants)[number]) => STAGE_FILTER_MAP["interview"](a);
+    const incoming = applicants.filter((a) => inStage(a) && INTERVIEW_SUB_FILTER_MAP["incoming"](a)).length;
+    const noShow = applicants.filter((a) => inStage(a) && INTERVIEW_SUB_FILTER_MAP["no-show"](a)).length;
+    const ai = applicants.filter((a) => inStage(a) && INTERVIEW_SUB_FILTER_MAP["ai"](a)).length;
+    const regular = applicants.filter((a) => inStage(a) && INTERVIEW_SUB_FILTER_MAP["regular"](a)).length;
+    return {
+      tabs: { incoming, "no-show": noShow },
+      types: { all: incoming, ai, regular },
+    };
+  }, [applicants]);
 
   const columns = useMemo<StageColumn[]>(() => {
     if (activeStage === "screening") {
@@ -164,22 +166,15 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
         ];
     }
     if (activeStage === "interview") {
-      if (interviewSubFilter === "ai-incoming") {
-        return [
-          ...NAME_SCORE_STATUS,
-          { key: "startDate", label: "Start Date", flex: 0.9 },
-          { key: "time", label: "Time", flex: 0.7 },
-          ...SUFFIX_COLUMNS,
-        ];
+      if (interviewTab === "no-show") {
+        return [...NAME_SCORE_STATUS, ...SUFFIX_COLUMNS];
       }
-      if (interviewSubFilter === "regular-incoming") {
-        return [
-          ...NAME_SCORE_STATUS,
-          { key: "startDate", label: "Start Date", flex: 0.9 },
-          { key: "time", label: "Time", flex: 0.7 },
-          ...SUFFIX_COLUMNS,
-        ];
-      }
+      return [
+        ...NAME_SCORE_STATUS,
+        { key: "startDate", label: "Start Date", flex: 0.9 },
+        { key: "time", label: "Time", flex: 0.7 },
+        ...SUFFIX_COLUMNS,
+      ];
     }
     if (activeStage === "evaluation") {
       return [
@@ -191,7 +186,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     }
     const base = PIPELINE_STAGES.find((s) => s.key === activeStage)?.columns ?? [];
     return base;
-  }, [activeStage, interviewSubFilter]);
+  }, [activeStage, interviewTab]);
 
   const evaluationSubCounts = useMemo(() => ({
     evaluated: applicants.filter(STAGE_FILTER_MAP.evaluated).length,
@@ -296,12 +291,15 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           )}
           {activeStage === "interview" && (
             <InterviewFilterBar
-              value={interviewSubFilter}
-              onChange={(v) => {
-                if (v !== "regular-incoming") setInterviewScheduleFilter(null);
-                setInterviewSubFilter(v);
+              tab={interviewTab}
+              onTabChange={(v) => {
+                setInterviewTab(v);
+                if (v !== "incoming") setInterviewScheduleFilter(null);
               }}
-              counts={interviewSubCounts}
+              counts={interviewCounts.tabs}
+              type={interviewType}
+              onTypeChange={setInterviewType}
+              typeCounts={interviewCounts.types}
               scheduleFilter={interviewScheduleFilter}
               onScheduleFilterChange={setInterviewScheduleFilter}
             />
