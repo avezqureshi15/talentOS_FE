@@ -31,14 +31,16 @@ export default function UserTable({ users, loading, onEdit, onDeactivate, onView
           header: "",
           render: (u: AdminUser) => (
             <div className="dt-actions">
-              <button
-                className="dt-btn"
-                onClick={(e) => { e.stopPropagation(); onEdit(u); }}
-                title="Edit user"
-              >
-                <span className="bx bx-pencil" />
-              </button>
-              {u.is_active && (
+              {onEdit && (
+                <button
+                  className="dt-btn"
+                  onClick={(e) => { e.stopPropagation(); onEdit(u); }}
+                  title="Edit user"
+                >
+                  <span className="bx bx-pencil" />
+                </button>
+              )}
+              {onDeactivate && u.is_active && (
                 <button
                   className="dt-btn dt-btn--danger"
                   onClick={(e) => { e.stopPropagation(); onDeactivate(u); }}

@@ -20,11 +20,12 @@ import type { AdminUser } from "@/app/admin/users/services/users-admin.service";
 
 type Props = {
   tenantId: number;
+  readOnly?: boolean;
 };
 
 type Tab = "active" | "invites";
 
-export default function TenantUserManagement({ tenantId }: Props) {
+export default function TenantUserManagement({ tenantId, readOnly = false }: Props) {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>("active");
   const [page, setPage] = useState(1);
@@ -71,6 +72,11 @@ export default function TenantUserManagement({ tenantId }: Props) {
 
   return (
     <>
+      {readOnly && (
+        <p className="td-lock-banner">
+          This organization is deleted. Users cannot be invited or created.
+        </p>
+      )}
       <div className="td-section-header">
         <h2 className="td-section-title">
           {tab === "active" ? "Active Users" : "Pending Invites"}
@@ -86,8 +92,12 @@ export default function TenantUserManagement({ tenantId }: Props) {
           >
             {HEADER_REFRESH_LABEL}
           </Button>
-          <Button variant="primary" onClick={() => setShowInviteModal(true)}>Invite User</Button>
-          <Button variant="secondary" onClick={() => setShowCreateModal(true)}>Create User</Button>
+          {!readOnly && (
+            <>
+              <Button variant="primary" onClick={() => setShowInviteModal(true)}>Invite User</Button>
+              <Button variant="secondary" onClick={() => setShowCreateModal(true)}>Create User</Button>
+            </>
+          )}
         </div>
       </div>
 
@@ -122,8 +132,8 @@ export default function TenantUserManagement({ tenantId }: Props) {
               <UserTable
                 users={users}
                 loading={usersLoading || usersFetching}
-                onEdit={(u) => setEditUser(u)}
-                onDeactivate={(u) => setDeactivateTarget(u)}
+                onEdit={readOnly ? undefined : (u) => setEditUser(u)}
+                onDeactivate={readOnly ? undefined : (u) => setDeactivateTarget(u)}
               />
             </div>
             {totalPages > 1 && (
@@ -154,7 +164,7 @@ export default function TenantUserManagement({ tenantId }: Props) {
         )}
       </div>
 
-      {showInviteModal && (
+      {showInviteModal && !readOnly && (
         <InviteUserModal
           tenantId={tenantId}
           onClose={() => setShowInviteModal(false)}
@@ -162,7 +172,7 @@ export default function TenantUserManagement({ tenantId }: Props) {
         />
       )}
 
-      {showCreateModal && (
+      {showCreateModal && !readOnly && (
         <CreateUserModal
           tenantId={tenantId}
           onClose={() => setShowCreateModal(false)}
@@ -170,7 +180,7 @@ export default function TenantUserManagement({ tenantId }: Props) {
         />
       )}
 
-      {editUser && (
+      {editUser && !readOnly && (
         <EditUserModal
           user={editUser}
           tenantId={tenantId}
@@ -179,7 +189,7 @@ export default function TenantUserManagement({ tenantId }: Props) {
         />
       )}
 
-      {deactivateTarget && (
+      {deactivateTarget && !readOnly && (
         <DeactivateDialog
           user={deactivateTarget}
           tenantId={tenantId}

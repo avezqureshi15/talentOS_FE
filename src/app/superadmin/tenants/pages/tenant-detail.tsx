@@ -113,7 +113,7 @@ export default function TenantDetail() {
         </div>
       </div>
 
-      <TenantUserManagement tenantId={id} />
+      <TenantUserManagement tenantId={id} readOnly={Boolean(tenant.deleted_at)} />
 
       {(tenant.logo_url || tenant.website || tenant.phone || tenant.description ||
         tenant.address_line1 || tenant.city || tenant.state || tenant.country ||
