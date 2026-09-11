@@ -128,12 +128,12 @@ export type AddCandidateResponse = {
 
 export const addCandidate = async (
   id: string,
-  payload: { name: string; email: string; phone: string; referral: boolean; resume: File },
+  payload: { resume: File; referral?: boolean; name?: string; email?: string; phone?: string },
 ): Promise<AddCandidateResponse> => {
   const formData = new FormData();
-  formData.append("name", payload.name);
-  formData.append("email", payload.email);
-  formData.append("phone", payload.phone);
+  if (payload.name) formData.append("name", payload.name);
+  if (payload.email) formData.append("email", payload.email);
+  if (payload.phone) formData.append("phone", payload.phone);
   formData.append("referral", payload.referral ? "true" : "false");
   formData.append("resume", payload.resume);
   const { data } = await httpClient.post<AddCandidateResponse>(

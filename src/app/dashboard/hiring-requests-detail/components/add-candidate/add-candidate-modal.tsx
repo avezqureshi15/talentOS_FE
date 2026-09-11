@@ -7,7 +7,6 @@ import { ToastType } from "@/components/ui/toast/toast.types";
 import { ADD_CANDIDATE_LIST_REFETCH_DELAY_MS } from "@/constants/constants";
 import { addCandidate } from "@/services/hiring-requests/hiring-requests";
 import { getApiErrorMessage } from "@/utils/api-error";
-import { isValidEmail, isValidPhone } from "@/utils/validation";
 import { invalidateHiringRequestQueries } from "@/app/dashboard/hiring-requests-detail/pages/invalidate-hiring-queries";
 import ImportCandidatesTab from "@/app/dashboard/hiring-requests-detail/components/import-candidates/import-candidates-tab";
 import "./add-candidate-modal.css";
@@ -18,7 +17,7 @@ type AddCandidateModalProps = {
   hiringRequestId: string;
 };
 
-type FieldKey = "name" | "email" | "phone" | "resume";
+type FieldKey = "resume";
 type FieldErrors = Partial<Record<FieldKey, string>>;
 type TabKey = "single" | "bulk";
 
@@ -40,9 +39,6 @@ const extractErrorMessage = (err: unknown): string => {
 
 const AddCandidateModal = ({ open, onClose, hiringRequestId }: AddCandidateModalProps) => {
   const queryClient = useQueryClient();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [referral, setReferral] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -58,9 +54,6 @@ const AddCandidateModal = ({ open, onClose, hiringRequestId }: AddCandidateModal
   }, []);
 
   const reset = () => {
-    setName("");
-    setEmail("");
-    setPhone("");
     setReferral(false);
     setFile(null);
     setFieldErrors({});
@@ -91,16 +84,9 @@ const AddCandidateModal = ({ open, onClose, hiringRequestId }: AddCandidateModal
 
   const validate = (): FieldErrors => {
     const errors: FieldErrors = {};
-    const trimmedName = name.trim();
-    const trimmedEmail = email.trim();
-    const trimmedPhone = phone.trim();
-    if (!trimmedName) errors.name = "Name is required";
-    if (!trimmedEmail) errors.email = "Email is required";
-    else if (!isValidEmail(trimmedEmail)) errors.email = "Enter a valid email address";
-    if (!trimmedPhone) errors.phone = "Phone is required";
-    else if (!isValidPhone(trimmedPhone)) errors.phone = "Enter a 10-digit mobile number starting with 6, 7, 8, or 9";
-    if (!file) errors.resume = "Resume is required";
-    else {
+    if (!file) {
+      errors.resume = "Resume is required";
+    } else {
       const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
       if (!isPdf) errors.resume = "Resume must be a PDF";
       else if (file.size > MAX_RESUME_BYTES) errors.resume = "Resume must be 2MB or smaller";
@@ -122,13 +108,7 @@ const AddCandidateModal = ({ open, onClose, hiringRequestId }: AddCandidateModal
     setIsSubmitting(true);
     setFormError(null);
     try {
-      await addCandidate(hiringRequestId, {
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-        referral,
-        resume: file!,
-      });
+      await addCandidate(hiringRequestId, { referral, resume: file! });
       scheduleListRefetch();
       useToastStore.getState().addToast("Candidate queued for AI evaluation", ToastType.SUCCESS);
       handleClose();
@@ -165,51 +145,9 @@ const AddCandidateModal = ({ open, onClose, hiringRequestId }: AddCandidateModal
       {tab === "single" ? (
       <form className="acm-form" onSubmit={handleSubmit}>
         <p className="acm-description">
-          Add one person with a PDF resume. They are queued for AI evaluation the same way as a careers application.
+          Upload a PDF resume. The candidate's name, email and phone are parsed automatically and they are queued for AI
+          evaluation — no manual entry needed.
         </p>
-
-        <label className="acm-label">
-          <span className="acm-label-text">
-            Name
-            <span className="acm-required" aria-hidden="true">*</span>
-          </span>
-          <input
-            className="acm-input"
-            value={name}
-            onChange={(e) => { setName(e.target.value); setFieldErrors((p) => ({ ...p, name: undefined })); }}
-            autoFocus
-          />
-          {fieldErrors.name && <span className="acm-field-error">{fieldErrors.name}</span>}
-        </label>
-
-        <label className="acm-label">
-          <span className="acm-label-text">
-            Email
-            <span className="acm-required" aria-hidden="true">*</span>
-          </span>
-          <input
-            className="acm-input"
-            type="email"
-            value={email}
-            onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: undefined })); }}
-          />
-          {fieldErrors.email && <span className="acm-field-error">{fieldErrors.email}</span>}
-        </label>
-
-        <label className="acm-label">
-          <span className="acm-label-text">
-            Phone
-            <span className="acm-required" aria-hidden="true">*</span>
-          </span>
-          <input
-            className="acm-input"
-            type="tel"
-            value={phone}
-            onChange={(e) => { setPhone(e.target.value); setFieldErrors((p) => ({ ...p, phone: undefined })); }}
-            placeholder="9876543210"
-          />
-          {fieldErrors.phone && <span className="acm-field-error">{fieldErrors.phone}</span>}
-        </label>
 
         <div className="acm-label">
           <span className="acm-label-text">
