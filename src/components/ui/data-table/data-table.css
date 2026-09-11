@@ -20,13 +20,14 @@
 .dt-row-block:last-child .dt-row { border-bottom: none; }
 
 .dt-row-block--expanded {
-  background: var(--bg-tertiary);
+  background: var(--surface-expanded);
 }
 
 .dt-row-block--expanded .dt-row,
 .dt-row-block:last-child.dt-row-block--expanded .dt-row {
-  background: var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-subtle);
+  background: var(--surface-expanded);
+  border-bottom: 1px solid var(--border-default);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .dt-row-expand {
@@ -36,9 +37,10 @@
 }
 
 .dt-row-block--expanded .dt-row-expand {
-  background: var(--bg-tertiary);
+  background: var(--surface-expanded);
   border-bottom: 1px solid var(--border-default);
   padding-left: 50px;
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .dt-row-block:last-child .dt-row-expand { border-bottom: none; }

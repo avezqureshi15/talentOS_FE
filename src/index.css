@@ -12,6 +12,8 @@
   --surface-card-hover: rgba(255, 255, 255, 0.07);
   --surface-disabled: rgba(255, 255, 255, 0.02);
   --surface-mist: rgba(255, 255, 255, 0.03);
+  /* expanded table row band (candidate accordion) */
+  --surface-expanded: var(--bg-tertiary);
 
   /* radius system */
   --radius-sm: 8px;
@@ -348,6 +350,8 @@
   --surface-card-hover: #efeff1;
   --surface-disabled: #f1f1f2;
   --surface-mist: #ffffff;
+  /* expanded table row band — clean cool tint so it reads as "open" */
+  --surface-expanded: #eef2f7;
 
   /* chips */
   --chip-bg: #ececee;
@@ -595,6 +599,8 @@
   --bg-primary: #ffffff;
   --bg-secondary: #f8f9fa;
   --bg-tertiary: #e2e8f0;
+  /* expanded table row band — warm Recruit41 tint */
+  --surface-expanded: #fff3e8;
 
   /* accent — Recruit41 orange */
   --accent: #f97316;
