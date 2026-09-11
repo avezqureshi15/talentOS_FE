@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import type { StageKey } from "@/app/dashboard/hiring-requests-detail/components/pipeline-stages/pipeline-stages.types";
-import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATION_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP } from "./detail.constants";
+import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATION_SUB_FILTER_MAP, EVALUATION_ROUND_FILTER_MAP, SCREENING_SUB_FILTER_MAP } from "./detail.constants";
 
 export type InterviewTab = "incoming" | "no-show";
 export type InterviewType = "all" | "ai" | "regular";
+export type EvaluationRoundFilter = "all" | "ai" | "regular";
 
 type UseFilteredApplicantsArgs = {
   applicants: Applicant[];
@@ -12,6 +13,7 @@ type UseFilteredApplicantsArgs = {
   interviewTab: InterviewTab;
   interviewType: InterviewType;
   evaluationSubFilter: string;
+  evaluationRoundFilter: EvaluationRoundFilter;
   screeningSubFilter: string;
   interviewScheduleFilter: string | null;
 };
@@ -22,6 +24,7 @@ export function useFilteredApplicants({
   interviewTab,
   interviewType,
   evaluationSubFilter,
+  evaluationRoundFilter,
   screeningSubFilter,
   interviewScheduleFilter,
 }: UseFilteredApplicantsArgs): Applicant[] {
@@ -42,6 +45,9 @@ export function useFilteredApplicants({
 
     if (activeStage === "evaluation") {
       filtered = filtered.filter(EVALUATION_SUB_FILTER_MAP[evaluationSubFilter] ?? (() => true));
+      if (evaluationRoundFilter !== "all") {
+        filtered = filtered.filter(EVALUATION_ROUND_FILTER_MAP[evaluationRoundFilter] ?? (() => true));
+      }
     }
 
     if (activeStage === "screening") {
@@ -49,5 +55,5 @@ export function useFilteredApplicants({
     }
 
     return filtered;
-  }, [applicants, activeStage, interviewTab, interviewType, evaluationSubFilter, screeningSubFilter, interviewScheduleFilter]);
+  }, [applicants, activeStage, interviewTab, interviewType, evaluationSubFilter, evaluationRoundFilter, screeningSubFilter, interviewScheduleFilter]);
 }

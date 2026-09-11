@@ -24,10 +24,10 @@ import Skeleton from "@/components/ui/skeleton/skeleton";
 import BulkArchiveModal from "@/app/dashboard/hiring-requests-detail/components/modal/bulk-archive-modal";
 import { useApplicationsContext } from "@/app/dashboard/hiring-requests-detail/components/detail/applications-context";
 import { useFilteredApplicants } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
-import type { InterviewTab, InterviewType } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
+import type { InterviewTab, InterviewType, EvaluationRoundFilter } from "@/app/dashboard/hiring-requests-detail/components/detail/use-filtered-applicants";
 import { useJobDetail } from "@/app/dashboard/hiring-requests-detail/components/detail/use-job-detail";
 import { useBulkSelection } from "@/app/dashboard/hiring-requests-detail/components/detail/use-bulk-selection";
-import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, SCREENING_SUB_FILTER_MAP } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
+import { STAGE_FILTER_MAP, INTERVIEW_SUB_FILTER_MAP, EVALUATION_SUB_FILTER_MAP, EVALUATION_ROUND_FILTER_MAP, SCREENING_SUB_FILTER_MAP } from "@/app/dashboard/hiring-requests-detail/components/detail/detail.constants";
 import { BULK_STAGE_CONFIG, isBulkAdvanceSubFilter, bulkSelectionKey } from "@/app/dashboard/hiring-requests-detail/components/detail/bulk-stage-config";
 import InterviewFilterBar, { type InterviewScheduleFilter } from "@/app/dashboard/hiring-requests-detail/components/detail/interview-filter-bar";
 import EvaluatedFilterBar, { type EvaluationSubFilter } from "@/app/dashboard/hiring-requests-detail/components/detail/evaluated-filter-bar";
@@ -44,6 +44,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const [interviewType, setInterviewType] = useState<InterviewType>("all");
   const [interviewScheduleFilter, setInterviewScheduleFilter] = useState<InterviewScheduleFilter>(null);
   const [evaluationSubFilter, setEvaluationSubFilter] = useState<EvaluationSubFilter>("evaluated");
+  const [evaluationRoundFilter, setEvaluationRoundFilter] = useState<EvaluationRoundFilter>("all");
   const [screeningSubFilter, setScreeningSubFilter] = useState<"pending" | "completed" | "flagged">("pending");
   const jobId = hiringRequest.id;
   const isRemote =
@@ -79,7 +80,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   });
 
   const filteredApplicants = useFilteredApplicants({
-    applicants, activeStage, interviewTab, interviewType, evaluationSubFilter, screeningSubFilter,
+    applicants, activeStage, interviewTab, interviewType, evaluationSubFilter, evaluationRoundFilter, screeningSubFilter,
     interviewScheduleFilter,
   });
 
@@ -193,6 +194,17 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
     pending: applicants.filter(STAGE_FILTER_MAP["waiting-evaluation"]).length,
   }), [applicants]);
 
+  const evaluationRoundCounts = useMemo(() => {
+    const inSubFilter = applicants.filter(
+      EVALUATION_SUB_FILTER_MAP[evaluationSubFilter] ?? (() => true),
+    );
+    return {
+      all: inSubFilter.length,
+      ai: inSubFilter.filter(EVALUATION_ROUND_FILTER_MAP.ai).length,
+      regular: inSubFilter.filter(EVALUATION_ROUND_FILTER_MAP.regular).length,
+    };
+  }, [applicants, evaluationSubFilter]);
+
   const screeningSubCounts = useMemo(() => ({
     pending: applicants.filter(
       (a) => STAGE_FILTER_MAP["screening"](a) && SCREENING_SUB_FILTER_MAP["pending"](a),
@@ -305,7 +317,14 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
             />
           )}
           {activeStage === "evaluation" && (
-            <EvaluatedFilterBar value={evaluationSubFilter} onChange={setEvaluationSubFilter} counts={evaluationSubCounts} />
+            <EvaluatedFilterBar
+              value={evaluationSubFilter}
+              onChange={setEvaluationSubFilter}
+              counts={evaluationSubCounts}
+              roundFilter={evaluationRoundFilter}
+              onRoundFilterChange={setEvaluationRoundFilter}
+              roundCounts={evaluationRoundCounts}
+            />
           )}
 
           <motion.div

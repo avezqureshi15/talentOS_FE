@@ -67,6 +67,14 @@ export const EVALUATION_SUB_FILTER_MAP: Record<string, (a: Applicant) => boolean
   pending: (a) => STAGE_FILTER_MAP["waiting-evaluation"](a),
 };
 
+// AI vs regular round — mirrors the badge shown in the evaluation table
+// (see candidate-table: `stage === "AI_INTERVIEW" ? AI : Regular`).
+export const EVALUATION_ROUND_FILTER_MAP: Record<string, (a: Applicant) => boolean> = {
+  all: () => true,
+  ai: (a) => a.stage === "AI_INTERVIEW",
+  regular: (a) => a.stage !== "AI_INTERVIEW",
+};
+
 function isScreeningFlagged(a: Applicant): boolean {
   const status = a.status?.toLowerCase() ?? "";
   return (
@@ -113,6 +121,7 @@ export const UI_INTERVIEW_TYPE_AI = "AI";
 export const UI_INTERVIEW_TYPE_REGULAR = "Regular";
 export const UI_EVALUATED_AI = "AI";
 export const UI_EVALUATED_REGULAR = "Regular";
+export const UI_EVALUATION_ROUND_ALL = "All";
 export const UI_EVALUATION_DONE = "Evaluated";
 export const UI_EVALUATION_PENDING = "Pending Eval";
 export const UI_SCREENING_PENDING = "Pending";
