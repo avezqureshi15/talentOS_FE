@@ -139,3 +139,26 @@ export const updateCandidateArchive = async (
   );
   return data;
 };
+
+export type CandidateDetailsUpdatePayload = {
+  phone: string;
+  linkedin_url: string;
+  how_did_you_hear: string;
+  location: string;
+  current_ctc: string;
+  expected_ctc: string;
+  years_of_experience: string;
+  notice_period: string;
+  willing_to_relocate: boolean;
+};
+
+export const updateCandidateDetails = async (
+  candidateId: number,
+  payload: CandidateDetailsUpdatePayload,
+): Promise<EvaluatedCandidate> => {
+  const { data } = await httpClient.patch<EvaluatedCandidate>(
+    API_ENDPOINTS.APPLICATION_CANDIDATE_DETAILS.replace("{candidate_id}", String(candidateId)),
+    payload,
+  );
+  return data;
+};

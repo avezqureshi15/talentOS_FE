@@ -9,6 +9,7 @@ export type CandidateTableProps = {
   onRowClick?: (candidate: Applicant) => void;
   onAction?: (handlerKey: string, candidateId: string) => void;
   onMenuAction?: (action: MenuAction, candidateId: string) => void;
+  onEditDetails?: (candidate: Applicant) => void;
   onTimelineOpen?: (candidate: Applicant) => void;
   showBulkSelection?: boolean;
   selectedIds?: Set<string>;

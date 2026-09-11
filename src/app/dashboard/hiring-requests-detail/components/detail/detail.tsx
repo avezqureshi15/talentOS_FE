@@ -18,6 +18,8 @@ import { useApplicantActionHandlers } from "@/app/dashboard/hiring-requests-deta
 import ApplicantTimelineSheet from "@/app/dashboard/hiring-requests-detail/components/timeline/timeline";
 import FinalVerdict from "@/app/dashboard/hiring-requests-detail/components/final-verdict/final-verdict";
 import AdvanceTargetModal from "@/app/dashboard/hiring-requests-detail/components/modal/advance-target-modal";
+import EditCandidateDetailsModal from "@/app/dashboard/hiring-requests-detail/components/modal/edit-candidate-details-modal";
+import type { Applicant } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 
 import ErrorBoundary from "@/components/ui/error-boundary/error-boundary";
 import Skeleton from "@/components/ui/skeleton/skeleton";
@@ -108,6 +110,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
   const bulkSelection = useBulkSelection(jobId, filteredApplicants, refresh, showBulkSelection, bulkKey);
   const [timelineId, setTimelineId] = useState<number | null>(null);
   const [pendingArchive, setPendingArchive] = useState(false);
+  const [editCandidate, setEditCandidate] = useState<Applicant | null>(null);
 
   useEffect(() => {
     setExpandedId(null);
@@ -337,6 +340,7 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
               onRowClick={(candidate) => setExpandedId((prev) => (prev === candidate.id ? null : candidate.id))}
               onAction={handleAction}
               onMenuAction={handleMenuAction}
+              onEditDetails={setEditCandidate}
               onTimelineOpen={(candidate) => setTimelineId(candidate.candidateId)}
               showBulkSelection={showBulkSelection}
               selectedIds={bulkSelection.selectedIds}
@@ -426,6 +430,12 @@ const JobDetail = ({ hiringRequest }: JobDetailProps) => {
           candidateName={cancelProps.target?.name ?? ""}
           onClose={cancelProps.onClose}
           onConfirm={cancelProps.onConfirm}
+        />
+
+        <EditCandidateDetailsModal
+          open={!!editCandidate}
+          applicant={editCandidate}
+          onClose={() => setEditCandidate(null)}
         />
       </motion.div>
     </div>

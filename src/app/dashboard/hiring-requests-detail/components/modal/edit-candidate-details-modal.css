@@ -1,0 +1,87 @@
+.ecd-modal .ecd-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.ecd-modal .ecd-description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.ecd-modal .ecd-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+@media (max-width: 560px) {
+  .ecd-modal .ecd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ecd-modal .ecd-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.ecd-modal .ecd-label-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ecd-modal .ecd-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-family);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.ecd-modal .ecd-input:focus {
+  border-color: var(--accent);
+}
+
+.ecd-modal .ecd-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.ecd-modal .ecd-checkbox-row input {
+  accent-color: var(--accent);
+}
+
+.ecd-modal .ecd-error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--danger);
+  padding: 8px 12px;
+  background: var(--danger-bg);
+  border-radius: 8px;
+}
+
+.ecd-modal .ecd-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}

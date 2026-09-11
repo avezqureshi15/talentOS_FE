@@ -3,6 +3,7 @@ import { resolveTableRowActions } from "@/app/dashboard/hiring-requests-detail/c
 import ApplicantMenuButton from "@/app/dashboard/hiring-requests-detail/components/applicants/applicant-menu-button/applicant-menu-button";
 import { MENU_ACTION_PERMISSIONS } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.constants";
 import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/constants/permissions";
 import type { Applicant, MenuAction } from "@/app/dashboard/hiring-requests-detail/components/applicants/applicants.types";
 import "./candidate-row-actions.css";
 
@@ -11,6 +12,7 @@ type CandidateRowActionsProps = {
   isScreening?: boolean;
   onAction: (handlerKey: string, id: string) => void;
   onMenuAction: (action: MenuAction, id: string) => void;
+  onEditDetails?: (candidate: Applicant) => void;
   onTimeline?: (c: Applicant) => void;
   hideCallNow?: boolean;
 };
@@ -31,11 +33,13 @@ const CandidateRowActions = ({
   isScreening = false,
   onAction,
   onMenuAction,
+  onEditDetails,
   onTimeline,
   hideCallNow = false,
 }: CandidateRowActionsProps) => {
   const stateConfig = useApplicantState(candidate, isScreening);
   const { can } = usePermissions();
+  const canEditDetails = !!onEditDetails && can(PERMISSIONS.APPLICATION_EVALUATE);
   const permitted = {
     ...stateConfig,
     actions: stateConfig.actions.filter((action) => !action.permission || can(action.permission)),
@@ -68,6 +72,9 @@ const CandidateRowActions = ({
         onMenuAction={onMenuAction}
         id={candidate.id}
         extraItems={[
+          ...(canEditDetails
+            ? [{ key: "edit_details", label: "Edit details", icon: "bx-edit-alt", onSelect: () => onEditDetails?.(candidate) }]
+            : []),
           ...overflowActions.map((action) => ({
             key: action.handler,
             label: action.label,

@@ -97,6 +97,7 @@ function getDisplayStatus(rawStatus: string): { label: string; cssClass: string;
 
 const CandidateTable = ({
   data, columns, onRowClick, onAction, onMenuAction, onTimelineOpen,
+  onEditDetails,
   showBulkSelection,
   selectedIds,
   onToggleSelect, onToggleSelectAll, allSelected,
@@ -213,6 +214,7 @@ const CandidateTable = ({
           isScreening={activeStage === "screening"}
           onAction={onAction ?? (() => {})}
           onMenuAction={onMenuAction ?? (() => {})}
+          onEditDetails={onEditDetails}
           onTimeline={onTimelineOpen}
         />
     ),
@@ -246,6 +248,7 @@ const CandidateTable = ({
           isScreening={activeStage === "screening"}
           onAction={onAction ?? (() => {})}
           onMenuAction={onMenuAction ?? (() => {})}
+          onEditDetails={onEditDetails}
           onTimeline={onTimelineOpen}
           hideCallNow={activeStage === "screening"}
         />

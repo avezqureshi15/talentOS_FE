@@ -75,6 +75,7 @@ export const API_ENDPOINTS = {
   AI_GENERATE: "/ai/generate",
   APPLICATION_ROUND_STATUS: "/applications/{candidate_id}/round-status",
   APPLICATION_ARCHIVE: "/applications/{candidate_id}/archive",
+  APPLICATION_CANDIDATE_DETAILS: "/applications/{candidate_id}/details",
   APPLICATION_RESUME: "/applications/candidates/{candidate_id}/resume",
   HIRING_REQUEST_EXPORT: "/hiring-requests/{hiring_request_id}/export",
   HIRING_REQUEST_IMPORT_CANDIDATES: "/hiring-requests/{hiring_request_id}/import-candidates",
